@@ -40,3 +40,15 @@ Our Bitcoin Address: 19EkDTAaGWySZv1QsWxyWwYMZpo7jpvPYe
 
 Anyone interested in contributing code or time to help with testing, please get in touch!
 
+Features
+===
+- Automatic RSA encryption of private messages. Users messages are encrypted with password protected private keys, and require a user to enter a message PIN if this feature is enabled.
+- PGP encryption - Users can set up PGP encryption of messages. Javascript encryption is enabled on message forms and the 'Send Address' form, and can be automatically encrypted with PGP on the server side if the vendor has this setting enabled.
+- PGP Two Factor Authentication - To secure your account, we can encrypt a challenge token with your public key, which you can decrypt with your private key. Enter the token to complete your login. Simples.
+- EXIF scrubbing of images - Heard about that hacker who was busted for posting a pic of his girlfriend with GPS meta-data? We did too. All images are scrubbed of meta-data, and converted to PNG's.
+- Bitcoin Escrow system (Still in testing, re disputes) - Vendors can require a buyer to finalize early if they rating isn't great, but we have an escrow system in place. Final thing to wrap up is disputes resolution.
+- Bitcoin wallet backup (yet to be added) - Storing all your coins in a live wallet is silly. So we're going to generate wallets as you go, and encrypt them with your PGP key, for storing until your ready to download. Top up the sites account as you need. (The functionality of this hasn't been finalized)
+- Bitcoin Mixing system (yet to be added) - Something we're considering an optional mixing feature.
+- Fee's System (minor, need to add) - Have yet to set up a panel for controlling fee's but this will be ready shortly.
+- Optional: Live Exchange Rates - Get current exchange rates from CoinDesk or BitcoinAverage.com every 10 minutes to keep things simple. Vendors set their price in their local currency, and everything afterwards will use the live exchange rates.
+
