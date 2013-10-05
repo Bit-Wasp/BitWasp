@@ -1,7 +1,7 @@
 BitWasp
 ===
 
-BitWasp is an open source project which aims to lower the barrier of entry for anyone wishing to set up a bitcoin marketplace. Bitwasp is designed to operate independantly of centralized services, and runs it's own bitcoin server to track payments.
+BitWasp is an open source PHP project which aims to lower the barrier of entry for anyone wishing to set up a bitcoin marketplace. Bitwasp is designed to operate independantly of centralized services, and runs it's own bitcoin server to track payments.
 
 BitWasp is not production ready
 ===
@@ -16,6 +16,8 @@ You may need to alter permissions for temporary files, so execute the following:
 chmod 777 ./assets/images -R
 
 Create a database on your server, and import the schema.sql file. 
+
+To use the PGP functions, you need PHP's gnupg extension.
 
 To run the bitcoin server, you'll need a bitcoin.conf:
 
@@ -40,7 +42,8 @@ Our Bitcoin Address: 19EkDTAaGWySZv1QsWxyWwYMZpo7jpvPYe
 
 Anyone interested in contributing code or time to help with testing, please get in touch!
 
-Features
+
+Details
 ===
 - Automatic RSA encryption of private messages. Users messages are encrypted with password protected private keys, and require a user to enter a message PIN if this feature is enabled.
 - PGP encryption - Users can set up PGP encryption of messages. Javascript encryption is enabled on message forms and the 'Send Address' form, and can be automatically encrypted with PGP on the server side if the vendor has this setting enabled.
