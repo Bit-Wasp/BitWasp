@@ -1,5 +1,5 @@
         <div class="span9 mainContent" id="homepage">
- 	  <h2>BitMerchant</h2>
+ 	  <h2>BitWasp</h2>
 						  
 	  <div class='alert alert-danger'>So long as this message remains in the code, the project is NOT production ready, and should only be used with the Bitcoin Testnet. Let ye be warned.</div>
 			  
@@ -31,7 +31,7 @@
 		    <div class='row-fluid'>
 			  <div class='span4'>
 			    <h3>Fit for all Purposes</h3>
-			    <p>Maybe you want to solely sell your own products on the marketplace, or want to be the next BitMit. BitMerchant is built for all purposes, and won't get in the way of what you'd like to do.</p> 
+			    <p>Maybe you want to solely sell your own products on the marketplace, or want to be the next BitMit. BitWasp is built for all purposes, and won't get in the way of what you'd like to do.</p> 
           <!--<p><a class="btn btn-success btn-large" href="#">Share your badges now!</a></p>  -->
               </div><!--/span-->  
 			
@@ -51,18 +51,18 @@
 		    <div class='row-fluid'>
 			  <div class='span4'>
 			    <h3>The code is Free! (Gratis & Libre)</h3>
-			    <p>as in free speech and free beer! BitMerchant is released under the Agorist Licence - it's use is unencumbered by restrictions (and warrantees). The code is yours to deploy in a marketplace, or to release your own, way better version.</p>
+			    <p>as in free speech and free beer! BitWasp is released under the Agorist Licence - it's use is unencumbered by restrictions (and warrantees). The code is yours to deploy in a marketplace, or to release your own, way better version.</p>
 			  </div>				  
 				  
 			
 			  <div class='span4'>
 			    <h3>Deal in your local currency</h3>
-			    <p>BitMerchant gathers exchange rates for Bitcoin, against USD, GBP, and EUR from some of the leading Price Index API's. Currently comes with built-in support for CoinDesk and BitcoinAverage.com. With this feature, you can set prices in your local currency, and charge users based on the current value of Bitcoin.</p>
+			    <p>BitWasp gathers exchange rates for Bitcoin, against USD, GBP, and EUR from some of the leading Price Index API's. Currently comes with built-in support for CoinDesk and BitcoinAverage.com. With this feature, you can set prices in your local currency, and charge users based on the current value of Bitcoin.</p>
 			  </div>
 	
 			  <div class='span4'>
 			    <h3>We're Privacy Conscious</h3>
-			    <p>BitMerchant takes the privacy of it's users seriously. All uploaded images are stripped of GPS information, and other meta-data. Private Messages are encrypted using RSA encryption, and completely unreadable until you login and enter your PIN. This presents a barrier to attackers and even nosy administrators.</p>
+			    <p>BitWasp takes the privacy of it's users seriously. All uploaded images are stripped of GPS information, and other meta-data. Private Messages are encrypted using RSA encryption, and completely unreadable until you login and enter your PIN. This presents a barrier to attackers and even nosy administrators.</p>
 			  </div>				
 		    </div>			    
         </div>
