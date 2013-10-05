@@ -20,7 +20,10 @@ SQL Database
 
 Pull the project from our repository, and unzip in your document root.
 You may need to alter permissions for temporary files, so execute the following:
+
+```
 chmod 777 ./assets/images -R
+```
 
 Create a database on your server, and import the schema.sql file. 
 
@@ -28,17 +31,21 @@ To use the PGP functions, you need PHP's gnupg extension.
 
 To run the bitcoin server, you'll need a bitcoin.conf:
 
+```
 rpcuser=bitcoinrpc_something_here
 rpcpassword=asldhflashdljfasdhfahsdjfalskd
 testnet=1
 server=1
 rpcport=28332
 rpcconnect=127.0.0.1
+```
 
 Download the bitcoin binaries, unzip them, and cd into the directory for your chipset; ./bitcoin*/bin/32 or ./bitcoin*/bin/64
 Execute the following command to run your bitcoin daemon.
-
+```
 ./bitcoind -daemon -blocknotify="curl http://localhost_or_your_vhost/callback/block/%s" -walletnotify="curl http://localhost_or_your_vhost/callback/wallet/%s"
+```
+
 
 There is no installer, so you need to set up the config files yourself:
 ./application/config/database.php :
