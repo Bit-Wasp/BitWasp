@@ -1,0 +1,63 @@
+        <div class="span9 mainContent" id="admin_edit_users">
+
+		  <?php echo $nav; ?>
+
+		  <?php echo form_open('admin/edit/users', array('class' => 'form-horizontal')); ?>
+  		    <fieldset>
+			
+			  <div class="row-fluid">
+		        <div class="span3">Session Timeout</div>
+		        <div class="span7"><input type='text' class='span1' name='login_timeout' value='<?php echo $config['login_timeout']; ?>' /> minutes</div>
+			  </div>
+		      <span class="help-inline"><?php echo form_error('login_timeout'); ?></span>
+
+			  <div class="row-fluid">
+				<div class="span3">Captcha Length</div>
+				<div class="span7"><input type='text' class='span1' name='captcha_length' value='<?php echo $config['captcha_length']; ?>' /> characters</div>
+			  </div>
+		      <span class="help-inline"><?php echo form_error('captcha_length'); ?></span>
+		      
+			  <div class="row-fluid">
+				<div class="span3">Registration Allowed?</div>
+				<div class="span7">
+                  <label class="radio inline"><input type='radio' name='registration_allowed' value='0' <?php echo ($config['registration_allowed'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
+                  <label class="radio inline"><input type='radio' name='registration_allowed' value='1' <?php echo ($config['registration_allowed'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
+				</div>
+			  </div>
+		      <span class="help-inline"><?php echo form_error('registration_allowed'); ?></span>
+		      
+		      <div class="row-fluid">
+				<div class="span3">Vendor Registration Allowed?</div>
+				<div class="span7">
+			      <label class="radio inline"><input type='radio' name='vendor_registration_allowed' value='0' <?php echo ($config['vendor_registration_allowed'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
+                  <label class="radio inline"><input type='radio' name='vendor_registration_allowed' value='1' <?php echo ($config['vendor_registration_allowed'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
+				</div>
+			  </div>
+		      <span class="help-inline"><?php echo form_error('vendor_registration_allowed'); ?></span>
+			
+			  <div class="row-fluid">
+			    <div class="span3">Encrypt Private Message's?</div>
+			    <div class="span7">
+                  <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='0' <?php echo ($config['encrypt_private_messages'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
+                  <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='1' <?php echo ($config['encrypt_private_messages'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
+			    </div>
+			  </div>
+			  <span class="help-inline"><?php echo form_error('encrypt_private_messages'); ?></span>
+			
+			  <div class="row-fluid">
+			    <div class="span3">Force Vendor PGP?</div>
+			    <div class="span7">
+                  <label class="radio inline"><input type="radio" name="force_vendor_pgp" value="0" <?php echo ($config['force_vendor_pgp'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
+                  <label class="radio inline"><input type="radio" name="forve_vendor_pgp" value="1" <?php echo ($config['force_vendor_pgp'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
+			    </div>
+			  </div>
+			  <span class="help-inline"><?php echo form_error('force_vendor_pgp'); ?></span>			
+			
+              <div class="form-actions">
+		        <input type='submit' value='Update' class='btn btn-primary' />
+                <?php echo anchor('account','Cancel', array('class'=>'returnLink btn'));?>
+		      </div>
+
+			</fieldset>
+		  </form>
+		</div>

@@ -1,0 +1,43 @@
+.mainContent {
+	padding-left: 20px;
+	padding-top: 15px;
+	padding-right: 20px;
+	margin-bottom: 30px;
+	background-image: url('../../assets/img/gridbg.gif');
+	background-repeat: repeat;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+.mainContent h2 {
+	font-size: 30px;
+	margin-bottom: 10px;
+	line-height: 1;
+	letter-spacing: -1px;
+	color: #FF6600;
+}
+
+.mainContent h3 {
+	font-size: 18px;
+	margin-bottom: 10px;
+	line-height: 1;
+	letter-spacing: -1px;
+	color: #FF6600;
+}
+
+.userbar ul {
+	padding-top: 0px;
+	padding-left:10px;
+	padding-bottom: 0px;
+	
+}
+
+.userbar li {
+	list-style-type: none;
+}
+
+/* Hack to prevent indentation in a new row of items 3*/
+.row-fluid .span3:nth-child(4n+1) {
+	margin-left: 0;
+}
