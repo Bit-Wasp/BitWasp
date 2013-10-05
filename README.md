@@ -29,7 +29,7 @@ To use the PGP functions, you need PHP's gnupg extension.
 To run the bitcoin server, you'll need a bitcoin.conf:
 
 rpcuser=bitcoinrpc_something_here
-rpcpassword=asldhflashdljfasdhfahsdjfalskdfjkashdfthisshouldbeareallyreallyreallylongpassword.
+rpcpassword=asldhflashdljfasdhfahsdjfalskd
 testnet=1
 server=1
 rpcport=28332
