@@ -12,11 +12,13 @@ This project is very much under development, and not yet ready for an alpha. Ple
 Installation
 ===
 Dependencies: 
+```
 Linux (commands in this reference will assume you're using Linux)
 gnupg PHP extension
 php-gd or imagemagick extension (for image conversion, metadata scrubbing, resizing)
 Bitcoin binaries
 SQL Database
+```
 
 Pull the project from our repository, and unzip in your document root.
 You may need to alter permissions for temporary files, so execute the following:
