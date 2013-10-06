@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /
+RewriteBase /bitwasp-repo/
 #Removes access to the system folder by users.
 #Additionally this will allow you to create a System.php controller,
 #previously this would not have been possible.

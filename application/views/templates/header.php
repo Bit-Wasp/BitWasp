@@ -7,11 +7,9 @@
     <title><?php echo $title; ?> | <?php echo $site_title ;?></title>
     <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="<?php echo base_url(); ?>assets/css/style.css">
-
-
-	<script src='http://code.jquery.com/jquery-1.10.2.js'></script>
-	<script src="http://coinwidget.com/widget/lookup.php?data=0_bitcoin_19mmkwx8JUfCYAhnrgMhr25Y8Zxes7VxG8"></script>
     
+	<script src='http://code.jquery.com/jquery-1.10.2.js'></script>
+   
     <style type="text/css">
       body {
         padding-top: 60px;

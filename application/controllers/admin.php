@@ -100,7 +100,7 @@ class Admin extends CI_Controller {
 		}
 		$data['page'] = 'admin/edit_bitcoin';
 		$data['title'] = $this->nav['bitcoin']['heading'];
-		$data['nav'] = $this->generate_nav();		
+		$data['nav'] = $this->generate_nav();
 		$this->load->library('Layout', $data);
 	}
 	
@@ -170,9 +170,10 @@ class Admin extends CI_Controller {
 		
 				$category = $this->categories_model->get(array('id' => $this->input->post('category_id')));
 				$cat_children = $this->categories_model->get_children($category['id']);
-		
+
 				// Check if items or categories are orphaned by this action, redirect to move these.
-				if($category['count_items'] > 0 || $cat_children !== FALSE) {
+				if($category['count_items'] > 0 || $cat_children['count'] > 0) {
+					echo 'a';
 					redirect('admin/category/orphans/'.$category['hash']);
 				} else {
 					// Delete the category.

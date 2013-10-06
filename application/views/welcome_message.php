@@ -12,7 +12,7 @@
 	
 	<div class='row-fluid'>
 		<p>Please consider donating to our Bitcoin address, . Donations will go towards hosting, and to provide bounties for bugs.</p>
-		<script src="http://coinwidget.com/widget/lookup.php?data=0_bitcoin_19mmkwx8JUfCYAhnrgMhr25Y8Zxes7VxG8"></script>
+		<script src="http://coinwidget.com/widget/lookup.php?data=0_bitcoin_19EkDTAaGWySZv1QsWxyWwYMZpo7jpvPYe"></script>
 <div id="content">
     <div id="goalleft" class="therm-text"></div>
     <div id="thermo2" class="thermometer horizontal">
