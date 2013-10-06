@@ -1,10 +1,10 @@
 <?php
 
 $config['ssl'] = false;
-$config['user'] = 'bitcoinrpc';
-$config['password'] = '6Wk1SYL7JmPYoUeWjYRSdqij4xrM5rGBvC4kbJipLVJK';
+$config['user'] = '';
+$config['password'] = '';
 $config['host'] = 'localhost';
-$config['port'] = '28332';
+$config['port'] = '';
 
 
 //$config['ssl'] = false;
