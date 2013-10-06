@@ -48,10 +48,10 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = '';			// set up these!
-$db['default']['username'] = '';
-$db['default']['password'] = '';
-$db['default']['database'] = '';
+$db['default']['hostname'] = '127.0.0.1';
+$db['default']['username'] = 'bitwasp';
+$db['default']['password'] = 'pippop';
+$db['default']['database'] = 'bitwasp';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = 'bw_';
 $db['default']['pconnect'] = TRUE;

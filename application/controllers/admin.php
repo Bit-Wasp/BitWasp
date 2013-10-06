@@ -160,7 +160,7 @@ class Admin extends CI_Controller {
 									'hash' => $this->general->unique_hash('categories','hash'),
 									'parent_id' => $this->input->post('category_parent'));
 				if($this->categories_model->add($category) == TRUE)
-					redirect('admin/items');
+					redirect('admin/edit/items');
 			} 
 		} 
 		
@@ -176,8 +176,8 @@ class Admin extends CI_Controller {
 					redirect('admin/category/orphans/'.$category['hash']);
 				} else {
 					// Delete the category.
-					if($this->categories_model->delete($this->input->post('category_id')) == TRUE)
-						redirect('admin/items');
+					if($this->categories_model->delete($category['id']) == TRUE)
+						redirect('admin/edit/items');
 				}
 			}
 		}
