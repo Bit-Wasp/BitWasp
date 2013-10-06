@@ -1,4 +1,4 @@
-BitWasp
+	BitWasp
 ===
 
 BitWasp is an open source PHP project which aims to lower the barrier of entry for anyone wishing to set up a bitcoin marketplace. Bitwasp is designed to operate independantly of centralized services, and runs it's own bitcoin server to track payments.
@@ -14,9 +14,9 @@ Installation
 Dependencies: 
 Linux (commands in this reference will assume you're using Linux)
 gnupg PHP extension
+php-gd or imagemagick extension (for image conversion, metadata scrubbing, resizing)
 Bitcoin binaries
 SQL Database
-
 
 Pull the project from our repository, and unzip in your document root.
 You may need to alter permissions for temporary files, so execute the following:
@@ -54,7 +54,11 @@ There is no installer, so you need to set up the config files yourself:
 	- This needs your bitcoind JSON-rpc credentials as entered above.
 
 To enable currency conversion, set up a cronjob:
+```
 */10 * * * * curl http://localhost_or_your_vhost/callback/rates
+```
+
+Finally, double check your .htaccess. The only setting you need to change is the second line, for RewriteBase. This is the folder BitWasp resides in on your server. Eg; server.com/bitwasp/ would have this set as RewriteBase /bitwasp/
 
 Support BitWasp's Development
 ===
@@ -73,7 +77,6 @@ Details
 - EXIF scrubbing of images - Heard about that hacker who was busted for posting a pic of his girlfriend with GPS meta-data? We did too. All images are scrubbed of meta-data, and converted to PNG's.
 - Bitcoin Escrow system (Still in testing, re disputes) - Vendors can require a buyer to finalize early if they rating isn't great, but we have an escrow system in place. Final thing to wrap up is disputes resolution.
 - Bitcoin wallet backup (yet to be added) - Storing all your coins in a live wallet is silly. So we're going to generate wallets as you go, and encrypt them with your PGP key, for storing until your ready to download. Top up the sites account as you need. (The functionality of this hasn't been finalized)
-- Bitcoin Mixing system (yet to be added) - Something we're considering an optional mixing feature.
 - Fee's System (minor, need to add) - Have yet to set up a panel for controlling fee's but this will be ready shortly.
 - Optional: Live Exchange Rates - Get current exchange rates from CoinDesk or BitcoinAverage.com every 10 minutes to keep things simple. Vendors set their price in their local currency, and everything afterwards will use the live exchange rates.
 
