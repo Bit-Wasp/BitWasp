@@ -1,11 +1,17 @@
 <?php
 
-$config['ssl'] = false;			// Set up these!
-$config['user'] = '';
-$config['password'] = '';
-$config['host'] = '';
-$config['port'] = '';
+$config['ssl'] = false;
+$config['user'] = 'bitcoinrpc';
+$config['password'] = '6Wk1SYL7JmPYoUeWjYRSdqij4xrM5rGBvC4kbJipLVJK';
+$config['host'] = 'localhost';
+$config['port'] = '28332';
 
+
+//$config['ssl'] = false;
+//$config['user'] = 'test';
+//$config['password'] = '123';
+//$config['host'] = 'localhost';
+//$config['port'] = '19001';
 
 
 // Leave these lines intact.
