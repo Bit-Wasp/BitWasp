@@ -30,6 +30,7 @@ chmod 777 ./assets/images -R
 Create a database on your server, and import the schema.sql file. 
 
 To use the PGP functions, you need PHP's gnupg extension.
+You need PHP's GD library or the ImageMagick library to resize files, but if it can't it'll just default to the normal file (slow.....)
 
 To run the bitcoin server, you'll need a bitcoin.conf:
 
@@ -51,9 +52,9 @@ Execute the following command to run your bitcoin daemon.
 
 There is no installer, so you need to set up the config files yourself:
 ./application/config/database.php :
-	- This needs your SQL details. 
+	- This needs your SQL details. See ./application/config/database.php.sample
 ./application/config/bitwasp.php :
-	- This needs your bitcoind JSON-rpc credentials as entered above.
+	- This needs your bitcoind JSON-rpc credentials as entered above. See ./application/config/bitcoin.php.sample
 
 To enable currency conversion, set up a cronjob:
 ```
