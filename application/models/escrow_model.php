@@ -115,7 +115,7 @@ class Escrow_model extends CI_Model {
 			$credit_txn = array( 'txn_id' => "Order #$order_id",
 								 'user_hash' => $recipient['user_hash'],
 								 'value' => (float)$escrow['amount'],
-								 'confirmations' => '',
+								 'confirmations' => '>50',
 								 'address' => '[payment]',
 								 'category' => 'receive',
 								 'credited' => '1',

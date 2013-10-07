@@ -1,9 +1,8 @@
         <div class="span9 mainContent" id="my-orders">
 		  <h2>Place Order</h2>
-<br />
+		  <?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
 		  <?php echo form_open('order/place/'.$order['id'], array('name'=>'placeOrderForm','class' => 'form-horizontal')); ?>
             <fieldset>
-<?php echo validation_errors(); ?>
 			  <div class="row-fluid">
 				<div class="span1 offset1">Vendor</div>
 				<div class="span5"><?php echo anchor('user/'.$order['vendor']['user_hash'], $order['vendor']['user_name']); ?></div>
