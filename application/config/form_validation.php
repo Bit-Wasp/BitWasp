@@ -178,7 +178,7 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'price',
 											  'label' => 'price',
-											  'rules' => 'numeric',
+											  'rules' => 'numeric|check_price_positive',
 										)
 							),
 				'edit_listing' => array(

@@ -212,6 +212,10 @@ class Listings extends CI_Controller {
 		}
 		return $this->general->matches_any($param, $c_id);
 	}
+	
+	public function check_price_positive($param) {
+		return ($param > 0) ? TRUE : FALSE;
+	}
 };
 
 /* End of file Listings.php */
