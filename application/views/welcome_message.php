@@ -7,7 +7,7 @@
             <p>Completely avoid the barrier of entry to the Bitcoin Market, and take part in the Bitcoin revolution!</p>  
             <p>Highly customizable, allowing you to tailor the site's configuration for your users requirements.</p>  
             <p>The project is open source, and well-reviewed, so rest assured people are working hard to keep your software secure.</p>  
-            <p align='center'><a class="btn btn-success btn-medium">Check out our source code on GitHub!</a> or <a class="btn btn-success btn-medium">Get started now!</a></p>  
+            <p align='center'><a class="btn btn-success btn-medium" href="https://www.github.com/Bit-Wasp/BitWasp">Check out our source code on GitHub!</a> </p>  
 	    
 	
 	<div class='row-fluid'>
