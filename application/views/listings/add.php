@@ -3,7 +3,6 @@
           <?php echo form_open('listings/add', array('class' => 'form-horizontal')); ?>
             <fieldset>
               <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
-<?php echo validation_errors(); ?>
               <div class="control-group">
                 <label class="control-label" for="name">Name</label>
                 <div class="controls">
