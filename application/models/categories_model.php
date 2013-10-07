@@ -114,6 +114,7 @@ class Categories_model extends CI_Model {
 			$menu[$result->id] = array(	'id' => $result->id,
 										'name' => $result->name,
 										'description' => $result->description,
+										'hash' => $result->hash,
 										'count' => $products->num_rows(),
 										'parent_id' => $result->parent_id
 									);

@@ -92,7 +92,7 @@ class Layout {
 			} $content .= ">\n";
 
 			// Display link if category contains items.
-			$content .= ($category['count'] == 0) ? '<span>'.$category['name'].'</span>' : '<a href="'.site_url().'category/'.$category['id'].'">'.$category['name'].' ('. $category['count'] .")</a>\n";
+			$content .= ($category['count'] == 0) ? '<span>'.$category['name'].'</span>' : '<a href="'.site_url().'category/'.$category['hash'].'">'.$category['name'].' ('. $category['count'] .")</a>\n";
 
 			// Check if we need to recurse into children.
 			if(isset($category['children']))  

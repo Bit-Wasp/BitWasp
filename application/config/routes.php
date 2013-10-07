@@ -116,6 +116,8 @@ $route['order/(:any)'] = 'orders/purchase_item/$1';
 $route['order/dispute/(:num)'] = 'orders/dispute/$1';
 $route['orders/dispute/(:num)'] = 'orders/dispute/$1';
 
+$route['category/(:any)'] = 'items/category/$1';
+
 $route['404_override'] = '';
 $route['default_controller'] = 'welcome';
 

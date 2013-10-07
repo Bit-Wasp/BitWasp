@@ -15,6 +15,20 @@ class Items extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
+	// Load all items in a category.
+	public function category($hash){		
+		$this->load->model('categories_model');
+		
+		$data['category'] = $this->categories_model->get(array('hash' => "$hash"));
+		if($data['category'] == FALSE)
+			redirect('items');
+		
+		$data['title'] = 'Items by Category: '.$data['category']['name'];
+		$data['page'] = 'items/index';
+		$data['items'] = $this->items_model->get_list( array('category' => $data['category']['id']) );
+		$this->load->library('Layout', $data);
+	}
+	
 	// Load a specific item.
 	public function get($hash) {
 		$data['item'] = $this->items_model->get($hash);

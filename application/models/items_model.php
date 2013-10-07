@@ -13,12 +13,18 @@ class Items_model extends CI_Model {
 	}
 	
 	// Get all items (will soon have pagination)
-	public function get_list() {
+	public function get_list($opt = array()) {
 		$results = array();
 		
 		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, description, main_image')
 				 ->where('hidden !=', '1')
 				 ->order_by('add_time ASC');
+				 
+		if(count($opt) > 0) {
+			foreach($opt as $key => $val) {
+				$this->db->where("$key", "$val");
+			}
+		}
 				 
 		$query = $this->db->get('bw_items');
 		
