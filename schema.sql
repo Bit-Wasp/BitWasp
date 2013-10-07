@@ -1,4 +1,4 @@
--- phpMyAdmin SQL Dump
+pa-- phpMyAdmin SQL Dump
 -- version 3.4.11.1deb2
 -- http://www.phpmyadmin.net
 --
@@ -561,7 +561,8 @@ INSERT INTO `bw_page_authorization` (`id`, `URI`, `auth_level`, `timeout`, `syst
 (12, 'items', 'login', 0, ''),
 (13, 'order', 'buyer', 0, '0'),
 (14, 'orders', 'vendor', 0, '1'),
-(15, '', 'login', 0, '');
+(15, '', 'login', 0, '1'),
+(16, 'category', 'login', 0, '1'),;
 
 
 

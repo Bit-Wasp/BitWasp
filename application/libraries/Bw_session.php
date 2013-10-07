@@ -84,7 +84,7 @@ class BW_Session {
 	public function validate_req() {
 		$this->auth_level = $this->CI->auth_model->check_auth($this->URI[0]);
 		
-		if($this->CI->general->matches_any($this->URI[0], array('','items','item','user')) == TRUE && $this->CI->bw_config->allow_guests == TRUE  && !$this->CI->current_user->logged_in() )
+		if($this->CI->general->matches_any($this->URI[0], array('','items','item','category','user')) == TRUE && $this->CI->bw_config->allow_guests == TRUE  && !$this->CI->current_user->logged_in() )
 			return TRUE;
 		
 		if($this->auth_level == FALSE)
