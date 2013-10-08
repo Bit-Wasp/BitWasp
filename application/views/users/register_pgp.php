@@ -1,4 +1,4 @@
-          <div class="mainContainer span9">
+          <div class="mainContent span9">
             <h2>Upload Public Key</h2>
             <?php echo form_open('register/pgp', array('class' => 'form-horizontal')); ?>
               <fieldset>

@@ -1,4 +1,4 @@
-          <div class="mainContainer">
+          <div class="mainContent">
             <h2>Two Factor Authentication</h2>
               <?php echo form_open('login/two_factor', array('class' => 'form-horizontal')); ?>
               <fieldset>

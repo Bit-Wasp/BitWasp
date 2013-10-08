@@ -1,4 +1,3 @@
-
           <div class="mainContent span6">
             <h2>Login</h2>
             <div class="alert">            

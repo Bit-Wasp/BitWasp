@@ -20,6 +20,7 @@ Installation
 Dependencies: 
 ```
 Linux (commands in this reference will assume you're using Linux)
+curl
 gnupg PHP extension
 php-gd or imagemagick extension (for image conversion, metadata scrubbing, resizing)
 php-curl

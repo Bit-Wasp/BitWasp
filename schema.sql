@@ -429,6 +429,7 @@ CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
   `eur` decimal(10,4) NOT NULL,
   `gbp` decimal(10,4) NOT NULL,
   `btc` int(11) NOT NULL DEFAULT '1',
+  `price_index` varchar(50),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
 
