@@ -164,6 +164,13 @@ class Admin extends CI_Controller {
 			} 
 		} 
 		
+		if($this->input->post('rename_category') == 'Rename') {
+			if($this->form_validation->run('admin_rename_category') == TRUE) {
+				if($this->categories_model->rename($this->input->post('category_id'), $this->input->post('category_name')) == TRUE)
+					redirect('admin/edit/items');
+			}
+		}
+		
 		// Delete a category
 		if($this->input->post('delete_category') == 'Delete') {
 			if($this->form_validation->run('admin_delete_category') == TRUE) {

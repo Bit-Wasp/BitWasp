@@ -15,6 +15,15 @@ class Categories_model extends CI_Model {
 		return FALSE;
 	}
 	
+	// Rename a category.
+	public function rename($category_id, $new_name) {
+		$this->db->where('id', $category_id);
+		if($this->db->update('categories', array('name' => $new_name)) == TRUE)
+			return TRUE;
+		
+		return FALSE;
+	}
+	
 	// Delete a category.
 	public function delete($category_id) {
 		$this->db->where('id', $category_id);

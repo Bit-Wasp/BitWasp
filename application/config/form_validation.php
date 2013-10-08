@@ -291,6 +291,16 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_category_exists'
 										)
 							),
+				'admin_rename_category' => array(
+										array('field' => 'category_id',
+											  'label' => 'Category',
+											  'rules' => 'callback_check_can_delete_category'
+										),
+										array('field' => 'category_name',
+											  'label' => 'New name',
+											  'rules' => 'required|htmlentities'
+										)
+							),
 				'admin_delete_category' => array(
 										array('field' => 'category_id',
 											  'label' => 'Category',
