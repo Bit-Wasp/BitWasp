@@ -239,7 +239,7 @@ class Bw_bitcoin {
 							'price_index' => $rates->price_index
 					);
 		}
-					print_r($update);
+
 		if($this->CI->currencies_model->update_exchange_rates($update) == TRUE)
 			return TRUE;
 			

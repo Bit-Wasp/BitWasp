@@ -1,5 +1,5 @@
         <div class="span9 mainContent" id="my-orders">
-		  <h2>Place Order</h2>
+		  <h2>Review Order</h2>
 		  <?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
 		  <?php echo form_open('order/place/'.$order['id'], array('name'=>'placeOrderForm','class' => 'form-horizontal')); ?>
             <fieldset>
