@@ -562,7 +562,7 @@ INSERT INTO `bw_page_authorization` (`id`, `URI`, `auth_level`, `timeout`, `syst
 (13, 'order', 'buyer', 0, '0'),
 (14, 'orders', 'vendor', 0, '1'),
 (15, '', 'login', 0, '1'),
-(16, 'category', 'login', 0, '1'),;
+(16, 'category', 'login', 0, '1');
 
 
 
