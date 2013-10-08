@@ -106,7 +106,7 @@ $route['admin/tokens/delete/(:any)'] = 'admin/delete_token/$1';
 $route['orders'] = 'orders/list_orders';
 // Buye
 $route['order/list'] = 'orders/list_purchases';
-$route['order/recount'] = 'orders/recount';
+$route['order/recount'] = 'orders/recount_all';
 $route['order/place/(:num)'] = 'orders/place/$1';
 $route['order/finalize/(:num)'] = 'orders/finalize/$1';
 $route['order/cancel/(:num)'] = 'orders/cancel/$1';

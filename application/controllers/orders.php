@@ -16,6 +16,93 @@ class Orders extends CI_Controller {
 	// Buyer, view their orders
 	public function list_purchases($status = NULL) {
 		$this->load->library('form_validation');		
+	
+		$place_order = $this->input->post('place_order');
+		$recount = $this->input->post('recount');
+		if(is_array($place_order) || is_array($recount)) {
+			$id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount); 
+			$id = $id[0];
+			$current_order = $this->order_model->load_order($id, array('0'));
+			if($current_order == FALSE)
+				redirect('order/list');
+
+			$list = $this->input->post('quantity');
+			foreach($list as $hash => $quantity) {
+				$item_info = $this->items_model->get($hash);
+				if($item_info !== FALSE) {
+					$update = array('item_hash' => $hash,
+									'quantity' => $quantity);
+					$this->order_model->update_items($current_order['id'], $update, 'force');
+				}
+			}
+			if(is_array($place_order))
+				redirect('order/place/'.$current_order['id']);
+		}
+		
+		$cancel_order = $this->input->post('cancel');
+		if(is_array($cancel_order)) {
+			$id = array_keys($cancel_order); $id = $id[0];
+			$current_order = $this->order_model->load_order($id, array('2'));
+			
+			if($current_order == FALSE) 	redirect('order/list');
+			
+			if(	$this->escrow_model->pay($current_order['id'], 'buyer') == TRUE &&
+				$this->order_model->cancel($current_order['id']) == TRUE ){
+				// Send message to vendor
+				$data['from'] = $this->current_user->user_id;
+				$details = array('username' => $get['vendor']['user_name'],
+								 'subject' => "Order #{$get['id']} has been cancelled.");
+				$details['message'] = "{$this->current_user->user_name} has cancelled their order with you for the following items:<br /><br />\n";
+				for($i = 0; $i < count($get['items']); $i++){
+					$details['message'] .= "{$get['items'][$i]['quantity']} x {$get['items'][$i]['name']}<br />\n";
+				}
+				$details['message'] .= "<br />Total price: {$get['currency']['symbol']}{$get['price']}";
+			 
+				$message = $this->bw_messages->prepare_input($data, $details);
+				$message['order_id'] = $get['id'];
+				$this->messages_model->send($message);
+				
+				redirect('order/list');
+			}
+		}
+
+		$finalize_order = $this->input->post('finalize');
+		if(is_array($finalize_order)) {
+			$id = array_keys($finalize_order); $id = $id[0];
+			$current_order = $this->order_model->load_order($id, array('2'));
+			$success = FALSE;
+			// Forcing finalize early.
+			if($current_order !== FALSE && $current_order['finalized'] == '0') {
+				if($this->escrow_model->pay($current_order['id'], 'vendor') == TRUE) {
+					if($this->order_model->progress_order($current_order['id'], '2') == TRUE)
+						$success = TRUE;
+				} 
+			} 
+
+			if($success == FALSE){
+				$current_order = $this->order_model->load_order($id, array('4'));
+				// Item has been dispatched - either finalized already, or is in escrow and must be paid.
+				if(	($current_order['finalized'] == '0' && $this->escrow_model->pay($current_order['id'], 'vendor') == TRUE) ||
+					$current_order['finalized'] == '1'){
+					if($this->order_model->progress_order($current_order['id'],'4', '6') == TRUE) 
+						$success = TRUE;
+				}
+			}
+			
+			if($success == TRUE) {
+				$data['from'] = $this->current_user->user_id;
+				$details = array('username' => $current_order['vendor']['user_name'],
+								 'subject' => "Order #{$current_order['id']} has been finalized");
+				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. BTC {$current_order['price']} has been credited to your account.<br />\n";
+				$details['message'] = ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />\n';
+				$message = $this->bw_messages->prepare_input($data, $details);
+				$message['order_id'] = $current_order['id'];
+				$this->messages_model->send($message);
+			}
+			//redirect('order/list');
+			
+		}
+		
 		$data['orders'] = $this->order_model->my_purchases(); 
 		$data['balance'] = $this->bitcoin_model->current_balance();
 		$data['escrow_balance'] = $this->escrow_model->balance();		
@@ -245,19 +332,6 @@ class Orders extends CI_Controller {
 		redirect('order/list');
 	}
 	
-	// Buyer, cancel order
-	public function cancel($id) {
-		$current_order = $this->order_model->load_order($id, array('2'));
-		if($current_order == FALSE)
-			redirect('order/list');
-		
-		if(	$this->escrow_model->pay($current_order['id'], 'buyer') == TRUE &&
-			$this->order_model->cancel($current_order['id']) == TRUE )
-				redirect('order/list');
-		
-		redirect('order/list');
-	}
-
 	public function dispute($id) {
 		$current_order = $this->order_model->load_order($id, array('4','2'));
 		if($current_order == FALSE)
@@ -307,29 +381,6 @@ class Orders extends CI_Controller {
 		$data['page'] = 'orders/dispute';
 		$data['title'] = 'Raise Dispute';
 		$this->load->library('Layout', $data);
-	}
-	
-	// Buyer, recount the items on the form.
-	public function recount() {
-		$list = $this->input->post('quantity');
-		$orders = array();
-		foreach($list as $by_vendor) {
-			$count = 0;
-			$keys = array_keys($by_vendor);
-			foreach($by_vendor as $quantity){ 
-				$item_hash = $keys[$count++];
-				$item_info = $this->items_model->get($item_hash);
-				$current_order = $this->order_model->load($item_info['vendor_hash'],'0');
-				
-				if($current_order == FALSE)
-					redirect('order/list');
-					
-				$update = array('item_hash' => $item_hash,
-								'quantity' => $quantity);
-				$this->order_model->update_items($current_order['id'], $update, 'force');
-			}
-		}
-		redirect('order/list');
 	}
 	
 	// Callback for placing an order.

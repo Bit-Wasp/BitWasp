@@ -1,4 +1,4 @@
-          <div class="span9 mainContent">
+          <div class="span6 mainContent">
             <h2>Register</h2>
             <div class='alert'>
                 <?php if(isset($returnMessage)) { 

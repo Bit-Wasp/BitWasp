@@ -59,7 +59,7 @@ class BW_Session {
 			$this->CI->session->unset_userdata('two_factor');
 			$userdata = array(	'logged_in' => 'true',
 								'last_activity' => time(),
-								'new_session' == 'true',
+								'new_session' => 'true',
 								'user_id'	=> $user['id'],
 								'user_hash' => $user['user_hash'],
 								'user_name' => $user['user_name'],

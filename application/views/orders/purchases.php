@@ -13,7 +13,6 @@
 <?php } ?>
 		  
 <?php if(is_array($orders)) { ?>
-		  <?php echo form_open('order/recount', array('class' => 'form-horizontal')); ?>
 			<br />
 	        <div class="row-fluid">
 	          <div class="span2"></div>
@@ -34,11 +33,12 @@
               <tbody>
 <?php foreach($orders as $order) { ?>				  
 				<tr>
+				<?php echo form_open('order/list', array('class' => 'form-horizontal')); ?>
 				  <td><?php echo anchor('user/'.$order['vendor']['user_hash'], $order['vendor']['user_name']).'<br />#'.$order['id']; ?></td>
 				  <td>
 <?php foreach($order['items'] as $item) { 
 			if($order['progress'] == '0') { ?>
-					<select name='quantity[<?php echo $order['vendor']['user_hash'] ?>][<?php echo $item['hash']; ?>]' class="span1" autocomplete="off">
+					<select name='quantity[<?php echo $item['hash']; ?>]' class="span1" autocomplete="off">
 <?php			for($i = 0; $i < 11; $i++) {?>
 					  <option value='<?php echo $i; ?>' <?php if($i == $item['quantity']) echo 'selected="selected"'; ?>><?php echo $i; ?></option>
 <?php 			} ?>
@@ -51,16 +51,13 @@
 				  <td><?php echo 'BTC'.$order['price'];
 				  if($local_currency['id'] !== '0') echo '<br />'.$local_currency['symbol'].$order['price_l']; ?></td>
 				  <td><?php echo $order['progress_message']; ?></td>
+				  </form>
 				</tr>
 <?php } ?>				
 		
               </tbody>
             </table>
             
-            <div class="form-actions">
-	            <input type='submit' class="btn btn-primary" value='Recount' />
-            </div>            
-          </form>
 <?php } else { ?>
           <p>You have no purchases at present.</p>
 <?php } ?>

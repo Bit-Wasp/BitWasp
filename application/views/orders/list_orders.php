@@ -45,8 +45,8 @@ if(is_array($await_dispatch)) {
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td>
 				  <ul>
-					<?php
-		foreach($order['items'] as $item) { ?><li><?php echo $item['quantity']; ?> x <?php echo anchor('item/'.$item['hash'], $item['name']); ?></li><?php } ?>
+					<?php foreach($order['items'] as $item) { ?><li><?php echo $item['quantity']; ?> x <?php echo anchor('item/'.$item['hash'], $item['name']); ?></li>
+<?php } ?>
 				  </ul>
 				</td>
 			    <td><?php echo form_open('orders'); ?><input type='submit' name='dispatch[<?php echo $order['id']; ?>]' value='Confirm Dispatch' class="btn btn-mini" /></form></td>	
@@ -81,7 +81,7 @@ if(is_array($await_finalization)) {
 		foreach($order['items'] as $item) { ?>
 			      <li><?php echo $item['quantity']; ?> x <?php echo anchor('item/'.$item['hash'], $item['name']); ?></li>
 	<?php } ?></ul></td>
-			    <td>Awaiting finalization. <?php echo anchor('orders/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"'); ?></td>	
+			    <td>Awaiting <?php echo ($order['finalized'] == '0') ? 'finalization' : 'delivery'; ?>. <?php echo anchor('orders/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"'); ?></td>	
 			  </tr>
 <?php } } ?>
 

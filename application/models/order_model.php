@@ -274,15 +274,16 @@ class Order_model extends CI_Model {
 				
 				switch($order['progress']) {
 					case '0':	
-						$progress_message = '<a class="btn btn-mini" href="'.site_url().'order/place/'.$order['id']. '">Place Order</a></center>';
+						$progress_message = '<input type="submit" class="btn btn-mini" name="recount['.$order['id'].']" value="Update" /> ';
+						$progress_message.= '<input type="submit" class="btn btn-mini" name="place_order['.$order['id'].']" value="Proceed with Order" />';
 						break;
 					case '1':
 						$progress_message = 'Awaiting vendor response.'; 
 						break;
 					case '2':
 						$progress_message = 'Must finalize early.<br />'; 
-						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/finalize/'.$order['id'].'">Finalize</a> ';
-						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/cancel/'.$order['id'].'">Cancel</a>';
+						$progress_message.= '<input type="submit" class="btn btn-mini" name="cancel['.$order['id'].']" value="Cancel" /> ';
+						$progress_message.= '<input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="Finalize Early" /> ';
 						break;
 					case '3':
 						$progress_message = "Awaiting dispatch.<br />";
@@ -290,8 +291,8 @@ class Order_model extends CI_Model {
 						break;
 					case '4':
 						$progress_message = "Item has been dispatched.<br />";
-						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/finalize/'.$order['id'].'">';
-						$progress_message.= ($order['finalized'] == '0') ? 'Finalize' : 'Received'; $progress_message.='</a> ';
+						$progress_message.= '<input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="';
+						$progress_message.= ($order['finalized'] == '0') ? 'Finalize' : 'Received'; $progress_message.='" /> ';
 						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/dispute/'.$order['id'].'">Dispute</a>';	
 						break;
 					case '5':
