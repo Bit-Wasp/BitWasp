@@ -5,13 +5,11 @@
   		  <fieldset>
 		    <?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>
 			  <div class="row-fluid">
-				<div class="span2"></div>
-				<div class="span5"><b>Fetch Exchange Rates?</b></div>
+				<div class="span4 offset2"><strong>Fetch Exchange Rates?</strong></div>
 			  </div>				
 			  
 			  <div class="row-fluid">
-				  <div class="span1"></div>
-				  <div class="span2">Use A Bitcoin Index?</div>
+				  <div class="span2 offset1">Use A Bitcoin Index?</div>
 				  <div class="span4">
 					<select name='price_index' autocomplete="off">
 <?php foreach($config['price_index_config'] as $key => $index_config){ ?>
@@ -22,21 +20,18 @@
 			  </div>
 
 		      <div class="row-fluid">
-			    <div class="span3"></div>
-			    <div class="span7"><input type="submit" name="update_price_index" value="Update" class="btn" /></div>
+			    <div class="span4 offset3"><input type="submit" name="update_price_index" value="Update" class="btn" /></div>
 	          </div>
 	          			  
 			</form>
 			
 			<?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>  	
 			  <div class="row-fluid">
-				<div class="span2"></div>
-				<div class="span5"><b>Transfer Between Accounts</b></div>
+				<div class="span5 offset2"><strong>Transfer Between Accounts</strong></div>
 			  </div>				
 			  
 		      <div class="row-fluid">
-				<div class="span1"></div>
-		        <div class="span2">From</div>
+		        <div class="span2 offset1">From</div>
 			    <div class="span4">
 				  <select name='from'>
 					<?php foreach($accounts as $acc => $bal) { 
@@ -49,8 +44,7 @@
 	          </div>				  
 				
 		      <div class="row-fluid">
-				<div class="span1"></div>
-		        <div class="span2">To</div>
+		        <div class="span2 offset1">To</div>
 			    <div class="span4">
 				  <select name='to'>
 					<?php foreach($accounts as $acc => $bal) { 
@@ -63,9 +57,8 @@
 	          </div>				  
 
 		      <div class="row-fluid">
-				<div class="span1"></div>
-		        <div class="span2">Amount</div>
-				<div class="span5"><input type="text" name="amount" value="<?php echo set_value('amount'); ?>" /></div>
+		        <div class="span2 offset1">Amount</div>
+				<div class="span4"><input type="text" name="amount" value="<?php echo set_value('amount'); ?>" /></div>
 				<span class='help-inline'><?php if(isset($transfer_bitcoins_error)) { 
 				    echo $transfer_bitcoins_error;
 				} else {
@@ -74,15 +67,9 @@
 	          </div>		
 
 		      <div class="row-fluid">
-			    <div class="span3"></div>
-			    <div class="span7"><input type="submit" name="admin_transfer_bitcoins" value="Send" class="btn" /></div>
+			    <div class="span4 offset3"><input type="submit" name="admin_transfer_bitcoins" value="Send" class="btn" /></div>
 	          </div>
 	          
-            <!--  <div class="form-actions">
-		        <input type="submit" value="Update" class="btn btn-primary" />
-                <?php echo anchor('account','Cancel', array('class'=>'returnLink btn'));?>
-		      </div>-->
-
 		    </fieldset>
 		  </form>
 		</div>
