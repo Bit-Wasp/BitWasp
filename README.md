@@ -22,6 +22,7 @@ Dependencies:
 Linux (commands in this reference will assume you're using Linux)
 gnupg PHP extension
 php-gd or imagemagick extension (for image conversion, metadata scrubbing, resizing)
+php-curl
 Bitcoin binaries
 SQL Database
 ```
