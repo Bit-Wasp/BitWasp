@@ -1,4 +1,4 @@
-pa-- phpMyAdmin SQL Dump
+-- phpMyAdmin SQL Dump
 -- version 3.4.11.1deb2
 -- http://www.phpmyadmin.net
 --
