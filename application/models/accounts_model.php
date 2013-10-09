@@ -15,9 +15,9 @@ class Accounts_model extends CI_Model {
 			return FALSE;
 		
 		if(count($opt) == 0) {
-			$this->db->select('id, display_login_time, force_pgp_messages, login_time, location, register_time, user_name, user_hash, user_role');
+			$this->db->select('id, banned, display_login_time, force_pgp_messages, login_time, location, register_time, user_name, user_hash, user_role');
 		} else if($opt['own'] == TRUE) {
-			$this->db->select('id, display_login_time, local_currency, force_pgp_messages, login_time, location, register_time, two_factor_auth, user_name, user_hash, user_role');
+			$this->db->select('id, banned, display_login_time, local_currency, force_pgp_messages, login_time, location, register_time, two_factor_auth, user_name, user_hash, user_role');
 		}
 
 		if (isset($identifier['user_hash'])) {
@@ -81,9 +81,16 @@ class Accounts_model extends CI_Model {
 			return TRUE;
 		}
 			
-			
 		return FALSE;
 	}
+
+	public function toggle_ban($user_id, $value) {
+		$this->db->where('id', $user_id);
+		if($this->db->update('users', array('banned' => $value)) == TRUE)
+			return TRUE;
+		
+		return FALSE;
+	}		
 	
 	// Update a users account.
 	public function update($changes) {

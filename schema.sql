@@ -635,13 +635,15 @@ CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
 
 CREATE TABLE IF NOT EXISTS `bw_users` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
+  `banned` enum('0','1') DEFAULT 0,
   `bitcoin_cashout_address` varchar(40) NOT NULL,
   `bitcoin_topup_address` varchar(40) NOT NULL,
   `bitcoin_balance` decimal(10,8) NOT NULL,
+  `display_login_time` enum('0','1') NOT NULL,  
   `force_pgp_messages` enum('0','1') NOT NULL,
+  `local_currency` int(11) NOT NULL,
   `location` int(3) NOT NULL,
   `login_time` int(20) NOT NULL,
-  `display_login_time` enum('0','1') NOT NULL,
   `password` varchar(128) NOT NULL,
   `public_key` blob NOT NULL,
   `private_key` blob NOT NULL,
@@ -651,7 +653,6 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `user_hash` varchar(16) NOT NULL,
   `user_name` varchar(40) NOT NULL,
   `user_role` enum('Buyer','Vendor','Admin') NOT NULL,
-  `local_currency` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_hash` (`user_hash`,`user_name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;

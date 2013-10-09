@@ -10,7 +10,7 @@ if($price_index !== 'Disabled' && isset($exchange_rates) && isset($exchange_rate
 } ?> Data obtained <?php echo $exchange_rates['time_f']; ?> from <?php echo $price_index; ?>. 
 <?php } ?></i>
 
-Page rendered in <strong>{elapsed_time}</strong> seconds. <a href="">Powered by BitWasp</a></p>
+Page rendered in <strong>{elapsed_time}</strong> seconds. <a href="https://github.com/Bit-Wasp/BitWasp">Powered by BitWasp</a></p>
       </footer>
     </div>  <!-- /container -->
 

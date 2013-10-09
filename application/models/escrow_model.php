@@ -111,15 +111,6 @@ class Escrow_model extends CI_Model {
 			
 			if($user == 'vendor')
 				$this->order_model->set_finalized($order_id); 
-
-			$credit_txn = array( 'txn_id' => "Order #$order_id",
-								 'user_hash' => $recipient['user_hash'],
-								 'value' => (float)$escrow['amount'],
-								 'confirmations' => '>50',
-								 'address' => '[payment]',
-								 'category' => 'receive',
-								 'credited' => '1',
-								 'time' => time());
 								 
 			$debit_txn = array( 'txn_id' => "Order #$order_id",
 								 'user_hash' => $sender['user_hash'],
@@ -129,9 +120,17 @@ class Escrow_model extends CI_Model {
 								 'category' => 'send',
 								 'credited' => '1',
 								 'time' => time());
+			$this->bitcoin_model->add_pending_txn($debit_txn);						
 			
+			$credit_txn = array( 'txn_id' => "Order #$order_id",
+								 'user_hash' => $recipient['user_hash'],
+								 'value' => (float)$escrow['amount'],
+								 'confirmations' => '>50',
+								 'address' => '[payment]',
+								 'category' => 'receive',
+								 'credited' => '1',
+								 'time' => time());
 			$this->bitcoin_model->add_pending_txn($credit_txn);
-			$this->bitcoin_model->add_pending_txn($debit_txn);			
 
 			if($this->delete($order_id) == TRUE)
 				return TRUE;

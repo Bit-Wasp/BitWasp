@@ -343,6 +343,12 @@ $config = array('register_form'=>array(
 											  'rules' => 'required|htmlentities'
 										)
 							),
+				'admin_ban_user' => array(
+										array('field' => 'ban_user',
+											  'label' => '',
+											  'rules' => 'callback_check_bool'
+										)
+							),
 				'order_dispute' => array(
 										array('field' => 'dispute_message',
 											  'label' => 'Dispute reason',

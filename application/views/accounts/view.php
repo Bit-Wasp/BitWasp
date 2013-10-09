@@ -1,9 +1,19 @@
         <div class="span9 mainContent" id="view-account">
           <div class="container-fluid">
 			  
+			<?php if(isset($returnMessage)) { ?>
+			<div class='alert'><?php echo $returnMessage; ?></div> <?php } ?>
+			
             <div class="row-fluid">
               <div class="span9 btn-group">
-				<h2><?php if($logged_in == TRUE) echo anchor('message/send/'.$user['user_hash'],'Message', 'class="btn"'); ?>  
+				<h2><?php 
+				if($logged_in == TRUE) {
+					echo anchor('message/send/'.$user['user_hash'],'Message', 'class="btn"')." "; 
+					if($user_role == "Admin" && $user['user_role'] !== "Admin") {
+						$txt = ($user['banned'] == '0') ? 'Ban User' : 'Unban User';
+						echo anchor('admin/ban_user/'.$user['user_hash'], $txt, 'class="btn"'); 
+					}
+				} ?>
 					<?php echo $user['user_name']; ?></h2>
               </div>
             </div>

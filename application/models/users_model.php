@@ -20,11 +20,11 @@ class Users_model extends CI_Model {
 	}
 	
 	// Remove User
-	public function remove($userHash) {}
+	public function remove($user_hash) {}
 	
 	// Load a users information, by hash/name/id.
 	public function get(array $user) {
-		$this->db->select('id, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');
+		$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');
 
 		if (isset($user['user_hash'])) {
 			$query = $this->db->get_where('users', array('user_hash' => $user['user_hash']));

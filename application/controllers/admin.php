@@ -317,6 +317,40 @@ class Admin extends CI_Controller {
 		}
 		$this->load->library('Layout', $data);
 	}
+	
+
+	public function ban_user($hash) {
+		$this->load->library('form_validation');
+		$this->load->model('accounts_model');
+		
+		$data['user'] = $this->accounts_model->get(array('user_hash' => $hash));
+		if($data['user'] == FALSE)
+			redirect('admin/edit/users');
+			
+		$data['title'] = 'Ban User';
+		$data['page'] = 'admin/ban_user';			
+		
+		if($this->form_validation->run('admin_ban_user') == TRUE) {
+			if($this->input->post('ban_user') !== $data['user']['banned']) {
+				if( $this->accounts_model->toggle_ban($data['user']['id'], $this->input->post('ban_user') ) ) {
+					$data['returnMessage'] = $data['user']['user_name']." has now been ";
+					$data['returnMessage'].= ($this->input->post('ban_user') == '0') ? 'banned.' : 'unbanned.'; 
+					$data['page'] = 'accounts/view';
+					$data['title'] = $data['user']['user_name'];
+					
+					$data['logged_in'] = $this->current_user->logged_in();
+					$data['user_role'] = $this->current_user->user_role;
+					$data['user'] = $this->accounts_model->get(array('user_hash' => $hash));					
+				} else {
+					$data['returnMessage'] = 'Unable to alter this user right now, please try again later.';
+				}
+			} else {
+				redirect('user/'.$data['user']['user_hash']);
+			}
+		}
+				
+		$this->load->library('Layout', $data);
+	}	
 
 	// Generate the navigation bar for the admin panel.
 	public function generate_nav() { 

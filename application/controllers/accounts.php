@@ -15,6 +15,7 @@ class Accounts extends CI_Controller {
 			redirect('');
 	
 		$data['logged_in'] = $this->current_user->logged_in();
+		$data['user_role'] = $this->current_user->user_role;
 		$data['page'] = 'accounts/view';
 		$data['title'] = $data['user']['user_name'];
 		

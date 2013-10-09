@@ -34,36 +34,41 @@ class Users extends CI_Controller {
 			$password = $this->input->post('password');
 			$user_info = $this->users_model->get(array('user_name' => $user_name));
 			
+			$data['returnMessage'] = "Your details were incorrect, try again.";
+			
 			if($user_info !== FALSE){
 				$check_login = $this->users_model->check_password($user_name, $user_info['salt'], $password);
-				
-				if( ($check_login !== FALSE) && ($check_login['id'] == $user_info['id']) ) {
-					$this->users_model->set_login($user_info['id']);
+
+				if($user_info['banned'] == '1') {
+					$data['returnMessage'] = "You have been banned from this site.";
+				} else {
+					if( ($check_login !== FALSE) && ($check_login['id'] == $user_info['id']) ) {
+						$this->users_model->set_login($user_info['id']);
 					
-					if($user_info['two_factor_auth'] == '1') {
-						// Redirect for two-factor authentication.
-						$this->bw_session->create($user_info, 'two_factor');	// TRUE, enables a half-session for two factor auth
-						redirect('login/two_factor');
+						if($user_info['two_factor_auth'] == '1') {
+							// Redirect for two-factor authentication.
+							$this->bw_session->create($user_info, 'two_factor');	// TRUE, enables a half-session for two factor auth
+							redirect('login/two_factor');
 							
-					} elseif ($user_info['user_role'] == 'Vendor' 
-						&& $this->bw_config->force_vendor_pgp == TRUE
-						&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE){
+						} elseif ($user_info['user_role'] == 'Vendor' 
+							&& $this->bw_config->force_vendor_pgp == TRUE
+							&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE){
 								
-						// Redirect to register a PGP key.
-						$this->bw_session->create($user_info, 'force_pgp');	// enable a half-session where the user registers a PGP key.
-						redirect('register/pgp');
+							// Redirect to register a PGP key.
+							$this->bw_session->create($user_info, 'force_pgp');	// enable a half-session where the user registers a PGP key.
+							redirect('register/pgp');
 						
-					} else {
-						// Success! Log the user in.
-						$this->bw_session->create($user_info);
-						redirect('/');
+						} else {
+							// Success! Log the user in.
+							$this->bw_session->create($user_info);
+							redirect('/');
+						}
 					}
 				} 
 			}
 			// If not already redirected... details were incorrect.
 			$data['title'] = 'Login';
 			$data['page'] = 'users/login';
-			$data['returnMessage'] = "Your details were incorrect, try again.";
 			$data['captcha'] = $this->bw_captcha->generate();
 		}
 		$this->load->library('Layout',$data);
