@@ -75,7 +75,7 @@ if(is_array($await_finalization)) {
 			  <tr>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>
-			    <td>BTC <?php echo $order['price_b']; ?><br /><?php echo $local_currency['symbol'].$order['price_l']; ?></td>
+			    <td>BTC <?php echo $order['price_b']; ?></td>
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td><ul><?php
 		foreach($order['items'] as $item) { ?>
@@ -91,7 +91,7 @@ if(is_array($in_dispute)) {
 			  <tr>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>
-			    <td>BTC <?php echo $order['price_b']; ?><br /><?php echo $local_currency['symbol'].$order['price_l']; ?></td>
+			    <td>BTC <?php echo $order['price_b']; ?></td>
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td><ul><?php
 		foreach($order['items'] as $item) { ?>
