@@ -99,8 +99,7 @@ class Orders extends CI_Controller {
 				$message['order_id'] = $current_order['id'];
 				$this->messages_model->send($message);
 			}
-			//redirect('order/list');
-			
+			redirect('order/list');
 		}
 		
 		$data['orders'] = $this->order_model->my_purchases(); 
