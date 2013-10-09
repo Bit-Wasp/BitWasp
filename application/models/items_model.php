@@ -12,6 +12,14 @@ class Items_model extends CI_Model {
 		$this->load->model('users_model');
 	}
 	
+	public function delete($id) {
+		$this->db->where('id', $id);
+		if($this->db->delete('items') == TRUE) 
+			return TRUE;
+			
+		return FALSE;
+	}
+	
 	// Get all items (will soon have pagination)
 	public function get_list($opt = array()) {
 		$results = array();

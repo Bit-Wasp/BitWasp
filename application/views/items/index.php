@@ -1,5 +1,5 @@
         <div class="span9 mainContent" id="item_view">
-          <h2>Items<?php if(isset($category)) echo ' Category: '.$category['name']; ?></h2>
+          <h2><?php echo (isset($category)) ? 'Category: '.$category['name'] : 'Items'; ?></h2>
           <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
           
           <?php if(count($items) > 0) { ?>

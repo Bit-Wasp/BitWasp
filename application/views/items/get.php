@@ -4,9 +4,11 @@
 		  <div class="itemInfo" id="prod_<?php echo $item['hash']; ?>">
 			<h2><?php 
 			
-			if($logged_in == TRUE) { ?>
-			<?php echo anchor('message/send/'.$item['vendor']['user_hash'], 'Message Vendor', 'class="btn"'); ?> 
-			<?php } ?>
+			if($logged_in == TRUE) { 
+				echo anchor('message/send/'.$item['vendor']['user_hash'], 'Message Vendor', 'class="btn"')." "; 
+				if($user_role == 'Admin')
+					echo anchor('admin/delete_item/'.$item['hash'], 'Delete', 'class="btn"');
+			} ?>
 			<?php echo $item['name'] ?></h2>
 			<p class="vendor">
 		      Vendor: <?php echo anchor('user/'.$item['vendor']['user_hash'],$item['vendor']['user_name']); ?>

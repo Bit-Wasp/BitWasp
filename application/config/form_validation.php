@@ -337,6 +337,12 @@ $config = array('register_form'=>array(
 											  'rules' => 'htmlentities'
 										)
 							),
+				'admin_delete_item' => array(
+										array('field' => 'reason_for_removal',
+											  'label' => 'reason for removal.',
+											  'rules' => 'required|htmlentities'
+										)
+							),
 				'order_dispute' => array(
 										array('field' => 'dispute_message',
 											  'label' => 'Dispute reason',

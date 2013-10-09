@@ -285,6 +285,39 @@ class Admin extends CI_Controller {
 		return FALSE;
 	}
 
+	public function delete_item($hash) {
+		$this->load->library('form_validation');
+		$this->load->model('items_model');
+		$this->load->model('messages_model');
+		
+		$data['item'] = $this->items_model->get($hash);
+		if($data['item'] == FALSE)
+			redirect('items');
+			
+		$data['title'] = 'Delete Item';
+		$data['page'] = 'admin/delete_item';			
+		
+		if($this->form_validation->run('admin_delete_item') == TRUE) {
+			if($this->items_model->delete($data['item']['id']) == TRUE) {
+				
+				$info['from'] = $this->current_user->user_id;
+				$details = array('username' => $data['item']['vendor']['user_name'],
+								 'subject' => "Listing '{$data['item']['name']}' has been removed");
+				$details['message'] = "Your listing has been removed from the marketplace. <br /><br />\n";
+				$details['message'] = "Reason for removal:<br />\n".$this->input->post('reason_for_removal');
+				$message = $this->bw_messages->prepare_input($info, $details);
+				$this->messages_model->send($message);
+				
+				$data['title'] = 'Deleted Item';
+				$data['page'] = 'items/index';
+				$data['items'] = $this->items_model->get_list();					
+			} else { 
+				$data['returnMessage'] = 'Unable to delete that item at this time.';
+			}
+		}
+		$this->load->library('Layout', $data);
+	}
+
 	// Generate the navigation bar for the admin panel.
 	public function generate_nav() { 
 		$links = '';

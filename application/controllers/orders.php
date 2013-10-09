@@ -307,30 +307,6 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	/* User can finalize at either 2 (forced early) or 4 after receiving order. */
-	public function finalize($id) {
-		$current_order = $this->order_model->load_order($id, array('2'));
-		$success = FALSE;
-		// Forcing finalize early.
-		if($current_order['finalized'] == '0') {
-			if($this->escrow_model->pay($current_order['id'], 'vendor') == TRUE) {
-				if($this->order_model->progress_order($current_order['id'], '2') == TRUE)
-					$success = TRUE;
-			} 
-		} 
-
-		if($success == FALSE){
-			$current_order = $this->order_model->load_order($id, array('4'));
-			// Item has been dispatched - either finalized already, or is in escrow and must be paid.
-			if(	($current_order['finalized'] == '0' && $this->escrow_model->pay($current_order['id'], 'vendor') == TRUE) ||
-				$current_order['finalized'] == '1'){
-				if($this->order_model->progress_order($current_order['id'],'4', '6') == TRUE) 
-					$success = TRUE;
-			}
-		}
-		redirect('order/list');
-	}
-	
 	public function dispute($id) {
 		$current_order = $this->order_model->load_order($id, array('4','2'));
 		if($current_order == FALSE)
