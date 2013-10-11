@@ -2,7 +2,15 @@
 
 class Auth_model extends CI_Model {
 	
-	// Check the required authorization for the URI. (first segment).
+	/**
+	 * Check Auth
+	 * 
+	 * Check the level of authorization required for the URI[0]
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	string / bool
+	 */		
 	public function check_auth($URI) {
 		$this->db->select('auth_level')
 				 ->where(array('URI' => $URI));
@@ -18,6 +26,16 @@ class Auth_model extends CI_Model {
 	}
 	
 	// Check the timeout associated with the auth_req for this page.
+	
+	/**
+	 * Check Authorization Timeout 
+	 * 
+	 * Load the authorization timeout of this URI.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	int (seconds) / FALSE
+	 */			
 	public function check_auth_timeout($URI) {
 		$this->db->select('timeout')
 				 ->where(array('URI' => $URI));
@@ -32,7 +50,15 @@ class Auth_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Check the supplied solution to a two-factor auth.
+	/**
+	 * Check Two Factor Token
+	 * 
+	 * Check the supplied solution to a two-factor auth.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */			
 	public function check_two_factor_token($token) {
 		$result = FALSE;
 		
@@ -50,13 +76,19 @@ class Auth_model extends CI_Model {
 		return $result;
 	}
 	
-	// Add a two factor token.
+	
+	/**
+	 * Add Two Factor Token
+	 * 
+	 * Store the solution of a two-factor challenge for the user.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */			
 	public function add_two_factor_token($token) {
 		$array = array( 'solution' => $token,
 						'user_id' => $this->current_user->user_id);			
-		if($this->db->insert('two_factor_tokens', $array) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->insert('two_factor_tokens', $array) == TRUE) ? TRUE : FALSE;
 	}
 };

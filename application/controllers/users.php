@@ -1,7 +1,29 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Users Controller
+ *
+ * This class handles the buyer and vendor side of the order process.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Users
+ * @author		BitWasp
+ * 
+ */
+
 class Users extends CI_Controller {
 
+	/**
+	 * Constructor
+	 * 
+	 * Load libs/models.
+	 *
+	 * @access	public
+	 * @see		Libraries/Bw_Captcha
+	 * @see		Models/Users_Model
+	 */
+	 
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('users_model');
@@ -9,13 +31,33 @@ class Users extends CI_Controller {
 		$this->block_category_display = ($this->bw_config->allow_guests == TRUE) ? TRUE : FALSE;
 	}
 
-	// Destroy the session and redirect to login.
+	/**
+	 * Log user out.
+	 * URI: /logout
+	 * 
+	 * @access	public
+	 * @see		Libraries/Bw_Session
+	 * 
+	 * @return	void
+	 */
 	public function logout() {
 		$this->bw_session->destroy();
 		redirect('login');
 	}
 	
-	// Login.
+	/**
+	 * Process user logins.
+	 * URI: /login/two_factor
+	 * 
+	 * @access	public
+	 * @see		Models/Accounts_Model
+	 * @see		Models/Auth_Model
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/GPG
+	 * @see		Libraries/Bw_Auth
+	 * 
+	 * @return	void
+	 */
 	public function login() {
 
 		$this->load->helper(array('form'));
@@ -38,30 +80,30 @@ class Users extends CI_Controller {
 			if($user_info !== FALSE){
 				$check_login = $this->users_model->check_password($user_name, $user_info['salt'], $password);
 
-				if($user_info['banned'] == '1') {
-					$data['returnMessage'] = "You have been banned from this site.";
-				} else {
-					if( ($check_login !== FALSE) && ($check_login['id'] == $user_info['id']) ) {
-						$this->users_model->set_login($user_info['id']);
-					
-						if($user_info['two_factor_auth'] == '1') {
-							// Redirect for two-factor authentication.
-							$this->bw_session->create($user_info, 'two_factor');	// TRUE, enables a half-session for two factor auth
-							redirect('login/two_factor');
-							
-						} elseif ($user_info['user_role'] == 'Vendor' 
-							&& $this->bw_config->force_vendor_pgp == TRUE
-							&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE){
-								
-							// Redirect to register a PGP key.
-							$this->bw_session->create($user_info, 'force_pgp');	// enable a half-session where the user registers a PGP key.
-							redirect('register/pgp');
+				// Check the login went through OK.
+				if( ($check_login !== FALSE) && ($check_login['id'] == $user_info['id']) ) {
+					$this->users_model->set_login($user_info['id']);
+
+					// Check if the user is banned.
+					if($user_info['banned'] == '1') {
+						$data['returnMessage'] = "You have been banned from this site.";
+					} else if($user_info['two_factor_auth'] == '1') {
+						// Redirect for two-factor authentication.
+						$this->bw_session->create($user_info, 'two_factor');	// TRUE, enables a half-session for two factor auth
+						redirect('login/two_factor');
 						
-						} else {
-							// Success! Log the user in.
-							$this->bw_session->create($user_info);
-							redirect('/');
-						}
+					} elseif ($user_info['user_role'] == 'Vendor' 
+						&& $this->bw_config->force_vendor_pgp == TRUE
+						&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE){
+							
+						// Redirect to register a PGP key.
+						$this->bw_session->create($user_info, 'force_pgp');	// enable a half-session where the user registers a PGP key.
+						redirect('register/pgp');
+					
+					} else {
+						// Success! Log the user in.
+						$this->bw_session->create($user_info);
+						redirect('/');
 					}
 				} 
 			}
@@ -74,7 +116,21 @@ class Users extends CI_Controller {
  
 	}
 	
-	// Process user registration.
+	/**
+	 * Register new users on the system.
+	 * URI: /register
+	 * 
+	 * @access	public
+	 * @see		Model/User_Model
+	 * @see		Models/Currencies_Model
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/OpenSSL
+	 * @see		Libraries/Bw_Bitcoin
+	 * @see		Libraries/Bw_Auth
+	 * 
+	 * @param 	string/NULL
+	 * @return	void
+	 */
 	public function register($token = NULL) {
 
 		// If registration is disabled, and no token is set, direct to the login page.
@@ -99,7 +155,8 @@ class Users extends CI_Controller {
 		$data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
 		$data['locations'] = $this->general_model->locations_list();
 		$data['currencies'] = $this->currencies_model->get();
-				
+		
+		// Different rules depending on whether a PIN must be entered.		
 		$register_page = ($data['encrypt_private_messages'] == TRUE) ? 'users/register' : 'users/register_no_pin';
 		$register_validation = ($data['encrypt_private_messages'] == TRUE) ? 'register_form' : 'register_no_pin_form';
 		
@@ -113,6 +170,7 @@ class Users extends CI_Controller {
 			$data['captcha'] = $this->bw_captcha->generate();
 			
 		} else {
+			// Work out if the role was supplied via a token, take that.
 			$role = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['str'];
 			
 			// Generate the users salt and encrypted password.
@@ -129,10 +187,12 @@ class Users extends CI_Controller {
 				unset($message_password);
 			
 			} else {
+				// Set default values for the message keys.
 				$message_keys = array(	'public_key' => '0',
 										'private_key' => '0');
 			}	
 
+			// Generate a user hash.
 			$user_hash = $this->general->unique_hash('users', 'user_hash');
 
 			// Build the array for the model.
@@ -184,6 +244,17 @@ class Users extends CI_Controller {
 	}
 
 	// If a user is prompted to set up their PGP key on login.
+	/**
+	 * Force a user to import a PGP key before logging in fully.
+	 * URI: /register/pgp
+	 * 
+	 * @access	public
+	 * @see		Models/Accounts_Model
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/GPG
+	 * 
+	 * @return	void
+	 */
 	public function register_pgp() {
 		if($this->current_user->force_pgp !== TRUE) 
 			redirect('');
@@ -196,7 +267,8 @@ class Users extends CI_Controller {
 		$data['page'] = 'users/register_pgp';
 		
 		if($this->form_validation->run('add_pgp') == TRUE) {
-			
+			// Import the key, this will perform HTML entities and 
+			// extract the content between the two PGP headers.
 			$public_key = $this->input->post('public_key');
 			$key = $this->gpg->import($public_key);
 			
@@ -207,7 +279,7 @@ class Users extends CI_Controller {
 							 'public_key' => $key['clean_key']);
 							 
 				if($this->accounts_model->add_pgp_key($key) == TRUE){
-					// Create session
+					// Create full session
 					$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
 					$this->bw_session->create($user_info);
 					redirect('');
@@ -219,8 +291,21 @@ class Users extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Two Factor authentication.
+	/**
+	 * Process a two factor PGP authentication.
+	 * URI: /login/two_factor
+	 * 
+	 * @access	public
+	 * @see		Models/Accounts_Model
+	 * @see		Models/Auth_Model
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/GPG
+	 * @see		Libraries/Bw_Auth
+	 * 
+	 * @return	void
+	 */
 	public function two_factor() {
+		// Abort if there is no two factor request.
 		if($this->current_user->two_factor !== TRUE) 
 			redirect('');
 				
@@ -234,29 +319,45 @@ class Users extends CI_Controller {
 		$data['page'] = 'users/two_factor';
 		
 		if($this->form_validation->run('two_factor') == TRUE) {
+			// Check the answer to what we have on record as the solution.
 			$answer = $this->input->post('answer');
 			
 			if($this->auth_model->check_two_factor_token($answer) == TRUE){
-					$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
-					$this->bw_session->create($user_info);
-					redirect('');
+				// If successful, create a full session and redirect to the homepage.
+				$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+				$this->bw_session->create($user_info);
+				redirect('');
 			} else {
+				// Leave an error if the user has not been redirected.
 				$data['returnMessage'] = "Your token did not match. Please remove any whitespaces and enter only the token. A new challenge has been generated.";
 			}			
 		} 
 		
+		// Generate a new challenge for new requests, or if a user 
+		// has failed one.
 		$data['challenge'] = $this->bw_auth->generate_two_factor_token();
 		
 		$this->load->library('Layout', $data);
 	}
 	
 	// Callback functions for for validation.
-	// Determine if the captcha was submitted correctly.
+	
+	/**
+	 * Check the supplied role ID is correct.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */	
 	public function check_captcha($param) {
 		return $this->bw_captcha->check($param);
 	}
 	
-	// Determine if the chosen role is allowed.
+	/**
+	 * Check the supplied role ID is allowed.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */	
 	public function check_role($param) {
 		$allowed_values = ($this->bw_config->vendor_registration_allowed) ? array('1','2') : array('1');
 	
@@ -266,16 +367,23 @@ class Users extends CI_Controller {
 		return FALSE;
 	}
 	
-	// Determine if chosen currency exists.
+	/**
+	 * Check if the supplied currency ID exists.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_valid_currency($param){
 		$this->load->model('currencies_model');
-		if($this->currencies_model->get($param) !== FALSE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
 	}
 	
-	// Check if the submitted location exists.
+	/**
+	 * Check the supplied location ID exists.
+	 *
+	 * @param	id
+	 * @return	bool
+	 */
 	public function check_location($param) {
 		if($this->general_model->location_by_id($param) == TRUE)
 			return TRUE;

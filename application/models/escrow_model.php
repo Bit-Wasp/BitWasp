@@ -1,19 +1,58 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Escrow Controller
+ *
+ * This class handles the buyer and vendor side of the order process.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Escrow
+ * @author		BitWasp
+ * 
+ */
+
 class Escrow_model extends CI_Model {
 	
+	/**
+	 * Constructor
+	 * 
+	 * Load libs/models.
+	 *
+	 * @access	public
+	 * @see		Models/Bitcoin_Model
+	 * @see		Models/Accounts_Model
+	 */
+	 
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('accounts_model');
 		$this->load->model('bitcoin_model');
 	}
 	
+	/**
+	 * Add
+	 * 
+	 * Record an escrow agreement. Debits a buyers account. Add's the
+	 * funds to the escrow account.
+	 *
+	 * $info = array('buyer_hash' => '...',
+	 * 				 'amount' => '...'
+	 * ................................
+	 * ................................
+	 * 
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */	
 	public function add($info) {
 		$update = array('user_hash' => $info['buyer_hash'],
 						'value' => (0-$info['amount']));
 		unset($info['buyer_hash']);
+		
 		// Debit buyers account. 
 		if($this->bitcoin_model->update_credits(array($update)) == TRUE){
+		
 			// If successful, add the funds to escrow.
 			if($this->db->insert('escrow', $info))
 				return TRUE;
@@ -21,25 +60,47 @@ class Escrow_model extends CI_Model {
 		
 		return FALSE;
 	}
-	
+
+	/**
+	 * Get
+	 * 
+	 * Load an escrow agreement from the table, by the order_id.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	array / FALSE;
+	 */					
 	public function get($order_id) {
 		$this->db->where('order_id',$order_id);
 		$query = $this->db->get('escrow');
-		if($query->num_rows() > 0){
-			return $query->row_array();
-		}
-		return FALSE;
+		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
-	
+
+
+	/**
+	 * Delete
+	 * 
+	 * Delete an escrow agreement, by the order_id.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */					
 	public function delete($order_id) {
 		$this->db->where('order_id', $order_id);
-		if($this->db->delete('escrow') == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->delete('escrow') == TRUE) ? TRUE : FALSE;
 	}
 	
-	public function finalize() {
+	
+	/**
+	 * Finalize
+	 * 
+	 * I think this might be deprecated in favour of pay()
+	 *
+	 * @access	public
+	 * @return	bool
+	 */				
+	public function finalize($order_id) {
 		$escrow = $this->get($order_id);
 		if($escrow == FALSE)
 			return FALSE;
@@ -56,6 +117,15 @@ class Escrow_model extends CI_Model {
 		return FALSE;
 	}
 	
+	/**
+	 * Balance
+	 * 
+	 * Load the current users escrow balance.
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */					
 	public function balance() {
 
 		switch(strtolower($this->current_user->user_role)) {
@@ -82,12 +152,23 @@ class Escrow_model extends CI_Model {
 		return $balance;		
 	}
 	
+
+	/**
+	 * Update Exchange Rates
+	 * 
+	 * Insert a new row of information about exchange rates.
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */					
 	public function pay($order_id, $user) {
-		
+		// Abort if escrow record does not exist.
 		$escrow = $this->get($order_id);
 		if($escrow == FALSE)
 			return FALSE;
 
+		// Determine who is the sender/recipient.
 		switch($user){
 			case 'buyer':
 				$recipient = $escrow['buyer_id'];
@@ -112,6 +193,7 @@ class Escrow_model extends CI_Model {
 			if($user == 'vendor')
 				$this->order_model->set_finalized($order_id); 
 								 
+			// Record the transaction in the senders account.
 			$debit_txn = array( 'txn_id' => "Order #$order_id",
 								 'user_hash' => $sender['user_hash'],
 								 'value' => "-".(float)$escrow['amount'],
@@ -122,6 +204,7 @@ class Escrow_model extends CI_Model {
 								 'time' => time());
 			$this->bitcoin_model->add_pending_txn($debit_txn);						
 			
+			// Record the transaction in the recipients account.
 			$credit_txn = array( 'txn_id' => "Order #$order_id",
 								 'user_hash' => $recipient['user_hash'],
 								 'value' => (float)$escrow['amount'],
@@ -139,13 +222,29 @@ class Escrow_model extends CI_Model {
 		return FALSE;
 	}
 	
+
+	/**
+	 * Dispute
+	 *
+	 * Insert a dispute record into the database.
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */					
 	public function dispute($info) {
-		if($this->db->insert('disputes', $info) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->insert('disputes', $info) == TRUE) ? TRUE : FALSE;
 	}
-	
+
+	/**
+	 * Get Dispute
+	 * 
+	 * Load a dispute record as specified by the $order_id.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	array / bool
+	 */					
 	public function get_dispute($order_id) {
 		$this->db->where('order_id', $order_id);
 		$query = $this->db->get('disputes');
@@ -157,12 +256,20 @@ class Escrow_model extends CI_Model {
 		return FALSE;
 	}
 	
+
+	/**
+	 * Update Dispute
+	 * 
+	 * Update Dispute number $order_id with info $info.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @param	array
+	 * @return	bool
+	 */					
 	public function update_dispute($order_id, $info) {
 		$this->db->where('order_id', $order_id);
-		if($this->db->update('disputes', $info))
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->update('disputes', $info)) ? TRUE : FALSE;
 	}
 };
 

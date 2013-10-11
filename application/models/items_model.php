@@ -1,26 +1,58 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-// Listings management/administration only. 
-// For items by user, go to items!
+/**
+ * Listings Model
+ *
+ * Model to contain database queries for dealing with vendor listings.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	Items
+ * @author		BitWasp
+ * 
+ */
 
 class Items_model extends CI_Model {
-	
+
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see		Models/Currencies_Model
+	 * @see		Models/Accounts_Model
+	 * @see		Models/Images_Model
+	 * @see		Models/Users_Model
+	 */		
 	public function __construct() {
 		$this->load->model('currencies_model');
 		$this->load->model('accounts_model');
 		$this->load->model('images_model');
 		$this->load->model('users_model');
 	}
-	
+
+	/**
+	 * Delete
+	 * 
+	 * Insert a new row of information about exchange rates.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */				
 	public function delete($id) {
 		$this->db->where('id', $id);
-		if($this->db->delete('items') == TRUE) 
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->delete('items') == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Get all items (will soon have pagination)
+	/**
+	 * Get list of pages. (need to build in pagination).
+	 * 
+	 * Display all items.
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */					
 	public function get_list($opt = array()) {
 		$results = array();
 		
@@ -28,17 +60,19 @@ class Items_model extends CI_Model {
 				 ->where('hidden !=', '1')
 				 ->order_by('add_time ASC');
 				 
+		// Add on extra options.
 		if(count($opt) > 0) {
 			foreach($opt as $key => $val) {
 				$this->db->where("$key", "$val");
 			}
 		}
 				 
+		// Get the list of items.
 		$query = $this->db->get('bw_items');
 		
 		if($query->num_rows() > 0){
 			foreach($query->result_array() as $row){
-					
+				// Load information about the items.
 				$row['description_s'] = substr(strip_tags($row['description']),0,70);
 				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
 				$row['main_image'] = $this->images_model->get($row['main_image']);
@@ -64,7 +98,15 @@ class Items_model extends CI_Model {
 		
 	}
 	
-	// Get any item.
+	/**
+	 * Get
+	 * 
+	 * Get information about an item (by $hash).
+	 * 
+	 * @access	public
+	 * @param	string
+	 * @return	array / FALSE
+	 */					
 	public function get($hash) {
 		$this->db->where('hash', $hash);
 		$query = $this->db->get('items');
@@ -88,10 +130,19 @@ class Items_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// List all items by a user.
+	/**
+	 * By User
+	 * 
+	 * Load listings as displayed by a user.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */					
 	public function by_user($user_hash) {		
 		$this->db->select('id, hash, price, currency, hidden, category, name, description, main_image');
 		$this->db->where('vendor_hash', $user_hash);
+		$this->db->where('hidden !=', '1');
 		$this->db->order_by('add_time', 'asc');
 		$query = $this->db->get('bw_items');
 		
@@ -100,10 +151,9 @@ class Items_model extends CI_Model {
 			foreach($query->result_array() as $row){
 				
 				$row['description_s'] = substr(strip_tags($row['description']),0,50);
-				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
+				if(strlen($row['description']) > 50) $row['description_s'] .= '...';
 				
 				$row['main_image'] = $this->images_model->get($row['main_image']);
-							
 				$row['currency'] = $this->currencies_model->get($row['currency']);			
 							
 				$row['price_b'] = $row['price']/$row['currency']['rate'];
@@ -118,7 +168,14 @@ class Items_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Count the full number of items in the table (for pagination, later)
+	/**
+	 * Get List Count
+	 * 
+	 * Will be used when implementing pagination.
+	 *
+	 * @access	public
+	 * @return	int
+	 */					
 	public function get_list_count(){ 
 		$this->db->select('id')
 				 ->where('hidden !=', '1')

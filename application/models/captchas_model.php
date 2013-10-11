@@ -2,29 +2,52 @@
 
 class Captchas_model extends CI_Model {
 
-	// Set a captcha.
+	public function __construct() {
+		parent::__construct();
+	}
+
+	/**
+	 * Set
+	 * 
+	 * Sets a captcha based on the key (held in the session), solution, and time. 
+	 *
+	 * @access	public
+	 * @param	string
+	 * @param	string
+	 * @return	bool
+	 */			
 	public function set($identifier, $solution) { 
 		$data = array(	'key' => $identifier,
 						'solution' => $solution,
 						'time' => time() );
 						
-		if($this->db->insert('captchas', $data))
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->insert('captchas', $data)) ? TRUE : FALSE;
 	}
 	
-	// Purge all expired captchas.
+	/**
+	 * Purge Expired
+	 * 
+	 * Purge categories older than the specified time.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */			
 	public function purge_expired($time){
 		$this->db->where('time <', $time);
 		$delete = $this->db->delete('captchas');
-		if($delete)
-			return TRUE;
-		
-		return FALSE;
+		return ($delete) ? TRUE : FALSE;
 	}
 	
-	// Load a captcha by its random identifier.
+	/**
+	 * Get
+	 * 
+	 * Load a captcha by its identifier.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */			
 	public function get($identifier) {
 		$this->db->select('id, solution')
 				 ->from('captchas')
@@ -41,12 +64,17 @@ class Captchas_model extends CI_Model {
 		}
 	}
 	
-	// Delete a captcha by it's id.
+	/**
+	 * Delete
+	 * 
+	 * Delete a captcha as specified by the ID.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */			
 	public function delete($id) { 
-		if($this->db->delete('captchas', array( 'id' => $id ) ))
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->delete('captchas', array( 'id' => $id ) )) ? TRUE : FALSE;
 	}
 
 };

@@ -1,7 +1,26 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Messages Model
+ *
+ * This class handles the database queries relating to messages.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	Messages
+ * @author		BitWasp
+ * 
+ */
+
 class Messages_model extends CI_Model {
 	
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see		Libraries/Current_User
+	 * @see		Libraries/Bw_Messages
+	 */		
 	public function __construct() {	
 		$this->load->library('current_user');
 		$this->load->library('bw_messages');

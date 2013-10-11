@@ -1,48 +1,99 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Users Model
+ *
+ * This class handles the database queries relating to users.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	Users
+ * @author		BitWasp
+ * 
+ */
+
 class Users_model extends CI_Model {
 	
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @return	void
+	 */	
 	public function __construct(){	}
 
-	// Add User
+	/**
+	 * Add User.
+	 * 
+	 * Add a user to the table. Use prepared statements..
+	 *
+	 * @access	public
+	 * @param	array
+	 * @param	string
+	 * @return	bool
+	 */					
 	public function add($data, $token_info = NULL) {
-		
 		$sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, array($data['user_name'],$data['password'],$data['salt'], $data['user_hash'], $data['user_role'], time(), $data['public_key'], $data['private_key'], $data['location'])); 
 		if($query){
-			if($token_info !== FALSE)
-				$this->delete_registration_token($token_info['id']);
+			if($token_info !== FALSE)			$this->delete_registration_token($token_info['id']);
 			
 			return TRUE;
-		} else {
-			return FALSE;
-		}
+		} 
+		return FALSE;
+		
 	}
 	
-	// Remove User
+	/**
+	 * Remove
+	 * 
+	 * Remove a user. Haven't had to code this yet..
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */				
 	public function remove($user_hash) {}
 	
 	// Load a users information, by hash/name/id.
+	/**
+	 * Get
+	 * 
+	 * Get a user, based on $user['user_hash'], $user['id'], $user['user_name']
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	array / FALSE
+	 */					
 	public function get(array $user) {
-		$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');
 
 		if (isset($user['user_hash'])) {
+			// Duplicate the select statement to prevent weird errors later on.
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');			
 			$query = $this->db->get_where('users', array('user_hash' => $user['user_hash']));
 		} elseif (isset($user['id'])) {
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');
 			$query = $this->db->get_where('users', array('id' => $user['id']));
 		} elseif (isset($user['user_name'])) {
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');			
 			$query = $this->db->get_where('users', array('user_name' => $user['user_name']));
 		} else {
 			return FALSE; //No suitable field found.
 		}
 		
-		if($query->num_rows() > 0) 
-			return $query->row_array();
-		
-		return FALSE;
+		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 	
 	// Load a users RSA public and pw-protected private key.
+	/**
+	 * Message Data
+	 * 
+	 * Load information regarding the users RSA encryption keys.
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	array / FALSE
+	 */					
 	public function message_data(array $user) {
 		$this->db->select('public_key, private_key, salt');
 
@@ -71,19 +122,35 @@ class Users_model extends CI_Model {
 	}
 	
 	// Return valid data when a users username, password, salt are specified. 
+	/**
+	 * Check Password.
+	 * 
+	 * Returns userdata when a users username, password and salt are entered correctly.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @param	string
+	 * @param	string
+	 * @return	a
+	 */					
 	public function check_password($user_name, $salt, $password){
 		$this->db->select('id')
 				 ->where('user_name',$user_name)
 				 ->where('password', $this->general->hash($password, $salt));
 		$query = $this->db->get('users');
 		
-		if($query->num_rows() > 0)
-			return $query->row_array();
-			
-		return FALSE;
+		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 	
-	// Add a new registration token.
+	/**
+	 * Add Registration Token
+	 * 
+	 * Add an array describing a registration token.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */					
 	public function add_registration_token($token) {
 		if($this->db->insert('registration_tokens', $token) == TRUE)
 			return TRUE;

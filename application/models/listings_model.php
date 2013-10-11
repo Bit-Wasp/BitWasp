@@ -1,33 +1,66 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-// Listings management/administration only. 
-// For items by user, go to items!
+/**
+ * Listings Model
+ *
+ * This class handles the database queries relating to listings.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	Listings
+ * @author		BitWasp
+ * 
+ */
 
 class Listings_model extends CI_Model {
 	
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see 	Models/Accounts_Model
+	 */	
 	public function __construct(){
 		$this->load->model('accounts_model');
 	}
 	
-	// Add an Listing
+	/**
+	 * Add
+	 * 
+	 * Add a new listing to the database.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */					
 	public function add($properties) {
-		if($this->db->insert('items', $properties) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->insert('items', $properties) == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Remove a Listing
+	/**
+	 * Delete
+	 * 
+	 * Delete a listing, where the listing belongs to the current user.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */					
 	public function delete($hash) {
 		$this->db->where('hash', $hash);
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
-		if($this->db->delete('items') == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->delete('items') == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Get an item, must be the current owner.
+	/**
+	 * Get 
+	 * 
+	 * Load an item if it belongs to the current user.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	array / FALSE
+	 */					
 	public function get($hash) {
 		$this->load->model('currencies_model');
 	
@@ -43,7 +76,7 @@ class Listings_model extends CI_Model {
 			
 			$row['price_b'] = $row['price']/$row['currency']['rate'];
 			$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
-			$row['price_l'] = (float)($row['price_b']*$local_currency['rate']);
+			$row['price_l'] = (float)round(($row['price_b']*$local_currency['rate']), 8, PHP_ROUND_HALF_UP);
 			$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];
 
 			$row['main_image_f'] = $this->images_model->get($row['main_image']);
@@ -54,15 +87,20 @@ class Listings_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Update a listing
+	/**
+	 * Update
+	 * 
+	 * Update an item with an array of changes (index as column, val as val)
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */					
 	public function update($item_hash, $changes) {
 		$this->db->where('hash', $item_hash);
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
 		
-		if($this->db->update('items', $changes)) 
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->update('items', $changes)) ? TRUE : FALSE;
 	}	
 
 

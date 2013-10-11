@@ -1,14 +1,38 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-// More public attributes of an account. 
+/**
+ * Accounts Model
+ *
+ * This class handles the database queries relating to orders.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	Accounts
+ * @author		BitWasp
+ * 
+ */
 
 class Accounts_model extends CI_Model {
 	
+	
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 */
 	public function __construct(){
 		parent::__construct();
 	}
 	
-	// Load an account.
+	/**
+	 * Load an account
+	 * 
+	 * @access	public
+	 * 
+	 * @param	string
+	 * @param	array optional
+	 * @return	array / FALSE
+	 */	
 	public function get($identifier, $opt = array()) {
 
 		if($identifier == NULL) 
@@ -49,7 +73,16 @@ class Accounts_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Load the public PGP key of a user.
+	/**
+	 * Get PGP Key
+	 * 
+	 * Load a PGP key based on the $user_id
+	 * 
+	 * @access	public
+	 * 
+	 * @param	int
+	 * @return	array / FALSE
+	 */		
 	public function get_pgp_key($user_id) {
 		$this->db->select('fingerprint, public_key');
 		$query = $this->db->get_where('pgp_keys', array('user_id' => $user_id));
@@ -63,7 +96,18 @@ class Accounts_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Add a PGP key.
+	/**
+	 * Add PGP Key
+	 * 
+	 * Add a PGP key to the database.
+	 * $config = array(	'user_id' => '...',
+	 * 					'fingerprint' => '...',
+	 * 					'public_key' => '...');
+	 * @access	public
+	 * 
+	 * @param	array
+	 * @return	bool
+	 */	
 	public function add_pgp_key($config) {
 		if($this->db->insert('pgp_keys', $config))
 			return TRUE;
@@ -71,7 +115,15 @@ class Accounts_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Delete a PGP key.
+	/**
+	 * Delete PGP key.
+	 * 
+	 * Delete a PGP public key for $user_id.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */		
 	public function delete_pgp_key($user_id) {
 		$this->db->where('user_id', $user_id);
 		if($this->db->delete('pgp_keys') == TRUE) {
@@ -83,22 +135,34 @@ class Accounts_model extends CI_Model {
 			
 		return FALSE;
 	}
-
+	
+	/**
+	 * Toggle Ban
+	 * 
+	 * Change the banned setting for $user_id.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @param	int
+	 * @return	bool
+	 */	
 	public function toggle_ban($user_id, $value) {
 		$this->db->where('id', $user_id);
-		if($this->db->update('users', array('banned' => $value)) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->update('users', array('banned' => $value)) == TRUE) ? TRUE : FALSE;
 	}		
 	
-	// Update a users account.
+	/**
+	 * Update 
+	 * 
+	 * Updates a user row with the indexes supplied in $changes.
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */		
 	public function update($changes) {
 		$this->db->where('id', $this->current_user->user_id);
-		if($this->db->update('users', $changes)) 
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->update('users', $changes)) ? TRUE : FALSE;
 	}
 
 };

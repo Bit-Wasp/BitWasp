@@ -33,10 +33,14 @@ class Bw_bitcoin {
 		}
 		$json_result = curl_exec($curl);
 		curl_close($curl);
-		$array =  json_decode($json_result);
-		$array->price_index = $source_name;
-		return $array;
 		
+		$array =  json_decode($json_result);
+		if($array !== FALSE){
+			$array->price_index = $source_name;
+			return $array;
+		} else {
+			return FALSE;
+		}
 	}
 
 	public function getaccount($address) {

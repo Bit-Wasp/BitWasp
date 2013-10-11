@@ -1,5 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Currencies Model
+ *
+ * This class handles handles database queries regarding currencies.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Currencies
+ * @author		BitWasp
+ * 
+ */
+
 class Currencies_model extends CI_Model {
 
 	public function __construct() { 
@@ -7,11 +19,19 @@ class Currencies_model extends CI_Model {
 		$this->load->library('bw_config');
 	}
 	
-	// Load information about all currencies, or just one.
+	/**
+	 * Get
+	 * 
+	 * Load all currencies, or a specified one by $id.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	array / FALSE
+	 */				
 	public function get($id = NULL) {
 		
 		if($id == NULL) {
-			$this->db->select('id, code, name, symbol');
+			$this->db->select('id, code, name, symbol');	// Duplicated to avoid a stupid error..
 			$query = $this->db->get('currencies');
 		} else {
 			$this->db->select('id, code, name, symbol');
@@ -30,6 +50,14 @@ class Currencies_model extends CI_Model {
 		return FALSE;
 	}
 
+	/**
+	 * Get all Exchange Rates
+	 * 
+	 * Load the latest set of exchange rates.
+	 *
+	 * @access	public
+	 * @return	bool
+	 */				
 	public function get_exchange_rates() {
 		$this->db->select('time, usd, eur, gbp');
 		$this->db->order_by('id desc');
@@ -50,6 +78,15 @@ class Currencies_model extends CI_Model {
 		return FALSE;
 	}
 	
+	/**
+	 * Get Exchange Rate
+	 * 
+	 * Load the rate of a specific currency.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	bool
+	 */					
 	public function get_exchange_rate($code) {
 		$this->db->order_by('id desc');
 		$this->db->limit('1');
@@ -62,10 +99,16 @@ class Currencies_model extends CI_Model {
 		return FALSE;
 	}
 	
+	/**
+	 * Update Exchange Rates
+	 * 
+	 * Insert a new row of information about exchange rates.
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */					
 	public function update_exchange_rates($update) {
-		if($this->db->insert('exchange_rates', $update) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->insert('exchange_rates', $update) == TRUE) ? TRUE : FALSE;
 	}
 };

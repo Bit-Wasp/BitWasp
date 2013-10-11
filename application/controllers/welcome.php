@@ -1,5 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Welcome Controller
+ *
+ * This class deals with the homepage.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Welcome
+ * @author		BitWasp
+ * 
+ */
+
 class Welcome extends CI_Controller {
 
 	public function index()

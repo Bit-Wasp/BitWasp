@@ -1,10 +1,35 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * General Model
+ *
+ * General model with some small functions.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	General
+ * @author		BitWasp
+ * 
+ */
+
 class General_model extends CI_Model {
 
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @return	void
+	 */	
 	public function __construct() {}
 
-	// Test to see if the hash is unique in the table/column.
+	/**
+	 * Test to see if the entry is unique in that table/column
+	 *
+	 * @param	string
+	 * @param	string
+	 * @param	string
+	 * @return	bool
+	 */
 	public function check_unique_entry($table, $column, $hash){
 		$this->db->where($column, $hash);
 		$query = $this->db->get($table);
@@ -17,7 +42,12 @@ class General_model extends CI_Model {
 		}
 	}
 
-	// Get new, stale users.
+	/**
+	 * Load any stale users.
+	 *
+	 * @param	int (hours)
+	 * @return	array/FALSE
+	 */
 	public function get_stale_users($threshold) {
 		$this->db->where('login_time <', $threshold);
 		$this->db->where('banned !=', '1');
@@ -38,24 +68,46 @@ class General_model extends CI_Model {
 		return FALSE;
 	}
 
-	// Return rows which have a timestamp of less than what is supplied
+	/**
+	 * Return rows in $table with a timestamp before $time
+	 *
+	 * @param	string
+	 * @param	int (timestamp)
+	 * @return	bool
+	 */
 	public function rows_before_time($table, $time) {
 		$this->db->where("time <", "$time");
 		$query = $this->db->get($table);
 		return ($query->num_rows() > 0) ? $query->result_array() : FALSE ;
 	}
 	
+	/**
+	 * Drop a row by the specified $table and $id.
+	 *
+	 * @param 	string
+	 * @param	id
+	 * @return	bool
+	 */
 	public function drop_id($table, $id) {
 		$this->db->where('id', "$id");
 		return ($this->db->delete($table) == TRUE) ? TRUE : FALSE ;
 	}
 	
-	// Count the number of entries in a table.
+	/**
+	 * Count the number of entries in a table.
+	 *
+	 * @param	string
+	 * @return	int
+	 */
 	public function count_entries($table) {
 		return $this->db->count_all($table);
 	}
 
-	// Count all bitcoin transaction
+	/**
+	 * Count all bitcoin transactions.
+	 *
+	 * @return	int
+	 */	
 	public function count_transactions() {
 		$this->db->select('id');
 		$this->db->where('address !=', '[payment]');
@@ -63,6 +115,11 @@ class General_model extends CI_Model {
 		return $query->num_rows();
 	}
 	
+	/**
+	 * Count the number of orders.
+	 *
+	 * @return	int
+	 */
 	public function count_orders() {
 		$this->db->select('id');
 		$this->db->where('address', '[payment]');
@@ -70,6 +127,11 @@ class General_model extends CI_Model {
 		return $query->num_rows()/2;
 	}
 
+	/**
+	 * Count the number of unread messages.
+	 *
+	 * @return	int
+	 */
 	public function count_unread_messages() {
 		$this->db->select('id');
 		$this->db->where('to', $this->current_user->user_id);
@@ -78,6 +140,11 @@ class General_model extends CI_Model {
 		return $query->num_rows();
 	}
 	
+	/**
+	 * Count new orders for Current_User->user_hash
+	 *
+	 * @return	int
+	 */	
 	public function count_new_orders() {
 		$this->db->select('id');
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
@@ -86,14 +153,22 @@ class General_model extends CI_Model {
 		return $query->num_rows();
 	}
 		
-	
-	// Load ID and country names.
+	/**
+	 * List all locations
+	 *
+	 * @return	array
+	 */
 	public function locations_list() {
 		$query = $this->db->get('country_codes');
 		return ($query->num_rows() > 0) ? $query->result_array() : array(); 
 	}
 	
-	// Load location name by id. 
+	/**
+	 * Load location name by $id.
+	 *
+	 * @param	int
+	 * @return	string / FALSE
+	 */
 	public function location_by_id($id){
 		$this->db->select('country')
 		         ->where('id', $id);

@@ -1,7 +1,25 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Order Model
+ *
+ * This class handles the database queries relating to orders.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	Order
+ * @author		BitWasp
+ * 
+ */
+
 class Order_model extends CI_Model {
 	
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see		Models/Items_Model
+	 */		
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('items_model');

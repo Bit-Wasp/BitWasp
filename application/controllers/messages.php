@@ -309,7 +309,7 @@ class Messages extends CI_Controller {
 	/**
 	 * Check the supplied username exists.
 	 *
-	 * @param	int
+	 * @param	string
 	 * @return	bool
 	 */
 	public function user_exists($param) {

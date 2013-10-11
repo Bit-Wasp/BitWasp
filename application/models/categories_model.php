@@ -7,39 +7,68 @@ class Categories_model extends CI_Model {
 		
 	}
 	
-	// Add a category to the table.
+	/**
+	 * Add
+	 * 
+	 * Add a category to the table.
+	 *	$category = array(	'name' => '...',
+	 *						'hash' => '...'),
+	 *						'parent_id' => '...');
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	bool
+	 */			
 	public function add($category) {
-		if($this->db->insert('categories', $category) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->insert('categories', $category) == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Rename a category.
+	/**
+	 * Rename
+	 * 
+	 * Rename $category_id to $new_name
+	 *
+	 * @access	public
+	 * @param	int
+	 * @param	string
+	 * @return	bool
+	 */				
 	public function rename($category_id, $new_name) {
 		$this->db->where('id', $category_id);
-		if($this->db->update('categories', array('name' => $new_name)) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->update('categories', array('name' => $new_name)) == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Delete a category.
+	/**
+	 * Delete
+	 * 
+	 * Delete a category as specified by the ID.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */				
 	public function delete($category_id) {
 		$this->db->where('id', $category_id);
-		if($this->db->delete('categories') == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->delete('categories') == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Load a category, along with the number of items it contains.
+	/**
+	 * Get
+	 * 
+	 * Loads a category based on $cat['id'] or ['hash']
+	 *
+	 * @access	public
+	 * @param	array
+	 * @return	array / FALSE
+	 */				
 	public function get(array $cat) {
 		$this->db->select('id, name, hash, parent_id');
 
 		if (isset($cat['hash'])) {
+			$this->db->select('id, name, hash, parent_id');			// Select statement repeated to avoid annoying errors.
 			$query = $this->db->get_where('categories', array('hash' => $cat['hash']));
 		} elseif (isset($cat['id'])) {
+			$this->db->select('id, name, hash, parent_id');
 			$query = $this->db->get_where('categories', array('id' => $cat['id']));
 		} else {
 			return FALSE;
@@ -55,27 +84,31 @@ class Categories_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Load all category information.
+	/**
+	 * List All
+	 * 
+	 * List all categories in a general list.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */					
 	public function list_all() {
 		$this->db->select('id, hash, name, parent_id');
 		$this->db->order_by('name', 'asc');
 		$query = $this->db->get('categories');
-		if($query->num_rows() > 0) {
-			$result = $query->result_array();
-			return $result;
-		}
-			
-		return FALSE;
+		return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
 	}
-	/*
-	// Count the number of items this category.		// UNUSED?
-	public function count_items($category_id) {
-		$this->db->where('category', $category_id);
-		$query = $this->db->get('items');
-		return $query->num_rows();
-	}*/
 	
-	// Load the direct children of the selected category.
+	/**
+	 * Get Children
+	 * 
+	 * Load the direct children of the specified parent ID.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	bool
+	 */				
 	public function get_children($category_id) {
 		$this->db->where('parent_id', $category_id);
 		$query = $this->db->get('categories');
@@ -84,25 +117,45 @@ class Categories_model extends CI_Model {
 		return $result;
 	}
 	
-	// Update items' parent ID.
+	/**
+	 * 
+	 * Update Items Category
+	 * 
+	 * Move items from one category ID to another.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @param	int
+	 * @return	bool
+	 */				
 	public function update_items_category($current_id, $new_id) {
 		$this->db->where('category', $current_id);
-		if($this->db->update('items', array('category' => $new_id)) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->update('items', array('category' => $new_id)) == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Change categories' parent ID.
+	/**
+	 * Update Parent Category
+	 * 
+	 * Move categorys with the parent category of $current_id to category $new_id.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @param	int
+	 * @return	bool
+	 */				
 	public function update_parent_category($current_id, $new_id) {
 		$this->db->where('parent_id', $current_id);
-		if($this->db->update('categories', array('parent_id' => $new_id)) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->update('categories', array('parent_id' => $new_id)) == TRUE) ? TRUE : FALSE;
 	}
 
-	// Produce categories in a dynamic multi-dimensional array
+	/**
+	 * Menu
+	 * 
+	 * Prepare categories in a multidimensional array.
+	 * 
+	 * @access	public
+	 * @return	array
+	 */				
 	public function menu(){
 		
 		$this->db->select('id, description, name, hash, parent_id');
