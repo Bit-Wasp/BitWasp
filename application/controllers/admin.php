@@ -1,14 +1,30 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Accounts Management Class
+ *
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Accounts
+ * @author		BitWasp
+ */
+
 class Admin extends CI_Controller {
 
 	public $nav;
 
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see		Models/Categories_model
+	 */
+
 	public function __construct() {
 		parent::__construct();
-		$this->load->model('config_model');
 		$this->load->model('categories_model');
 		
+		// Define information for the navigation panel.
 		$this->nav = array(	'' => 			array(	'panel' => '',
 													'title' => 'General',
 													'heading' => 'Admin Panel'),
@@ -27,6 +43,14 @@ class Admin extends CI_Controller {
 						);
 	}
 	
+	
+	/**
+	 * Load the General Information Panel.
+	 *
+	 * @see 	Libraries/GPG
+	 * @see 	Libraries/Bw_Config
+	 * @return	void
+	 */
 	public function index() {
 		$this->load->library('gpg');
 		if($this->gpg->have_GPG == TRUE) 
@@ -40,10 +64,20 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	/**
+	 * Edit General Settings.
+	 *
+	 * @see 	Libraries/GPG
+	 * @see		Libraries/Form_Validation
+	 * @see 	Libraries/Bw_Config
+	 * @return	void
+	 */
 	public function edit_general() {
 		$this->load->library('form_validation');
 		$data['config'] = $this->bw_config->load_admin('');
+		
 		if($this->form_validation->run('admin_edit_') == TRUE) {
+			// Determine which settings have changed. Filter unchanged.
 			$changes['site_description'] = ($this->input->post('site_descrpition') !== $data['config']['site_description']) ? $this->input->post('site_description') : NULL;
 			$changes['site_title'] = ($this->input->post('site_title') !== $data['config']['site_title']) ? $this->input->post('site_title') : NULL;
 			$changes['openssl_keysize'] = ($this->input->post('openssl_keysize') !== $data['config']['openssl_keysize']) ? $this->input->post('openssl_keysize') : NULL;
@@ -59,6 +93,12 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
+	/**
+	 * Load the Logs Information Panel.
+	 *
+	 * @see 	Librarie/Bw_Config
+	 * @return	void
+	 */
 	public function logs() {
 		$data['page'] = 'admin/logs';
 		$data['title'] = $this->nav['logs']['heading'];
@@ -74,7 +114,13 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	public function edit_logs() {
+	/**
+	 * Edit the settings regarding how long different information is kept.
+	 *
+	 * @see 	Libraries/Bw_Config
+	 * @return	void
+	 */
+	 public function edit_logs() {
 		$this->load->library('form_validation');
 		$data['page'] = 'admin/edit_logs';
 		$data['title'] = $this->nav['logs']['heading'];
@@ -86,7 +132,14 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	
+
+	/**
+	 * Load the Bitcoin Information Panel.
+	 *
+	 * @see 	Libraries/Bw_Bitcoin
+	 * @see		Models/Bitcoin_Model
+	 * @return	void
+	 */	
 	public function bitcoin() {
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');
@@ -101,6 +154,14 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
+	/**
+	 * Edit the Bitcoin Settings.
+	 *
+	 * @see 	Libraries/Bw_Bitcoin
+	 * @see		Libraries/Bw_Config
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */
 	public function edit_bitcoin() {
 		$this->load->library('form_validation');
 		$this->load->library('bw_bitcoin');
@@ -110,31 +171,39 @@ class Admin extends CI_Controller {
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		
 		if($this->input->post('update_price_index') == 'Update') {
+			// Check if the selection exists.
 			if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
+				
 				$update = array('price_index' => $this->input->post('price_index'));
 				$this->config_model->update($update);
+				
 				if($this->input->post('price_index') !== 'Disabled'){
 					
 					// If the price index was previously disabled, set the auto-run script interval back up..
 					if($data['price_index'] == 'Disabled')
-						$this->config_model->set_autorun_interval('price_index', '0.1666');
+						$this->config_model->set_autorun_interval('price_index', '0.166666');
 						
+					// And request new exchange rates.
 					$this->bw_bitcoin->ratenotify();
 				} else {
 					// When disabling BPI updates, set the interval to 0.
 					$this->config_model->set_autorun_interval('price_index', '0');
 				}
+				// Redirect when complete.
 				redirect('admin/bitcoin');
 			}
 		}
 		
+		// If the bitcoin transfer form has been completed:
 		if($this->input->post('admin_transfer_bitcoins') == 'Send') {
 			if($this->form_validation->run('admin_transfer_bitcoins') == TRUE) {
+				// Check that the account has the specified available balance.
 				$amount = $this->input->post('amount');
 				if($data['accounts'][$this->input->post('from')] >= (float)$amount) {
 					if($this->bw_bitcoin->move($this->input->post('from'), $this->input->post('to'), (float)$amount) == TRUE)
 						redirect('admin/bitcoin');
 				} else {
+					// Return an error if not redirected.
 					$data['transfer_bitcoins_error'] = 'That account has insufficient funds.';
 				}
 			}
@@ -145,6 +214,13 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
+	/**
+	 * Load the Users Information Panel.
+	 *
+	 * @see		Libraries/Bw_Config
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */	
 	public function users() {
 		$data['nav'] = $this->generate_nav();
 		$data['user_count'] = $this->general_model->count_entries('users');
@@ -154,19 +230,29 @@ class Admin extends CI_Controller {
 		$data['title'] = $this->nav['users']['heading'];
 		$this->load->library('Layout', $data);
 	}
-	
+
+	/**
+	 * Edit the User Settings.
+	 *
+	 * @see 	Libraries/Bw_Bitcoin
+	 * @see		Libraries/Bw_Config
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */	
 	public function edit_users() {
 		$this->load->library('form_validation');
 		$data['nav'] = $this->generate_nav();
 		$data['config'] = $this->bw_config->load_admin('users');
 		
 		if($this->form_validation->run('admin_edit_users') == TRUE) {
+			// Determine what changes, if any, to make. 
 			$changes['login_timeout'] = ($this->input->post('login_timeout') !== $data['config']['login_timeout']) ? $this->input->post('login_timeout') : NULL;
 			$changes['captcha_length'] = ($this->input->post('captcha_length') !== $data['config']['captcha_length']) ? $this->input->post('captcha_length') : NULL;
 			$changes['registration_allowed'] = ($this->input->post('registration_allowed') !== $data['config']['registration_allowed']) ? $this->input->post('registration_allowed'): NULL;
 			$changes['vendor_registration_allowed'] = ($this->input->post('vendor_registration_allowed') !== $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
 			$changes['encrypt_private_messages'] = ($this->input->post('encrypt_private_messages') !== $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_message'): NULL;
 			$changes['ban_after_inactivity'] = ($this->input->post('ban_after_inactivity') !== $data['config']['ban_after_inactivity']) ? $this->input->post('ban_after_inactivity') : NULL ;			
+			// If we're disabling banning users after inactivity, set that.
 			if($this->input->post('ban_after_inactivity_disable') == '1')
 				$changes['ban_after_inactivity'] = '0';
 			
@@ -181,8 +267,14 @@ class Admin extends CI_Controller {
 		$data['title'] = $this->nav['users']['heading'];
 		$this->load->library('Layout', $data);
 	}
-	
-	// Display admin stats/info about items.
+	/**
+	 * Load the Items Information Panel.
+	 *
+	 * @see 	Libraries/Bw_Bitcoin
+	 * @see		Libraries/Bw_Config
+	 * @see 	Models/Categories_Model
+	 * @return	void
+	 */
 	public function items() {
 		$data['nav'] = $this->generate_nav();
 		$data['item_count'] = $this->general_model->count_entries('items');
@@ -191,16 +283,23 @@ class Admin extends CI_Controller {
 		$data['title'] = $this->nav['items']['heading'];
 		$this->load->library('Layout', $data);
 	}
-	
-	// Edit Item/Categorys settings, 
+	/**
+	 * Edit the Items Settings.
+	 *
+	 * @see 	Models/Categories_Model
+	 * @see		Libraries/Bw_Config
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */
 	public function edit_items() {
 		$this->load->library('form_validation');
 		$data['nav'] = $this->generate_nav();
 		$data['categories'] = $this->categories_model->list_all();
 		
-		// Add a new category.
+		// If the Add Category form has been submitted:
 		if($this->input->post('add_category') == 'Add') {
 			if($this->form_validation->run('admin_add_category') == TRUE) {
+				// Add the category.
 				$category = array(	'name' => $this->input->post('category_name'),
 									'hash' => $this->general->unique_hash('categories','hash'),
 									'parent_id' => $this->input->post('category_parent'));
@@ -209,14 +308,16 @@ class Admin extends CI_Controller {
 			} 
 		} 
 		
+		// If the Rename Category form has been submitted:
 		if($this->input->post('rename_category') == 'Rename') {
 			if($this->form_validation->run('admin_rename_category') == TRUE) {
+				// Rename the category.
 				if($this->categories_model->rename($this->input->post('category_id'), $this->input->post('category_name')) == TRUE)
 					redirect('admin/edit/items');
 			}
 		}
 		
-		// Delete a category
+		// If the Delete Category form has been submitted:
 		if($this->input->post('delete_category') == 'Delete') {
 			if($this->form_validation->run('admin_delete_category') == TRUE) {
 		
@@ -228,7 +329,7 @@ class Admin extends CI_Controller {
 					echo 'a';
 					redirect('admin/category/orphans/'.$category['hash']);
 				} else {
-					// Delete the category.
+					// Otherwise it's empty and can be deleted.
 					if($this->categories_model->delete($category['id']) == TRUE)
 						redirect('admin/edit/items');
 				}
@@ -239,7 +340,15 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	/**
+	 * Edit the Items Settings.
+	 *
+	 * @see 	Models/Categories_Model
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */	
 	public function category_orphans($hash) {
+		// Abort if the category does not exist.
 		$data['category'] = $this->categories_model->get(array('hash' => $hash));
 		if($data['category'] == FALSE)
 			redirect('admin/items');
@@ -273,7 +382,7 @@ class Admin extends CI_Controller {
 				$this->categories_model->update_items_category($data['category']['id'], $this->input->post('category_id'));
 				$this->categories_model->update_parent_category($data['category']['id'], $this->input->post('category_id'));
 			}
-			// Finally, delete the category.
+			// Finally, delete the category and redirect.
 			if($this->categories_model->delete($data['category']['id']) == TRUE)
 				redirect('edit/items');
 		}
@@ -282,46 +391,69 @@ class Admin extends CI_Controller {
 		$data['title'] = 'Fix Orphans';
 		$this->load->library('Layout', $data);
 	}
-
+	
+	/**
+	 * Manage User Invite Tokens.
+	 *
+	 * @see 	Models/Users_Model
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/General
+	 * @return	void
+	 */	
 	public function user_tokens() {
 		$this->load->model('users_model');
 		$this->load->library('form_validation');
 		
+		// If the Create Token form has been submitted:
 		if($this->input->post('create_token') == "Create"){
 			if($this->form_validation->run('admin_create_token') == TRUE){
 				
+				// Generate a unique has as the token.
 				$update = array('user_type' => $this->input->post('user_role'),
 								'token_content' => $this->general->unique_hash('registration_tokens','token_content', 128),
 								'comment' => $this->input->post('token_comment'));
 								
 				$data['returnMessage'] = 'Unable to create your token at this time.';
 				if($this->users_model->add_registration_token($update) == TRUE){
+					// If token is successfully added, display error message.
 					$data['success'] = TRUE;
 					$data['returnMessage'] = 'Your token has been created';
+					
 				} 
 			}
 		}
 		
+		// Load a list of registration tokens.
 		$data['tokens'] = $this->users_model->list_registration_tokens();
 		$data['page'] = 'admin/user_tokens';
 		$data['title'] = 'Registration Tokens';
 		$this->load->library('Layout', $data);
 	}
 	
+	/**
+	 * Delete a User Token
+	 *
+	 * @see 	Models/Users_Model
+	 * @param	string
+	 * @return	void
+	 */	
 	public function delete_token($token) {
 		$this->load->library('form_validation');
 		$this->load->model('users_model');
 		
+		// Abort if the token does not exist.
 		$token = $this->users_model->check_registration_token($token);
 		if($token == FALSE)
 			redirect('admin/tokens');
 			
 		$data['returnMessage'] = 'Unable to delete the specified token, please try again later.';
 		if($this->users_model->delete_registration_token($token['id']) == TRUE){
+			// Display a message if the token is successfully deleted.
 			$data['success'] = TRUE;
 			$data['returnMessage'] = 'The selected token has been deleted.';
 		}
 			
+		// Load a list of registration tokens.
 		$data['tokens'] = $this->users_model->list_registration_tokens();
 		$data['page'] = 'admin/user_tokens';
 		$data['title'] = 'Registration Tokens';
@@ -329,7 +461,15 @@ class Admin extends CI_Controller {
 			
 		return FALSE;
 	}
-
+	
+	/**
+	 * Delete an Item, sending the vendor an explanation.
+	 *
+	 * @see 	Models/Messages_Model
+	 * @see		Models/Items_Model
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */	
 	public function delete_item($hash) {
 		$this->load->library('form_validation');
 		$this->load->model('items_model');
@@ -425,17 +565,34 @@ class Admin extends CI_Controller {
 		return $nav;
 	}
 	
-	// Callback to check the captcha length is not too long.
+	// Callback functions for form validation
+	
+	/**
+	 * Check the captcha length is not too long.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_captcha_length($param) {
 		return ($param > 0 && $param < 13) ? TRUE : FALSE;
 	}
 
-	// Callback functions for form validation.
+	/**
+	 * Check the supplied parameter is for a boolean..
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_bool($param) {
 		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
 	}
 
-	// Callback; check the required category exists (for parent_id)
+	/**
+	 * Check the required category exists (for parent_id)
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_category_exists($param) {
 		if($param == '0')	// Allows the category to be a root category.
 			return TRUE;
@@ -443,12 +600,22 @@ class Admin extends CI_Controller {
 		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 	
-	// Callback, check if the category can be deleted.
+	/**
+	 * Check the category can be deleted (doesn't allow '0' for root category)
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_can_delete_category($param) {
 		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 	
-	// Callback: check the specified bitcoin account already exists.
+	/**
+	 * Check the bitcoin account already exists in the server wallet.
+	 *
+	 * @param	string
+	 * @return	bool
+	 */
 	public function check_bitcoin_account_exists($param) {
 		if($param == '')
 			return FALSE;
@@ -457,13 +624,24 @@ class Admin extends CI_Controller {
 		return (isset($accounts[$param])) ? TRUE : FALSE;
 	}
 	
-	// Check the submitted parameter is either 1, 2, or 3.
+	/**
+	 * Check the submitted parameter is either 1, 2, or 3.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_admin_roles($param){
 		return ($this->general->matches_any($param, array('1','2','3')) == TRUE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * Check the supplied parameter is a positive number.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function is_positive($param) {
-		return ($param > 0) ? TRUE : FALSE;
+		return (is_numeric($param) && $param > 0) ? TRUE : FALSE;
 		
 	}
 };

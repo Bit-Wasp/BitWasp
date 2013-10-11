@@ -25,6 +25,7 @@ class Accounts extends CI_Controller {
 	/**
 	 * View a users profile
 	 *
+	 * @access	public
 	 * @param	string
 	 * @return	void
 	 */
@@ -45,6 +46,7 @@ class Accounts extends CI_Controller {
 	/**
 	 * View own user profile
 	 *
+	 * @access	public
 	 * @return	void
 	 */
 	public function me() {
@@ -60,10 +62,10 @@ class Accounts extends CI_Controller {
 	/**
 	 * Edit own account settings
 	 *
-	 * 
-	 * @see Models/Accounts_model
-	 * @see Models/Currencies_model
-	 * @see Models/General_model
+	 * @access	public
+	 * @see 	Models/Accounts_model
+	 * @see 	Models/Currencies_model
+	 * @see 	Models/General_model
 	 * @return	void
 	 */	
 	public function edit() {
@@ -97,6 +99,8 @@ class Accounts extends CI_Controller {
 			$changes['location'] = ($data['user']['location'] == $this->input->post('location')) ? NULL : $this->input->post('location');
 			$changes['display_login_time'] = ($data['user']['display_login_time'] == $this->input->post('display_login_time')) ? NULL : $this->input->post('display_login_time');
 			$changes['local_currency'] = ($data['user']['currency'] == $this->input->post('local_currency')) ? NULL : $this->input->post('local_currency');				
+			
+			// Only consider these if the user has a PGP key uploaded.
 			if(isset($data['user']['pgp'])) {
 				$changes['two_factor_auth'] = ($data['user']['two_factor_auth'] == $this->input->post('two_factor_auth')) ? NULL : $this->input->post('two_factor_auth');
 				$changes['force_pgp_messages'] = ($data['user']['force_pgp_messages'] == $this->input->post('force_pgp_messages')) ? NULL : $this->input->post('force_pgp_messages');
@@ -118,9 +122,10 @@ class Accounts extends CI_Controller {
 	/**
 	 * Delete PGP key from account.
 	 *
-	 * @see Libraries/Form_Validation
-	 * @see Libraries/GPG
-	 * @see Models/Accounts_model
+	 * @access	public 
+	 * @see 	Libraries/Form_Validation
+	 * @see 	Libraries/GPG
+	 * @see 	Models/Accounts_model
 	 * @return	void
 	 */
 	public function delete_pgp() {
@@ -141,7 +146,6 @@ class Accounts extends CI_Controller {
 			if($this->input->post('delete') == '1') {
 				if($this->accounts_model->delete_pgp_key($data['user']['id']) == TRUE) 
 					redirect('account');
-				
 			} else {
 				redirect('account');
 			}
@@ -156,9 +160,10 @@ class Accounts extends CI_Controller {
 	/**
 	 * Replace current PGP key. 
 	 *
-	 * @see Libraries/Gpg
-	 * @see Libraries/GPG::import()
-	 * @see Libraries/Form_Validation
+	 * @access	public
+	 * @see 	Libraries/Gpg
+	 * @see 	Libraries/GPG::import()
+	 * @see 	Libraries/Form_Validation
 	 * @return	void
 	 */
 	public function replace_pgp() {
@@ -201,8 +206,8 @@ class Accounts extends CI_Controller {
 	/**
 	 * Add a PGP key to account.
 	 *
-	 * @see Libraries/GPG
-	 * @see Libraries/Form_Validation
+	 * @see 	Libraries/GPG
+	 * @see		Libraries/Form_Validation
 	 * @param	string
 	 * @return	void
 	 */
@@ -243,7 +248,7 @@ class Accounts extends CI_Controller {
 	/**
 	 * Check if the parameter is for a boolean.
 	 *
-	 * @see Libraries/Form_Validation
+	 * @see 	Libraries/Form_Validation
 	 * @param	int
 	 * @return	bool
 	 */
@@ -254,7 +259,7 @@ class Accounts extends CI_Controller {
 	/**
 	 * Check that the specified location ID exists.
 	 *
-	 * @see Libraries/Form_Validation
+	 * @see 	Libraries/Form_Validation
 	 * @param	int
 	 * @return	bool
 	 */
@@ -265,8 +270,8 @@ class Accounts extends CI_Controller {
 	/**
 	 * Check that the specified currency ID exists.
 	 *
-	 * @see Libraries/Form_Validation
-	 * @see Models/Currencies_Model
+	 * @see 	Libraries/Form_Validation
+	 * @see 	Models/Currencies_Model
 	 * @param	int
 	 * @return	bool
 	 */
