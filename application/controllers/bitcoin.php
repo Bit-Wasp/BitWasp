@@ -87,8 +87,10 @@ class Bitcoin extends CI_Controller {
 		$this->load->library('form_validation');
 		
 		if($this->input->post('generate_new') == 'Replace') {
+			// If 'Generate' has been clicked, create a new address for the user.
 			$this->bw_bitcoin->new_address($this->current_user->user_hash);
 		} else if($this->form_validation->run('update_cashout_address') === TRUE) {
+			// If the form is submitted correctly, set a cashout address.
 			$this->bitcoin_model->set_cashout_address($this->current_user->user_hash, $this->input->post('cashout_address'));
 		}
 		

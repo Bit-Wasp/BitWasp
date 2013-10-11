@@ -24,7 +24,8 @@ class Accounts extends CI_Controller {
 
 	/**
 	 * View a users profile
-	 *
+	 * URI: /user/$hash
+	 * 
 	 * @access	public
 	 * @param	string
 	 * @return	void
@@ -45,6 +46,7 @@ class Accounts extends CI_Controller {
 	
 	/**
 	 * View own user profile
+	 * URI: /use
 	 *
 	 * @access	public
 	 * @return	void
@@ -277,7 +279,7 @@ class Accounts extends CI_Controller {
 	 */
 	public function check_valid_currency($param){
 		$this->load->model('currencies_model');
-		return ($this->currencies_model->get($param) !== FALSE) TRUE : FALSE;
+		return ($this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
 	}
 };
 
