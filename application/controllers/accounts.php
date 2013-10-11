@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Accounts Management Class
+ * Accounts Management Controller
  *
  * @package		BitWasp
  * @subpackage	Controllers

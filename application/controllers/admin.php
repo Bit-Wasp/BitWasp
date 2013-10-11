@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Accounts Management Class
+ * Administration Panel Controller
  *
  * @package		BitWasp
  * @subpackage	Controllers
- * @category	Accounts
+ * @category	Admin
  * @author		BitWasp
  */
 

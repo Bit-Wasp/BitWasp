@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Accounts Management Class
+ * Authorization Request's Controller
  *
  * This class handles requesting a password from a user to access a
  * restricted page. 
