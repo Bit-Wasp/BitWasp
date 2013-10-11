@@ -1,7 +1,29 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Accounts Management Class
+ *
+ * This class handles requesting a password from a user to access a
+ * restricted page. 
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Authorize
+ * @author		BitWasp
+ * 
+ * @see			Libraries/Bw_Session
+ */
+
 class Authorize extends CI_Controller {
 
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see		Models/Auth_Model
+	 * @see		Libraries/Bw_Auth
+	 * @see		Libraries/Bw_Captcha
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_auth');

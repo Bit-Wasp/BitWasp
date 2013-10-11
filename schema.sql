@@ -636,7 +636,7 @@ CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
 
 CREATE TABLE IF NOT EXISTS `bw_users` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `banned` enum('0','1') DEFAULT 0,
+  `banned` enum('0','1') DEFAULT '0',
   `bitcoin_cashout_address` varchar(40) NOT NULL,
   `bitcoin_topup_address` varchar(40) NOT NULL,
   `bitcoin_balance` decimal(10,8) NOT NULL,
