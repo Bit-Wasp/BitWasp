@@ -1,7 +1,29 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Messages Controller
+ *
+ * This class handles sending, reading, displaying of messages.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Messages
+ * @author		BitWasp
+ * 
+ */
+
 class Messages extends CI_Controller {
 	
+	/**
+	 * Constructor
+	 * 
+	 * Load libs/models, and direct users to enter their pin in required.
+	 *
+	 * @access	public
+	 * @see		Models/Currencies_Model
+	 * @see		Libraries/Bw_Messages
+	 * @see		Libraries/OpenSSL
+	 */
 	public function __construct() {
 		parent::__construct();
 	
@@ -11,20 +33,32 @@ class Messages extends CI_Controller {
 	
 		// Automatically check if a PIN is required.
 		if($this->bw_config->encrypt_private_messages == TRUE){
+			// If not set, redirect so the user can enter their pin.
 			if($this->current_user->message_password == NULL && uri_string() !== 'message/pin')
 				redirect('message/pin');
 		}			
 	}
 	 
-	// Read a message.
+	/**
+	 * Read a Message.
+	 * URI: /message/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Messages_Model
+	 * @see		Libraries/Bw_Messages
+	 * 
+	 * @return	void
+	 * @param
+	 */
 	public function read($hash) {
 		$data['page'] = 'messages/read';
 
-		// Load the message
+		// Redirect if the message does not exist.
 		$message = $this->messages_model->get($hash);
 		if($message == FALSE)
 			redirect('inbox');
 		
+		// Pass the message through a preparation function.
 		$message = $this->bw_messages->prepare_output(array($message));
 		$data['message'] = $message[0];
 		$data['title'] = $data['message']['subject'];
@@ -41,7 +75,19 @@ class Messages extends CI_Controller {
 	}
 		
 	// Display a users messages.
+	
+	/**
+	 * Load a Users Inbox.
+	 * URI: /listings/edit/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Messages_Model
+	 * @see		Libraries/Bw_Messages
+	 * 
+	 * @return	void
+	 */
 	public function inbox() {
+		// Load inbox and pass through preparation function.
 		$messages = $this->messages_model->inbox();
 		$data['messages'] = $this->bw_messages->prepare_output($messages);	
 		$data['page'] = 'messages/inbox';
@@ -49,7 +95,17 @@ class Messages extends CI_Controller {
 		$this->load->library('Layout',$data);
 	}
 	
-	// Delete a specific message, or all of them.
+	/**
+	 * Delete a specified message, or all of them if $hash=='all'
+	 * URI: /messages/delete/$hash
+	 * 
+	 * @access	public
+	 * @see		Libraries/Bw_Messages
+	 * @see		Models/Messages_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function delete($hash) {	
 		if($hash == 'all') {
 			if($this->messages_model->delete_all() == TRUE) {
@@ -72,6 +128,7 @@ class Messages extends CI_Controller {
 			}
 		}
 		
+		// Reload inbox with error message.
 		$data['title'] = 'Inbox';
 		$data['page'] = 'messages/inbox';
 		$messages = $this->messages_model->inbox();
@@ -80,7 +137,16 @@ class Messages extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Page to handle deleted messages, to avoid users refreshing a URI's.
+	/**
+	 * Page to handle deleted messages, to avoid user resubmitting URI's.
+	 * URI: /messages/deleted
+	 * 
+	 * @access	public
+	 * @see		Libraries/Bw_Messages
+	 * @see		Models/Messages_Model
+	 * 
+	 * @return	void
+	 */
 	public function deleted() { 	
 		
 		$data['title'] = 'Inbox';
@@ -99,7 +165,19 @@ class Messages extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}  
 	
-	// Send a message.
+	/**
+	 * Send a message. May be responding to a user, or message, as
+	 * specified by $identifier. $identifier may be unset.
+	 * URI: /messages/send/$identifier
+	 * 
+	 * @access	public
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/Bw_Messages
+	 * @see		Models/Messages_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function send($identifier = NULL){
 		
 		$this->load->library('form_validation');
@@ -111,14 +189,16 @@ class Messages extends CI_Controller {
 	
 		$reply_info = $this->messages_model->reply_info($identifier);
 		
+		// If the specified $identifier is meaningless, redirect to regular form.
 		if($reply_info == NULL && $identifier !== NULL)
 			redirect('message/send');
 		
+		// Parse information from the reply_info array.
 		if(is_array($reply_info)){
 			$data['to_name'] = $reply_info['to_name'];
-			
 			$data['subject'] = $reply_info['subject'];
-			
+
+			// If the public key is specified, load it's information.
 			if(isset($reply_info['public_key'])){
 				$data['public_key'] = $reply_info['public_key'];
 				$data['fingerprint'] = $reply_info['fingerprint'];
@@ -126,13 +206,14 @@ class Messages extends CI_Controller {
 			}
 		} 	
 		
+		// If the public key is set, load the JS for clientside PGP.
 		if($data['public_key'] !== ''){
-			// Include the required files for client side encryption
 			$data['header_meta'] = $this->load->view('messages/encryption_header', NULL, true);
 			$data['returnMessage'] = 'This message will be encrypted automatically if you have javascript enabled.<br />';
 		}
 	
 		if ($this->form_validation->run('send_message') == TRUE) {
+			// Form validation was successful, prepare the message.
 			$data['from'] = $this->current_user->user_id;
 			$message = $this->bw_messages->prepare_input($data);
 			if($this->messages_model->send($message)){
@@ -147,7 +228,16 @@ class Messages extends CI_Controller {
 		$this->load->library('Layout', $data);	
 	}
 
-	// Catcher page for when a message is sent.
+	/**
+	 * Catcher page for sent messages. Avoids refresh issues.
+	 * URI: /messages/sent
+	 * 
+	 * @access	public
+	 * @see		Libraries/Bw_Messages
+	 * @see		Models/Messages_Model
+	 * 
+	 * @return	void
+	 */
 	public function sent() { 
 		$messages = $this->messages_model->inbox();
 		$data['messages'] = $this->bw_messages->prepare_output($messages);
@@ -162,17 +252,25 @@ class Messages extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	// Prompt for a users pin if messages are encrypted.
+	/**
+	 * Prompt for a users message PIN if it's not set.
+	 * URI: /messages/pin
+	 * 
+	 * @access	public
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/Bw_Messages
+	 * @see		Models/Messages_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function enter_pin(){	
 		$this->load->model('users_model');
 		$this->load->library('form_validation');
 
 		$this->load->helper(array('form'));
 	
-		if ($this->form_validation->run('message_pin_form') == FALSE){
-			$data['title'] = 'Message PIN';
-			$data['page'] = 'messages/pin';
-		} else {
+		if ($this->form_validation->run('message_pin_form') == TRUE){
 			// Load the users salt, public key, and private key.
 			$user = $this->users_model->message_data(array('user_hash' => $this->current_user->user_hash));
 			$message_password = $this->general->hash($this->input->post('pin'),$user['salt']);
@@ -187,28 +285,36 @@ class Messages extends CI_Controller {
 				unset($message_password);
 				redirect('inbox');
 			} else {
-				$data['title'] = 'Message PIN';
-				$data['page'] = 'messages/pin';
 				$data['returnMessage'] = 'The PIN you entered was incorrect. Please try again';
 			}
 		}
+		$data['title'] = 'Message PIN';
+		$data['page'] = 'messages/pin';
+		
 		$this->load->library('Layout',$data);
 	}
 			   
 	// Callback functions for form validation.
+	
+	/**
+	 * Check that the delete on read function is set appropriately.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */	
 	public function check_delete_on_read($param) {
-		if($this->general->matches_any($param, array(NULL,'1')))
-			return TRUE;
-			
-		return FALSE;
+		return ($this->general->matches_any($param, array(NULL,'1')) == TRUE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * Check the supplied username exists.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function user_exists($param) {
 		$this->load->model('users_model');
-		if($this->users_model->get(array('user_name' => $param)) !== FALSE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->users_model->get(array('user_name' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 		
 };

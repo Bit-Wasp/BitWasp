@@ -43,16 +43,44 @@ class Btc_internal extends CI_Controller {
 		//$this->bitcoin_model->add_block($latest_hash, $bitcoin_info['blocks']);
 	}
 	
-	
+
+	/**
+	 * WalletNotify function - Inform site about transactions affecting
+	 * the wallet.
+	 * URI: /callback/wallet/$txn_id
+	 *
+	 * @access	public
+	 * @see		Models/Bitcoin_Model
+	 * @see		Libraries/Bw_Bitcoin
+	 */	
 	public function walletnotify($txn_id){
 		$this->bw_bitcoin->walletnotify($txn_id);
 	}
-	
-	public function blocknotify($txn_id){
-		$this->bw_bitcoin->blocknotify($txn_id);
+		
+	/**
+	 * BlockNotify function - Inform site about a new block.
+	 * Also important for updating confirmations of transactions.
+	 * URI: /callback/block/$block_hash
+	 * 
+	 * @access	public
+	 * @see		Libraries/Bw_Bitcoin
+	 */
+	public function blocknotify($block_hash){
+		$this->bw_bitcoin->blocknotify($block_hash);
 	}
 
+	/**
+	 * Used for testing - clear bitcoin transactions.
+	 * URI: /bitcoin/reset
+	 * 
+	 * @param	string
+	 * @see 	Models/Messages_Model
+	 * @see		Models/Items_Model
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */	
+/*
 	public function reset(){
 		$this->bitcoin_model->reset_a();
-	}
+	}*/
 };

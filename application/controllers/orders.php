@@ -1,10 +1,38 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Orders Controller
+ *
+ * This class handles the buyer and vendor side of the order process.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Orders
+ * @author		BitWasp
+ * 
+ */
+
 class Orders extends CI_Controller {
 
+	/**
+	 * Constructor
+	 * 
+	 * Load libs/models.
+	 *
+	 * @access	public
+	 * @see		Libraries/Bw_Bitcoin
+	 * @see		Libraries/Bw_Messages
+	 * @see		Models/Order_Model
+	 * @see		Models/Items_Model
+	 * @see		Models/Accounts_Model
+	 * @see		Models/Bitcoin_Model
+	 * @see		Models/Escrow_Model
+	 * @see		Models/Messages_Model
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
+		$this->load->library('bw_messages');
 		$this->load->model('order_model');
 		$this->load->model('items_model');
 		$this->load->model('accounts_model');
@@ -13,19 +41,36 @@ class Orders extends CI_Controller {
 		$this->load->model('messages_model');
 	}
 	
-	// Buyer, view their orders
+	/**
+	 * Browse Purchases
+	 * User Role: Buyer
+	 * URI: /order/list
+	 * 
+	 * @access	public
+	 * @see		Models/Order_Model
+	 * @see		Models/Escrow_Model
+	 * @see		Models/Items_Model
+	 * @see		Libraries/Form_Validation
+	 * 
+	 * @return	void
+	 * @param
+	 */
 	public function list_purchases($status = NULL) {
 		$this->load->library('form_validation');		
 	
+		// Check if we are Proceeding an order, or Recounting it.
 		$place_order = $this->input->post('place_order');
 		$recount = $this->input->post('recount');
 		if(is_array($place_order) || is_array($recount)) {
-			$id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount); 
-			$id = $id[0];
+			// Load the ID of the order.
+			$id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount); $id = $id[0];
+			
+			// If the order cannot be loaded (progress == 0), redirect to Purchases page.
 			$current_order = $this->order_model->load_order($id, array('0'));
 			if($current_order == FALSE)
 				redirect('order/list');
 
+			// Loop through items in order, and update each.
 			$list = $this->input->post('quantity');
 			foreach($list as $hash => $quantity) {
 				$item_info = $this->items_model->get($hash);
@@ -35,10 +80,12 @@ class Orders extends CI_Controller {
 					$this->order_model->update_items($current_order['id'], $update, 'force');
 				}
 			}
-			if(is_array($place_order))
-				redirect('order/place/'.$current_order['id']);
+			// If the order is being placed, redirect to there.
+			$url = (is_array($place_order)) ? 'order/place/;'.$current_order['id'] : 'order/list';
+			redirect($url);
 		}
 		
+		// If cancelling an order..
 		$cancel_order = $this->input->post('cancel');
 		if(is_array($cancel_order)) {
 			$id = array_keys($cancel_order); $id = $id[0];
@@ -46,8 +93,10 @@ class Orders extends CI_Controller {
 			
 			if($current_order == FALSE) 	redirect('order/list');
 			
+			// If the refund goes through, and cancelling it works:
 			if(	$this->escrow_model->pay($current_order['id'], 'buyer') == TRUE &&
 				$this->order_model->cancel($current_order['id']) == TRUE ){
+					
 				// Send message to vendor
 				$data['from'] = $this->current_user->user_id;
 				$details = array('username' => $get['vendor']['user_name'],
@@ -57,7 +106,8 @@ class Orders extends CI_Controller {
 					$details['message'] .= "{$get['items'][$i]['quantity']} x {$get['items'][$i]['name']}<br />\n";
 				}
 				$details['message'] .= "<br />Total price: {$get['currency']['symbol']}{$get['price']}";
-			 
+				
+				// Prepare the input.
 				$message = $this->bw_messages->prepare_input($data, $details);
 				$message['order_id'] = $get['id'];
 				$this->messages_model->send($message);
@@ -66,9 +116,13 @@ class Orders extends CI_Controller {
 			}
 		}
 
+		// If an order is being finalized.
 		$finalize_order = $this->input->post('finalize');
 		if(is_array($finalize_order)) {
+			// Get the ID of the order.
 			$id = array_keys($finalize_order); $id = $id[0];
+			
+			// Order may be at progress==2, or 4. Action accordingly.
 			$current_order = $this->order_model->load_order($id, array('2'));
 			$success = FALSE;
 			// Forcing finalize early.
@@ -81,6 +135,7 @@ class Orders extends CI_Controller {
 
 			if($success == FALSE){
 				$current_order = $this->order_model->load_order($id, array('4'));
+				
 				// Item has been dispatched - either finalized already, or is in escrow and must be paid.
 				if(	($current_order['finalized'] == '0' && $this->escrow_model->pay($current_order['id'], 'vendor') == TRUE) ||
 					$current_order['finalized'] == '1'){
@@ -89,6 +144,7 @@ class Orders extends CI_Controller {
 				}
 			}
 			
+			// If the script has been successful finalizing, send a message to the vendor.
 			if($success == TRUE) {
 				$data['from'] = $this->current_user->user_id;
 				$details = array('username' => $current_order['vendor']['user_name'],
@@ -102,6 +158,7 @@ class Orders extends CI_Controller {
 			redirect('order/list');
 		}
 		
+		// Load information about orders.
 		$data['orders'] = $this->order_model->my_purchases(); 
 		$data['balance'] = $this->bitcoin_model->current_balance();
 		$data['escrow_balance'] = $this->escrow_model->balance();		
@@ -111,28 +168,42 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	// Vendor, orders.
+	/**
+	 * Load Orders
+	 * User Role: Vendor
+	 * URI: /orders
+	 * 
+	 * @access	public
+	 * @see		Models/Messages_Model
+	 * @see		Libraries/Bw_Messages
+	 * 
+	 * @return	void
+	 * @param
+	 */
 	public function list_orders($status = NULL) {
 		if($status == 'update')
 			$data['returnMessage'] = "Order has been updated.";
 			
 		$this->load->library('form_validation');
-		
+
+		// If an order is being dispatched..
 		$dispatch = $this->input->post('dispatch');
 		if(is_array($dispatch)) {
 			foreach($dispatch as $id => $order) {
 				if(!is_numeric($id)) break;
 				
+				// May have progress==1 or 3. Action accordingly.
 				$successful = FALSE;
 				$get = $this->order_model->load_order($id, array('1'));
-				
-				if($get !== FALSE && $get['progress'] == '1') {					// Confirm an item is dispatched.
+				if($get !== FALSE && $get['progress'] == '1') {	
+					// Confirm an item is dispatched after Finalize Early.
 					if($this->order_model->progress_order($id, '1', '4') == TRUE) {
 						$successful = TRUE;
 						$buyer = $get['buyer']['user_name'];
 					}
 				}
 				
+				// Code hasn't run successfully yet, try progress=3.
 				if(!isset($buyer)){
 					$get = $this->order_model->load_order($id, array('3'));					
 					if($get !== FALSE && $get['progress'] == '3') {
@@ -158,11 +229,13 @@ class Orders extends CI_Controller {
 			redirect('orders');
 		}
 		
+		// If requesting a user to finalize early..
 		$finalize_early = $this->input->post('finalize_early');
 		if(is_array($finalize_early)) {
 			foreach($finalize_early as $id => $order){
 				$get = $this->order_model->load_order($id, array('1'));
 				if($get !== FALSE){
+					// If the order exists, progress it.
 					if($this->order_model->progress_order($id, '1', '2') == TRUE) {
 							
 						// Send message to vendor
@@ -194,7 +267,7 @@ class Orders extends CI_Controller {
 		
 		// Load info for display..
 		$data['local_currency'] = $this->current_user->currency;	
-		$data['balance'] = $this->bitcoin_model->current_balance();
+		$data['balance'] = $this->bitcoin_model->current_balance(); //Maybe not needed?
 		$data['escrow_balance'] = $this->escrow_model->balance();		
 
 		$data['page'] = 'orders/list_orders';

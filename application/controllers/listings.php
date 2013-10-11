@@ -1,7 +1,28 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Listings Controller
+ *
+ * This class handles management of a vendors listings.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Items
+ * @author		BitWasp
+ * 
+ */
+
 class Listings extends CI_Controller {
 
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see		Models/Items_Model
+	 * @see		Models/Listings_Model
+	 * @see		Models/Currencies_Model
+	 * @see		Libraries/Image
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('items_model');
@@ -10,7 +31,15 @@ class Listings extends CI_Controller {
 		$this->load->library('image');
 	}
 	
-	// Show a users listings
+	/**
+	 * Show all a users listings.
+	 * URI: /listings
+	 * 
+	 * @access	public
+	 * @see		Models/Items_Model
+	 * 
+	 * @return	void
+	 */
 	public function manage() {
 		$data['title'] = 'Manage Listings';
 		$data['page'] = 'listings/manage';
@@ -18,11 +47,22 @@ class Listings extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Edit an item.
+	/**
+	 * Edit a Listing
+	 * URI: /listings/edit/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Items_Model
+	 * @see		Models/Categories_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function edit($item_hash) {
 		$this->load->library('form_validation');
 		$this->load->model('categories_model');
 		
+		// If the listing doesn't exist, or belong to this user, abort.
 		$data['item'] = $this->listings_model->get($item_hash);
 		if($data['item'] == FALSE)
 			redirect('listings');
@@ -59,7 +99,19 @@ class Listings extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Add an item.
+	/**
+	 * Add a Listing
+	 * URI: /listings/add
+	 * 
+	 * @access	public
+	 * @see		Models/Listings_Model
+	 * @see		Models/Images_Model
+	 * @see		Models/Categories_Model
+	 * @see		Models/Currencies_Model
+	 * @see		Libraries/Form_Validation
+	 * 
+	 * @return	void
+	 */
 	public function add() {
 		$this->load->model('categories_model');
 		$this->load->library('form_validation');
@@ -80,13 +132,15 @@ class Listings extends CI_Controller {
 								'price' => $this->input->post('price'),
 								'vendor_hash' => $this->current_user->user_hash		
 						);
+			// Add the listing
 			if($this->listings_model->add($properties) == TRUE) {
+				// Allow the user to add some images.
 				$data['page'] = 'listings/images';
 				$data['title'] = 'Item Created';
 				$data['item'] = $this->listings_model->get($properties['hash']);
 				$data['images'] = $this->images_model->by_item($properties['hash']);
-				// Allow the user to add some images.
 			} else {
+				// Display an error message.
 				$data['returnMessage'] = 'Error adding your item, please try again later.';
 			}
 		}
@@ -98,16 +152,28 @@ class Listings extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Delete an item, along with it's images.
+	/**
+	 * Delete an item along with it's images.
+	 * URI: /listings/delete/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Listings_Model
+	 * @see		Models/Images_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function delete($hash) {
 		$item = $this->listings_model->get($hash);
-		
+
+		// Abort if the listing does not exist.
 		if($item == FALSE) 
 			redirect('listings');
 			
 		// Delete an items images as well.
 		if($this->listings_model->delete($hash) !== FALSE) {
 			if(count($item['images']) > 0){
+				// Delete each image.
 				foreach($item['images'] as $image){
 					$this->images_model->delete_item_img($hash, $image['hash']);
 				}
@@ -116,7 +182,18 @@ class Listings extends CI_Controller {
 		redirect('listings');
 	}
 	
-	// Add images to an item.
+	/**
+	 * Add Image to a Listing
+	 * URI: /listings/edit/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Listings_Model
+	 * @see		Models/Images_Model
+	 * @see		Libraries/Form_Validation
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function images($item_hash) {	
    	 	$data['item']= $this->listings_model->get($item_hash);
    	 	if($data['item'] == FALSE)
@@ -133,13 +210,14 @@ class Listings extends CI_Controller {
 		$data['title'] = 'Item Images';
 		$data['page'] = 'listings/images';
 		
-		//if($this->form_validation->run('add_image') !== FALSE) {
+		// If the Add Image form has been submitted:
 		if($this->input->post('add_image') == 'Create'){
 			
 			if(!$this->upload->do_upload()){
-				
+				// If there is an error with the file, display the errors.
 				$data['returnMessage'] = $this->upload->display_errors();
 			} else {
+				// Process the upload.
 				
 				$upload_data = $this->upload->data();
 				$upload_data['upload_path'] = $config['upload_path'];
@@ -169,7 +247,17 @@ class Listings extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Delete an image and redirect.
+	/**
+	 * Delete a Image from a Listing
+	 * URI: /listings/edit/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Listings_Model
+	 * @see		Models/Images_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function delete_image($image_hash) {
 		$item_hash = $this->images_model->get_item($image_hash);
 		$item_info = $this->listings_model->get($item_hash);
@@ -182,7 +270,17 @@ class Listings extends CI_Controller {
 		redirect('listings/images/'.$item_hash);
 	}
 	
-	// Update the main image and redirect.
+	/**
+	 * Add a Listings Main Image, and redirect.
+	 * URI: /listings/main_image/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Listings_Model
+	 * @see		Models/Images_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function main_image($image_hash) {
 		$item_hash = $this->images_model->get_item($image_hash);
 		$item = $this->listings_model->get($item_hash);
@@ -194,6 +292,13 @@ class Listings extends CI_Controller {
 	}
 
 	// Callback functions for form validation.
+	
+	/**
+	 * Check the supplied category ID exists.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_category_exists($param) {
 		$this->load->model('categories_model');
 		$categories = $this->categories_model->list_all();
@@ -204,6 +309,12 @@ class Listings extends CI_Controller {
 		return $this->general->matches_any($param, $cat_id);
 	}
 	
+	/**
+	 * Check the supplied currency ID exists.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_currency_exists($param) {
 		$currencies = $this->currencies_model->get();
 		$c_id = array();
@@ -213,6 +324,12 @@ class Listings extends CI_Controller {
 		return $this->general->matches_any($param, $c_id);
 	}
 	
+	/**
+	 * Check the supplied parameter is a positive number.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
 	public function check_price_positive($param) {
 		return ($param > 0) ? TRUE : FALSE;
 	}

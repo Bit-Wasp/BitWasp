@@ -29,6 +29,6 @@
 		  
 		  <div class="form-actions">
 			<input type='submit' value='Update' class='btn btn-primary' />
-			<?php echo anchor('account','Cancel', array('class'=>'returnLink btn'));?>
+			<?php echo anchor('admin/edit/items','Cancel', array('class'=>'returnLink btn'));?>
 		  </div>		  
 		</div>

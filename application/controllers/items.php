@@ -1,13 +1,38 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Items Controller
+ *
+ * This class handles with requests for items.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Items
+ * @author		BitWasp
+ * 
+ */
+
 class Items extends CI_Controller {
 
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @see		Models/Items_Model
+	 */
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('items_model');
 	}
 	
-	// Load all items.
+	/**
+	 * Load all items.
+	 * NOTE: pagination to come soon.
+	 * URI: /items
+	 * 
+	 * @access	public
+	 * @see		Models/Items_Model
+	 */
 	public function index(){				
 		$data['title'] = 'Items';
 		$data['page'] = 'items/index';
@@ -15,7 +40,17 @@ class Items extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Load all items in a category.
+	/**
+	 * Load all items in a category.
+	 * URI: /category/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Items_Model
+	 * @see		Models/Categories_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function category($hash){		
 		$this->load->model('categories_model');
 		
@@ -29,7 +64,16 @@ class Items extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Load a specific item.
+	/**
+	 * Load a specific item
+	 * URI: /item/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Items_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */	
 	public function get($hash) {
 		$data['item'] = $this->items_model->get($hash);
 		if($data['item'] == FALSE) 
@@ -43,3 +87,4 @@ class Items extends CI_Controller {
 	}
 };
 
+/* End of File: Items.php */

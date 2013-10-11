@@ -46,7 +46,7 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Load the General Information Panel.
-	 *
+	 * URI: /admin
 	 * @see 	Libraries/GPG
 	 * @see 	Libraries/Bw_Config
 	 * @return	void
@@ -66,7 +66,8 @@ class Admin extends CI_Controller {
 
 	/**
 	 * Edit General Settings.
-	 *
+	 * URI: /admin/edit
+	 * 
 	 * @see 	Libraries/GPG
 	 * @see		Libraries/Form_Validation
 	 * @see 	Libraries/Bw_Config
@@ -95,8 +96,9 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Load the Logs Information Panel.
-	 *
-	 * @see 	Librarie/Bw_Config
+	 * URI: /admin/logs
+	 * 
+	 * @see 	Libraries/Bw_Config
 	 * @return	void
 	 */
 	public function logs() {
@@ -116,7 +118,8 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Edit the settings regarding how long different information is kept.
-	 *
+	 * URI: /admin/edit/logs
+	 * 
 	 * @see 	Libraries/Bw_Config
 	 * @return	void
 	 */
@@ -132,10 +135,10 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-
 	/**
 	 * Load the Bitcoin Information Panel.
-	 *
+	 * URI: /admin/bitcoin
+	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Models/Bitcoin_Model
 	 * @return	void
@@ -156,7 +159,8 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Edit the Bitcoin Settings.
-	 *
+	 * URI: /admin/edit/bitcoin
+	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Libraries/Bw_Config
 	 * @see		Libraries/Form_Validation
@@ -216,7 +220,8 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Load the Users Information Panel.
-	 *
+	 * URI: /admin/users
+	 * 
 	 * @see		Libraries/Bw_Config
 	 * @see		Libraries/Form_Validation
 	 * @return	void
@@ -233,7 +238,8 @@ class Admin extends CI_Controller {
 
 	/**
 	 * Edit the User Settings.
-	 *
+	 * URI: /admin/edit/users
+	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Libraries/Bw_Config
 	 * @see		Libraries/Form_Validation
@@ -269,7 +275,8 @@ class Admin extends CI_Controller {
 	}
 	/**
 	 * Load the Items Information Panel.
-	 *
+	 * URI: /admin/items
+	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Libraries/Bw_Config
 	 * @see 	Models/Categories_Model
@@ -285,7 +292,8 @@ class Admin extends CI_Controller {
 	}
 	/**
 	 * Edit the Items Settings.
-	 *
+	 * URI: /admin/edit/items
+	 * 
 	 * @see 	Models/Categories_Model
 	 * @see		Libraries/Bw_Config
 	 * @see		Libraries/Form_Validation
@@ -342,7 +350,9 @@ class Admin extends CI_Controller {
 
 	/**
 	 * Edit the Items Settings.
-	 *
+	 * URI: /admin/category/orphans/$hash
+	 * 
+	 * @param	string
 	 * @see 	Models/Categories_Model
 	 * @see		Libraries/Form_Validation
 	 * @return	void
@@ -394,7 +404,8 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Manage User Invite Tokens.
-	 *
+	 * URI: /admin/tokens
+	 * 
 	 * @see 	Models/Users_Model
 	 * @see		Libraries/Form_Validation
 	 * @see		Libraries/General
@@ -432,7 +443,8 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Delete a User Token
-	 *
+	 * URI: /admin/tokens/delete/$token
+	 * 
 	 * @see 	Models/Users_Model
 	 * @param	string
 	 * @return	void
@@ -464,7 +476,9 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Delete an Item, sending the vendor an explanation.
-	 *
+	 * URI: /admin/delete_item/$hash
+	 * 
+	 * @param	string
 	 * @see 	Models/Messages_Model
 	 * @see		Models/Items_Model
 	 * @see		Libraries/Form_Validation
@@ -503,7 +517,16 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-
+	/**
+	 * Alter a users ban toggle.
+	 * URI: /admin/ban_user/$hash
+	 * 
+	 * @param	string
+	 * @see 	Models/Messages_Model
+	 * @see		Models/Items_Model
+	 * @see		Libraries/Form_Validation
+	 * @return	void
+	 */	
 	public function ban_user($hash) {
 		$this->load->library('form_validation');
 		$this->load->model('accounts_model');

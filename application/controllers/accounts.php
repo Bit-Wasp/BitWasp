@@ -46,7 +46,7 @@ class Accounts extends CI_Controller {
 	
 	/**
 	 * View own user profile
-	 * URI: /use
+	 * URI: /account
 	 *
 	 * @access	public
 	 * @return	void
@@ -63,7 +63,8 @@ class Accounts extends CI_Controller {
 
 	/**
 	 * Edit own account settings
-	 *
+	 * URI: /account/edit
+	 * 
 	 * @access	public
 	 * @see 	Models/Accounts_model
 	 * @see 	Models/Currencies_model
@@ -123,7 +124,8 @@ class Accounts extends CI_Controller {
 	
 	/**
 	 * Delete PGP key from account.
-	 *
+	 * URI: /pgp/delete
+	 * 
 	 * @access	public 
 	 * @see 	Libraries/Form_Validation
 	 * @see 	Libraries/GPG
@@ -161,7 +163,8 @@ class Accounts extends CI_Controller {
 
 	/**
 	 * Replace current PGP key. 
-	 *
+	 * URI: /pgp/replace
+	 * 
 	 * @access	public
 	 * @see 	Libraries/Gpg
 	 * @see 	Libraries/GPG::import()
@@ -207,7 +210,8 @@ class Accounts extends CI_Controller {
 	
 	/**
 	 * Add a PGP key to account.
-	 *
+	 * URI: /pgp/add
+	 * 
 	 * @see 	Libraries/GPG
 	 * @see		Libraries/Form_Validation
 	 * @param	string
