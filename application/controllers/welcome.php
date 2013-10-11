@@ -2,7 +2,6 @@
 
 class Welcome extends CI_Controller {
 
-
 	public function index()
 	{
 		$data['page'] = 'welcome_message';
