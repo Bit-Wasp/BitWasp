@@ -53,9 +53,8 @@ class Orders extends CI_Controller {
 	 * @see		Libraries/Form_Validation
 	 * 
 	 * @return	void
-	 * @param
 	 */
-	public function list_purchases($status = NULL) {
+	public function list_purchases() {
 		$this->load->library('form_validation');		
 	
 		// Check if we are Proceeding an order, or Recounting it.
@@ -174,11 +173,13 @@ class Orders extends CI_Controller {
 	 * URI: /orders
 	 * 
 	 * @access	public
-	 * @see		Models/Messages_Model
+	 * @see 	Libraries/Form_Validation
+	 * @see		Models/Order_Model
 	 * @see		Libraries/Bw_Messages
+	 * @
 	 * 
+	 * @param	string or null
 	 * @return	void
-	 * @param
 	 */
 	public function list_orders($status = NULL) {
 		if($status == 'update')
@@ -275,7 +276,19 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	// Buyer, add an item to the order
+	/**
+	 * Purchase an item/add item to order.
+	 * User Role: Buyer
+	 * URI: /order/$item_hash
+	 * 
+	 * @access	public
+	 * @see		Models/Items_Model
+	 * @see		Models/Order_Model
+	 * @see		Models/Bitcoin_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
 	public function purchase_item($item_hash) {	
 		$this->load->library('form_validation');
 		$item_info = $this->items_model->get($item_hash);
@@ -318,69 +331,24 @@ class Orders extends CI_Controller {
 		
 	}
 
-	// Buyer, submit order.
-	public function place($id) {
-		$this->load->library('form_validation');
-		$this->load->model('bitcoin_model');
-	
-		$data['order'] = $this->order_model->load_order($id, array('0'));
-		if($data['order'] == FALSE)
-			redirect('order/list');
-		
-		$balance = $this->bitcoin_model->current_balance();
-		
-		$data['title'] = 'Place Order #'.$data['order']['id'];
-		$data['page'] = 'orders/place';
-		$data['header_meta'] = $this->load->view('orders/encryption_header', NULL, true);
-		
-		if($this->form_validation->run('order_place') == TRUE) {
-
-			if($balance < $data['order']['price']) {
-				$data['returnMessage'] = 'You have insufficient funds to place this order. Please top up and try again';
-			} else {
-				$escrow = array('order_id' => $data['order']['id'],
-								'buyer_id' => $this->current_user->user_id,
-								'vendor_id' => $data['order']['vendor']['id'],
-								'buyer_hash' => $this->current_user->user_hash,
-								'amount' => $data['order']['price']);			
-				
-				if($this->escrow_model->add($escrow) == FALSE) {
-					$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
-				} else {
-					if($this->order_model->progress_order($data['order']['id'], '0') == FALSE){
-						$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
-					} else {
-					
-						// Send message to vendor
-						$info['from'] = $this->current_user->user_id;
-						$details = array('username' => $data['order']['vendor']['user_name'],
-										 'subject' => "New Order #{$data['order']['id']} from ".$this->current_user->user_name);
-						$details['message'] = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
-						for($i = 0; $i < count($data['order']['items']); $i++){
-							$details['message'] .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
-						}
-						$details['message'] .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\n";
-						$details['message'] .= "Buyer Address: <br />\n".$this->input->post('buyer_address');
-					 
-						$message = $this->bw_messages->prepare_input($info, $details);
-						$message['order_id'] = $data['order']['id'];
-						$this->messages_model->send($message);
-					
-						$data['success'] = TRUE;
-						$data['returnMessage'] = 'Your order has been placed. Funds have been added to escrow pending a response from your vendor.';
-						$data['page'] = 'orders/purchases';
-						$data['title'] = 'My Purchases';
-					}
-				}
-			}
-		} 			
-		$data['orders'] = $this->order_model->my_purchases();
-		$data['escrow_balance'] = $this->escrow_model->balance();		
-		$data['local_currency'] = $this->current_user->currency;
-		$this->load->library('Layout', $data);
-	}
-	
+	/**
+	 * Raise a Dispute over an order.
+	 * User Role: Buyer/Vendor
+	 * URI: /order/dispute/$id or orders/dispute/$id
+	 * 
+	 * @access	public
+	 * @see		Models/Order_Model
+	 * @see		Models/Escrow_Model
+	 * @see		Models/Messages_Model
+	 * @see		Models/Items_Model
+	 * @see		Libraries/Form_Validation
+	 * @see		Libraries/Bw_Messages
+	 * 
+	 * @param	int
+	 * @return	void
+	 */
 	public function dispute($id) {
+		// Abort if order is not currently disputable.
 		$current_order = $this->order_model->load_order($id, array('4','2'));
 		if($current_order == FALSE)
 			redirect('order/list');
