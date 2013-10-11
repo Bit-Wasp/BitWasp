@@ -16,12 +16,46 @@ class General_model extends CI_Model {
 			return FALSE;
 		}
 	}
+
+	// Get new, stale users.
+	public function get_stale_users($threshold) {
+		$this->db->where('login_time <', $threshold);
+		$this->db->where('banned !=', '1');
+		$query = $this->db->get('users');
+		if($query->num_rows() > 0){
+			$array = $query->result_array();
+			$results = array();
+			foreach($array as $user){
+				if($user['login_time'] == '0') {
+					if($user['register_time'] < $threshold)
+						array_push($results, $user);
+				} else {
+					array_push($results, $user);
+				}
+			}
+			return $results;
+		}
+		return FALSE;
+	}
+
+	// Return rows which have a timestamp of less than what is supplied
+	public function rows_before_time($table, $time) {
+		$this->db->where("time <", "$time");
+		$query = $this->db->get($table);
+		return ($query->num_rows() > 0) ? $query->result_array() : FALSE ;
+	}
+	
+	public function drop_id($table, $id) {
+		$this->db->where('id', "$id");
+		return ($this->db->delete($table) == TRUE) ? TRUE : FALSE ;
+	}
 	
 	// Count the number of entries in a table.
 	public function count_entries($table) {
 		return $this->db->count_all($table);
 	}
 
+	// Count all bitcoin transaction
 	public function count_transactions() {
 		$this->db->select('id');
 		$this->db->where('address !=', '[payment]');
@@ -33,7 +67,7 @@ class General_model extends CI_Model {
 		$this->db->select('id');
 		$this->db->where('address', '[payment]');
 		$query = $this->db->get('pending_txns');
-		return $query->num_rows();
+		return $query->num_rows()/2;
 	}
 
 	public function count_unread_messages() {
@@ -56,10 +90,7 @@ class General_model extends CI_Model {
 	// Load ID and country names.
 	public function locations_list() {
 		$query = $this->db->get('country_codes');
-		if($query->num_rows() > 0) 
-			return $query->result_array();
-			
-		return array();
+		return ($query->num_rows() > 0) ? $query->result_array() : array(); 
 	}
 	
 	// Load location name by id. 

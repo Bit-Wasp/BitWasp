@@ -1,5 +1,6 @@
 <?php
 $lang['check_valid_currency'] = 'You must select a valid currency.';
+$lang['is_positive'] = '%s must be a positive number.';
 $lang['check_price_positive'] = 'You must enter a positive number for the price';
 $lang['check_check_admin_roles'] = 'You must select a valid user role.';
 $lang['check_bitcoin_address'] = "You must enter a valid base58 address.";

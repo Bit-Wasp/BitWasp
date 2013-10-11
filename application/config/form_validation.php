@@ -269,6 +269,10 @@ $config = array('register_form'=>array(
 										array('field' => 'encrypt_private_messages',
 											  'label' => '',
 											  'rules' => 'callback_check_bool'
+										),
+										array('field' => 'ban_after_inactivity',
+											  'label' => 'Ban interval',
+											  'rules' => 'numeric|max_length[3]|callback_is_positive'
 										)
 							),
 				'admin_edit_bitcoin' => array(

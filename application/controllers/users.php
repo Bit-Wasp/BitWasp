@@ -10,19 +10,18 @@ class Users extends CI_Controller {
 	}
 
 	// Destroy the session and redirect to login.
-	public function logout(){
+	public function logout() {
 		$this->bw_session->destroy();
 		redirect('login');
 	}
 	
 	// Login.
-	public function login(){
+	public function login() {
 
 		$this->load->helper(array('form'));
 		$this->load->library('form_validation');
 	
-		if ($this->form_validation->run('login_form') == FALSE){
-			
+		if ($this->form_validation->run('login_form') == FALSE) {
 			$data['title'] = 'Login';
 			$data['page'] = 'users/login';
 			$data['action_page'] = 'login';
@@ -76,7 +75,7 @@ class Users extends CI_Controller {
 	}
 	
 	// Process user registration.
-	public function register($token = NULL){
+	public function register($token = NULL) {
 
 		// If registration is disabled, and no token is set, direct to the login page.
 		if($this->bw_config->registration_allowed == FALSE && $token == NULL)
@@ -114,12 +113,7 @@ class Users extends CI_Controller {
 			$data['captcha'] = $this->bw_captcha->generate();
 			
 		} else {
-			if($token == NULL){
-				$role = $this->general->role_from_id($this->input->post('user_type'));
-			} else {
-				// $token_info must be set according to token.
-				$role = $data['token_info']['user_type']['str'];
-			}	
+			$role = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['str'];
 			
 			// Generate the users salt and encrypted password.
 			$salt = $this->general->generate_salt();

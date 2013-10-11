@@ -24,5 +24,20 @@ class Config_model extends CI_Model {
 			$this->db->update('config', array($key => $update));
 		}
 	}
-		
+
+	public function load_autorun_intervals() {
+		$query = $this->db->get('purge_intervals');
+		return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
+	}
+	
+	public function set_autorun_updated($index) {
+		$this->db->where('index', $index);
+		return ($this->db->update('purge_intervals', array('last_update' => time()))) ? TRUE : FALSE ;
+	}
+	
+	public function set_autorun_interval($index, $interval) {
+		$this->db->where('index', $index);
+		return ($this->db->update('purge_intervals', array('interval' => "$interval"))) ? TRUE : FALSE ;
+	}	
+	
 };

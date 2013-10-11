@@ -17,7 +17,8 @@ class Bw_config {
 		if($config == FALSE)
 			die('Error, BitWasp configuration notfound.');
 		
-		$config = $this->CI->general->expect_keys('site_description, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
+		$config = $this->CI->general->expect_keys('site_description, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
+		$config = $this->CI->general->expect_keys('site_description, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
 		foreach($config as $key => $value) {
 			$this->$key = $value;
 		}
@@ -51,9 +52,13 @@ class Bw_config {
 							'encrypt_private_messages' => $this->encrypt_private_messages,
 							'force_vendor_pgp' => $this->force_vendor_pgp,
 							'login_timeout' => $this->login_timeout/60,
-							'captcha_length' => $this->captcha_length);
+							'captcha_length' => $this->captcha_length,
+							'ban_after_inactivity' => $this->ban_after_inactivity);
 		} else if($panel == 'items') {
 			$result = array();
+		} else if($panel == 'logs') {
+			$result = array('ban_after_inactivity' => $this->ban_after_inactivity,
+							'price_index' => $this->price_index);
 		}
 		
 		return $result;

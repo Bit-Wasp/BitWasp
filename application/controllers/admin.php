@@ -20,7 +20,10 @@ class Admin extends CI_Controller {
 													'heading' => 'Items Panel'),
 							'users' => 		array(	'panel' => '/users',
 													'title' => 'Users',
-													'heading' => 'User Panel')
+													'heading' => 'User Panel'),
+							'logs' => 		array(	'panel' => '/logs',
+													'title' => 'Logs',
+													'heading' => 'Logs Panel')
 						);
 	}
 	
@@ -56,6 +59,34 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
+	public function logs() {
+		$data['page'] = 'admin/logs';
+		$data['title'] = $this->nav['logs']['heading'];
+
+		$data['transaction_count'] = $this->general_model->count_transactions();
+		$data['order_count'] = $this->general_model->count_orders();
+		$data['messages_count'] = $this->general_model->count_entries('messages');
+
+		$data['intervals'] = $this->config_model->load_autorun_intervals();
+		$data['config'] = $this->bw_config->load_admin('logs');
+		$data['nav'] = $this->generate_nav();
+		
+		$this->load->library('Layout', $data);
+	}
+	
+	public function edit_logs() {
+		$this->load->library('form_validation');
+		$data['page'] = 'admin/edit_logs';
+		$data['title'] = $this->nav['logs']['heading'];
+
+		$data['intervals'] = $this->config_model->load_autorun_intervals();
+		$data['config'] = $this->bw_config->load_admin('logs');
+		$data['nav'] = $this->generate_nav();
+		
+		$this->load->library('Layout', $data);
+	}
+
+	
 	public function bitcoin() {
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');
@@ -82,7 +113,17 @@ class Admin extends CI_Controller {
 			if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
 				$update = array('price_index' => $this->input->post('price_index'));
 				$this->config_model->update($update);
-				$this->bw_bitcoin->ratenotify();
+				if($this->input->post('price_index') !== 'Disabled'){
+					
+					// If the price index was previously disabled, set the auto-run script interval back up..
+					if($data['price_index'] == 'Disabled')
+						$this->config_model->set_autorun_interval('price_index', '0.1666');
+						
+					$this->bw_bitcoin->ratenotify();
+				} else {
+					// When disabling BPI updates, set the interval to 0.
+					$this->config_model->set_autorun_interval('price_index', '0');
+				}
 				redirect('admin/bitcoin');
 			}
 		}
@@ -108,7 +149,7 @@ class Admin extends CI_Controller {
 		$data['nav'] = $this->generate_nav();
 		$data['user_count'] = $this->general_model->count_entries('users');
 		$data['config'] = $this->bw_config->load_admin('users');
-		
+
 		$data['page'] = 'admin/users';
 		$data['title'] = $this->nav['users']['heading'];
 		$this->load->library('Layout', $data);
@@ -125,6 +166,10 @@ class Admin extends CI_Controller {
 			$changes['registration_allowed'] = ($this->input->post('registration_allowed') !== $data['config']['registration_allowed']) ? $this->input->post('registration_allowed'): NULL;
 			$changes['vendor_registration_allowed'] = ($this->input->post('vendor_registration_allowed') !== $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
 			$changes['encrypt_private_messages'] = ($this->input->post('encrypt_private_messages') !== $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_message'): NULL;
+			$changes['ban_after_inactivity'] = ($this->input->post('ban_after_inactivity') !== $data['config']['ban_after_inactivity']) ? $this->input->post('ban_after_inactivity') : NULL ;			
+			if($this->input->post('ban_after_inactivity_disable') == '1')
+				$changes['ban_after_inactivity'] = '0';
+			
 			$changes = array_filter($changes, 'strlen');
 		
 			// Update config
@@ -382,18 +427,12 @@ class Admin extends CI_Controller {
 	
 	// Callback to check the captcha length is not too long.
 	public function check_captcha_length($param) {
-		if($param < 13) 
-			return TRUE;
-			
-		return FALSE;
+		return ($param > 0 && $param < 13) ? TRUE : FALSE;
 	}
 
 	// Callback functions for form validation.
 	public function check_bool($param) {
-		if($this->general->matches_any($param, array('0','1')))
-			return TRUE;
-		
-		return FALSE;
+		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
 	}
 
 	// Callback; check the required category exists (for parent_id)
@@ -401,20 +440,12 @@ class Admin extends CI_Controller {
 		if($param == '0')	// Allows the category to be a root category.
 			return TRUE;
 			
-		$category = $this->categories_model->get(array('id' => $param));
-		if($category !== FALSE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 	
 	// Callback, check if the category can be deleted.
 	public function check_can_delete_category($param) {
-		$category =$this->categories_model->get(array('id' => $param));
-		if($category !== FALSE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 	
 	// Callback: check the specified bitcoin account already exists.
@@ -423,17 +454,17 @@ class Admin extends CI_Controller {
 			return FALSE;
 			
 		$accounts = $this->bw_bitcoin->listaccounts(0);
-		if(isset($accounts[$param]))
-			return TRUE;
-
-		return FALSE;
+		return (isset($accounts[$param])) ? TRUE : FALSE;
 	}
 	
 	// Check the submitted parameter is either 1, 2, or 3.
 	public function check_admin_roles($param){
-		if($this->general->matches_any($param, array('1','2','3')))
-			return TRUE;
-		return FALSE;
+		return ($this->general->matches_any($param, array('1','2','3')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	public function is_positive($param) {
+		return ($param > 0) ? TRUE : FALSE;
+		
 	}
 };
 

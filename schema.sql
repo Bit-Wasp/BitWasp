@@ -99,6 +99,7 @@ CREATE TABLE IF NOT EXISTS `bw_config` (
   `captcha_length` int(11) NOT NULL,
   `allow_guests` enum('0','1') NOT NULL,
   `price_index` varchar(30) NOT NULL DEFAULT '',
+  `ban_after_inactivity` int(11) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
