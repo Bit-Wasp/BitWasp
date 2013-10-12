@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 	if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Currencies Model
@@ -14,6 +14,13 @@
 
 class Currencies_model extends CI_Model {
 
+	/**
+	 * Constructor
+	 *
+	 * @see		Libraries/Bw_Config
+	 * @access	public
+	 * @return	void
+	 */		
 	public function __construct() { 
 		parent::__construct();
 		$this->load->library('bw_config');
@@ -22,7 +29,8 @@ class Currencies_model extends CI_Model {
 	/**
 	 * Get
 	 * 
-	 * Load all currencies, or a specified one by $id.
+	 * Load a specific currency if the $id parameter is set as an argument.
+	 * If not, then load all catgories.
 	 *
 	 * @access	public
 	 * @param	int
@@ -38,6 +46,7 @@ class Currencies_model extends CI_Model {
 			$query = $this->db->get_where('currencies', array('id' => "$id"));
 		}
 		
+		$results = array();
 		if($query->num_rows() > 0){
 			if($id == NULL)
 				return $query->result_array();
@@ -53,7 +62,9 @@ class Currencies_model extends CI_Model {
 	/**
 	 * Get all Exchange Rates
 	 * 
-	 * Load the latest set of exchange rates.
+	 * Load the latest set of exchange rates from the exchange_rates table.
+	 * Formats the timestamp into a nicer looking format. Returns an array
+	 * on a successful run, otherwise, returns FALSE.
 	 *
 	 * @access	public
 	 * @return	bool
@@ -68,9 +79,9 @@ class Currencies_model extends CI_Model {
 			$row = $query->row_array();
 			$row['time_f'] = $this->general->format_time($row['time']);
 			
-			$result = array('bpi' => array('usd' => $this->get_exchange_rate('usd'),
-											'eur' => $this->get_exchange_rate('eur'),
-											'gbp' => $this->get_exchange_rate('gbp')),
+			$result = array('bpi' => array('usd' => $row['usd'],
+											'eur' => $row['eur'],
+											'gbp' => $row['gbp']),
 							'time' => $row['time'],
 							'time_f' => $this->general->format_time($row['time']));
 			return $result;
@@ -81,11 +92,12 @@ class Currencies_model extends CI_Model {
 	/**
 	 * Get Exchange Rate
 	 * 
-	 * Load the rate of a specific currency.
+	 * Load the rate of a specific currency. If the entry exists, return
+	 * the rate. Otherwise return FALSE.
 	 *
 	 * @access	public
 	 * @param	string
-	 * @return	bool
+	 * @return	int / FALSE
 	 */					
 	public function get_exchange_rate($code) {
 		$this->db->order_by('id desc');
@@ -102,7 +114,8 @@ class Currencies_model extends CI_Model {
 	/**
 	 * Update Exchange Rates
 	 * 
-	 * Insert a new row of information about exchange rates.
+	 * Insert a new row of information about exchange rates. Returns TRUE 
+	 * if the insert was successful, FALSE if it failed.
 	 *
 	 * @access	public
 	 * @param	array

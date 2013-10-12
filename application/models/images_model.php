@@ -1,12 +1,40 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Images Model
+ *
+ * This class handles the database queries relating to images.
+ * 
+ * @package		BitWasp
+ * @subpackage	Models
+ * @category	Images
+ * @author		BitWasp
+ * 
+ */
+ 
 class Images_model extends CI_Model {
-	
+
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @return	void
+	 */			
 	public function __construct() {
 		parent::__construct();
 	}
 	
-	// Load an images information.
+	/**
+	 * Get
+	 * 
+	 * Load an image, identified by the $image_hash. If the record is found,
+	 * then return the row of information. If not, and once the requested
+	 * $image_hash !== 'default', try loading the 'default' image hash instead.
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	array / FALSE
+	 */					
 	public function get($image_hash) {
 		$this->db->select('hash, encoded, height, width');
 		$this->db->where('hash', $image_hash);
@@ -14,21 +42,32 @@ class Images_model extends CI_Model {
 		if($query->num_rows() > 0)
 			return $query->row_array();
 		
-		if($image_hash !== 'default') 
-			return $this->get('default');
-			
-		return FALSE;
+		return ($image_hash !== 'default') : $this->get('default'); FALSE;
 	}
 	
-	// List an items images using the item hash.
+	/**
+	 * By Item
+	 *
+	 * Selects all image records associated with an item. If records are 
+	 * found, we call $this->get() on each result to load further data about
+	 * the image. Results are compiled into an array, no images causes 
+	 * an empty array to be returned.
+	 * 
+	 * @access	public
+	 * @param	int
+	 * @return	array
+	 */					
 	public function by_item($item_hash) {
 		$this->db->select('image_hash');
 		$this->db->where('item_hash', $item_hash);
 		$query = $this->db->get('item_images');
+		
 		if($query->num_rows() > 0) {
 			$results = array();
 			foreach($query->result_array() as $row) {
-				array_push($results, $this->get($row['image_hash']));
+				$tmp = $this->get($row['image_hash']);
+				if($tmp !== FALSE)
+					array_push($results, $tmp);
 			}
 		} else {
 			$results = array();
@@ -36,18 +75,40 @@ class Images_model extends CI_Model {
 		return $results;
 	}
 	
-	// Add an encoded image to the images table.
+	/**
+	 * Add
+	 * 
+	 * Add an encoded image to the images table. Specified by $file_name,
+	 * we load a base64 encoded version of the image, and enter it into the 
+	 * table, along with the $image_hash. Returns TRUE if the record added
+	 * successfully, and FALSE on failure.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @param	string
+	 * @return	bool
+	 */					
 	public function add($image_hash, $file_name) {
 		$insert = array('hash' => $image_hash,
-						'encoded' => $this->image->encode($file_name));	
-						
-		if($this->db->insert('images', $insert) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+						'encoded' => $this->image->encode($file_name));							
+		return ($this->db->insert('images', $insert) == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Add to an item, as well as to the images table.
+	/**
+	 * Add to Item
+	 * 
+	 * Add's the base64 encoded image to the database as with Images_Model\Add(),
+	 *  and then records a link between the image and the item (by adding 
+	 * a record to item_images). If the $main_image indicator is set to true, 
+	 * then this $image_hash will be set as the main image for $item_hash.
+	 *
+	 * @access	public
+	 * @param	string
+	 * @param	string
+	 * @param	string
+	 * @param	bool
+	 * @return	bool
+	 */					
 	public function add_to_item($image_hash, $file_name, $item_hash, $main_image = FALSE) {
 		$insert = $this->add($image_hash, $file_name);
 			
@@ -66,7 +127,17 @@ class Images_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Return an item_hash for an image's hash.
+	/**
+	 * Get Item
+	 * 
+	 * Search for the the $item_hash coresponding to an $image_hash. 
+	 * Returns the item_hash string if the record is found, and FALSE 
+	 * if the specified image does not exist.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	array / FALSE
+	 */					
 	public function get_item($image_hash) {
 		$this->db->select('item_hash')
 				 ->where('image_hash', $image_hash);
@@ -78,17 +149,35 @@ class Images_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Update the main_image of an item.
+	/**
+	 * Main Image
+	 * 
+	 * Updates the item record identified by $item_hash, to set the items
+	 * main image as $image_hash. Returns TRUE if successful, false if unsuccessful.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	array / FALSE
+	 */					
 	public function main_image($item_hash, $image_hash) {
 		$update = array('main_image' => $image_hash);
 		$this->db->where('hash', $item_hash);
-		if($this->db->update('items', $update) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->update('items', $update) == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Delete an items image. Handles removing the main_image.
+	/**
+	 * Delete Item Image
+	 * 
+	 * Deletes an image from an item. The function will check if it just 
+	 * deleted the main_image for the item, in which case it will either 
+	 * take the first image from the items images and use that, or revert
+	 * to the default image. Removes related thumbnail/large images. Returns
+	 * TRUE on success, and FALSE on failure.
+	 *
+	 * @access	public
+	 * @param	int
+	 * @return	array / FALSE
+	 */					
 	public function delete_item_img($item_hash, $image_hash) {
 		// Delete link
 		$this->db->where('image_hash', $image_hash);

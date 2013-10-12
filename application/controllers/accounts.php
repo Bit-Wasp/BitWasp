@@ -26,6 +26,12 @@ class Accounts extends CI_Controller {
 	 * View a users profile
 	 * URI: /user/$hash
 	 * 
+	 * Users can load a public profile of other users. If the 
+	 * Accounts_Model\get() returns FALSE, the requested account does not 
+	 * exist, and the user is redirected to the homepage. Otherwise,
+	 * the specified view is loaded into the Layout class.
+	 * 
+	 * 
 	 * @access	public
 	 * @param	string
 	 * @return	void
@@ -47,6 +53,11 @@ class Accounts extends CI_Controller {
 	/**
 	 * View own user profile
 	 * URI: /account
+	 * A user can view their own account settings. Accounts_Model\get is called
+	 * but this time, an additional option is set to confirm it's the 
+	 * users own account, and additional info besides the norm should be
+	 * loaded from the database. The data is then sent to the Layout class 
+	 * to be displayed.
 	 *
 	 * @access	public
 	 * @return	void
@@ -60,10 +71,24 @@ class Accounts extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-
 	/**
 	 * Edit own account settings
 	 * URI: /account/edit
+	 * 
+	 * Users can alter their account settings. They may choose to alter
+	 * their local currency, their current location, whether their login
+	 * activity is displayed, (and their PGP fingerprint if they have it,
+	 * along with options for Two-Factor Auth and Forced PGP Messages).
+	 * Users may be forced to replace their PGP key, instead of delete it.
+	 * This is done in the view by using $data['option_replace_pgp'] = TRUE.
+	 * 
+	 * Different Form_Validation rules are chosen based on whether the
+	 * user has a PGP key currently set up on their account. Once past
+	 * form validation, we compare POSTed values to what we have in the
+	 * database, filter unchanged entries, and update if there is anything
+	 * to update.
+	 * 
+	 * Redirect on success, or display an error.
 	 * 
 	 * @access	public
 	 * @see 	Models/Accounts_model
@@ -126,6 +151,11 @@ class Accounts extends CI_Controller {
 	 * Delete PGP key from account.
 	 * URI: /pgp/delete
 	 * 
+	 * User will be redirected if they are forced to replace instead of delete.
+	 * If the user has no PGP key, they will get redirected also. If the
+	 * form validation is successful, delete the PGP key. Even if we didn't
+	 * delete the key, redirect the accounts page.
+	 * 
 	 * @access	public 
 	 * @see 	Libraries/Form_Validation
 	 * @see 	Libraries/GPG
@@ -165,6 +195,13 @@ class Accounts extends CI_Controller {
 	 * Replace current PGP key. 
 	 * URI: /pgp/replace
 	 * 
+	 * Sometimes called instead of pgp/delete (as the user might be forced
+	 * to have a PGP key at all times). The new key is imported using the GPG\import
+	 * function. This function strips out the PGP key from the input, and performs
+	 * HTMlentities on the remaining key if it passes validation. 
+	 * If replacing the key is successful, redirect, otherwise display
+	 * an error.
+	 * 
 	 * @access	public
 	 * @see 	Libraries/Gpg
 	 * @see 	Libraries/GPG::import()
@@ -185,16 +222,14 @@ class Accounts extends CI_Controller {
 			$import = $this->gpg->import($public_key);
 			
 			if($import !== FALSE) {
+			
+				$config = array('fingerprint' => $import['fingerprint'],
+								'public_key' => $import['clean_key']);				
+				
 				// If the import is successful, delete the current key and add the new one.
-				if($this->accounts_model->delete_pgp_key($this->current_user->user_id) == TRUE) {
-					$config = array('user_id' => $this->current_user->user_id,
-									'fingerprint' => $import['fingerprint'],
-									'public_key' => $import['clean_key']);
-									
-					if($this->accounts_model->add_pgp_key($config) == TRUE) {
-						redirect('account');
-					}
-				}
+				if($this->accounts_model->replace_pgp_key($data['user']['id'], $config) == TRUE) 
+					redirect('account');
+					
 				// If the user has not been redirected, display an error message.
 				$data['returnMessage'] = 'An error occured, please try again.';
 			} else {
@@ -211,6 +246,14 @@ class Accounts extends CI_Controller {
 	/**
 	 * Add a PGP key to account.
 	 * URI: /pgp/add
+	 * 
+	 * If a user is forced to keep their PGP key, they can only replace it.
+	 * They will be redirected to the Replace PGP Key form. If they already 
+	 * have a PGP key, then we redirect them to the account information page.
+	 * 
+	 * If form validation goes through, the GPG\import function checks
+	 * the key is valid. If so, the key is inserted, and the user redirected.
+	 * On failure, an error message is displayed.
 	 * 
 	 * @see 	Libraries/GPG
 	 * @see		Libraries/Form_Validation
@@ -254,6 +297,11 @@ class Accounts extends CI_Controller {
 	/**
 	 * Check if the parameter is for a boolean.
 	 *
+	 * In HTML forms when setting something as enabled or disabled, the radio
+	 * button will be either '0' or '1'. Check if the value contains either
+	 * of these. Return TRUE if the parameter matches one, return FALSE
+	 * on failure.
+	 * 
 	 * @see 	Libraries/Form_Validation
 	 * @param	int
 	 * @return	bool
@@ -265,6 +313,10 @@ class Accounts extends CI_Controller {
 	/**
 	 * Check that the specified location ID exists.
 	 *
+	 * Locations are selected on HTML forms and submitted as the ID. 
+	 * If the submitted parameter does not contain a valid location ID, 
+	 * return FALSE. Return TRUE if it contains a valid location ID.
+	 * 
 	 * @see 	Libraries/Form_Validation
 	 * @param	int
 	 * @return	bool
@@ -275,6 +327,10 @@ class Accounts extends CI_Controller {
 		
 	/**
 	 * Check that the specified currency ID exists.
+	 * 
+	 * Currencies are chosen on HTML forms by specifying their currency ID.
+	 * This function attempts to load the specified currency. If successful
+	 * it returns TRUE, return FALSE on failure.
 	 *
 	 * @see 	Libraries/Form_Validation
 	 * @see 	Models/Currencies_Model

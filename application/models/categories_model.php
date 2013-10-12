@@ -1,7 +1,24 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Currencies Model
+ *
+ * This class handles handles database queries regarding currencies.
+ * 
+ * @package		BitWasp
+ * @subpackage	Controllers
+ * @category	Currencies
+ * @author		BitWasp
+ * 
+ */
 class Categories_model extends CI_Model {
 
+	/**
+	 * Constructor
+	 *
+	 * @access	public
+	 * @return	void
+	 */		
 	public function __construct() { 
 		parent::__construct();
 		
@@ -10,10 +27,12 @@ class Categories_model extends CI_Model {
 	/**
 	 * Add
 	 * 
-	 * Add a category to the table.
-	 *	$category = array(	'name' => '...',
+	 * Add a category to the table, as outlined below.
+	 * $category = array(	'name' => '...',
 	 *						'hash' => '...'),
 	 *						'parent_id' => '...');
+	 * The category must contain these parameters, otherwise the insert will fail. 
+	 * Returns a boolean TRUE on successful insert, else returns FALSE.
 	 *
 	 * @access	public
 	 * @param	array
@@ -26,7 +45,8 @@ class Categories_model extends CI_Model {
 	/**
 	 * Rename
 	 * 
-	 * Rename $category_id to $new_name
+	 * Change the name for the category record, $category_id, to $new_name.
+	 * Returns TRUE if update was successful, or FALSE if failure.
 	 *
 	 * @access	public
 	 * @param	int
@@ -41,7 +61,8 @@ class Categories_model extends CI_Model {
 	/**
 	 * Delete
 	 * 
-	 * Delete a category as specified by the ID.
+	 * Delete a category as specified by the category's ID. Returns TRUE if the record 
+	 * was successfully deleted, FALSE on failure. 
 	 *
 	 * @access	public
 	 * @param	int
@@ -55,7 +76,10 @@ class Categories_model extends CI_Model {
 	/**
 	 * Get
 	 * 
-	 * Loads a category based on $cat['id'] or ['hash']
+	 * Loads a category based on $cat['id'] or $cat['hash']. Returns FALSE
+	 * if neither of these is set. If there are records specified by this
+	 * identifier, work out the number of items in the cateogry. If there
+	 * are no records, default to FALSE.
 	 *
 	 * @access	public
 	 * @param	array
@@ -87,7 +111,8 @@ class Categories_model extends CI_Model {
 	/**
 	 * List All
 	 * 
-	 * List all categories in a general list.
+	 * List all categories in a general list. Returns FALSE if there are 
+	 * no categories in the table. Returns an array if there are records.
 	 *
 	 * @access	public
 	 * @param	int
@@ -103,7 +128,8 @@ class Categories_model extends CI_Model {
 	/**
 	 * Get Children
 	 * 
-	 * Load the direct children of the specified parent ID.
+	 * Load the direct children of the specified parent ID. Also load the
+	 * number of child categories for that parent.
 	 *
 	 * @access	public
 	 * @param	int
@@ -121,7 +147,8 @@ class Categories_model extends CI_Model {
 	 * 
 	 * Update Items Category
 	 * 
-	 * Move items from one category ID to another.
+	 * Move items from one category ID to another. Returns TRUE if it
+	 * was successful, otherwise it returns FALSE.
 	 *
 	 * @access	public
 	 * @param	int
@@ -136,7 +163,9 @@ class Categories_model extends CI_Model {
 	/**
 	 * Update Parent Category
 	 * 
-	 * Move categorys with the parent category of $current_id to category $new_id.
+	 * Move categorys with the parent category of $current_id to category
+	 * $new_id. Returns TRUE if the parent category of $current_id was 
+	 * successfully updated to $new_id. Returns FALSE if unsuccessful.
 	 *
 	 * @access	public
 	 * @param	int
@@ -151,7 +180,9 @@ class Categories_model extends CI_Model {
 	/**
 	 * Menu
 	 * 
-	 * Prepare categories in a multidimensional array.
+	 * Prepare categories in a multidimensional array. Load results, and 
+	 * and loop through them to build up information. Build the array, adding
+	 * on menu children, and unset any loose children from the very first level. 
 	 * 
 	 * @access	public
 	 * @return	array
