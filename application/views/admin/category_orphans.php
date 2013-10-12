@@ -6,8 +6,7 @@
 		  <?php echo form_open('admin/category/orphans/'.$category['hash'], array('class' => 'form-horizontal') ); ?>
 		  
 		  <div class="row-fluid">
-			<div class="span1"></div>
-			<div class="span2">New Category</div>
+			<div class="span2 offset1">New Category</div>
 			<div class="span4">
 			  <select name='category_id'>
 			    <?php // Filter children of the category to be deleted, and the category itself, from the displayed list.

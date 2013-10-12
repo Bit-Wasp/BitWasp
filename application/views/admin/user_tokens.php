@@ -9,13 +9,11 @@
 			<?php echo form_open("admin/tokens", array("class" => "form-horizontal")); ?>  
 			
 			  <div class="row-fluid">
-				<div class="span2"></div>
-				<div class="span3"><b>Create a Registration Invite</b></div>
+				<div class="span3 offset2"><b>Create a Registration Invite</b></div>
 			  </div>
 			
 			  <div class="row-fluid">
-			    <div class="span1"></div>
-			    <div class="span2">User Role</div>
+			    <div class="span2 offset1">User Role</div>
 			    <div class="span4">
 				  <select name="user_role">
 				    <option value=""></option>
@@ -33,8 +31,7 @@
 			  </div>
 			  
 			  <div class="row-fluid">
-				<div class="span3"></div>
-				<div class="span4">This note will not be shown to the user.</div>
+				<div class="span5 offset3">This note will not be shown to the user.</div>
 			  </div>
 			
 			  <div class="row-fluid">

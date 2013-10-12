@@ -36,53 +36,14 @@ class Config_model extends CI_Model {
 	 * @return	void
 	 */				
 	public function update($records) {
+		$success = TRUE;
 		foreach($records as $key => $update){
 			$this->db->where('id', '1');
-			$this->db->update('config', array($key => $update));
+			if($this->db->update('config', array($key => $update)) !== TRUE)
+				$success = FALSE;
 		}
+		return $success;
 	}
 
-	/**
-	 * Load Autorun Intervals
-	 * 
-	 * Load the intervals/information for each recurring task.
-	 *
-	 * @access	public
-	 * @param	int
-	 * @return	bool
-	 */				
-	public function load_autorun_intervals() {
-		$query = $this->db->get('purge_intervals');
-		return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
-	}
-	
-	/**
-	 * Set Autorun Updated
-	 * 
-	 * Update the last_update entry for the task.
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	bool
-	 */					
-	public function set_autorun_updated($index) {
-		$this->db->where('index', $index);
-		return ($this->db->update('purge_intervals', array('last_update' => time()))) ? TRUE : FALSE ;
-	}
-	
-	/**
-	 * Set Autorun Interval
-	 * 
-	 * Set the interval for a particular job.
-	 *
-	 * @access	public
-	 * @param	string
-	 * @param	int
-	 * @return	bool
-	 */				
-	public function set_autorun_interval($index, $interval) {
-		$this->db->where('index', $index);
-		return ($this->db->update('purge_intervals', array('interval' => "$interval"))) ? TRUE : FALSE ;
-	}	
 	
 };

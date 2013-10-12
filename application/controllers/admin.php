@@ -37,9 +37,9 @@ class Admin extends CI_Controller {
 							'users' => 		array(	'panel' => '/users',
 													'title' => 'Users',
 													'heading' => 'User Panel'),
-							'logs' => 		array(	'panel' => '/logs',
-													'title' => 'Logs',
-													'heading' => 'Logs Panel')
+							'autorun' => 	array(	'panel' => '/autorun',
+													'title' => 'Autorun',
+													'heading' => 'Autorun Panel')
 						);
 	}
 	
@@ -95,8 +95,8 @@ class Admin extends CI_Controller {
 			$changes['allow_guests'] = ($this->input->post('allow_guests') !== $data['config']['allow_guests']) ? $this->input->post('allow_guests') : NULL;
 			$changes = array_filter($changes, 'strlen');
 	
-			$this->config_model->update($changes);
-			redirect('admin');			
+			if($this->config_model->update($changes) == TRUE)
+				redirect('admin');			
 		}
 		$data['page'] = 'admin/edit_';
 		$data['title'] = $this->nav['']['heading'];
@@ -106,24 +106,26 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Load the Logs Information Panel.
-	 * URI: /admin/logs
+	 * URI: /admin/autorun
 	 * 
 	 * User is shown the amount of transcations, order's, and messages on
 	 * record. 
 	 * 
 	 * @see 	Libraries/Bw_Config
+	 * @see		Models/Autorun_Model
 	 * @return	void
 	 */
-	public function logs() {
-		$data['page'] = 'admin/logs';
-		$data['title'] = $this->nav['logs']['heading'];
+	public function autorun() {
+		$this->load->model('autorun_model');
+		$data['page'] = 'admin/autorun';
+		$data['title'] = $this->nav['autorun']['heading'];
 
 		$data['transaction_count'] = $this->general_model->count_transactions();
 		$data['order_count'] = $this->general_model->count_orders();
 		$data['messages_count'] = $this->general_model->count_entries('messages');
 
-		$data['intervals'] = $this->config_model->load_autorun_intervals();
-		$data['config'] = $this->bw_config->load_admin('logs');
+		$data['jobs'] = $this->autorun_model->load_all();
+		$data['config'] = $this->bw_config->load_admin('autorun');
 		$data['nav'] = $this->generate_nav();
 		
 		$this->load->library('Layout', $data);
@@ -131,20 +133,36 @@ class Admin extends CI_Controller {
 	
 	/**
 	 * Edit the settings regarding how long different information is kept.
-	 * URI: /admin/edit/logs
+	 * URI: /admin/edit/autorun
 	 * 
 	 * Need to add the form!
 	 * 
 	 * @see 	Libraries/Bw_Config
+	 * @see		Models/Autorun_Model
 	 * @return	void
 	 */
-	 public function edit_logs() {
+	 public function edit_autorun() {
 		$this->load->library('form_validation');
-		$data['page'] = 'admin/edit_logs';
-		$data['title'] = $this->nav['logs']['heading'];
+		$this->load->model('autorun_model');
+		
+		$data['page'] = 'admin/edit_autorun';
+		$data['title'] = $this->nav['autorun']['heading'];
+		$data['jobs'] = $this->autorun_model->load_all();
+		
+		if($this->form_validation->run('admin_edit_autorun') == TRUE){
+			$jobs = $this->input->post('jobs');
+			$update = FALSE;
+			foreach($jobs as $index => $interval){
+				if(isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval){
+					if($this->autorun_model->set_interval($index, $interval) == TRUE)
+						$update = TRUE;
+				}
+			}
+			if($update)
+				redirect('admin/autorun');
+		}
 
-		$data['intervals'] = $this->config_model->load_autorun_intervals();
-		$data['config'] = $this->bw_config->load_admin('logs');
+		$data['config'] = $this->bw_config->load_admin('autorun');
 		$data['nav'] = $this->generate_nav();
 		
 		$this->load->library('Layout', $data);
@@ -166,6 +184,7 @@ class Admin extends CI_Controller {
 	public function bitcoin() {
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');
+		$data['config'] = $this->bw_config->load_admin('bitcoin');
 		$data['latest_block'] = $this->bitcoin_model->latest_block();
 		$data['transaction_count'] = $this->general_model->count_transactions();
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
@@ -202,33 +221,47 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');
+		$this->load->model('autorun_model');
+		
 		$data['config'] = $this->bw_config->load_admin('bitcoin');
 		$data['price_index'] = $this->bw_config->price_index;
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		
-		// 
-		if($this->input->post('update_price_index') == 'Update') {
-			// Check if the selection exists.
-			if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
-				
-				$update = array('price_index' => $this->input->post('price_index'));
-				$this->config_model->update($update);
-				
-				if($this->input->post('price_index') !== 'Disabled'){
-					
-					// If the price index was previously disabled, set the auto-run script interval back up..
-					if($data['price_index'] == 'Disabled')
-						$this->config_model->set_autorun_interval('price_index', '0.166666');
+		if($this->input->post('submit_edit_bitcoin') == 'Update') {
+			
+			$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_transactions_after') : NULL ;						
+			
+			// If we're disabling auto-deleting transactions, set that.
+			if($this->input->post('delete_transactions_after_disabled') == '1') 		$changes['delete_transactions_after'] = "0";
 						
-					// And request new exchange rates.
-					$this->bw_bitcoin->ratenotify();
-				} else {
-					// When disabling BPI updates, set the interval to 0.
-					$this->config_model->set_autorun_interval('price_index', '0');
+			
+			// Check if the selection exists.
+			if($data['config']['price_index'] !== $this->input->post('price_index')){
+				if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
+				
+					$update = array('price_index' => $this->input->post('price_index'));
+					$this->config_model->update($update);
+					
+					if($this->input->post('price_index') !== 'Disabled'){		
+						// If the price index was previously disabled, set the auto-run script interval back up..
+						if($data['price_index'] == 'Disabled')
+							$this->config_model->set_autorun_interval('price_index', '0.166666');
+							
+						// And request new exchange rates.
+						$this->bw_bitcoin->ratenotify();
+					} else {
+						// When disabling BPI updates, set the interval to 0.
+						$this->config_model->set_autorun_interval('price_index', '0');
+					}
+					// Redirect when complete.
+					redirect('admin/bitcoin');
 				}
-				// Redirect when complete.
-				redirect('admin/bitcoin');
 			}
+			
+			$changes = array_filter($changes, 'strlen');
+	
+			if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+				redirect('admin/bitcoin');	
 		}
 		
 		// If the bitcoin transfer form has been completed:
@@ -297,23 +330,29 @@ class Admin extends CI_Controller {
 		
 		if($this->form_validation->run('admin_edit_users') == TRUE) {
 			// Determine what changes, if any, to make. 
-			$changes['login_timeout'] = ($this->input->post('login_timeout') !== $data['config']['login_timeout']) ? $this->input->post('login_timeout') : NULL;
-			$changes['captcha_length'] = ($this->input->post('captcha_length') !== $data['config']['captcha_length']) ? $this->input->post('captcha_length') : NULL;
-			$changes['registration_allowed'] = ($this->input->post('registration_allowed') !== $data['config']['registration_allowed']) ? $this->input->post('registration_allowed'): NULL;
-			$changes['vendor_registration_allowed'] = ($this->input->post('vendor_registration_allowed') !== $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
+			$changes['login_timeout'] = ((int)$this->input->post('login_timeout') !== $data['config']['login_timeout']) ? $this->input->post('login_timeout') : NULL;
+			$changes['captcha_length'] = ((int)$this->input->post('captcha_length') !== $data['config']['captcha_length']) ? $this->input->post('captcha_length') : NULL;
+			$changes['registration_allowed'] = ((int)$this->input->post('registration_allowed') !== $data['config']['registration_allowed']) ? $this->input->post('registration_allowed'): NULL;
+			$changes['vendor_registration_allowed'] = ((int)$this->input->post('vendor_registration_allowed') !== $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
 			$changes['encrypt_private_messages'] = ($this->input->post('encrypt_private_messages') !== $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_message'): NULL;
 			$changes['ban_after_inactivity'] = ($this->input->post('ban_after_inactivity') !== $data['config']['ban_after_inactivity']) ? $this->input->post('ban_after_inactivity') : NULL ;			
-			// If we're disabling banning users after inactivity, set that.
-			if($this->input->post('ban_after_inactivity_disable') == '1')
-				$changes['ban_after_inactivity'] = '0';
+			$changes['delete_messages_after'] = ($this->input->post('delete_messages_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_messages_after') : NULL ;			
+			
+			// If we're disabling auto-banning users after inactivity, set that.
+			if($this->input->post('ban_after_inactivity_disabled') == '1') 		$changes['ban_after_inactivity'] = "0";
+
+			// If we're disabling auto-clearing of user messages.
+			if($this->input->post('delete_messages_after_disabled') == '1')		$changes['delete_messages_after'] = "0";				
 			
 			$changes = array_filter($changes, 'strlen');
-		
+
 			// Update config
-			$this->config_model->update($changes);
-			redirect('admin/users');
+			if($this->config_model->update($changes) == TRUE)
+				redirect('admin/users');
 		} 
 		
+		
+		$data['config'] = $this->bw_config->load_admin('users');
 		$data['page'] = 'admin/edit_users';
 		$data['title'] = $this->nav['users']['heading'];
 		$this->load->library('Layout', $data);
@@ -321,8 +360,6 @@ class Admin extends CI_Controller {
 	/**
 	 * Load the Items Information Panel.
 	 * URI: /admin/items
-	 * 
-	 * 
 	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Libraries/Bw_Config
@@ -398,8 +435,17 @@ class Admin extends CI_Controller {
 	}
 
 	/**
-	 * Edit the Items Settings.
+	 * Fix orphan categories/items.
 	 * URI: /admin/category/orphans/$hash
+	 * 
+	 * If a category is to be deleted, where the result would orphan
+	 * any items or categories, they need to be looked after. Calculate
+	 * what we have to say to the user. If there's nothing to do for this
+	 * category then redirect away from this form. 
+	 * 
+	 * If the form is submitted correctly, then update the records.
+	 * Finally, if the category is successfully removed, return TRUE,
+	 * otherwise return FALSE on failure.
 	 * 
 	 * @param	string
 	 * @see 	Models/Categories_Model
@@ -704,6 +750,16 @@ class Admin extends CI_Controller {
 	 */
 	public function check_admin_roles($param){
 		return ($this->general->matches_any($param, array('1','2','3')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check the submitted parameter is a valid interval for an autorun job.
+	 *
+	 * @param	int
+	 * @return	bool
+	 */
+	public function check_autorun_interval($param){
+		return ($param >= '0') ? TRUE : FALSE;
 	}
 	
 	/**

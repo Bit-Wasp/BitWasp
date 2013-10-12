@@ -272,8 +272,12 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'ban_after_inactivity',
 											  'label' => 'Ban interval',
-											  'rules' => 'numeric|max_length[3]|callback_is_positive'
-										)
+											  'rules' => 'numeric|max_length[3]|callback_check_autorun_interval'
+										),
+										array('field' => 'delete_messages_after',
+											  'label' => 'Message-delete interval',
+											  'rules' => 'numeric|max_length[3]|callback_check_autorun_interval'
+										)										
 							),
 				'admin_edit_bitcoin' => array(
 										array('field' => '',
@@ -351,6 +355,12 @@ $config = array('register_form'=>array(
 										array('field' => 'ban_user',
 											  'label' => '',
 											  'rules' => 'callback_check_bool'
+										)
+							),
+				'admin_edit_autorun' => array(
+										array('field' => 'jobs[]',
+											  'label' => 'Intervals',
+											  'rules' => 'numeric|callback_check_autorun_interval'
 										)
 							),
 				'order_dispute' => array(

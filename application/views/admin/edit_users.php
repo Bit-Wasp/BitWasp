@@ -36,7 +36,7 @@
 		      <span class="help-inline offset2"><?php echo form_error('vendor_registration_allowed'); ?></span>
 			
 			  <div class="row-fluid">
-			    <div class="span3">Encrypt Private Message's?</div>
+			    <div class="span3">Encrypt Private Message's?</div>/
 			    <div class="span7">
                   <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='0' <?php echo ($config['encrypt_private_messages'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
                   <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='1' <?php echo ($config['encrypt_private_messages'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
@@ -57,10 +57,20 @@
 				<div class="span3">Ban After Inactivity</div>
 				<div class="span7">
 				  <label class="inline"><input type='text' class='span2' name='ban_after_inactivity' value='<?php echo $config['ban_after_inactivity']; ?>' /> days</label>
-				  <label class="inline"><input type='checkbox' name='ban_after_inactivity_disabled' <?php echo ($config['ban_after_inactivity'] == '0') ? 'checked ' : NULL; ?>	/> Disabled</label>
+				  <label class="inline"><input type='checkbox' name='ban_after_inactivity_disabled' <?php echo ($config['ban_after_inactivity'] == '0') ? 'checked ' : NULL; ?>	value='1' /> Disabled</label>
 				</div>
 			  </div>
 			  <span class="help-inline offset2"><?php echo form_error('ban_after_inactivity'); ?></span>
+
+			  <div class="row-fluid">
+				<div class="span3">Delete Messages After</div>
+				<div class="span7">
+				  <label class="inline"><input type='text' class='span2' name='delete_messages_after' value='<?php echo $config['delete_messages_after']; ?>' /> days</label>
+				  <label class="inline"><input type='checkbox' name='delete_messages_after_disabled' <?php echo ($config['delete_messages_after'] == '0') ? 'checked ' : NULL; ?> value='1' /> Disabled</label>
+				</div>
+			  </div>
+			  <span class="help-inline offset2"><?php echo form_error('delete_messages_after'); ?></span>
+			
 			
               <div class="form-actions">
 		        <input type='submit' value='Update' class='btn btn-primary' />

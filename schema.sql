@@ -491,7 +491,7 @@ CREATE TABLE IF NOT EXISTS `bw_item_images` (
   `image_hash` varchar(20) NOT NULL,
   `item_hash` varchar(29) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=70 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -511,7 +511,7 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
   `order_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Stores encrypted/plaintext messages.' AUTO_INCREMENT=172 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Stores encrypted/plaintext messages.' ;
 
 -- --------------------------------------------------------
 
@@ -530,7 +530,7 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
   `vendor_hash` varchar(20) NOT NULL,
   `finalized` enum('0','1') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 

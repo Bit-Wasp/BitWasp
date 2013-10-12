@@ -17,8 +17,7 @@ class Bw_config {
 		if($config == FALSE)
 			die('Error, BitWasp configuration notfound.');
 		
-		$config = $this->CI->general->expect_keys('site_description, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
-		$config = $this->CI->general->expect_keys('site_description, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
+		$config = $this->CI->general->expect_keys('site_description, delete_messages_after, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
 		foreach($config as $key => $value) {
 			$this->$key = $value;
 		}
@@ -45,7 +44,8 @@ class Bw_config {
 							'allow_guests' => $this->allow_guests);
 		} else if($panel == 'bitcoin') {
 			$result = array('price_index' => $this->price_index,
-							'price_index_config' => $this->price_index_config);
+							'price_index_config' => $this->price_index_config,
+							'delete_transactions_after' => $this->delete_transactions_after);
 		} else if($panel == 'users') {
 			$result = array('registration_allowed' => $this->registration_allowed,
 							'vendor_registration_allowed' => $this->vendor_registration_allowed,
@@ -53,11 +53,14 @@ class Bw_config {
 							'force_vendor_pgp' => $this->force_vendor_pgp,
 							'login_timeout' => $this->login_timeout/60,
 							'captcha_length' => $this->captcha_length,
-							'ban_after_inactivity' => $this->ban_after_inactivity);
+							'ban_after_inactivity' => $this->ban_after_inactivity,
+							'delete_messages_after' => $this->delete_messages_after);
 		} else if($panel == 'items') {
 			$result = array();
-		} else if($panel == 'logs') {
+		} else if($panel == 'autorun') {
 			$result = array('ban_after_inactivity' => $this->ban_after_inactivity,
+							'delete_messages_after' => $this->delete_messages_after,
+							'delete_transactions_after' => $this->delete_transactions_after,
 							'price_index' => $this->price_index);
 		}
 		

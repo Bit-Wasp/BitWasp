@@ -12,6 +12,11 @@
 			  <span class="span3">Transactions Processed</span>
 			  <span class="span7"><?php echo $transaction_count; ?></span>
 			</div>
+		
+			<div class="row-fluid">
+			  <span class="span3">Delete Transactions After</span>
+			  <span class="span7"><?php echo ($config['delete_transactions_after'] == '0') ? 'Disabled' : $config['delete_transactions_after'].' days'; ?></span>
+			</div>
 			
 			<div class="row-fluid">
 			  <span class="span3">Use A Bitcoin Price Index?</span>
