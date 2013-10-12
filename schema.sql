@@ -31,13 +31,19 @@ CREATE TABLE IF NOT EXISTS `bw_addresses` (
   `user_hash` varchar(20) NOT NULL,
   `bitcoin_address` varchar(35) NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=146 ;
+
+CREATE TABLE IF NOT EXISTS `bw_autorun` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `name` varchar(40) NOT NULL,
+  `interval` varchar(8) NOT NULL,
+  `interval_type` varchar(10) NOT NULL,
+  `last_update` varchar(20) NOT NULL,
+  `description` varchar(200) NOT NULL,
+  `index` varchar(40) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `index` (`index`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_blocks`
---
 
 CREATE TABLE IF NOT EXISTS `bw_blocks` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -47,12 +53,6 @@ CREATE TABLE IF NOT EXISTS `bw_blocks` (
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_captchas`
---
-
 CREATE TABLE IF NOT EXISTS `bw_captchas` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `key` varchar(16) NOT NULL,
@@ -60,13 +60,7 @@ CREATE TABLE IF NOT EXISTS `bw_captchas` (
   `time` int(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_categories`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
 
 CREATE TABLE IF NOT EXISTS `bw_categories` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -76,13 +70,7 @@ CREATE TABLE IF NOT EXISTS `bw_categories` (
   `parent_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_config`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
 
 CREATE TABLE IF NOT EXISTS `bw_config` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -99,13 +87,14 @@ CREATE TABLE IF NOT EXISTS `bw_config` (
   `captcha_length` int(11) NOT NULL,
   `allow_guests` enum('0','1') NOT NULL,
   `price_index` varchar(30) NOT NULL DEFAULT '',
-  `ban_after_inactivity` int(11) DEFAULT 0,
+  `ban_after_inactivity` int(4) NOT NULL,
+  `delete_messages_after` int(4) NOT NULL DEFAULT '100' COMMENT 'Number of days to store messages in the database.`',  
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 
 INSERT INTO `bw_config` (`id`, `openssl_keysize`, `site_description`, `site_title`, `login_timeout`, `base_url`, `index_page`, `registration_allowed`, `vendor_registration_allowed`, `encrypt_private_messages`, `force_vendor_pgp`, `captcha_length`, `allow_guests`, `price_index`) VALUES
-(1, '2048', 'open source bitcoin marketplace', 'BitWasp', 30, '', '', '1', '1', '1', '1', 2, '0', 'CoinDesk');
+(1, '2048', 'open source bitcoin marketplace', 'Bit Merchant', 30, '', '', '1', '1', '1', '1', 2, '0', 'CoinDesk', 50, 0);
 
 -- --------------------------------------------------------
 
@@ -376,18 +365,11 @@ CREATE TABLE IF NOT EXISTS `bw_currencies` (
   `code` varchar(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 INSERT INTO `bw_currencies` (`id`, `name`, `symbol`, `code`) VALUES
 (0, 'Bitcoin', 'BTC', 'BTC'),
 (1, 'United States Dollar', '&#36;', 'USD'),
 (2, 'British Pound Sterling', '&pound;', 'GBP'),
 (3, 'Euro', '&euro;', 'EUR');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_disputes`
---
 
 CREATE TABLE IF NOT EXISTS `bw_disputes` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -397,13 +379,7 @@ CREATE TABLE IF NOT EXISTS `bw_disputes` (
   `last_update` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `order_id` (`order_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_escrow`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_escrow` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -415,7 +391,7 @@ CREATE TABLE IF NOT EXISTS `bw_escrow` (
   `dispute_message` text NOT NULL,
   `dispute_by_id` int(9) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -430,9 +406,8 @@ CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
   `eur` decimal(10,4) NOT NULL,
   `gbp` decimal(10,4) NOT NULL,
   `btc` int(11) NOT NULL DEFAULT '1',
-  `price_index` varchar(50),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 
 INSERT INTO `bw_exchange_rates` (`id`, `time`, `usd`, `eur`, `gbp`, `btc`) VALUES
@@ -478,7 +453,7 @@ CREATE TABLE IF NOT EXISTS `bw_items` (
   `hidden` enum('0','1') NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=42 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 -- --------------------------------------------------------
 
@@ -545,7 +520,7 @@ CREATE TABLE IF NOT EXISTS `bw_page_authorization` (
   `timeout` int(3) NOT NULL,
   `system` enum('0','1') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 
 INSERT INTO `bw_page_authorization` (`id`, `URI`, `auth_level`, `timeout`, `system`) VALUES
@@ -563,16 +538,7 @@ INSERT INTO `bw_page_authorization` (`id`, `URI`, `auth_level`, `timeout`, `syst
 (12, 'items', 'login', 0, ''),
 (13, 'order', 'buyer', 0, '0'),
 (14, 'orders', 'vendor', 0, '1'),
-(15, '', 'login', 0, '1'),
-(16, 'category', 'login', 0, '1');
-
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_pending_txns`
---
+(15, '', 'login', 0, '');
 
 CREATE TABLE IF NOT EXISTS `bw_pending_txns` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -585,13 +551,7 @@ CREATE TABLE IF NOT EXISTS `bw_pending_txns` (
   `user_hash` varchar(20) NOT NULL,
   `value` decimal(10,8) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=130 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_pgp_keys`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_pgp_keys` (
   `id` int(9) NOT NULL,
@@ -600,12 +560,6 @@ CREATE TABLE IF NOT EXISTS `bw_pgp_keys` (
   `user_id` int(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_registration_tokens`
---
-
 CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `comment` varchar(100) NOT NULL,
@@ -613,38 +567,25 @@ CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   `token_content` varchar(128) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_two_factor_tokens`
---
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `user_id` int(9) NOT NULL,
   `solution` varchar(128) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bw_users`
---
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_users` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `banned` enum('0','1') DEFAULT '0',
+  `banned` enum('0','1') NOT NULL DEFAULT '0',
   `bitcoin_cashout_address` varchar(40) NOT NULL,
   `bitcoin_topup_address` varchar(40) NOT NULL,
   `bitcoin_balance` decimal(10,8) NOT NULL,
-  `display_login_time` enum('0','1') NOT NULL,  
   `force_pgp_messages` enum('0','1') NOT NULL,
-  `local_currency` int(11) NOT NULL,
   `location` int(3) NOT NULL,
   `login_time` int(20) NOT NULL,
+  `display_login_time` enum('0','1') NOT NULL,
   `password` varchar(128) NOT NULL,
   `public_key` blob NOT NULL,
   `private_key` blob NOT NULL,
@@ -654,6 +595,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `user_hash` varchar(16) NOT NULL,
   `user_name` varchar(40) NOT NULL,
   `user_role` enum('Buyer','Vendor','Admin') NOT NULL,
+  `local_currency` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_hash` (`user_hash`,`user_name`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
@@ -661,4 +603,3 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-

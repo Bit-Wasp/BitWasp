@@ -48,7 +48,7 @@
 			    <div class="span3">Force Vendor PGP?</div>
 			    <div class="span7">
                   <label class="radio inline"><input type="radio" name="force_vendor_pgp" value="0" <?php echo ($config['force_vendor_pgp'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
-                  <label class="radio inline"><input type="radio" name="forve_vendor_pgp" value="1" <?php echo ($config['force_vendor_pgp'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
+                  <label class="radio inline"><input type="radio" name="force_vendor_pgp" value="1" <?php echo ($config['force_vendor_pgp'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
 			    </div>
 			  </div>
 			  <span class="help-inline offset2"><?php echo form_error('force_vendor_pgp'); ?></span>			
