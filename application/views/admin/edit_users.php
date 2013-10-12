@@ -36,7 +36,7 @@
 		      <span class="help-inline offset2"><?php echo form_error('vendor_registration_allowed'); ?></span>
 			
 			  <div class="row-fluid">
-			    <div class="span3">Encrypt Private Message's?</div>/
+			    <div class="span3">Encrypt Private Message's?</div>
 			    <div class="span7">
                   <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='0' <?php echo ($config['encrypt_private_messages'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
                   <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='1' <?php echo ($config['encrypt_private_messages'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
