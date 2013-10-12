@@ -47,6 +47,10 @@ class Admin extends CI_Controller {
 	/**
 	 * Load the General Information Panel.
 	 * URI: /admin
+	 * 
+	 * Load general info about the site, like OpenSSL version, GPG version,
+	 * and other general site settings from the database. Has Admin Nav Bar.
+	 * 
 	 * @see 	Libraries/GPG
 	 * @see 	Libraries/Bw_Config
 	 * @return	void
@@ -67,6 +71,12 @@ class Admin extends CI_Controller {
 	/**
 	 * Edit General Settings.
 	 * URI: /admin/edit
+	 * 
+	 * Compare the POSTed fields with those on record. If there's any
+	 * difference, this will be submitted to the database. If it's the same
+	 * the variable is set to NULL, and filtered using array_filter.
+	 * Changes are commited and the user is redirected to the info panel.
+	 * Has Admin Nav Bar.
 	 * 
 	 * @see 	Libraries/GPG
 	 * @see		Libraries/Form_Validation
@@ -98,6 +108,9 @@ class Admin extends CI_Controller {
 	 * Load the Logs Information Panel.
 	 * URI: /admin/logs
 	 * 
+	 * User is shown the amount of transcations, order's, and messages on
+	 * record. 
+	 * 
 	 * @see 	Libraries/Bw_Config
 	 * @return	void
 	 */
@@ -120,6 +133,8 @@ class Admin extends CI_Controller {
 	 * Edit the settings regarding how long different information is kept.
 	 * URI: /admin/edit/logs
 	 * 
+	 * Need to add the form!
+	 * 
 	 * @see 	Libraries/Bw_Config
 	 * @return	void
 	 */
@@ -138,6 +153,11 @@ class Admin extends CI_Controller {
 	/**
 	 * Load the Bitcoin Information Panel.
 	 * URI: /admin/bitcoin
+	 * 
+	 * This panel displays information about the accounts in the bitcoin
+	 * wallet, the number of transactions processed to date, the source
+	 * of the bitcoin exchange rates, and the latest block.
+	 * Has Admin Nav Bar.
 	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Models/Bitcoin_Model
@@ -161,6 +181,18 @@ class Admin extends CI_Controller {
 	 * Edit the Bitcoin Settings.
 	 * URI: /admin/edit/bitcoin
 	 * 
+	 * If the user submitted the Price Index form, we check for updates.
+	 * If the source specified exists, then update the config setting.
+	 * + If the source was previously disabled, re-setup the periodic updates.
+	 * + Trigger a new update from the new price index.
+	 * If the source is set to disabled, then disable the periodic updates.
+	 * by setting the interval to zero.
+	 * 
+	 * If the user submitted the form to transfer coins, check that the
+	 * sending account has sufficient balance. If so, transfer coins, and
+	 * redirect to Bitcoin Information Page. If not, display an error.
+	 * Has Admin Nav Bar.
+	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Libraries/Bw_Config
 	 * @see		Libraries/Form_Validation
@@ -174,6 +206,7 @@ class Admin extends CI_Controller {
 		$data['price_index'] = $this->bw_config->price_index;
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		
+		// 
 		if($this->input->post('update_price_index') == 'Update') {
 			// Check if the selection exists.
 			if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
@@ -222,6 +255,13 @@ class Admin extends CI_Controller {
 	 * Load the Users Information Panel.
 	 * URI: /admin/users
 	 * 
+	 * Display user count, and global user configuration settings like
+	 * session timeout, the captcha length, whether users can register on 
+	 * the register form, whether vendors may register on the site, whether
+	 * PM's are encrypted using RSA, whether vendors should be forced to 
+	 * have a PGP associated with their account, or how long it takes before
+	 * banning a user due to inactivity.
+	 * 
 	 * @see		Libraries/Bw_Config
 	 * @see		Libraries/Form_Validation
 	 * @return	void
@@ -239,6 +279,11 @@ class Admin extends CI_Controller {
 	/**
 	 * Edit the User Settings.
 	 * URI: /admin/edit/users
+	 * 
+	 * Alter the user settings. Work out which fields are different, and
+	 * set the corresponding $changes[] entry to the POST fields. Unchanged
+	 * entries are set to NULL and filtered. Changes are saved and the user
+	 * redirected back to the User Info Page. Has Admin Nav Bar.
 	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Libraries/Bw_Config
@@ -277,6 +322,8 @@ class Admin extends CI_Controller {
 	 * Load the Items Information Panel.
 	 * URI: /admin/items
 	 * 
+	 * 
+	 * 
 	 * @see 	Libraries/Bw_Bitcoin
 	 * @see		Libraries/Bw_Config
 	 * @see 	Models/Categories_Model
@@ -293,6 +340,8 @@ class Admin extends CI_Controller {
 	/**
 	 * Edit the Items Settings.
 	 * URI: /admin/edit/items
+	 * 
+	 * Edit Item settings. Mainly just add/rename/delete categories.
 	 * 
 	 * @see 	Models/Categories_Model
 	 * @see		Libraries/Bw_Config

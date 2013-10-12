@@ -4,7 +4,7 @@
  * Accounts Management Controller
  *
  * @package		BitWasp
- * @subpackage	Controllers
+ * @subpackage		Controllers
  * @category	Accounts
  * @author		BitWasp
  */
@@ -31,7 +31,6 @@ class Accounts extends CI_Controller {
 	 * exist, and the user is redirected to the homepage. Otherwise,
 	 * the specified view is loaded into the Layout class.
 	 * 
-	 * 
 	 * @access	public
 	 * @param	string
 	 * @return	void
@@ -53,6 +52,7 @@ class Accounts extends CI_Controller {
 	/**
 	 * View own user profile
 	 * URI: /account
+	 * 
 	 * A user can view their own account settings. Accounts_Model\get is called
 	 * but this time, an additional option is set to confirm it's the 
 	 * users own account, and additional info besides the norm should be
@@ -178,9 +178,11 @@ class Accounts extends CI_Controller {
 		
 		if($this->form_validation->run('delete_pgp') === TRUE) {
 			if($this->input->post('delete') == '1') {
+				// If the user has selected to delete their key, delete it and redirect.
 				if($this->accounts_model->delete_pgp_key($data['user']['id']) == TRUE) 
 					redirect('account');
 			} else {
+				// Otherwise, they've chosen not to delete. Redirect.
 				redirect('account');
 			}
 		}
