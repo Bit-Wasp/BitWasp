@@ -106,10 +106,10 @@ class BW_Session {
 		if($this->auth_level == 'login' && $this->CI->current_user->logged_in())
 			return TRUE;
 		
-		if($this->auth_level == 'vendor' && $this->CI->general->matches_any(strtolower($this->user_role), array('vendor', 'admin')))
+		if($this->auth_level == 'vendor' && $this->CI->general->matches_any(strtolower($this->user_role), array('vendor')))
 			return TRUE;
 		
-		if($this->auth_level == 'buyer' && $this->CI->general->matches_any(strtolower($this->user_role), array('buyer', 'admin')))
+		if($this->auth_level == 'buyer' && $this->CI->general->matches_any(strtolower($this->user_role), array('buyer')))
 			return TRUE;
 		
 		if($this->auth_level == 'admin' && $this->user_role == 'Admin')
