@@ -358,6 +358,7 @@ class Admin extends CI_Controller {
 		$data['title'] = $this->nav['users']['heading'];
 		$this->load->library('Layout', $data);
 	}
+	
 	/**
 	 * Load the Items Information Panel.
 	 * URI: /admin/items
