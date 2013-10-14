@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 /**
- * General
+ * General Library
  * 
  * A general library containing miscellaneous functions used throughout
  * the application.

@@ -1,12 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Escrow Controller
+ * Escrow Model
  *
  * This class handles the buyer and vendor side of the order process.
  * 
  * @package		BitWasp
- * @subpackage	Controllers
+ * @subpackage	Models
  * @category	Escrow
  * @author		BitWasp
  * 

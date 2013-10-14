@@ -1,7 +1,12 @@
 <?php
 
-// This class is only here for testing purposes. 
-
+/**
+ * Bitcoin Test Controller
+ * 
+ * This controller is used to test out some bitcoin functions before
+ * adding them to the live code. Also has a blockexplorer feature.
+ */
+ 
 class Bitcoin_Test extends CI_Controller {
 	
 	public function __construct() {

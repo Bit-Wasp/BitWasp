@@ -1,27 +1,48 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 /**
- * GPG
+ * GPG Library
  * 
  * This library handles server side GPG encryption of messages. It is also
  * used to generate challenges for users to perform GPG two step authentication.
  * 
  * @package		BitWasp
- * @subpackage	Controllers
- * @category	Admin
+ * @subpackage	Library
+ * @category	GPG
  * @author		BitWasp
  */
 
 class GPG {
 
+	/**
+	 * GPG
+	 * 
+	 * This variable contains the GPG object once initialized.
+	 */
 	protected $gpg;
 	
+	/**
+	 * Have GPG
+	 * 
+	 * This is used to determine whether the application has access to
+	 * the GPG functions
+	 */
 	public $have_GPG = TRUE;
+	
+	/**
+	 * Stype
+	 * 
+	 * Whether the script should use procedural or object oriented functions.
+	 */
 	public $style;
+	
+	/**
+	 * Version
+	 * 
+	 * Record the GnuPG extensions version here.
+	 */
 	public $version;
 	
-	// Set up the class, by initializing the GnuPG extension. 
-	// Compatible with object-oriented or procedural version.
 	/**
 	 * Construct
 	 * 
@@ -58,8 +79,6 @@ class GPG {
 	}
 	
 	// Import a public key.
-	// A successful import will result in $info['fingerprint'] being set, and != 0.
-	// Unsuccessful will just return FALSE;
 	/**
 	 * Import
 	 * 
@@ -69,6 +88,9 @@ class GPG {
 	 * and we can return an array with a santizied (htmlentities) key 
 	 * and fingerprint.
 	 * Returns FALSE on failure.
+	 * 
+	 * @param	string	$ascii
+	 * @return	string / FALSE
 	 */
 	public function import($ascii) {
 		$start = strpos($ascii, '-----BEGIN PGP PUBLIC KEY BLOCK-----');
@@ -97,8 +119,8 @@ class GPG {
 	 * Takes the supplied $fingerprint so GnuPG can load the key from the 
 	 * keyring. 
 	 * 
-	 * @param		string
-	 * @param		string
+	 * @param		string	$fingerprint
+	 * @param		string	$plaintext
 	 * @return		string
 	 */
 	public function encrypt($fingerprint, $plaintext) {

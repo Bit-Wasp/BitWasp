@@ -1,5 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Auth Model
+ *
+ * This class handles the database queries for two step authentication,
+ * and authorizing requests to restricted pages,
+ * 
+ * @package		BitWasp
+ * @subpackage	Model
+ * @category	Auth
+ * @author		BitWasp
+ * 
+ */
 class Auth_model extends CI_Model {
 	
 	/**
@@ -24,8 +36,6 @@ class Auth_model extends CI_Model {
 		
 		return FALSE;
 	}
-	
-	// Check the timeout associated with the auth_req for this page.
 	
 	/**
 	 * Check Authorization Timeout 
@@ -75,7 +85,6 @@ class Auth_model extends CI_Model {
 		
 		return $result;
 	}
-	
 	
 	/**
 	 * Add Two Factor Token

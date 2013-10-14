@@ -157,7 +157,14 @@ class Users_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Load a list of registration tokens.
+	/**
+	 * List Registration Tokens
+	 * 
+	 * This function loads a list of the current registration tokens 
+	 * on record.
+	 * 
+	 * @return		array
+	 */
 	public function list_registration_tokens() {
 		$query = $this->db->get('registration_tokens');
 		if($query->num_rows() > 0)
@@ -166,7 +173,14 @@ class Users_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Check Registration Token
+	/**
+	 * Check Registration Token
+	 * 
+	 * This function checks whether a registration token is valid or now.
+	 * Returns info about the token on success, FALSE on failure.
+	 * 
+	 * @return	array/FALSE
+	 */
 	public function check_registration_token($token) {
 		
 		$this->db->select('id, user_type, token_content');
@@ -183,13 +197,26 @@ class Users_model extends CI_Model {
 		}
 	}
 	
-	// Remove Registration Token
+	/**
+	 * Delete Registration Token
+	 * 
+	 * Delete a registration token as specified by $id.
+	 * 
+	 * @param	int	$id
+	 * @return	bool
+	 */
 	public function delete_registration_token($id) {
 		$delete = $this->db->delete('registration_tokens', array('id' => $id)); 
 		return $delete;
 	}
 	
-	// Record the users login time.
+	/**
+	 * Set Login
+	 * 
+	 * Set the users login time (user specified by $id)
+	 * @param	int $id
+	 * @return	bool
+	 */
 	public function set_login($id) {
 		$change = array('login_time' => time());
 		
@@ -201,3 +228,5 @@ class Users_model extends CI_Model {
 		return FALSE;
 	}
 };
+
+/* End of File: Users_Model.php */

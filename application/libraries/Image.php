@@ -37,6 +37,12 @@ class Image {
 	 * where we can keep accessing it later if performing several actions.
 	 */
 	protected $gd_import;
+	
+	/**
+	 * Import
+	 * 
+	 * Is set to TRUE when an image has been imported.
+	 */
 	protected $import = FALSE;
 
 	/**
@@ -146,9 +152,6 @@ class Image {
 		return $results;
 	}
 
-	// Yet to be needed.
-	public function display($img_hash, $height = NULL, $width = NULL){}
-	
 	/**
 	 * Encode
 	 * 

@@ -1,7 +1,24 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Captcha Model
+ *
+ * This class handles the creation, removal, retrieval, and purging of
+ * catpcha's for authentication requests.
+ * 
+ * @package		BitWasp
+ * @subpackage	Model
+ * @category	Escrow
+ * @author		BitWasp
+ * 
+ */
 class Captchas_model extends CI_Model {
 
+	/**
+	 * Constructor
+	 * 
+	 * Load the CodeIgniter framework
+	 */
 	public function __construct() {
 		parent::__construct();
 	}

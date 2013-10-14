@@ -1,16 +1,33 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Bitwasp Captcha Library
+ * Captcha Library
  * 
  * Library for the generation, and checking, of captcha requests.
  * 
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Captcha
+ * @author		BitWasp
  */
 class Bw_captcha {
 
 	protected $CI; 
+	/**
+	 * Captcha Length
+	 * 
+	 * Set from the value in bw_config->captcha_length. This sets the number
+	 * of characters the captcha should contain.
+	 */
 	protected $captcha_length; 
-	protected $captcha_timeout = 1200; // Purge if captcha is 20 minutes old.
+	
+	/**
+	 * Captcha Timeout
+	 * 
+	 * This sets how long before we forget about a captcha request and remove it from the database.
+	 * Default is 20 minutes.
+	 */
+	protected $captcha_timeout = 1200; 
 	
 	/**
 	 * Construct

@@ -33,6 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   * of an error instead of throwing an exception, to fit the BitWasp's
   * purposes.
   */
+  /**
+   * jsonRPCclient library
+   */
 class Jsonrpcclient {
 	
 	/**
@@ -64,8 +67,7 @@ class Jsonrpcclient {
 	/**
 	 * Takes the connection parameters
 	 *
-	 * @param string $url
-	 * @param boolean $debug
+	 * @param array ($url, $debug)
 	 */
 	public function __construct($params) {
 		

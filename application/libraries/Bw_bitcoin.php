@@ -1,12 +1,20 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
+ * Bitcoin Library
+ * 
  * This library is a socket for the JSON RPC interface. 
  * Configuration is loaded from ./application/config/bitcoin.php
  * The class contains functions for bitcoind and functions for 
  * bitcoind to callback in order to track information about new transactions.
  * Also contains a function to update exchange rates from the selected
  * provider
+ * 
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Messages
+ * @author		BitWasp
+ */  
  */
 
 class Bw_bitcoin {

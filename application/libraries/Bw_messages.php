@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-/* BitWasp Messages Library
+/* Messages Library
  * 
  * Used to prepare messages for input to the table or output.
  * 
@@ -10,9 +10,19 @@
  * @author		BitWasp
  */ 
 class Bw_messages {
-	
+
+	/**
+	 * Message Password
+	 * 
+	 * This is used to store the users message password.
+	 */
 	protected $message_password;
 	public $CI;
+	
+	/**
+	 * This is set by the site configuration, determines whether RSA encryption
+	 * of message is done.
+	 */
 	public $encrypt_private_messages;
 	
 	/**
@@ -44,6 +54,9 @@ class Bw_messages {
 	 * enabled, this message content will be encrypted with the receipients
 	 * RSA key to securely store the data.
 	 * Finally content is base64 encoded.
+	 * 
+	 * @param	array	$data
+	 * @param	array	$system
 	 */
 	public function prepare_input($data, $system = NULL) {
 		
@@ -104,7 +117,6 @@ class Bw_messages {
 		return $results;
 	}
 	
-	// Convert DB responses to a managable array.
 	/**
 	 * Prepare Output
 	 * 
@@ -116,7 +128,7 @@ class Bw_messages {
 	 * $messages is an array containing all the messages. Loop through each
 	 * and prepare for output.
 	 * 
-	 * @param		array
+	 * @param		array	$messages
 	 * @return		array
 	 */
 	public function prepare_output($messages = NULL){

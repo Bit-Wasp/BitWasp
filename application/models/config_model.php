@@ -1,10 +1,32 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Config Model
+ *
+ * This class handles the retrieval/updating of the configuration settings
+ * from the database.
+ * 
+ * @package		BitWasp
+ * @subpackage	Model
+ * @category	Config
+ * @author		BitWasp
+ * 
+ */
 class Config_model extends CI_Model {
 	
+	/**
+	 * Config
+	 * 
+	 * Store the sites config here for easy access
+	 */
 	public $config;
 	
-	// Load from several possible configurations. Default is row 1.
+	/**
+	 * Constructor
+	 * 
+	 * Loads the current config into $this->config. Can specify different
+	 * config rows, but yet to be implemented.
+	 */
 	public function __construct($config = 1){	
 		$query = $this->db->get_where('config', array('id' => $config));
 		if($query->num_rows() > 0){
@@ -44,6 +66,7 @@ class Config_model extends CI_Model {
 		}
 		return $success;
 	}
-
 	
 };
+
+/* End of File: Config_Model.php */

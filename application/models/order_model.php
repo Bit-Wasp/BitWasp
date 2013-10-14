@@ -26,6 +26,15 @@ class Order_model extends CI_Model {
 	}
 	
 	// Add an order
+	/**
+	 * Add
+	 * 
+	 * Adds an order to the database. Columns are specified by array keys.
+	 * Returns a boolean.
+	 * 
+	 * @param	array	$order
+	 * @return	bool
+	 */
 	public function add($order) {
 		if($this->db->insert('orders', $order) == TRUE)
 			return TRUE;
@@ -33,7 +42,16 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Buyer may cancel an order.. 
+	/** 
+	 * Cancel
+	 * 
+	 * This function cancels an order by resetting it's progress to 0.
+	 * Buyers may cancel an order if FE is requested.
+	 * Returns a boolean.
+	 * 
+	 * @param		int	$order_id
+	 * @return		bool
+	 */
 	public function cancel($order_id){
 		$this->db->where('id', $order_id);
 		if($this->db->update('orders', array('progress' => '0')) == TRUE)
@@ -42,7 +60,14 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Load a vendors orders as specified by the progress.
+	/**
+	 * Order By Progress
+	 * 
+	 * Load an order for the currently logged in vendor as specified by it's progress.
+	 * 
+	 * @param	int	$progress
+	 * @return	array/FALSE
+	 */
 	public function order_by_progress($progress) {
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
 		$this->db->where('progress', $progress);
@@ -54,7 +79,14 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Load current vendors purchases.
+	/**
+	 * My Orders
+	 * 
+	 * Loads the current vendors orders.
+	 * Returns an array on success and FALSE on failure.
+	 * 
+	 * @return	array/FALSE
+	 */
 	public function my_orders() {
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
 				
@@ -66,7 +98,14 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Load current buyer's purchases.
+	/**
+	 * My Purchases
+	 * 
+	 * Returns the current buyers purchases on success, and FALSE if there
+	 * are none.
+	 * 
+	 * @return	array/FALSE
+	 */
 	public function my_purchases() {
 		$this->db->where('buyer_id', $this->current_user->user_id)
 				 ->order_by('progress asc, time desc');
@@ -77,8 +116,16 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Buyer load an order, optionally by a user with a specific progress... (update
-	// the create order page so that we can have multiple orders to a vendor (at different stages))
+	/**
+	 * Load
+	 * 
+	 * Buyer can load an order about them, as specified by $vendor_hash,
+	 * and can optionally set a progress $progress.
+	 * 
+	 * @param	string	$vendor_hash
+	 * @param	int	progress
+	 * @return	array/FALSE
+	 */
 	public function load($vendor_hash, $progress = NULL) {
 		$this->db->where('vendor_hash', $vendor_hash);
 		$this->db->where('buyer_id', $this->current_user->user_id);
@@ -91,12 +138,23 @@ class Order_model extends CI_Model {
 		$result = $this->build_array($query->result_array());
 		return $result[0];
 	}
-	
+
+	/**
+	 * Load Order
+	 * 
+	 * Load an order, specified by it's $id, and the current $progress.
+	 * Calculates whether it's a buyer or a vendor who is making the
+	 * request.
+	 * 
+	 * @param	int	$id
+	 * @param	array	$allowed_progress
+	 * @return	array/FALSE
+	 */
 	public function load_order($id, $allowed_progress = array()){
 		switch(strtolower($this->current_user->user_role)){
 			case 'vendor':
 				$this->db->where('vendor_hash', $this->current_user->user_hash);
-				break;;
+				break;
 			case 'buyer':
 				$this->db->where('buyer_id', $this->current_user->user_id);
 				break;
@@ -118,7 +176,15 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 
-	// Get an order by it's ID. More general than load.
+	/**
+	 * Get
+	 * 
+	 * Loads an order by it's $order_id. Does not require the user to
+	 * be a specific role.
+	 * 
+	 * @param	int	$order_id
+	 * @return	array/FALSE
+	 */
 	public function get($order_id) {
 		$this->db->where('id', $order_id);
 		$query =$this->db->get('orders');
@@ -129,7 +195,16 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 
-	// Delete an order.
+	/**
+	 * Delete
+	 * 
+	 * Deletes an order as specified by it's $order_id. Does not
+	 * require that the user has a specific role.
+	 * Returns a boolean.
+	 * 
+	 * @param	int	$order_id
+	 * @return	bool
+	 */
 	public function delete($order_id) {
 		$this->db->where('id', $order_id);
 		if($this->db->delete('orders') == TRUE)
@@ -138,7 +213,18 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Update the item string.
+	/**
+	 * Update Items
+	 * 
+	 * Updates the items in $order_it, as specified by $update.
+	 * If $act == 'update' then we update the order with the new $update['quantity'],
+	 * otherwise it's creating the item in the order.
+	 * 
+	 * @param	int	$order_id
+	 * @param	array	$update
+	 * @param	string	$act
+	 * @return	bool
+	 */
 	public function update_items($order_id, $update, $act = 'update') {
 		
 		$order_info = $this->get($order_id);
@@ -188,7 +274,14 @@ class Order_model extends CI_Model {
 		
 	}
 	
-	// Recalculate the price based on an item string.
+	/**
+	 * Calculate Price
+	 * 
+	 * Recalculates the price based on an order's item string.
+	 * 
+	 * @param	string	$item_string
+	 * @return	int	
+	 */
 	public function calculate_price($item_string) {
 		$array = explode(":", $item_string);
 		$price = 0;
@@ -202,13 +295,17 @@ class Order_model extends CI_Model {
 		return $price;
 	}
 	
-	// Mark an order as finalized (when it comes to receiving item, check if finalized =1 ? 'receive' ? 'finalize' 
+	/**
+	 * Set Finalized
+	 * 
+	 * Mark an order as finalized, when it comes to receiving item or finalizing (escrow)
+	 * 
+	 * @param	int	$order_id
+	 * @return	bool
+	 */
 	public function set_finalized($order_id) {
 		$this->db->where('id', $order_id);
-		if($this->db->update('orders', array('finalized' => '1')) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->update('orders', array('finalized' => '1')) == TRUE) ? TRUE : FALSE;
 	}
 	
 	// 0: Order unconfirmed, and editable. 
@@ -230,7 +327,18 @@ class Order_model extends CI_Model {
 	// 		auto pay vendor and set to 7.
 	// 7: Transaction Complete
 	// 		Offer both parties a chance to review the other.
-	
+
+	/**
+	 * Progress Order
+	 * 
+	 * Used to progress an order by $order_id. Can either be a vendor or a buyer.
+	 * Controls the flow of the order.
+	 * 
+	 * @param	int	$order_id
+	 * @param	int	$current_progress
+	 * @param	int	$set_progress
+	 * @return	bool
+	 */
 	public function progress_order($order_id, $current_progress, $set_progress = 0) {
 		$current_order = $this->get($order_id);
 		
@@ -253,6 +361,16 @@ class Order_model extends CI_Model {
 		return FALSE;
 	}
 	
+	/**
+	 * Build Array
+	 * 
+	 * Used to build an array of orders into a more readable array.
+	 * Contains information about the vendor, the items (removes vendor
+	 * entry from each item).
+	 * 
+	 * @param	array $orders
+	 * return 	array
+	 */
 	public function build_array($orders ) {
 		$this->load->model('currencies_model');
 		if(count($orders) > 0) {

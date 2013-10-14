@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 /**
- * BitWasp Session Library
+ * Session Library
  * 
  * This session is used to manage the sessions in the application.
  * Performs checking if the session has expired

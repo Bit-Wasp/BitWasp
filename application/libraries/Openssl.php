@@ -14,13 +14,25 @@
 
 class Openssl {
 
-	/**
-	 * OpenSSL default settings
-	 *
-	 * Preset variables.
-	 */
+	 /**
+	  * Digest Algorithm
+	  * 
+	  * Set the default hash function to use.
+	  */
 	protected $digest_alg = "sha512";
+	
+	/**
+	 * Private Key Bits
+	 * 
+	 * Sets the default bits the private key should use.
+	 */
 	protected $private_key_bits = 2048;
+	
+	/**
+	 * Private Key Type
+	 * 
+	 * Sets which default type the keypair should be.
+	 */
 	protected $private_key_type = OPENSSL_KEYTYPE_RSA;
 
 	/**

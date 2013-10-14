@@ -31,7 +31,7 @@ class Delete_Message_History {
 	/**
 	 * Constructor
 	 * 
-	 * Load's the CodeIgniter framework
+	 * Loads the CodeIgniter framework
 	 */	
 	public function __construct() {
 		$this->CI = &get_instance();

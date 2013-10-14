@@ -19,10 +19,28 @@
 
 class Bw_auth {
 	
+	/**
+	 * Message Password Timeout
+	 * 
+	 * This sets the default amount of time to hold the message password
+	 * in the session before expiring.
+	 */
 	protected $message_password_timeout = 1200;
 	
 	public $CI;
+	
+	/**
+	 * URI
+	 * 
+	 * Store the Current_user/URI here.
+	 */
 	public $URI;
+	
+	/**
+	 * Auth Req's
+	 * 
+	 * Store the current users auth requests here.
+	 */
 	public $auth_reqs;
 
 	/** 
