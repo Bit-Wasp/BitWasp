@@ -35,7 +35,7 @@ class Categories_model extends CI_Model {
 	 * Returns a boolean TRUE on successful insert, else returns FALSE.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	array	$category
 	 * @return	bool
 	 */			
 	public function add($category) {
@@ -49,8 +49,8 @@ class Categories_model extends CI_Model {
 	 * Returns TRUE if update was successful, or FALSE if failure.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @param	string
+	 * @param	int	$category_id
+	 * @param	string	$new_name
 	 * @return	bool
 	 */				
 	public function rename($category_id, $new_name) {
@@ -65,7 +65,7 @@ class Categories_model extends CI_Model {
 	 * was successfully deleted, FALSE on failure. 
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int	$category_id
 	 * @return	bool
 	 */				
 	public function delete($category_id) {
@@ -82,8 +82,8 @@ class Categories_model extends CI_Model {
 	 * are no records, default to FALSE.
 	 *
 	 * @access	public
-	 * @param	array
-	 * @return	array / FALSE
+	 * @param	array	$cat
+	 * @return	array/FALSE
 	 */				
 	public function get(array $cat) {
 		$this->db->select('id, name, hash, parent_id');
@@ -115,8 +115,7 @@ class Categories_model extends CI_Model {
 	 * no categories in the table. Returns an array if there are records.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @return	bool
+	 * @return	array/FALSE
 	 */					
 	public function list_all() {
 		$this->db->select('id, hash, name, parent_id');
@@ -132,8 +131,8 @@ class Categories_model extends CI_Model {
 	 * number of child categories for that parent.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$category_id
+	 * @return	array
 	 */				
 	public function get_children($category_id) {
 		$this->db->where('parent_id', $category_id);
@@ -151,8 +150,8 @@ class Categories_model extends CI_Model {
 	 * was successful, otherwise it returns FALSE.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @param	int
+	 * @param	int	$current_id
+	 * @param	int	$new_id
 	 * @return	bool
 	 */				
 	public function update_items_category($current_id, $new_id) {
@@ -168,8 +167,8 @@ class Categories_model extends CI_Model {
 	 * successfully updated to $new_id. Returns FALSE if unsuccessful.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @param	int
+	 * @param	int	$current_id
+	 * @param	int	$new_id
 	 * @return	bool
 	 */				
 	public function update_parent_category($current_id, $new_id) {

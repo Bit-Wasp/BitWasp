@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-354663125"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1620177577"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-354663125" class="accordion-body collapse in">
+            <div id="namespace-1620177577" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -458,7 +458,7 @@
             <article class="method">
                 <h3 class="public ">check_unique_entry()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">check_unique_entry( <span class="argument">$table</span>,  <span class="argument">$column</span>,  <span class="argument">$hash</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">check_unique_entry(string <span class="argument">$table</span>, string <span class="argument">$column</span>, string <span class="argument">$hash</span>) : bool</pre>
                 <p><em>Test to see if the entry is unique in that table/column</em></p>
                 
 
@@ -466,19 +466,19 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$table</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$column</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$hash</td>
                                 <td>
 </td>
@@ -507,7 +507,7 @@
             <article class="method">
                 <h3 class="public ">get_stale_users()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_stale_users( <span class="argument">$threshold</span>) : \array/FALSE</pre>
+                <pre class="signature" style="margin-right: 54px;">get_stale_users(int <span class="argument">$threshold</span>) : \array/FALSE</pre>
                 <p><em>Load any stale users.</em></p>
                 
 
@@ -515,7 +515,7 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$threshold</td>
                                 <td>
 </td>
@@ -544,7 +544,7 @@
             <article class="method">
                 <h3 class="public ">rows_before_time()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">rows_before_time( <span class="argument">$table</span>,  <span class="argument">$time</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">rows_before_time(string <span class="argument">$table</span>, int <span class="argument">$time</span>) : bool</pre>
                 <p><em>Return rows in $table with a timestamp before $time</em></p>
                 
 
@@ -552,13 +552,13 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$table</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$time</td>
                                 <td>
 </td>
@@ -587,7 +587,7 @@
             <article class="method">
                 <h3 class="public ">drop_id()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">drop_id( <span class="argument">$table</span>,  <span class="argument">$id</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">drop_id(string <span class="argument">$table</span>, int <span class="argument">$id</span>) : bool</pre>
                 <p><em>Drop a row by the specified $table and $id.</em></p>
                 
 
@@ -595,13 +595,13 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$table</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$id</td>
                                 <td>
 </td>
@@ -630,7 +630,7 @@
             <article class="method">
                 <h3 class="public ">count_entries()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">count_entries( <span class="argument">$table</span>) : int</pre>
+                <pre class="signature" style="margin-right: 54px;">count_entries(string <span class="argument">$table</span>) : int</pre>
                 <p><em>Count the number of entries in a table.</em></p>
                 
 
@@ -638,7 +638,7 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$table</td>
                                 <td>
 </td>
@@ -807,7 +807,7 @@
             <article class="method">
                 <h3 class="public ">location_by_id()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">location_by_id( <span class="argument">$id</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">location_by_id(int <span class="argument">$id</span>) : \string/FALSE</pre>
                 <p><em>Load location name by $id.</em></p>
                 
 
@@ -815,7 +815,7 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$id</td>
                                 <td>
 </td>
@@ -824,9 +824,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    string
-                                            &mdash; <p>/ FALSE</p>
-
+                    \string/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -927,7 +925,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 19:50.
+                    on October 14th, 2013 at 20:54.
                 </section>
             </section>
         </section>

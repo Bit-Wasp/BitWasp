@@ -42,7 +42,7 @@ class Escrow_model extends CI_Model {
 	 * ................................
 	 * 
 	 * @access	public
-	 * @param	array
+	 * @param	array $info
 	 * @return	bool
 	 */	
 	public function add($info) {
@@ -67,7 +67,7 @@ class Escrow_model extends CI_Model {
 	 * Load an escrow agreement from the table, by the order_id.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int	$order_id
 	 * @return	array / FALSE;
 	 */					
 	public function get($order_id) {
@@ -91,13 +91,13 @@ class Escrow_model extends CI_Model {
 		return ($this->db->delete('escrow') == TRUE) ? TRUE : FALSE;
 	}
 	
-	
 	/**
 	 * Finalize
 	 * 
 	 * I think this might be deprecated in favour of pay()
 	 *
 	 * @access	public
+	 * @param	int $order_id
 	 * @return	bool
 	 */				
 	public function finalize($order_id) {
@@ -123,7 +123,6 @@ class Escrow_model extends CI_Model {
 	 * Load the current users escrow balance.
 	 *
 	 * @access	public
-	 * @param	array
 	 * @return	bool
 	 */					
 	public function balance() {
@@ -159,7 +158,8 @@ class Escrow_model extends CI_Model {
 	 * Insert a new row of information about exchange rates.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	int	$order_id
+	 * @param	string 	$user
 	 * @return	bool
 	 */					
 	public function pay($order_id, $user) {
@@ -229,7 +229,7 @@ class Escrow_model extends CI_Model {
 	 * Insert a dispute record into the database.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	array	$info
 	 * @return	bool
 	 */					
 	public function dispute($info) {
@@ -242,7 +242,7 @@ class Escrow_model extends CI_Model {
 	 * Load a dispute record as specified by the $order_id.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int	$order_id
 	 * @return	array / bool
 	 */					
 	public function get_dispute($order_id) {
@@ -263,8 +263,8 @@ class Escrow_model extends CI_Model {
 	 * Update Dispute number $order_id with info $info.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @param	array
+	 * @param	int	$order_id
+	 * @param	array	$info
 	 * @return	bool
 	 */					
 	public function update_dispute($order_id, $info) {

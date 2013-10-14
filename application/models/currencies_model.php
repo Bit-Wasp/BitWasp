@@ -17,6 +17,8 @@ class Currencies_model extends CI_Model {
 	/**
 	 * Constructor
 	 *
+	 * Load the config model
+	 * 
 	 * @see		Libraries/Bw_Config
 	 * @access	public
 	 * @return	void
@@ -33,8 +35,8 @@ class Currencies_model extends CI_Model {
 	 * If not, then load all catgories.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @return	array / FALSE
+	 * @param	int	$id
+	 * @return	array/FALSE
 	 */				
 	public function get($id = NULL) {
 		
@@ -96,7 +98,7 @@ class Currencies_model extends CI_Model {
 	 * the rate. Otherwise return FALSE.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$code
 	 * @return	int / FALSE
 	 */					
 	public function get_exchange_rate($code) {

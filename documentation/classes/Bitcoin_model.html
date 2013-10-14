@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1771196888"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-43711310"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1771196888" class="accordion-body collapse in">
+            <div id="namespace-43711310" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -495,7 +495,7 @@
             <article class="method">
                 <h3 class="public ">current_balance()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">current_balance( <span class="argument">$user_hash</span>) : int</pre>
+                <pre class="signature" style="margin-right: 54px;">current_balance(\NULL/string <span class="argument">$user_hash</span>) : \int/FALSE</pre>
                 <p><em>Current Balance</em></p>
                 <p>Will load the current users balance if $user_hash is not set. If
 $user_hash is set, we will load that users balance. Once the
@@ -506,7 +506,7 @@ FALSE if there is no record.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>\NULL/string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
@@ -515,9 +515,7 @@ FALSE if there is no record.</p>
                 
                 
                                     <h4>Returns</h4>
-                    int
-                                            &mdash; <p>/ FALSE</p>
-
+                    \int/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -537,7 +535,7 @@ FALSE if there is no record.</p>
             <article class="method">
                 <h3 class="public ">unverified_transactions()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">unverified_transactions( <span class="argument">$user_hash</span>) : int</pre>
+                <pre class="signature" style="margin-right: 54px;">unverified_transactions(string <span class="argument">$user_hash</span>) : int</pre>
                 <p><em>Unverified Transactions</em></p>
                 <p>Load the balance of unverified transactions to do with the specified
 user's account.</p>
@@ -546,7 +544,7 @@ user's account.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
@@ -575,7 +573,7 @@ user's account.</p>
             <article class="method">
                 <h3 class="public ">user_txns()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">user_txns( <span class="argument">$user_hash</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">user_txns(string <span class="argument">$user_hash</span>) : bool</pre>
                 <p><em>User Transactions</em></p>
                 <p>Loads an array of user transactions, by searching for the users hash.
 If there are records, we format this information, and build up the
@@ -585,7 +583,7 @@ results array. Returns an array if successful, returns FALSE on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
@@ -614,7 +612,7 @@ results array. Returns an array if successful, returns FALSE on failure.</p>
             <article class="method">
                 <h3 class="public ">get_user_address()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_user_address( <span class="argument">$user_hash</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">get_user_address(string <span class="argument">$user_hash</span>) : \string/FALSE</pre>
                 <p><em>Get User Address</em></p>
                 <p>Search for the bitcoin topup address for the specified user. Once
 the user exists, check if the bitcoin_topup_address is unset for
@@ -626,7 +624,7 @@ return FALSE;</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
@@ -635,9 +633,7 @@ return FALSE;</p>
                 
                 
                                     <h4>Returns</h4>
-                    string
-                                            &mdash; <p>/ FALSE</p>
-
+                    \string/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -657,7 +653,7 @@ return FALSE;</p>
             <article class="method">
                 <h3 class="public ">get_cashout_address()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_cashout_address( <span class="argument">$user_hash</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">get_cashout_address(string <span class="argument">$user_hash</span>) : \string/FALSE</pre>
                 <p><em>Get Cashout Address</em></p>
                 <p>Load the cashout address for the user. If the record exists, then
 return the bitcoin address. Otherwise, return FALSE.</p>
@@ -666,7 +662,7 @@ return the bitcoin address. Otherwise, return FALSE.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
@@ -675,9 +671,7 @@ return the bitcoin address. Otherwise, return FALSE.</p>
                 
                 
                                     <h4>Returns</h4>
-                    string
-                                            &mdash; <p>/ FALSE</p>
-
+                    \string/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -697,7 +691,7 @@ return the bitcoin address. Otherwise, return FALSE.</p>
             <article class="method">
                 <h3 class="public ">log_user_address()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">log_user_address( <span class="argument">$user_hash</span>,  <span class="argument">$address</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">log_user_address(string <span class="argument">$user_hash</span>, string <span class="argument">$address</span>) : bool</pre>
                 <p><em>Log User Address</em></p>
                 <p>Log the bitcoin address so we can search for it in future. This is
 in case the user tries to top up using one of their old addresses.
@@ -707,13 +701,13 @@ Returns TRUE if the insert was successful, FALSE if it failed.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$address</td>
                                 <td>
 </td>
@@ -742,7 +736,7 @@ Returns TRUE if the insert was successful, FALSE if it failed.</p>
             <article class="method">
                 <h3 class="public ">set_user_address()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">set_user_address( <span class="argument">$user_hash</span>,  <span class="argument">$address</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">set_user_address(string <span class="argument">$user_hash</span>, string <span class="argument">$address</span>) : bool</pre>
                 <p><em>Set User Address</em></p>
                 <p>Set the address on the users profile. If the update is successful,
 log the address to the table. If unsuccessful, return FALSE.</p>
@@ -751,13 +745,13 @@ log the address to the table. If unsuccessful, return FALSE.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$address</td>
                                 <td>
 </td>
@@ -786,7 +780,7 @@ log the address to the table. If unsuccessful, return FALSE.</p>
             <article class="method">
                 <h3 class="public ">set_cashout_address()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">set_cashout_address( <span class="argument">$user_hash</span>,  <span class="argument">$address</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">set_cashout_address(string <span class="argument">$user_hash</span>, string <span class="argument">$address</span>) : bool</pre>
                 <p><em>Set Cashout Address</em></p>
                 <p>Update the users profile to record their cashout address. Returns
 TRUE if the update was successful. FALSE on failure.</p>
@@ -795,13 +789,13 @@ TRUE if the update was successful. FALSE on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$address</td>
                                 <td>
 </td>
@@ -830,7 +824,7 @@ TRUE if the update was successful. FALSE on failure.</p>
             <article class="method">
                 <h3 class="public ">get_address_owner()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_address_owner( <span class="argument">$address</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">get_address_owner(string <span class="argument">$address</span>) : \string/FALSE</pre>
                 <p><em>Get Address Owner</em></p>
                 <p>Called by Walletnotify, check to see who owns this address.
 Used to associate a transaction with a user_hash. Returns FALSE
@@ -840,7 +834,7 @@ if no record is found, or returns the user_hash if successful.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$address</td>
                                 <td>
 </td>
@@ -849,9 +843,7 @@ if no record is found, or returns the user_hash if successful.</p>
                 
                 
                                     <h4>Returns</h4>
-                    string
-                                            &mdash; <p>/ bool</p>
-
+                    \string/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -871,7 +863,7 @@ if no record is found, or returns the user_hash if successful.</p>
             <article class="method">
                 <h3 class="public ">get_cashout_address_owner()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_cashout_address_owner( <span class="argument">$address</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">get_cashout_address_owner(string <span class="argument">$address</span>) : \string/FALSE</pre>
                 <p><em>Get Cashout Address Owner</em></p>
                 <p>Called by Walletnotify, get the owner of the cashout address.
 Used for cashouts. Returns the user_hash if successful, returns
@@ -881,7 +873,7 @@ FALSE on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$address</td>
                                 <td>
 </td>
@@ -890,9 +882,7 @@ FALSE on failure.</p>
                 
                 
                                     <h4>Returns</h4>
-                    string
-                                            &mdash; <p>/ FALSE</p>
-
+                    \string/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -912,7 +902,7 @@ FALSE on failure.</p>
             <article class="method">
                 <h3 class="public ">add_pending_txn()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">add_pending_txn( <span class="argument">$array</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">add_pending_txn(array <span class="argument">$array</span>) : bool</pre>
                 <p><em>Add Pending Transaction</em></p>
                 <p>Records a transaction, with indexes of $array as column names.
 Is added once for a bitcoin topup/cashout. Also used to record
@@ -933,7 +923,7 @@ array( 'txn_id' => "...",
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>array</td>
                                 <td>$array</td>
                                 <td>
 </td>
@@ -962,7 +952,7 @@ array( 'txn_id' => "...",
             <article class="method">
                 <h3 class="public ">user_transaction()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">user_transaction( <span class="argument">$user_hash</span>,  <span class="argument">$txn_id</span>,  <span class="argument">$category</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">user_transaction(string <span class="argument">$user_hash</span>, string <span class="argument">$txn_hash</span>, string <span class="argument">$category</span>) : bool</pre>
                 <p><em>User Transaction</em></p>
                 <p>Check if there is already a record of this transaction. Looks the
 transaction up based on the user's hash, transaction ID, and the
@@ -973,19 +963,19 @@ TRUE if the transaction is on record already, FALSE if it's not.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
-                                <td>$txn_id</td>
+                                <td>string</td>
+                                <td>$txn_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$category</td>
                                 <td>
 </td>
@@ -1014,18 +1004,18 @@ TRUE if the transaction is on record already, FALSE if it's not.</p>
             <article class="method">
                 <h3 class="public ">have_transaction()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">have_transaction( <span class="argument">$txn_id</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">have_transaction(string <span class="argument">$txn_id</span>) : \array/FALSE</pre>
                 <p><em>Have Transaction</em></p>
                 <p>Checks if we have this transaction ID. Very very bad.
 Should be deprecated in favour of user_transaction()...
 Not specific enough. Returns the transaction if successful, or
-FALSE if it's not found.</p>
+FALSE if it's not found. Wallet Notify callback.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$txn_id</td>
                                 <td>
 </td>
@@ -1034,9 +1024,7 @@ FALSE if it's not found.</p>
                 
                 
                                     <h4>Returns</h4>
-                    array
-                                            &mdash; <p>/ FALSE</p>
-
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -1062,9 +1050,9 @@ FALSE if it's not found.</p>
 when sending accounts. And by escrow_model::pay() to issue payment.
 And orders::place() to deduct the buyers account.
 Requires an array, where each update is contained as an entry in that array.
-Often only suppling one update. The value can be negative.</p>
-
-<p>Eg:
+Often only suppling one update. The value can be negative.
+Called by Wallet Notify when debiting accounts.
+Eg:
 $updates = array('0' => array('user_hash' => '...',
                                  'value' => '...'),
                     '1' => array('user_hash' => '...',
@@ -1103,7 +1091,7 @@ $updates = array('0' => array('user_hash' => '...',
             <article class="method">
                 <h3 class="public ">set_credited()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">set_credited( <span class="argument">$txn_id</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">set_credited(string <span class="argument">$txn_id</span>) : bool</pre>
                 <p><em>Set Credited</em></p>
                 <p>Records that this transaction HAS been credited to a users balance.
 Called by Blocknotify.</p>
@@ -1112,7 +1100,7 @@ Called by Blocknotify.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$txn_id</td>
                                 <td>
 </td>
@@ -1171,7 +1159,7 @@ there are no records. Script then checks each of these for updates.</p>
             <article class="method">
                 <h3 class="public ">update_confirmations()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">update_confirmations( <span class="argument">$updates</span>) : void</pre>
+                <pre class="signature" style="margin-right: 54px;">update_confirmations(array <span class="argument">$updates</span>) : void</pre>
                 <p><em>Update Confirmations</em></p>
                 <p>An array of updates is supplied, taking the following format.
 $updates = array('0' => array('txn_id' => '...',
@@ -1186,7 +1174,7 @@ go through.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>array</td>
                                 <td>$updates</td>
                                 <td>
 </td>
@@ -1213,7 +1201,7 @@ go through.</p>
             <article class="method">
                 <h3 class="public ">add_block()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">add_block( <span class="argument">$block_hash</span>,  <span class="argument">$number</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">add_block(string <span class="argument">$block_hash</span>,  <span class="argument">$height</span>) : bool</pre>
                 <p><em>Add Block</em></p>
                 <p>Called by blocknotify to record the block &amp; its height. Returns TRUE
 if the insertion was successful, otherwise returns FALSE.</p>
@@ -1222,14 +1210,14 @@ if the insertion was successful, otherwise returns FALSE.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$block_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
                                 <td></td>
-                                <td>$number</td>
+                                <td>$height</td>
                                 <td>
 </td>
                             </tr>
@@ -1257,7 +1245,7 @@ if the insertion was successful, otherwise returns FALSE.</p>
             <article class="method">
                 <h3 class="public ">have_block()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">have_block( <span class="argument">$block_hash</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">have_block(string <span class="argument">$block_hash</span>) : bool</pre>
                 <p><em>Have Block</em></p>
                 <p>Called by Blocknotify. Check if we have a block with that hash.
 Returns TRUE if we do, returns FALSE otherwise.</p>
@@ -1266,7 +1254,7 @@ Returns TRUE if we do, returns FALSE otherwise.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$block_hash</td>
                                 <td>
 </td>
@@ -1436,7 +1424,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 19:50.
+                    on October 14th, 2013 at 20:54.
                 </section>
             </section>
         </section>

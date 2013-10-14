@@ -99,10 +99,10 @@ class Image {
 	 * image into a new filename. Returns an array with information on
 	 * a successful resize, or FALSE if there is nothing to import.
 	 *
-	 * @param		int
-	 * @param		int
-	 * @param		string
-	 * @return		array / FALSE
+	 * @param		int	$width
+	 * @param		int	$height
+	 * @param		string	$new_name
+	 * @return		array/FALSE
 	 */	
 	public function resize($width, $height, $new_name) {
 		// Abort if the import wasn't done.
@@ -160,7 +160,7 @@ class Image {
 	 * and don't need to be stored in the database.. Returns FALSE if
 	 * the file cannot be found.
 	 * 
-	 * @param		string
+	 * @param		string	$filename
 	 * @return		string / FALSE
 	 */
 	public function encode($filename){
@@ -171,6 +171,7 @@ class Image {
 	 * Temp
 	 * 
 	 * Create the HTML string that will display the image temporarily.
+	 * @param	string	$filename
 	 */
 	public function temp($filename){
 		$image = $this->encode($filename);

@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1388362985"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1464294854"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1388362985" class="accordion-body collapse in">
+            <div id="namespace-1464294854" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -552,7 +552,7 @@ model</p>
             <article class="method">
                 <h3 class="public ">getaccount()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getaccount( <span class="argument">$address</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">getaccount(string <span class="argument">$address</span>) : string</pre>
                 <p><em>Get Account</em></p>
                 <p>Function to query bitcoind, to see which account owns $address.
 Returns a string containing the account name if successful, or
@@ -562,7 +562,7 @@ an array describing the error on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$address</td>
                                 <td>
 </td>
@@ -593,16 +593,16 @@ an array describing the error on failure.</p>
             <article class="method">
                 <h3 class="public ">getbalance()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getbalance( <span class="argument">$account</span>) : float</pre>
+                <pre class="signature" style="margin-right: 54px;">getbalance(string <span class="argument">$account</span>) : float</pre>
                 <p><em>Get Balance</em></p>
-                <p>Function to query bitcoind, to get the balance of the account.
+                <p>Function to query bitcoind, to get the balance of the account $account.
 Returns a float in each case, whether the account exists or not.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$account</td>
                                 <td>
 </td>
@@ -631,7 +631,7 @@ Returns a float in each case, whether the account exists or not.</p>
             <article class="method">
                 <h3 class="public ">getblock()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getblock( <span class="argument">$block_hash</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">getblock(string <span class="argument">$block_hash</span>) : array</pre>
                 <p><em>Get Block</em></p>
                 <p>Function to query bitcoind, to get information about a block ($block_hash)
 Returns an array containing the account name if successful, or
@@ -641,7 +641,7 @@ an array describing the error on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$block_hash</td>
                                 <td>
 </td>
@@ -670,7 +670,7 @@ an array describing the error on failure.</p>
             <article class="method">
                 <h3 class="public ">getblockhash()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getblockhash( <span class="argument">$block_no</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">getblockhash(string <span class="argument">$block_no</span>) : string</pre>
                 <p><em>Get Block Hash</em></p>
                 <p>Function to query bitcoind, to get the block hash for a particular
 height.
@@ -681,7 +681,7 @@ array describing the error on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$block_no</td>
                                 <td>
 </td>
@@ -743,7 +743,7 @@ block height, balance, difficulty,</p>
             <article class="method">
                 <h3 class="public ">gettransaction()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">gettransaction( <span class="argument">$tx_id</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">gettransaction(string <span class="argument">$tx_hash</span>) : array</pre>
                 <p><em>Get Transaction</em></p>
                 <p>Function to query bitcoind for a transaction ($tx_id). The transaction
 must belong to this wallet in order read this information. Returns
@@ -754,8 +754,8 @@ on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
-                                <td>$tx_id</td>
+                                <td>string</td>
+                                <td>$tx_hash</td>
                                 <td>
 </td>
                             </tr>
@@ -812,7 +812,7 @@ in the wallet. Displays transactions with 0 confirmations.</p>
             <article class="method">
                 <h3 class="public ">cashout()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">cashout( <span class="argument">$to</span>,  <span class="argument">$amount</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">cashout(string <span class="argument">$to</span>, float <span class="argument">$amount</span>) : array</pre>
                 <p><em>Cashout</em></p>
                 <p>Function to ask bitcoind to send $amount to the bitcoin address
 $to. Sends the funds from the "main" account. Returns a transaction
@@ -823,13 +823,13 @@ an error on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$to</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>float</td>
                                 <td>$amount</td>
                                 <td>
 </td>
@@ -858,7 +858,7 @@ an error on failure.</p>
             <article class="method">
                 <h3 class="public ">move()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">move( <span class="argument">$from</span>,  <span class="argument">$to</span>,  <span class="argument">$amount</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">move(string <span class="argument">$from</span>, string <span class="argument">$to</span>, float <span class="argument">$amount</span>) : bool</pre>
                 <p><em>Move</em></p>
                 <p>Function to ask bitcoind to move funds from the $from account
 to the $to account. Will create the account if it doesn't exist.
@@ -869,19 +869,19 @@ already. Does not broadcast a transaction to the bitcoin network.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$from</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$to</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>float</td>
                                 <td>$amount</td>
                                 <td>
 </td>
@@ -910,7 +910,7 @@ already. Does not broadcast a transaction to the bitcoin network.</p>
             <article class="method">
                 <h3 class="public ">sendfrom()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">sendfrom( <span class="argument">$src_ac</span>,  <span class="argument">$to_address</span>,  <span class="argument">$value</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">sendfrom(string <span class="argument">$src_ac</span>, string <span class="argument">$to_address</span>, float <span class="argument">$value</span>) : bool</pre>
                 <p><em>Send From</em></p>
                 <p>Function to ask bitcoind to send $value BTC from any $src_ac, to
 $to_address. The transaction must belong to this wallet in order
@@ -921,19 +921,19 @@ transaction is successful, otherwise returns an error on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$src_ac</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$to_address</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>float</td>
                                 <td>$value</td>
                                 <td>
 </td>
@@ -962,7 +962,7 @@ transaction is successful, otherwise returns an error on failure.</p>
             <article class="method">
                 <h3 class="public ">validateaddress()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">validateaddress( <span class="argument">$address</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">validateaddress(string <span class="argument">$address</span>) : bool</pre>
                 <p><em>Validate Address</em></p>
                 <p>Function to validate a bitcoin address. Checks if there is a
 base58 address, and other tests. Returns a boolean with the answer.</p>
@@ -971,7 +971,7 @@ base58 address, and other tests. Returns a boolean with the answer.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$address</td>
                                 <td>
 </td>
@@ -1000,7 +1000,7 @@ base58 address, and other tests. Returns a boolean with the answer.</p>
             <article class="method">
                 <h3 class="public ">new_address()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">new_address( <span class="argument">$user_hash</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">new_address(string <span class="argument">$user_hash</span>) : bool</pre>
                 <p><em>New Address</em></p>
                 <p>Function to ask bitcoind to create a new address for the topup
 account. Associates the address with the $user_hash. Sets the
@@ -1013,7 +1013,7 @@ to be read then.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_hash</td>
                                 <td>
 </td>
@@ -1074,7 +1074,7 @@ A new address is created for this every time.</p>
             <article class="method">
                 <h3 class="public ">walletnotify()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">walletnotify( <span class="argument">$txn_id</span>)</pre>
+                <pre class="signature" style="margin-right: 54px;">walletnotify(string <span class="argument">$txn_hash</span>)</pre>
                 <p><em>Wallet Notify</em></p>
                 <p>Function to notify the marketplace about any new transactions.
 Checks if transaction is for our wallet, and if not, continues with
@@ -1093,8 +1093,8 @@ Don't know why they'd do this, but this way we do the accounting properly.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
-                                <td>$txn_id</td>
+                                <td>string</td>
+                                <td>$txn_hash</td>
                                 <td>
 </td>
                             </tr>
@@ -1120,7 +1120,7 @@ Don't know why they'd do this, but this way we do the accounting properly.</p>
             <article class="method">
                 <h3 class="public ">blocknotify()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">blocknotify( <span class="argument">$block_id</span>) : void</pre>
+                <pre class="signature" style="margin-right: 54px;">blocknotify(string <span class="argument">$block_hash</span>) : void</pre>
                 <p><em>Block Notify</em></p>
                 <p>Function to inform the marketplace about new blocks. Upon receiving
 a new block, we get the list of all pending transactions (uncredited
@@ -1141,8 +1141,8 @@ causes the 'check' icon to appear in the transaction log.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
-                                <td>$block_id</td>
+                                <td>string</td>
+                                <td>$block_hash</td>
                                 <td>
 </td>
                             </tr>
@@ -1240,7 +1240,7 @@ for the latest exchange rates between USD/GBP/EUR.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 19:50.
+                    on October 14th, 2013 at 20:54.
                 </section>
             </section>
         </section>

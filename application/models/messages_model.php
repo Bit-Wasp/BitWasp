@@ -34,7 +34,7 @@ class Messages_model extends CI_Model {
 	 * Load a specific message, based on the message hash. Limit
 	 * messages to those that can be read by the currently logged in user.
 	 * 
-	 * @param		string
+	 * @param		string	$hash
 	 * @return		array / FALSE
 	 */
 	public function get($hash) {
@@ -52,7 +52,7 @@ class Messages_model extends CI_Model {
 	 * Load a users inbox. Based on current_user->user_id. User can 
 	 * optionally set a limit for messages.
 	 * 
-	 * @param		int
+	 * @param		int	$limit
 	 * @return		array / NULL
 	 */
 	public function inbox($limit = 0) {
@@ -75,7 +75,7 @@ class Messages_model extends CI_Model {
 	 * Delete a message, restrict the scope of this function to messages
 	 * that the currently logged in user has access to.
 	 * 
-	 * @param		int
+	 * @param		int	$id
 	 * @return		bool
 	 */
 	public function delete($id) {
@@ -94,7 +94,7 @@ class Messages_model extends CI_Model {
 	 * 
 	 * @see		Libraries\Autorun
 	 * 
-	 * @param	int
+	 * @param	int	$id
 	 * @return	bool
 	 */
 	public function delete_autorun($id) {
@@ -122,7 +122,7 @@ class Messages_model extends CI_Model {
 	 * so we can build the send-message form in the case of replying, 
 	 * or directly messaging a user.
 	 * 
-	 * @param		string
+	 * @param		string	$identifier
 	 * @return		array / NULL
 	 */
 	public function reply_info($identifier) {		
@@ -170,7 +170,7 @@ class Messages_model extends CI_Model {
 	 * Takes the entered array and inserts it to the database. 
 	 * Array keys can be any of the columns in the database.
 	 * 
-	 * @param		array
+	 * @param		array	$data
 	 * @return		bool
 	 */
 	public function send($data) {
@@ -183,7 +183,7 @@ class Messages_model extends CI_Model {
 	 * This function takes the supplied message $id and sets it
 	 * as viewed.
 	 * 
-	 * @param		int
+	 * @param		int 	$id
 	 * @return		bool
 	 */
 	public function set_viewed($id) {
@@ -192,3 +192,5 @@ class Messages_model extends CI_Model {
 		return ($this->db->update('messages', $update)) ? TRUE : FALSE;
 	}
 };
+
+/* End of File: Messages_Model.php */

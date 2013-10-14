@@ -134,11 +134,11 @@ class Bw_auth {
 	 * 
 	 * A general function to store the authorization requests in the session.
 	 * 
-	 * @param		array
+	 * @param		array $array
 	 * @return		void
 	 */
-	public function set_data(array $array) {
-		$this->CI->session->set_userdata('auth_reqs', json_encode($array));
+	public function set_data(array $auth_reqs) {
+		$this->CI->session->set_userdata('auth_reqs', json_encode($auth_reqs));
 	}
 	
 	/**
@@ -147,8 +147,8 @@ class Bw_auth {
 	 * This function records the new authorized request for the URI, along
 	 * with the current time, and the timeout for this request.
 	 * 
-	 * @param		string
-	 * @param		int
+	 * @param		string	$URI
+	 * @param		int	$timeout
 	 * @return		void
 	 */
 	public function setup_auth($URI, $timeout) {
@@ -160,7 +160,6 @@ class Bw_auth {
 		}
 	}	
 	
-	// Record the authorization, and how long until it expires, then redirect to desired page.
 	/**
 	 * Successful Auth
 	 * 

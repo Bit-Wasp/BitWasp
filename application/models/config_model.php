@@ -54,8 +54,8 @@ class Config_model extends CI_Model {
 	 * Update column in the config row. Indexes are column name.
 	 *
 	 * @access	public
-	 * @param	array
-	 * @return	void
+	 * @param	array	$records
+	 * @return	bool
 	 */				
 	public function update($records) {
 		$success = TRUE;

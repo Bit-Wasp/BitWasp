@@ -25,7 +25,6 @@ class Order_model extends CI_Model {
 		$this->load->model('items_model');
 	}
 	
-	// Add an order
 	/**
 	 * Add
 	 * 
@@ -207,10 +206,7 @@ class Order_model extends CI_Model {
 	 */
 	public function delete($order_id) {
 		$this->db->where('id', $order_id);
-		if($this->db->delete('orders') == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return  ($this->db->delete('orders') == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -267,10 +263,7 @@ class Order_model extends CI_Model {
 						
 		$this->db->where('id', $order_id)
 				 ->where('progress', '0');
-		if($this->db->update('orders', $order) == TRUE) 
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->update('orders', $order) == TRUE)  ? TRUE : FALSE;
 		
 	}
 	
@@ -463,7 +456,6 @@ class Order_model extends CI_Model {
 				
 				unset($item_array);
 			}
-			//print_r($orders);
 			return $orders;
 			
 		} else {

@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1410969608"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-881749699"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1410969608" class="accordion-body collapse in">
+            <div id="namespace-881749699" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -677,7 +677,7 @@ authorize page.</p>
             <article class="method">
                 <h3 class="public ">set_data()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">set_data(array <span class="argument">$array</span>) : void</pre>
+                <pre class="signature" style="margin-right: 54px;">set_data(array <span class="argument">$auth_reqs</span>) : void</pre>
                 <p><em>Set Data</em></p>
                 <p>A general function to store the authorization requests in the session.</p>
 
@@ -686,7 +686,7 @@ authorize page.</p>
                     <table class="table table-condensed table-hover">
                                                     <tr>
                                 <td>array</td>
-                                <td>$array</td>
+                                <td>$auth_reqs</td>
                                 <td>
 </td>
                             </tr>
@@ -712,7 +712,7 @@ authorize page.</p>
             <article class="method">
                 <h3 class="public ">setup_auth()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">setup_auth( <span class="argument">$URI</span>,  <span class="argument">$timeout</span>) : void</pre>
+                <pre class="signature" style="margin-right: 54px;">setup_auth(string <span class="argument">$URI</span>, int <span class="argument">$timeout</span>) : void</pre>
                 <p><em>Setup Authorization</em></p>
                 <p>This function records the new authorized request for the URI, along
 with the current time, and the timeout for this request.</p>
@@ -721,13 +721,13 @@ with the current time, and the timeout for this request.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$URI</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$timeout</td>
                                 <td>
 </td>
@@ -885,7 +885,7 @@ returned. On failure, the function returns FALSE.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 19:50.
+                    on October 14th, 2013 at 20:54.
                 </section>
             </section>
         </section>

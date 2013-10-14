@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-2023494802"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1753606368"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-2023494802" class="accordion-body collapse in">
+            <div id="namespace-1753606368" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -454,7 +454,7 @@
             <article class="method">
                 <h3 class="public ">get()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get( <span class="argument">$image_hash</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">get(int <span class="argument">$image_hash</span>) : \array/FALSE</pre>
                 <p><em>Get</em></p>
                 <p>Load an image, identified by the $image_hash. If the record is found,
 then return the row of information. If not, and once the requested
@@ -464,7 +464,7 @@ $image_hash !== 'default', try loading the 'default' image hash instead.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$image_hash</td>
                                 <td>
 </td>
@@ -473,9 +473,7 @@ $image_hash !== 'default', try loading the 'default' image hash instead.</p>
                 
                 
                                     <h4>Returns</h4>
-                    array
-                                            &mdash; <p>/ FALSE</p>
-
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -495,7 +493,7 @@ $image_hash !== 'default', try loading the 'default' image hash instead.</p>
             <article class="method">
                 <h3 class="public ">by_item()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">by_item( <span class="argument">$item_hash</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">by_item(int <span class="argument">$item_hash</span>) : array</pre>
                 <p><em>By Item</em></p>
                 <p>Selects all image records associated with an item. If records are
 found, we call $this->get() on each result to load further data about
@@ -506,7 +504,7 @@ an empty array to be returned.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$item_hash</td>
                                 <td>
 </td>
@@ -535,7 +533,7 @@ an empty array to be returned.</p>
             <article class="method">
                 <h3 class="public ">add()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">add( <span class="argument">$image_hash</span>,  <span class="argument">$file_name</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">add(string <span class="argument">$image_hash</span>, string <span class="argument">$file_name</span>) : bool</pre>
                 <p><em>Add</em></p>
                 <p>Add an encoded image to the images table. Specified by $file_name,
 we load a base64 encoded version of the image, and enter it into the
@@ -546,13 +544,13 @@ successfully, and FALSE on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$image_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$file_name</td>
                                 <td>
 </td>
@@ -581,7 +579,7 @@ successfully, and FALSE on failure.</p>
             <article class="method">
                 <h3 class="public ">add_to_item()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">add_to_item( <span class="argument">$image_hash</span>,  <span class="argument">$file_name</span>,  <span class="argument">$item_hash</span>,  <span class="argument">$main_image</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">add_to_item(string <span class="argument">$image_hash</span>, string <span class="argument">$file_name</span>, string <span class="argument">$item_hash</span>,  <span class="argument">$main_image</span>) : bool</pre>
                 <p><em>Add to Item</em></p>
                 <p>Add's the base64 encoded image to the database as with Images_Model\Add(),
  and then records a link between the image and the item (by adding
@@ -592,19 +590,19 @@ then this $image_hash will be set as the main image for $item_hash.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$image_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$file_name</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$item_hash</td>
                                 <td>
 </td>
@@ -639,7 +637,7 @@ then this $image_hash will be set as the main image for $item_hash.</p>
             <article class="method">
                 <h3 class="public ">get_item()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_item( <span class="argument">$image_hash</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">get_item(int <span class="argument">$image_hash</span>) : \array/FALSE</pre>
                 <p><em>Get Item</em></p>
                 <p>Search for the the $item_hash coresponding to an $image_hash.
 Returns the item_hash string if the record is found, and FALSE
@@ -649,7 +647,7 @@ if the specified image does not exist.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>int</td>
                                 <td>$image_hash</td>
                                 <td>
 </td>
@@ -658,9 +656,7 @@ if the specified image does not exist.</p>
                 
                 
                                     <h4>Returns</h4>
-                    array
-                                            &mdash; <p>/ FALSE</p>
-
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -680,7 +676,7 @@ if the specified image does not exist.</p>
             <article class="method">
                 <h3 class="public ">main_image()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">main_image( <span class="argument">$item_hash</span>,  <span class="argument">$image_hash</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">main_image(string <span class="argument">$item_hash</span>, string <span class="argument">$image_hash</span>) : array</pre>
                 <p><em>Main Image</em></p>
                 <p>Updates the item record identified by $item_hash, to set the items
 main image as $image_hash. Returns TRUE if successful, false if unsuccessful.</p>
@@ -689,13 +685,13 @@ main image as $image_hash. Returns TRUE if successful, false if unsuccessful.</p
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$item_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$image_hash</td>
                                 <td>
 </td>
@@ -726,7 +722,7 @@ main image as $image_hash. Returns TRUE if successful, false if unsuccessful.</p
             <article class="method">
                 <h3 class="public ">delete_item_img()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">delete_item_img( <span class="argument">$item_hash</span>,  <span class="argument">$image_hash</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">delete_item_img(string <span class="argument">$item_hash</span>, string <span class="argument">$image_hash</span>) : array</pre>
                 <p><em>Delete Item Image</em></p>
                 <p>Deletes an image from an item. The function will check if it just
 deleted the main_image for the item, in which case it will either
@@ -738,13 +734,13 @@ TRUE on success, and FALSE on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$item_hash</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$image_hash</td>
                                 <td>
 </td>
@@ -856,7 +852,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 19:50.
+                    on October 14th, 2013 at 20:54.
                 </section>
             </section>
         </section>

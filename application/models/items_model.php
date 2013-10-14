@@ -36,7 +36,7 @@ class Items_model extends CI_Model {
 	 * Insert a new row of information about exchange rates.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int	$id
 	 * @return	bool
 	 */				
 	public function delete($id) {
@@ -50,7 +50,7 @@ class Items_model extends CI_Model {
 	 * Display all items.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	array	$opt
 	 * @return	bool
 	 */					
 	public function get_list($opt = array()) {
@@ -104,8 +104,8 @@ class Items_model extends CI_Model {
 	 * Get information about an item (by $hash).
 	 * 
 	 * @access	public
-	 * @param	string
-	 * @return	array / FALSE
+	 * @param	string	$hash
+	 * @return	array/FALSE
 	 */					
 	public function get($hash) {
 		$this->db->where('hash', $hash);
@@ -136,7 +136,7 @@ class Items_model extends CI_Model {
 	 * Load listings as displayed by a user.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$user_hash
 	 * @return	bool
 	 */					
 	public function by_user($user_hash) {		
@@ -186,3 +186,5 @@ class Items_model extends CI_Model {
 		return $query->num_rows();
 	}
 };
+
+/* End of File: Items_Model.php */

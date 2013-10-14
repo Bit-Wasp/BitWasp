@@ -111,14 +111,11 @@ class Bw_config {
 	 * 
 	 * Loads the chosen bitcoin indexing config.
 	 * 
-	 * @return		array / FALSE
+	 * @return		array/FALSE
 	 */
 	public function bitcoin_rate_config(){
 		$array = $this->price_index_config;	
-		if($this->price_index == '')
-			return FALSE;
-			
-		return $array[$this->price_index];
+		return ($this->price_index == '') ? FALSE : $array[$this->price_index];
 	}
 
 };

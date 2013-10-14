@@ -206,8 +206,7 @@ class Users_model extends CI_Model {
 	 * @return	bool
 	 */
 	public function delete_registration_token($id) {
-		$delete = $this->db->delete('registration_tokens', array('id' => $id)); 
-		return $delete;
+		return ($this->db->delete('registration_tokens', array('id' => $id)) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -222,10 +221,7 @@ class Users_model extends CI_Model {
 		
 		$this->db->where('id', $id);
 		$query = $this->db->update('users', $change);
-		if($query)
-			return TRUE;
-			
-		return FALSE;
+		return ($query) ? TRUE : FALSE;
 	}
 };
 

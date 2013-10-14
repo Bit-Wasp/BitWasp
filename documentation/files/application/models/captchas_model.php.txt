@@ -1,14 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Captcha Model
+ * Captchas Model
  *
  * This class handles the creation, removal, retrieval, and purging of
  * catpcha's for authentication requests.
  * 
  * @package		BitWasp
  * @subpackage	Model
- * @category	Escrow
+ * @category	Captcha
  * @author		BitWasp
  * 
  */
@@ -29,8 +29,8 @@ class Captchas_model extends CI_Model {
 	 * Sets a captcha based on the key (held in the session), solution, and time. 
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	string
+	 * @param	string	$identifier
+	 * @param	string	$solution
 	 * @return	bool
 	 */			
 	public function set($identifier, $solution) { 
@@ -47,7 +47,7 @@ class Captchas_model extends CI_Model {
 	 * Purge categories older than the specified time.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int	$time
 	 * @return	bool
 	 */			
 	public function purge_expired($time){
@@ -62,7 +62,7 @@ class Captchas_model extends CI_Model {
 	 * Load a captcha by its identifier.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$identifier
 	 * @return	bool
 	 */			
 	public function get($identifier) {
@@ -87,7 +87,7 @@ class Captchas_model extends CI_Model {
 	 * Delete a captcha as specified by the ID.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int	$id
 	 * @return	bool
 	 */			
 	public function delete($id) { 

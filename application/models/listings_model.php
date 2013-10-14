@@ -30,7 +30,7 @@ class Listings_model extends CI_Model {
 	 * Add a new listing to the database.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$properties
 	 * @return	bool
 	 */					
 	public function add($properties) {
@@ -43,7 +43,7 @@ class Listings_model extends CI_Model {
 	 * Delete a listing, where the listing belongs to the current user.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$hash
 	 * @return	bool
 	 */					
 	public function delete($hash) {
@@ -58,8 +58,8 @@ class Listings_model extends CI_Model {
 	 * Load an item if it belongs to the current user.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	array / FALSE
+	 * @param	string	$hash
+	 * @return	array/FALSE
 	 */					
 	public function get($hash) {
 		$this->load->model('currencies_model');
@@ -93,7 +93,8 @@ class Listings_model extends CI_Model {
 	 * Update an item with an array of changes (index as column, val as val)
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	string	$item_hash
+	 * @param	array	$changes
 	 * @return	bool
 	 */					
 	public function update($item_hash, $changes) {

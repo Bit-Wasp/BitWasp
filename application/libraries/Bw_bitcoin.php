@@ -87,7 +87,7 @@ class Bw_bitcoin {
 	 * Returns a string containing the account name if successful, or
 	 * an array describing the error on failure.
 	 * 
-	 * @param		string
+	 * @param		string	$address
 	 * @return		string / array
 	 */
 	public function getaccount($address) {
@@ -97,10 +97,10 @@ class Bw_bitcoin {
 	/**
 	 * Get Balance
 	 * 
-	 * Function to query bitcoind, to get the balance of the account.
+	 * Function to query bitcoind, to get the balance of the account $account.
 	 * Returns a float in each case, whether the account exists or not. 
 	 * 
-	 * @param		string
+	 * @param		string	$account
 	 * @return		float
 	 */
 	public function getbalance($account) {
@@ -114,14 +114,13 @@ class Bw_bitcoin {
 	 * Returns an array containing the account name if successful, or
 	 * an array describing the error on failure.
 	 * 
-	 * @param		string
+	 * @param		string	$block_hash
 	 * @return		array
 	 */
 	public function getblock($block_hash) {
 		return $this->CI->jsonrpcclient->getblock($block_hash);
 	}
 	
-
 	/**
 	 * Get Block Hash
 	 * 
@@ -130,7 +129,7 @@ class Bw_bitcoin {
 	 * Returns a string containing the block hash if successful, or an 
 	 * array describing the error on failure.
 	 * 
-	 * @param		string
+	 * @param		string	$block_no
 	 * @return		string / array
 	 */	
 	public function getblockhash($block_no) {
@@ -158,11 +157,11 @@ class Bw_bitcoin {
 	 * an array containing transaction information, or an error array
 	 * on failure.
 	 * 
-	 * @param		string
+	 * @param		string	$tx_hash
 	 * @return		array
 	 */		
-	public function gettransaction($tx_id) {
-		return $this->CI->jsonrpcclient->gettransaction($tx_id);
+	public function gettransaction($tx_hash) {
+		return $this->CI->jsonrpcclient->gettransaction($tx_hash);
 	}
 	
 	/**
@@ -186,8 +185,8 @@ class Bw_bitcoin {
 	 * id ($tx_id) if the transaction is successful, otherwise returns 
 	 * an error on failure.
 	 * 
-	 * @param		string
-	 * @param		float
+	 * @param		string	$to
+	 * @param		float	$amount
 	 * @return		array
 	 */		
 	public function cashout($to, $amount) {
@@ -202,9 +201,9 @@ class Bw_bitcoin {
 	 * Already have error-checked this account name, we want it to exist 
 	 * already. Does not broadcast a transaction to the bitcoin network.
 	 * 
-	 * @param		string
-	 * @param		string
-	 * @param		float
+	 * @param		string	$from
+	 * @param		string	$to
+	 * @param		float	$amount
 	 * @return		bool
 	 */			
 	public function move($from, $to, $amount) {
@@ -219,9 +218,9 @@ class Bw_bitcoin {
 	 * read this information. Returns a transaction id ($tx_id) if the 
 	 * transaction is successful, otherwise returns an error on failure.
 	 * 
-	 * @param		string
-	 * @param		string
-	 * @param		float
+	 * @param		string	$src_ac
+	 * @param		string	$to_address
+	 * @param		float	$value
 	 * @return		bool
 	 */			
 	public function sendfrom($src_ac, $to_address, $value){
@@ -234,7 +233,7 @@ class Bw_bitcoin {
 	 * Function to validate a bitcoin address. Checks if there is a 
 	 * base58 address, and other tests. Returns a boolean with the answer.
 	 * 
-	 * @param		string
+	 * @param		string	$address
 	 * @return		bool
 	 */		
 	public function validateaddress($address) {
@@ -252,7 +251,7 @@ class Bw_bitcoin {
 	 * reusing addresses). Does not return the address, sets it in the DB
 	 * to be read then.
 	 * 
-	 * @param		string
+	 * @param		string	$user_hash
 	 * @return		bool
 	 */			
 	public function new_address($user_hash) {
@@ -289,11 +288,11 @@ class Bw_bitcoin {
 	 * a user may be putting in another users topup address to cashout.
 	 * Don't know why they'd do this, but this way we do the accounting properly.
 	 * 
-	 * @param		string
+	 * @param		string	$txn_hash
 	 */			
-	public function walletnotify($txn_id) {
+	public function walletnotify($txn_hash) {
 
-		$transaction = $this->gettransaction($txn_id);
+		$transaction = $this->gettransaction($txn_hash);
 		// Abort if there's an error obtaining the transaction (not for our wallet)
 		if(isset($transaction['code']))
 			return FALSE;
@@ -311,7 +310,7 @@ class Bw_bitcoin {
 		// Work out if the transaction is cashing out anything.
 		if(isset($send[0]) && $send[0]['account'] == "main" && $send[0]['category'] == "send") {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
-			$update = array('txn_id' => $txn_id,
+			$update = array('txn_id' => $txn_hash,
 							'user_hash' => $user_hash,
 							'value' => $send[0]['amount'],
 							'confirmations' => $transaction['confirmations'],
@@ -320,7 +319,7 @@ class Bw_bitcoin {
 							'credited' => '1',
 							'time' => $transaction['time']);
 
-			if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_id, $update['category']) == FALSE) {
+			if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
 
 				$this->CI->bitcoin_model->add_pending_txn($update);
 				
@@ -334,7 +333,7 @@ class Bw_bitcoin {
 		// Workout if the transaction is topping an account up.
 		if(isset($receive[0]) && $receive[0]['account'] == 'topup' && $receive[0]['category'] == "receive") {
 			$user_hash = $this->CI->bitcoin_model->get_address_owner($receive[0]['address']);
-			$update = array('txn_id' => $txn_id,
+			$update = array('txn_id' => $txn_hash,
 							'user_hash' => $user_hash,
 							'value' => $receive[0]['amount'],
 							'confirmations' => $transaction['confirmations'],
@@ -342,7 +341,7 @@ class Bw_bitcoin {
 							'category' => 'receive',
 							'time' => $transaction['time']);
 
-			if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_id, $update['category']) == FALSE) {
+			if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
 				$this->CI->bitcoin_model->add_pending_txn($update);
 
 				if($this->CI->bitcoin_model->get_user_address($user_hash) == $update['address']) 
@@ -369,17 +368,17 @@ class Bw_bitcoin {
 	 * tracking this transaction, by setting confirmations='>50'. This
 	 * causes the 'check' icon to appear in the transaction log.
 	 * 
-	 * @param		string
+	 * @param		string	$block_hash
 	 * @return		void
 	 */		
-	public function blocknotify($block_id){
+	public function blocknotify($block_hash){
 		
 		// First task, maintain a record of the processed blocks.
-		if($this->CI->bitcoin_model->have_block($block_id) == FALSE) {
-			$block = $this->getblock($block_id);
+		if($this->CI->bitcoin_model->have_block($block_hash) == FALSE) {
+			$block = $this->getblock($block_hash);
 			if(!isset($block['code'])){
-				$this->CI->bitcoin_model->add_block($block_id, $block['height']);
-				echo "recorded $block_id\n";
+				$this->CI->bitcoin_model->add_block($block_hash, $block['height']);
+				echo "recorded $block_hash\n";
 			}
 		}
 		

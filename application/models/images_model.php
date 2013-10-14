@@ -32,8 +32,8 @@ class Images_model extends CI_Model {
 	 * $image_hash !== 'default', try loading the 'default' image hash instead.
 	 * 
 	 * @access	public
-	 * @param	int
-	 * @return	array / FALSE
+	 * @param	int	$image_hash
+	 * @return	array/FALSE
 	 */					
 	public function get($image_hash) {
 		$this->db->select('hash, encoded, height, width');
@@ -54,7 +54,7 @@ class Images_model extends CI_Model {
 	 * an empty array to be returned.
 	 * 
 	 * @access	public
-	 * @param	int
+	 * @param	int	$item_hash
 	 * @return	array
 	 */					
 	public function by_item($item_hash) {
@@ -84,8 +84,8 @@ class Images_model extends CI_Model {
 	 * successfully, and FALSE on failure.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	string
+	 * @param	string	$image_hash
+	 * @param	string	$file_name
 	 * @return	bool
 	 */					
 	public function add($image_hash, $file_name) {
@@ -103,10 +103,10 @@ class Images_model extends CI_Model {
 	 * then this $image_hash will be set as the main image for $item_hash.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @param	string
-	 * @param	bool
+	 * @param	string	$image_hash
+	 * @param	string	$file_name
+	 * @param	string	$item_hash
+	 * @param	bool	$mail_image
 	 * @return	bool
 	 */					
 	public function add_to_item($image_hash, $file_name, $item_hash, $main_image = FALSE) {
@@ -135,8 +135,8 @@ class Images_model extends CI_Model {
 	 * if the specified image does not exist.
 	 *
 	 * @access	public
-	 * @param	int
-	 * @return	array / FALSE
+	 * @param	int	$image_hash
+	 * @return	array/FALSE
 	 */					
 	public function get_item($image_hash) {
 		$this->db->select('item_hash')
@@ -156,7 +156,8 @@ class Images_model extends CI_Model {
 	 * main image as $image_hash. Returns TRUE if successful, false if unsuccessful.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	string	$item_hash
+	 * @param	string	$image_hash
 	 * @return	array / FALSE
 	 */					
 	public function main_image($item_hash, $image_hash) {
@@ -175,7 +176,8 @@ class Images_model extends CI_Model {
 	 * TRUE on success, and FALSE on failure.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	string	$item_hash
+	 * @param	string	$image_hash
 	 * @return	array / FALSE
 	 */					
 	public function delete_item_img($item_hash, $image_hash) {

@@ -50,8 +50,8 @@ class Bitcoin_model extends CI_Model {
 	 * FALSE if there is no record.
 	 *
 	 * @access	public
-	 * @param	NULL / string
-	 * @return	int / FALSE
+	 * @param	NULL/string	$user_hash
+	 * @return	int/FALSE
 	 */			
 	public function current_balance($user_hash = NULL ) {
 		$this->db->select('bitcoin_balance');
@@ -73,8 +73,8 @@ class Bitcoin_model extends CI_Model {
 	 * Load the balance of unverified transactions to do with the specified
 	 * user's account.
 	 *
-	 * @access	public
-	 * @param	string
+	 * @access	public	
+	 * @param	string	$user_hash
 	 * @return	int
 	 */			
 	public function unverified_transactions($user_hash) {
@@ -102,7 +102,7 @@ class Bitcoin_model extends CI_Model {
 	 * results array. Returns an array if successful, returns FALSE on failure.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	string	$user_hash
 	 * @return	bool
 	 */			
 	public function user_txns($user_hash) {
@@ -133,8 +133,8 @@ class Bitcoin_model extends CI_Model {
 	 * 
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	string / FALSE
+	 * @param	string	$user_hash
+	 * @return	string/FALSE
 	 */			
 	public function get_user_address($user_hash) {
 		$this->db->select('bitcoin_topup_address')
@@ -158,8 +158,8 @@ class Bitcoin_model extends CI_Model {
 	 * return the bitcoin address. Otherwise, return FALSE.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	string / FALSE
+	 * @param	string	$user_hash
+	 * @return	string/FALSE
 	 */			
 	public function get_cashout_address($user_hash) {
 		$this->db->select('bitcoin_cashout_address')
@@ -181,8 +181,8 @@ class Bitcoin_model extends CI_Model {
 	 * Returns TRUE if the insert was successful, FALSE if it failed.
 	 * 
 	 * @access	public
-	 * @param	string
-	 * @param	string
+	 * @param	string	$user_hash
+	 * @param	string	$address
 	 * @return	bool
 	 */			
 	public function log_user_address($user_hash, $address) {
@@ -196,7 +196,8 @@ class Bitcoin_model extends CI_Model {
 	 * log the address to the table. If unsuccessful, return FALSE.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	string	$user_hash
+	 * @param	string	$address
 	 * @return	bool
 	 */			
 	public function set_user_address($user_hash, $address) {
@@ -216,8 +217,8 @@ class Bitcoin_model extends CI_Model {
 	 * TRUE if the update was successful. FALSE on failure. 
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	string
+	 * @param	string	$user_hash
+	 * @param	string	$address
 	 * @return	bool
 	 */			
 	public function set_cashout_address($user_hash, $address) {
@@ -233,8 +234,8 @@ class Bitcoin_model extends CI_Model {
 	 * if no record is found, or returns the user_hash if successful.
 	 *
 	 * @access	public
-	 * @param	array
-	 * @return	string / bool
+	 * @param	string	$address
+	 * @return	string/FALSE
 	 */			
 	public function get_address_owner($address) {
 		$this->db->select('user_hash');
@@ -256,8 +257,8 @@ class Bitcoin_model extends CI_Model {
 	 * FALSE on failure.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	string / FALSE
+	 * @param	string	$address
+	 * @return	string/FALSE
 	 */		
 	public function get_cashout_address_owner($address) {
 		$this->db->select('user_hash');
@@ -290,7 +291,7 @@ class Bitcoin_model extends CI_Model {
 	 *		 'time' => "...");
 	 * 
 	 * @access	public
-	 * @param	array
+	 * @param	array	$array
 	 * @return	bool
 	 */			
 	public function add_pending_txn($array) {
@@ -299,7 +300,6 @@ class Bitcoin_model extends CI_Model {
 			if($this->db->insert('pending_txns', $array) == TRUE)
 				return TRUE;
 		}
-		
 		return FALSE;
 	}
 
@@ -312,32 +312,32 @@ class Bitcoin_model extends CI_Model {
 	 * TRUE if the transaction is on record already, FALSE if it's not.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	string	$user_hash
+	 * @param	string	$txn_hash
+	 * @param	string	$category
 	 * @return	bool
 	 */			
-	public function user_transaction($user_hash, $txn_id, $category){
+	public function user_transaction($user_hash, $txn_hash, $category){
 		$this->db->select('id')
 				 ->where('user_hash', $user_hash)
-				 ->where('txn_id', $txn_id)
+				 ->where('txn_id', $txn_hash)
 				 ->where('category', $category);
 				
 		$query = $this->db->get('pending_txns');
 		return ($query->num_rows() > 0) ? TRUE : FALSE;
 	}
-	
-	// WalletNotify callback. 
-		
+			
 	/**
 	 * Have Transaction
 	 * 
 	 * Checks if we have this transaction ID. Very very bad.
 	 * Should be deprecated in favour of user_transaction()...
 	 * Not specific enough. Returns the transaction if successful, or
-	 * FALSE if it's not found.
+	 * FALSE if it's not found. Wallet Notify callback.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	array / FALSE
+	 * @param	string	$txn_id
+	 * @return	array/FALSE
 	 */		
 	public function have_transaction($txn_id) {
 		$this->db->where('txn_id', $txn_id);
@@ -348,8 +348,6 @@ class Bitcoin_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// BlockNotify (received) and WalletNotify (sent) callbacks
-	
 	/**
 	 * Update Credits 
 	 * 
@@ -358,7 +356,7 @@ class Bitcoin_model extends CI_Model {
 	 * And orders::place() to deduct the buyers account.
 	 * Requires an array, where each update is contained as an entry in that array.
 	 * Often only suppling one update. The value can be negative.
-	 * 
+	 * Called by Wallet Notify when debiting accounts.
 	 * Eg: 
 	 * $updates = array('0' => array('user_hash' => '...',
 	 * 								 'value' => '...'),
@@ -391,7 +389,7 @@ class Bitcoin_model extends CI_Model {
 	 * Called by Blocknotify. 
 	 * 
 	 * @access	public
-	 * @param	string
+	 * @param	string	$txn_id
 	 * @return	bool
 	 */			
 	public function set_credited($txn_id) {
@@ -416,10 +414,7 @@ class Bitcoin_model extends CI_Model {
 		$this->db->where('address !=', '[payment]');
 		
 		$query = $this->db->get('pending_txns');
-		if($query->num_rows() > 0) 
-			$res = $query->result_array();
-		
-		return $res;
+		return ($query->num_rows() > 0) ? $query->result_array() : $res;
 	}
 	
 	/**
@@ -435,7 +430,7 @@ class Bitcoin_model extends CI_Model {
 	 * go through. 
 	 * 
 	 * @access	public
-	 * @param	array
+	 * @param	array	$updates
 	 * @return	void
 	 */			
 	public function update_confirmations($updates) {
@@ -452,12 +447,12 @@ class Bitcoin_model extends CI_Model {
 	 * if the insertion was successful, otherwise returns FALSE.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	int
+	 * @param	string	$block_hash
+	 * @param	int	$number
 	 * @return	bool
 	 */			
-	public function add_block($block_hash, $number) {
-		return ($this->db->insert('blocks', array('hash' => $block_hash, 'number' => $number)) == TRUE) ? TRUE : FALSE;
+	public function add_block($block_hash, $height) {
+		return ($this->db->insert('blocks', array('hash' => $block_hash, 'number' => $height)) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -467,7 +462,7 @@ class Bitcoin_model extends CI_Model {
 	 * Returns TRUE if we do, returns FALSE otherwise.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$block_hash
 	 * @return	bool
 	 */		
 	public function have_block($block_hash) {

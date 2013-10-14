@@ -54,7 +54,7 @@ class Bw_captcha {
 	 * Checks the entered $answer to see if it correspondes to the
 	 * captchakey stored in the session
 	 * 
-	 * @param		string
+	 * @param		string $answer.
 	 * @return		bool
 	 */
 	public function check($answer) { 
@@ -71,17 +71,12 @@ class Bw_captcha {
 			// Unset the current challenge from the users session.
 			$this->CI->session->unset_userdata('captcha_key');
 	
-			if($test['solution'] == $answer){
-				return TRUE;
-			} else {
-				return FALSE;
-			}
+			return ($test['solution'] == $answer) ? TRUE : FALSE;
 		} else {
 			return FALSE;
 		}
 	}
 	
-	// Generate and store a captcha.
 	/**
 	 * Generate
 	 * 

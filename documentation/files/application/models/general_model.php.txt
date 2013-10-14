@@ -25,9 +25,9 @@ class General_model extends CI_Model {
 	/**
 	 * Test to see if the entry is unique in that table/column
 	 *
-	 * @param	string
-	 * @param	string
-	 * @param	string
+	 * @param	string	$table
+	 * @param	string	$column
+	 * @param	string	$hash
 	 * @return	bool
 	 */
 	public function check_unique_entry($table, $column, $hash){
@@ -45,7 +45,7 @@ class General_model extends CI_Model {
 	/**
 	 * Load any stale users.
 	 *
-	 * @param	int (hours)
+	 * @param	int $threshold
 	 * @return	array/FALSE
 	 */
 	public function get_stale_users($threshold) {
@@ -71,8 +71,8 @@ class General_model extends CI_Model {
 	/**
 	 * Return rows in $table with a timestamp before $time
 	 *
-	 * @param	string
-	 * @param	int (timestamp)
+	 * @param	string	$table
+	 * @param	int	$time
 	 * @return	bool
 	 */
 	public function rows_before_time($table, $time) {
@@ -84,8 +84,8 @@ class General_model extends CI_Model {
 	/**
 	 * Drop a row by the specified $table and $id.
 	 *
-	 * @param 	string
-	 * @param	id
+	 * @param 	string	$table
+	 * @param	int	$id
 	 * @return	bool
 	 */
 	public function drop_id($table, $id) {
@@ -96,7 +96,7 @@ class General_model extends CI_Model {
 	/**
 	 * Count the number of entries in a table.
 	 *
-	 * @param	string
+	 * @param	string	$table
 	 * @return	int
 	 */
 	public function count_entries($table) {
@@ -166,8 +166,8 @@ class General_model extends CI_Model {
 	/**
 	 * Load location name by $id.
 	 *
-	 * @param	int
-	 * @return	string / FALSE
+	 * @param	int	$id
+	 * @return	string/FALSE
 	 */
 	public function location_by_id($id){
 		$this->db->select('country')
