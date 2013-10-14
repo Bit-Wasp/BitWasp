@@ -1,11 +1,23 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/* BitWasp Messages Library
+ * 
+ * Used to prepare messages for input to the table or output.
+ * 
+ * 
+ */
 class Bw_messages {
 	
 	protected $message_password;
 	public $CI;
 	public $encrypt_private_messages;
 	
+	/**
+	 * Constructor
+	 * 
+	 * Load the CodeIgniter framework, and the OpenSSL/GPG libraries,
+	 * and the users model.
+	 */
 	public function __construct() {
 		$this->CI = &get_instance();
 		$this->CI->load->library('openssl');
@@ -13,7 +25,23 @@ class Bw_messages {
 		$this->CI->load->model('users_model');
 	}	
 	
-	// Takes input from CI's input->post and builds an array for submission to the messages table.
+	/**
+	 * Prepare Input
+	 * 
+	 * Prepares a message for storage in the database. If $system is NULL,
+	 * then the message information is taken from POST data (ie, submitted
+	 * using the messages form). Otherwise, the message is taken from the
+	 * system array.
+	 * 
+	 * Checks if the message is encrypted, or if the vendor has enabled
+	 * server side encryption of GPG messages.
+	 * 
+	 * Prepares the content columns data - a JSON array containing the
+	 * message, subject, and sender ID. If encrypted private messages are
+	 * enabled, this message content will be encrypted with the receipients
+	 * RSA key to securely store the data.
+	 * Finally content is base64 encoded.
+	 */
 	public function prepare_input($data, $system = NULL) {
 		
 		if($system == NULL) {
@@ -74,6 +102,20 @@ class Bw_messages {
 	}
 	
 	// Convert DB responses to a managable array.
+	/**
+	 * Prepare Output
+	 * 
+	 * This function prepares database responses into a parsable array.
+	 * Used to display the inbox, or a single message.
+	 * 
+	 * The content JSON string (which may be RSA encrypted) is base64 decoded
+	 * and decrypted if necessary.
+	 * $messages is an array containing all the messages. Loop through each
+	 * and prepare for output.
+	 * 
+	 * @param		array
+	 * @return		array
+	 */
 	public function prepare_output($messages = NULL){
 		$this->CI->load->model('users_model');
 		$this->CI->load->model('accounts_model');
