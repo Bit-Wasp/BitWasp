@@ -193,7 +193,6 @@ class Admin extends CI_Controller {
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		$data['bitcoin_index'] = $this->bw_config->price_index;
 		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
-		var_dump($data['bitcoin_info']);
 		
 		$data['page'] = 'admin/bitcoin';
 		$data['title'] = $this->nav['bitcoin']['heading'];

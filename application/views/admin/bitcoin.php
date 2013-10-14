@@ -5,11 +5,29 @@
 		  <div class="container-fluid">
 			  
 
+<?php 
+if($bitcoin_info == NULL) { ?>
+		  <div class="row-fluid">
+			<span class="span3">Bitcoind Status</span>
+			<span class="span7">The bitcoin daemon is currently disabled.</span>
+		  </div>
+<?php } else { ?>
+		  <div class="row-fluid">
+			<span class="span3">Bitcoind Status</span>
+			<span class="span7">Bitcoind is currently running.</span>
+		  </div>
+		  
+		  <div class="row-fluid">
+			<span class="span3">Bitcoind Version</span>
+			<span class="span7"><?php $bitcoin_info['version']; ?></span>
+		  </div>
+		  
 <?php if($bitcoin_info['testnet'] == TRUE) { ?>
 		  <div class="row-fluid">
-			<span class="span3">Testnet</span>
+			<span class="span3">Bitcoind Status</span>
 			<span class="span7">asdf</span>
 		  </div>
+<?php } ?>
 <?php } ?>
 			  
 			<div class="row-fluid">
