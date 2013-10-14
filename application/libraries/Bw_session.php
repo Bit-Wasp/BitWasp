@@ -29,15 +29,14 @@ class BW_Session {
 		$this->URI = $this->CI->current_user->URI;	
 		
 		if($this->CI->current_user->logged_in()){
-			$account = $this->CI->users_model->get(array('user_hash' => $this->current_user->user_hash));
+			$account = $this->CI->users_model->get(array('user_hash' => $this->CI->current_user->user_hash));
 			
 			// Kill a session due to inactivity, or if the user is deleted/banned while logged in.
 			if((time()-$this->CI->current_user->last_activity) > $this->CI->bw_config->login_timeout
-				&& $this->CI->session->userdata('new_session') !== 'true'
-				|| $account == FALSE
+				&& $this->CI->session->userdata('new_session') !== 'true' 
+				|| $account == FALSE 
 				|| $account['banned'] == '1'){ 
 				
-				// Dont destroy the session - need to see why this is necessary.
 				//if(!$this->CI->general->matches_any( $this->URI[0], array('login', 'register'))){
 					$this->destroy(); 
 					redirect('login');
