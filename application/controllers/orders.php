@@ -343,7 +343,7 @@ class Orders extends CI_Controller {
 	 * @see		Libraries/Form_Validation
 	 * @see		Libraries/Bw_Messages
 	 * 
-	 * @param	int
+	 * @param	int	$id
 	 * @return	void
 	 */	
 	public function place($id) {
@@ -362,7 +362,7 @@ class Orders extends CI_Controller {
 		
 		if($this->form_validation->run('order_place') == TRUE) {
 
-			if($balance <= $data['order']['price']) {
+			if($balance <= 0 || $balance <= $data['order']['price']) {
 				$data['returnMessage'] = 'You have insufficient funds to place this order. Please top up and try again';
 			} else {
 				$escrow = array('order_id' => $data['order']['id'],
