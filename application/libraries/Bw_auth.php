@@ -24,16 +24,24 @@ class Bw_auth {
 	public $CI;
 	public $URI;
 	public $auth_reqs;
-	
+
+	/** 
+	 * Construct
+	 * 
+	 * Load the codeigniter framework, the current URI, and auth_requests.
+	 */
 	public function __construct() {		
 		$this->CI = &get_instance();
 	
 		$this->URI = $this->CI->current_user->URI;
 		$this->auth_reqs = $this->CI->current_user->auth_reqs;
-		
 	}
 	
-	// Remove any expired authorization for pages.
+	/**
+	 * Auth Timeout
+	 * 
+	 * Remove any expired authorization for a page.
+	 */
 	public function auth_timeout(){
 		// Clear auth req data if the user isn't on the authorize page.
 		if($this->URI[0] !== 'authorize')
@@ -54,7 +62,15 @@ class Bw_auth {
 		}
 	}
 	
-	// Generate a new auth request.
+	/**
+	 * New Auth
+	 * 
+	 * Generate a new authorization request. Record the current URI
+	 * so we can redirect the user later on, and direct them to the 
+	 * authorize page.
+	 * 
+	 * @return		void
+	 */
 	public function new_auth(){
 		$config = array('current_auth_req' => uri_string());
 		$this->CI->session->set_userdata($config);
@@ -62,7 +78,13 @@ class Bw_auth {
 		redirect('authorize');
 	}
 	
-	// Check the current URI has a currently verified request.
+	/**
+	 * Check Current
+	 * 
+	 * Check if the current URI has already been authorized by the user.
+	 * 
+	 * @return		bool
+	 */
 	public function check_current() {
 		foreach($this->auth_reqs as $key => $req) {
 			if($key == $this->URI[0])
@@ -72,20 +94,38 @@ class Bw_auth {
 		return FALSE;
 	}
 	
-	// Check if the user is attempting to authorize.
+	/**
+	 * Has Request
+	 * 
+	 * Check if the user has made an attempt to authorize a request.
+	 * @return		bool
+	 */
 	public function has_request() {
-		if(is_string($this->CI->session->userdata('current_auth_req')))
-			return TRUE;
-		
-		return FALSE;
+		return (is_string($this->CI->session->userdata('current_auth_req'))) ? TRUE : FALSE;
 	}
 	
-	// General function to store the auth requests (JSON encoded)
+	/**
+	 * Set Data
+	 * 
+	 * A general function to store the authorization requests in the session.
+	 * 
+	 * @param		array
+	 * @return		void
+	 */
 	public function set_data(array $array) {
 		$this->CI->session->set_userdata('auth_reqs', json_encode($array));
 	}
 	
-	// After a successful authorization, add the authorization to the list.
+	/**
+	 * Setup Authorization
+	 * 
+	 * This function records the new authorized request for the URI, along
+	 * with the current time, and the timeout for this request.
+	 * 
+	 * @param		string
+	 * @param		int
+	 * @return		void
+	 */
 	public function setup_auth($URI, $timeout) {
 		if($timeout > 0) {
 			$new_auth = $this->auth_reqs; 
@@ -96,6 +136,14 @@ class Bw_auth {
 	}	
 	
 	// Record the authorization, and how long until it expires, then redirect to desired page.
+	/**
+	 * Successful Auth
+	 * 
+	 * Record the successful authorization request, how long until it expires,
+	 * and then provide the requested URI so the user can be redirected.
+	 * 
+	 * @return		string
+	 */
 	public function successful_auth() {
 		$this->CI->load->model('auth_model');
 		$attempted_uri = $this->CI->current_user->current_auth_req;
@@ -109,7 +157,14 @@ class Bw_auth {
 		return $attempted_uri;
 	}
 	
-	// Message password expiry function.
+	/**
+	 * Message Password Timeout
+	 * 
+	 * This function will check if the message password is expired, and 
+	 * should be forgotten.
+	 * 
+	 * @return		void
+	 */
 	public function message_password_timeout() {	
 		$grant_time = $this->CI->session->userdata('message_password_granted');
 		
@@ -119,22 +174,34 @@ class Bw_auth {
 		}
 	}
 	
-	// Generate and store a two factor token.
+	/**
+	 * Generate Two Factor Token
+	 * 
+	 * This function will generate and store a new two-factor token.
+	 * If the challenge is successfully generated, then the challenge is
+	 * returned. On failure, the function returns FALSE.
+	 * 
+	 * @return		string / FALSE
+	 */
 	public function generate_two_factor_token() {
 		$this->CI->load->library('gpg');
 		$this->CI->load->model('accounts_model');
 		
+		// Load the users PGP key. 
 		$key = $this->CI->accounts_model->get_pgp_key($this->CI->current_user->user_id);
-		if($key == FALSE)
+		if($key == FALSE)		// Abort if it's not set.
 			return FALSE;
 			
+		// Generate a solution.
 		$solution = $this->CI->general->generate_salt();
 		$text = "Login Token: $solution\n";
+		// Encrypt the challenge.
 		$challenge = $this->CI->gpg->encrypt($key['fingerprint'], $text);
 		
-		if($challenge == FALSE)
+		if($challenge == FALSE)		// Abort if unsuccessful.
 			return FALSE;
 			
+		// If we successfully stored the solution, return the challenge.
 		if($this->CI->auth_model->add_two_factor_token($solution))
 			return $challenge;
 			

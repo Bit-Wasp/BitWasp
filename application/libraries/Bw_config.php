@@ -1,6 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-
 /* BitWasp Config Library
  * 
  * Used to load the sites configuration from the database, and for 

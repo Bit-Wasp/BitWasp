@@ -1,11 +1,25 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Bitwasp Captcha Library
+ * 
+ * Library for the generation, and checking, of captcha requests.
+ * 
+ */
 class Bw_captcha {
 
 	protected $CI; 
 	protected $captcha_length; 
 	protected $captcha_timeout = 1200; // Purge if captcha is 20 minutes old.
 	
+	/**
+	 * Construct
+	 * 
+	 * Load the CodeIgniter framework, along with it's captcha helper script,
+	 * the captchas model, and the images library.
+	 * 
+	 * Purge all of the expired captchas.
+	 */
 	public function __construct() {
 		$this->CI = &get_instance();
 		
@@ -17,7 +31,15 @@ class Bw_captcha {
 		$this->CI->captchas_model->purge_expired($expired_time);
 	}
 		
-	// Check an answer.
+	/**
+	 * Check
+	 * 
+	 * Checks the entered $answer to see if it correspondes to the
+	 * captchakey stored in the session
+	 * 
+	 * @param		string
+	 * @return		bool
+	 */
 	public function check($answer) { 
 		// Load captcha identifier from session.
 		
@@ -43,6 +65,18 @@ class Bw_captcha {
 	}
 	
 	// Generate and store a captcha.
+	/**
+	 * Generate
+	 * 
+	 * Remove previous challenges for this user. 
+	 * 
+	 * Generate a captcha solution based on the admin-configurable length.
+	 * Generate an image using the CI captcha library, generate a unique
+	 * hash for the captchakey. Set the captchakey in memory to check
+	 * later on.
+	 * 
+	 * @return		string
+	 */
 	public function generate() {
 		// Check if there is a challenge set for this user. Delete old and create a new one.
 		// Either way, the timed removal of old captchas will fix this sort of thing.
@@ -90,3 +124,5 @@ class Bw_captcha {
 	}
 	
 };
+
+/* End of File: Bw_captcha.php */
