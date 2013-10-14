@@ -47,7 +47,6 @@ class Openssl {
 	 * 
 	 * @param		string
 	 */
-	
 	public function keypair($message_password) {
 		
 		/* Create the private and public key */
