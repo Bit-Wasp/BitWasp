@@ -1,5 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
+/**
+ * BitWasp Session Library
+ * 
+ * This session is used to manage the sessions in the application.
+ * Performs checking if the session has expired
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Session
+ * @author		BitWasp
+ */
 class BW_Session {
 
 	protected $CI;
@@ -12,40 +22,57 @@ class BW_Session {
 	public function __construct(){
 		$this->CI = &get_instance();
 		$this->CI->load->model('auth_model');
+		$this->CI->load->model('users_model');
 		$this->CI->load->library('bw_auth');
 		
 		$this->URI = $this->CI->current_user->URI;	
 		
 		if($this->CI->current_user->logged_in()){
+			$account = $this->CI->users_model->get(array('user_hash' => $this->current_user->user_hash));
 			
-			// Kill a session due to inactivity.
+			// Kill a session due to inactivity, or if the user is deleted/banned while logged in.
 			if((time()-$this->CI->current_user->last_activity) > $this->CI->bw_config->login_timeout
-				&& $this->CI->session->userdata('new_session') !== 'true'){ 
+				&& $this->CI->session->userdata('new_session') !== 'true'
+				|| $account == FALSE
+				|| $account['banned'] == '1'){ 
 				
-				// Leave this commented for now to test. 
-				if(!$this->CI->general->matches_any( $this->URI[0], array('login', 'register'))){
+				// Dont destroy the session - need to see why this is necessary.
+				//if(!$this->CI->general->matches_any( $this->URI[0], array('login', 'register'))){
 					$this->destroy(); 
 					redirect('login');
 					
-				}		
+				//}		
 			} else {
+				// Remove new_session from memory if set.
 				if($this->CI->session->userdata('new_session'))
 					$this->CI->session->unset_userdata('new_session');
 				
+				// Check if auth reqs or the message password has expired & remove them.
 				$this->CI->bw_auth->auth_timeout();
 				$this->CI->bw_auth->message_password_timeout();
 				
+				// Set the last activity to track for expiry.
 				$this->CI->session->set_userdata('last_activity', time());
 				
 				$this->user_role = $this->CI->current_user->user_role;
-				
 			}
 		}
 		
 		$this->validate_req();
 	}
 	
-	// Create a session. Params such as 2FA or a pubkey prompt can be set here.
+	/**
+	 * Create
+	 * 
+	 * Create a session based on the supplied userdata $user, and an
+	 * optional parameter specifying the type of the session (such
+	 * as a full session (param=null), for two factor (param=two_factor)
+	 * or to register a pgp key (param=force_pgp)
+	 * 
+	 * @param		array
+	 * @param		array
+	 * @return		void
+	 */
 	public function create($user, $params = NULL) {
 		if($params == 'force_pgp') {
 			$userdata = array(	'user_id' => $user['id'],
@@ -70,17 +97,44 @@ class BW_Session {
 		$this->CI->session->set_userdata($userdata);
 	}
 	
-	// Destroy the current session.
+	/**
+	 * Destroy
+	 * 
+	 * Destroy the current session, remove userdata, and redirect
+	 * to the login page.
+	 * 
+	 * @return		void
+	 */
 	public function destroy() {
 		$this->CI->session->unset_userdata('logged_in');
 		$this->CI->session->unset_userdata('auth_reqs');
 		$this->CI->session->unset_userdata('message_password');
 		// Destroy the session.
 		$this->CI->session->sess_destroy();
-		redirect('login');									// made the change here!
+		redirect('login');
 	}
 	
-	// Validate a users request to view a page. Lots of rules.
+	/**
+	 * Validate Request
+	 * 
+	 * Validate a users request to view a page.
+	 * Authorization for a pages first uri (Current_user->URI[0]) is 
+	 * stored in the page_authorization's table. Some of the rules are
+	 *  - If the admin allows it, allow users to view the homepage, items/item, category, user pages.
+	 *  - If the authorization level is unset, allow the request.
+	 *  - If a two factor session is set, and the user isn't on that page or logout, redirect them to the two factor form.
+	 *  - If a user has the force_pgp flag set, and they're not on that page or the logout page, redirect to the PGP form.
+	 *  - If the page is restricted to guests only (login/register), the user must not be logged in.
+	 *  - If the authorization level == 'login' and the user is logged in, allow their request.
+	 *  - If the authorization level == 'vendor' and the user has that role, allow the request.
+	 *  - If the authorization level == 'buyer' and the user has that role, allow the request.
+	 *  - If the authorization level == 'admin' and the user has that role, allow the request.
+	 *  - If the authorization level == 'auth|all', all users must enter their password before viewing the page (record request for a few minutes)
+	 *  - If the authorization level == 'auth|admin', user MUST be an admin, and must enter their password.
+	 *  - If all these rules fail, direct the user to the login page.
+	 * 
+	 * @return		void.
+	 */
 	public function validate_req() {
 		$this->auth_level = $this->CI->auth_model->check_auth($this->URI[0]);
 		
