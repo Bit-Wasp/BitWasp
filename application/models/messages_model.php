@@ -28,19 +28,33 @@ class Messages_model extends CI_Model {
 	}
 	
 	// Load a specific message.
+	/**
+	 * Get
+	 * 
+	 * Load a specific message, based on the message hash. Limit
+	 * messages to those that can be read by the currently logged in user.
+	 * 
+	 * @param		string
+	 * @return		array / FALSE
+	 */
 	public function get($hash) {
 		$this->db->select('id, content, hash, viewed, encrypted, viewed, remove_on_read, time')
 				 ->where('to', $this->current_user->user_id)
 				 ->where('hash', $hash);
 				
 		$query = $this->db->get('messages');
-		if($query->num_rows() > 0)
-			return $query->row_array();
-			
-		return FALSE;
+		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 	
-	// Load a users inbox.
+	/**
+	 * Inbox
+	 * 
+	 * Load a users inbox. Based on current_user->user_id. User can 
+	 * optionally set a limit for messages.
+	 * 
+	 * @param		int
+	 * @return		array / NULL
+	 */
 	public function inbox($limit = 0) {
 		$this->db->select('id, content, hash, viewed, encrypted, viewed, remove_on_read, time')
 				 ->where('to', $this->current_user->user_id)
@@ -51,20 +65,27 @@ class Messages_model extends CI_Model {
 
 		$query = $this->db->get('messages');
 	
-		if($query->num_rows() > 0) 
-			return $query->result_array();
+		return ($query->num_rows() > 0) ? $query->result_array() : NULL;
 
-		return NULL;
 	}
 	
-	// Delete a message, restrict ownership to the currently logged in user.
+	/**
+	 * Delete
+	 * 
+	 * Delete a message, restrict the scope of this function to messages
+	 * that the currently logged in user has access to.
+	 * 
+	 * @param		int
+	 * @return		bool
+	 */
 	public function delete($id) {
 		$this->db->where('to', $this->current_user->user_id);
 		$this->db->where('id', $id);
 		return ($this->db->delete('messages') == TRUE) ? TRUE : FALSE;
 	}
 	
-	/* Delete Autorun
+	/**
+	 * Delete Autorun
 	 * 
 	 * This function is called by an autorun job to delete messages older
 	 * than a specific age. Unlike delete(), this function can delete any
@@ -72,29 +93,41 @@ class Messages_model extends CI_Model {
 	 * authenticated user)
 	 * 
 	 * @see		Libraries\Autorun
-	 * @see		
 	 * 
 	 * @param	int
-	 * return	bool
+	 * @return	bool
 	 */
 	public function delete_autorun($id) {
 		$this->db->where('id', "$id");
 		return ($this->db->delete('messages') == TRUE) ? TRUE : FALSE;
 	}
 	
-	// Delete all messages.
+	/**
+	 * Delete All
+	 * 
+	 * Delete all messages sent to the current user. Returns TRUE on 
+	 * success, and FALSE on failure.
+	 *
+	 * @return		bool
+	 */
 	public function delete_all() {
 		$this->db->where('to', $this->current_user->user_id);
-		if($this->db->delete('messages') == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->delete('messages') == TRUE) ? TRUE : FALSE;
 	}	
 	
-	// Function to gather information about a user/message so we can build the send-message form.
+	/**
+	 * Reply Info
+	 * 
+	 * This function fathers information about a supplied userhash/messagehash 
+	 * so we can build the send-message form in the case of replying, 
+	 * or directly messaging a user.
+	 * 
+	 * @param		string
+	 * @return		array / NULL
+	 */
 	public function reply_info($identifier) {		
 		if($identifier == NULL)
-			return FALSE;
+			return NULL;
 		
 		$this->load->model('accounts_model');
 		$message = $this->get($identifier);
@@ -126,27 +159,36 @@ class Messages_model extends CI_Model {
 			}
 		}
 		
-		if(isset($res))
-			return $res;
-
-		return NULL;
+		// If the result is set, return it, otherwise, return NULL.
+		return (isset($res)) ? $res : NULL;
 	}
 	
-	// Add the message to the table.
+	/**
+	 * Send
+	 * 
+	 * Send a message to a user.
+	 * Takes the entered array and inserts it to the database. 
+	 * Array keys can be any of the columns in the database.
+	 * 
+	 * @param		array
+	 * @return		bool
+	 */
 	public function send($data) {
-		if($this->db->insert('messages', $data))
-			return TRUE;
-	
-		return FALSE;
+		return ($this->db->insert('messages', $data)) ? TRUE : FALSE;
 	}
 	
-	// Set whether the message has been viewed.
+	/**
+	 * Set Viewed
+	 * 
+	 * This function takes the supplied message $id and sets it
+	 * as viewed.
+	 * 
+	 * @param		int
+	 * @return		bool
+	 */
 	public function set_viewed($id) {
 		$update = array('viewed' => '1');
 		$this->db->where('id', $id);
-		if($this->db->update('messages', $update))
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->update('messages', $update)) ? TRUE : FALSE;
 	}
 };

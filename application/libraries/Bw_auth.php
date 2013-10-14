@@ -202,10 +202,7 @@ class Bw_auth {
 			return FALSE;
 			
 		// If we successfully stored the solution, return the challenge.
-		if($this->CI->auth_model->add_two_factor_token($solution))
-			return $challenge;
-			
-		return FALSE;
+		return ($this->CI->auth_model->add_two_factor_token($solution) == TRUE) ? $challenge : FALSE;
 	}
 };
 
