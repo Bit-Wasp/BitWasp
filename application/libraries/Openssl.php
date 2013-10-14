@@ -1,19 +1,52 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * OpenSSL
+ *
+ * This library contains the functions to manage RSA encryption within
+ * the marketplace. Can generate RSA keypair's at a specified 
+ *  
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	OpenSSL
+ * @author		BitWasp
+ */
+
 class Openssl {
 
-
+	/**
+	 * OpenSSL default settings
+	 *
+	 * Preset variables.
+	 */
 	protected $digest_alg = "sha512";
 	protected $private_key_bits = 2048;
 	protected $private_key_type = OPENSSL_KEYTYPE_RSA;
 
+	/**
+	 * Constructor
+	 *
+	 * This function is used to load the CodeIgniter framework, and to 
+	 * work out the keysize to be used.
+	 * 
+	 * @return		void
+	 */
 	public function __construct() {
 		$CI = &get_instance();
-		$CI->load->library('bw_config');
-		$this->private_key_bits = $CI->bw_config->openssl_keysize;
+		$this->private_key_bits = ($CI->bw_config->openssl_keysize == '') ? $this->private_key_bits : $CI->private_key_bits;
 	}
 
-	// Generate a keypair using the basic configuration.
+	/**
+	 * Keypair
+	 *
+	 * Generate an RSA keypair, the private key of which is protected 
+	 * using the specified $message_password. Returns the public/private
+	 * keypair as an array containing the base64 decoded strings (for
+	 * insertion into the database).
+	 * 
+	 * @param		string
+	 */
+	
 	public function keypair($message_password) {
 		
 		/* Create the private and public key */
@@ -35,13 +68,32 @@ class Openssl {
 					 'private_key' => base64_encode($private_key) );
 	}
 	
-	// Encrypt text using a public key.
+	/**
+	 * Encrypt
+	 *
+	 * This function encrypts the specified $text using the specified
+	 * $public_key. Returns the encrypted text.
+	 * 
+	 * @return		string
+	 */
 	public function encrypt($text, $public_key) { 
 		openssl_public_encrypt($text, $encrypted, $public_key);
 		return $encrypted;
 	}
 	
-	// Decrypt text using an encrypted private key and password.
+	/**
+	 * Decrypt
+	 *
+	 * Decrypt text using the password protected $private_key and the
+	 * users $message_password. Suppress errors for openssl_private_decrypt
+	 * because when entering the message pin on /messaages/pin, the supplied
+	 * pin may be incorrect. We handle errors by checking the output.
+	 * 
+	 * @param		string
+	 * @param		string
+	 * @param		string
+	 * @return		string
+	 */	
 	public function decrypt($text, $private_key, $password) { 
 		// Decrypt the private key prior to use.
 		$res = openssl_pkey_get_private($private_key, $password);

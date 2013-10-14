@@ -12,6 +12,7 @@
 class Bw_bitcoin {
 	
 	public $CI;
+	
 	/**
 	 * Config
 	 * 
@@ -432,11 +433,14 @@ class Bw_bitcoin {
 	 */		
 	public function ratenotify() {
 		$this->CI->load->model('currencies_model');
+		// Abort if price indexing is disabled.
 		if($this->CI->bw_config->price_index == 'Disabled')
 			return FALSE;
-			
+	
+		// Function to get the exchange rates via an API.
 		$rates = $this->get_exchange_rates();
 
+		// Parse results depending on where they're from.
 		if($this->CI->bw_config->price_index == 'CoinDesk') {
 			$update = array('time' => strtotime($rates->time->updated),
 							'usd' => $rates->bpi->USD->rate,
