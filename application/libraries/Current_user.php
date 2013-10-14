@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Current_User
+ * Current User Library
  * 
  * This library is used to allow easy access to information about the
  * user. User data is taken from the session, and the database, to allow

@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * OpenSSL
+ * OpenSSL Library
  *
  * This library contains the functions to manage RSA encryption within
  * the marketplace. Can generate RSA keypair's at a specified 

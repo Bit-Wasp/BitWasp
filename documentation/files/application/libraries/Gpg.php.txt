@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 /**
- * GPG
+ * GPG Library
  * 
  * This library handles server side GPG encryption of messages. It is also
  * used to generate challenges for users to perform GPG two step authentication.

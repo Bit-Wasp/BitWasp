@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Delete Message History
+ * Delete Message History Job
  *
  * This job is used to delete old and unneeded messages. Called by the 
  * autorun library. It is run periodically (default is to run every 

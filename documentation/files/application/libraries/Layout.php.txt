@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 /**
- * Layout
+ * Layout Library
  *
  * Library which takes care of loading the templates for displaying
  * the site. If the user is logged in, we load their role, bitcoin balance,

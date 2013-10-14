@@ -1,6 +1,6 @@
 <?php
 /**
- * Autorun
+ * Autorun Library
  *
  * This library automatically loads jobs, checks if there newly created 
  * ones (found in application/libraries/Autorun/) or runs jobs at a 
