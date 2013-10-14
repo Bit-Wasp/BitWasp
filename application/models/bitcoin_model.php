@@ -339,14 +339,14 @@ class Bitcoin_model extends CI_Model {
 	 * @param	string	$txn_id
 	 * @return	array/FALSE
 	 */		
-	public function have_transaction($txn_id) {
+	/*public function have_transaction($txn_id) {
 		$this->db->where('txn_id', $txn_id);
 		$query = $this->db->get('pending_txns');
 		if($query->num_rows() > 0)
 			return $query->row_array();
 			
 		return FALSE;
-	}
+	}*/
 	
 	/**
 	 * Update Credits 

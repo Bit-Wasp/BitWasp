@@ -133,10 +133,7 @@ class Bitcoin extends CI_Controller {
 	 */
 	public function has_sufficient_balance($param) {
 		$balance = $this->bitcoin_model->current_balance();
-		if(($param > 0) && ((float)$param <= (float)$balance))
-			return TRUE;
-			
-		return FALSE;
+		return (($param > 0) && ((float)$param <= (float)$balance)) ? TRUE : FALSE;
 	}
 };
 /* End of File: Bitcoin.php */
