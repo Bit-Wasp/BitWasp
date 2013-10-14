@@ -61,7 +61,7 @@ class Current_User {
 			
 			$tmp = $this->CI->currencies_model->get($user['local_currency']);
 			// Determine which currency the user has set for themselves.
-			$this->currency = ($tmp == FALSE || $this->CI->bw_config->price_index == 'Disabled') $this->CI->currencies_model->get('0') :  $tmp;
+			$this->currency = ($tmp == FALSE || $this->CI->bw_config->price_index == 'Disabled') ? $this->CI->currencies_model->get('0') :  $tmp;
 
 		} else {
 			$id = $this->CI->session->userdata('user_id');
