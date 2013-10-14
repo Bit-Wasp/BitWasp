@@ -3,6 +3,15 @@
 		  <?php echo $nav; ?>
 			
 		  <div class="container-fluid">
+			  
+
+<?php if($bitcoin_info['testnet'] == TRUE) { ?>
+		  <div class="row-fluid">
+			<span class="span3">Testnet</span>
+			<span class="span7">asdf</span>
+		  </div>
+<?php } ?>
+			  
 			<div class="row-fluid">
 			  <span class="span3">Latest Block</span>
 			  <span class="span7"><?php echo $latest_block['number']; ?></span>

@@ -70,6 +70,12 @@ class Btc_internal extends CI_Controller {
 	}
 
 	/**
+	 * Rate notify callback. Used by cronjobs, or for manual testing */
+	public function ratenotify(){
+		$this->bw_bitcoin->ratenotify();
+	}
+
+	/**
 	 * Used for testing - clear bitcoin transactions.
 	 * URI: /bitcoin/reset
 	 * 

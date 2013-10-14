@@ -61,10 +61,25 @@ class Messages_model extends CI_Model {
 	public function delete($id) {
 		$this->db->where('to', $this->current_user->user_id);
 		$this->db->where('id', $id);
-		if($this->db->delete('messages') == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->delete('messages') == TRUE) ? TRUE : FALSE;
+	}
+	
+	/* Delete Autorun
+	 * 
+	 * This function is called by an autorun job to delete messages older
+	 * than a specific age. Unlike delete(), this function can delete any
+	 * users messages (rather than being restricted to the currently 
+	 * authenticated user)
+	 * 
+	 * @see		Libraries\Autorun
+	 * @see		
+	 * 
+	 * @param	int
+	 * return	bool
+	 */
+	public function delete_autorun($id) {
+		$this->db->where('id', "$id");
+		return ($this->db->delete('messages') == TRUE) ? TRUE : FALSE;
 	}
 	
 	// Delete all messages.

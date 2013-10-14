@@ -59,7 +59,7 @@ class Bitcoin extends CI_Controller {
 											'txn_id' => $send,
 											'category' => 'send')); 
 				$this->session->set_flashdata('info', $info);
-				$update = $this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
+				$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
 				redirect('bitcoin');
 			} else {
 				// Leave an error message if the user was not redirected.

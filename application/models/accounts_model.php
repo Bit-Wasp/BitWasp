@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Accounts_model extends CI_Model {
 	
 	/**
@@ -139,7 +138,6 @@ class Accounts_model extends CI_Model {
 			
 		return FALSE;
 	}
-	
 	
 	/**
 	 * Replace PGP key.

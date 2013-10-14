@@ -86,7 +86,8 @@ class Autorun_model extends CI_Model {
 	 */					
 	public function set_updated($index) {
 		$this->db->where('index', $index);
-		return ($this->db->update('autorun', array('last_update' => time()))) ? TRUE : FALSE ;
+		$time = time();
+		return ($this->db->update('autorun', array('last_update' => "$time"))) ? TRUE : FALSE ;
 	}
 	
 	/**

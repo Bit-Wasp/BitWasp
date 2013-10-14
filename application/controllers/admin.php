@@ -43,7 +43,6 @@ class Admin extends CI_Controller {
 						);
 	}
 	
-	
 	/**
 	 * Load the General Information Panel.
 	 * URI: /admin
@@ -156,6 +155,10 @@ class Admin extends CI_Controller {
 				if(isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval){
 					if($this->autorun_model->set_interval($index, $interval) == TRUE)
 						$update = TRUE;
+						
+					if($interval !== '0'){
+						$this->autorun->jobs[$index]->job();
+					}
 				}
 			}
 			if($update)
@@ -189,6 +192,8 @@ class Admin extends CI_Controller {
 		$data['transaction_count'] = $this->general_model->count_transactions();
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		$data['bitcoin_index'] = $this->bw_config->price_index;
+		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
+		var_dump($data['bitcoin_info']);
 		
 		$data['page'] = 'admin/bitcoin';
 		$data['title'] = $this->nav['bitcoin']['heading'];
@@ -244,7 +249,7 @@ class Admin extends CI_Controller {
 					
 					if($this->input->post('price_index') !== 'Disabled'){		
 						// If the price index was previously disabled, set the auto-run script interval back up..
-						if($data['price_index'] == 'Disabled')
+						if($data['price_index'] == 'Disabled') 
 							$this->config_model->set_autorun_interval('price_index', '0.166666');
 							
 						// And request new exchange rates.
@@ -376,6 +381,7 @@ class Admin extends CI_Controller {
 		$data['title'] = $this->nav['items']['heading'];
 		$this->load->library('Layout', $data);
 	}
+
 	/**
 	 * Edit the Items Settings.
 	 * URI: /admin/edit/items

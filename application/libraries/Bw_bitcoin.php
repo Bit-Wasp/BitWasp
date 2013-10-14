@@ -1,10 +1,32 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+/**
+ * This library is a socket for the JSON RPC interface. 
+ * Configuration is loaded from ./application/config/bitcoin.php
+ * The class contains functions for bitcoind and functions for 
+ * bitcoind to callback in order to track information about new transactions.
+ * Also contains a function to update exchange rates from the selected
+ * provider
+ */
 
 class Bw_bitcoin {
 	
 	public $CI;
+	/**
+	 * Config
+	 * 
+	 * This variable contains the bitcoin credentials for the JSON rpc
+	 * interface. 
+	 */
 	public $config;
 	
+	/**
+	 * Constructor
+	 * 
+	 * Load the bitcoin configuration using CodeIgniters config library.
+	 * Load the jsonRPCclient library with the config, and the bitcoin 
+	 * model
+	 */
 	public function __construct() {
 		$this->CI = &get_instance();
 		
@@ -15,6 +37,13 @@ class Bw_bitcoin {
 		$this->CI->load->model('bitcoin_model');
 	}
 	
+	/**
+	 * Get Exchange Rates
+	 * 
+	 * Load exchange rates from the defined BPI. Called by bw_bitcoin/ratenotify().
+	 * 
+	 * @return		array / FALSE
+	 */
 	public function get_exchange_rates(){
 		
 		$source = $this->CI->bw_config->bitcoin_rate_config();
@@ -43,22 +72,72 @@ class Bw_bitcoin {
 		}
 	}
 
+	/**
+	 * Get Account
+	 * 
+	 * Function to query bitcoind, to see which account owns $address.
+	 * Returns a string containing the account name if successful, or
+	 * an array describing the error on failure.
+	 * 
+	 * @param		string
+	 * @return		string / array
+	 */
 	public function getaccount($address) {
 		return $this->CI->jsonrpcclient->getaccount($address);
 	}
 
+	/**
+	 * Get Balance
+	 * 
+	 * Function to query bitcoind, to get the balance of the account.
+	 * Returns a float in each case, whether the account exists or not. 
+	 * 
+	 * @param		string
+	 * @return		float
+	 */
 	public function getbalance($account) {
 		return $this->CI->jsonrpcclient->getbalance($account);
 	}
 	
+	/**
+	 * Get Block
+	 * 
+	 * Function to query bitcoind, to get information about a block ($block_hash)
+	 * Returns an array containing the account name if successful, or
+	 * an array describing the error on failure.
+	 * 
+	 * @param		string
+	 * @return		array
+	 */
 	public function getblock($block_hash) {
 		return $this->CI->jsonrpcclient->getblock($block_hash);
 	}
 	
+
+	/**
+	 * Get Block Hash
+	 * 
+	 * Function to query bitcoind, to get the block hash for a particular
+	 * height.
+	 * Returns a string containing the block hash if successful, or an 
+	 * array describing the error on failure.
+	 * 
+	 * @param		string
+	 * @return		string / array
+	 */	
 	public function getblockhash($block_no) {
 		return $this->CI->jsonrpcclient->getblockhash($block_no);
 	}
 		
+	/**
+	 * Get Info
+	 * 
+	 * Function to query bitcoind for general information, like version,
+	 * block height, balance, difficulty, 
+	 * 
+	 * @param		string
+	 * @return		string / array
+	 */		
 	public function getinfo() {
 		return $this->CI->jsonrpcclient->getinfo();
 	}

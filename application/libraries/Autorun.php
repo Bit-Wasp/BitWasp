@@ -30,9 +30,29 @@ class Autorun {
 	 */
 	public $path;
 	
-	// Need to store the fully generated array for later on, if
-	// the admin wants to change things.
+	/**
+	 * Jobs
+	 * 
+	 * This will store the jobs so they can be re-called if there are any 
+	 * changes we can rerun the job.
+	 */
+	 public $jobs = array();
 	
+	/**
+	 * Constructor
+	 * 
+	 * This initiates and runs each autorun job. Each time the class is
+	 * loaded, we scan the Autorun path for newly added jobs. If there are
+	 * some unrecognized ones, we add their default information to the 
+	 * autorun table and run the job for the first time.
+	 * If the job is recognized, we check the autorun table to see when
+	 * it was last run, and the frequency the job is to be run. If the
+	 * interval has passed, we run the job again & record the details on 
+	 * the table
+	 * All jobs are stored to an array, where they can be accessed through
+	 * the rest of the application (if any changes are being updated, we
+	 * should re-run the job).
+	 */	
 	public function __construct() { 
 		$this->CI = &get_instance();
 		$this->CI->load->model('autorun_model');
@@ -68,6 +88,7 @@ class Autorun {
 			}
 			
 			array_push($this->defaults, $class->config);
+			$this->jobs[$class->config['index']] = $class;
 			unset($class);
 		}
 	}
