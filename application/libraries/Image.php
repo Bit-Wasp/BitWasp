@@ -1,17 +1,49 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
-// Upload image.
-// Resize, should take file path, and 
-
+/**
+ * Image Library
+ *
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Image
+ * @author		BitWasp
+ */
 class Image {
+	/** 
+	 * Use Library
+	 * 
+	 * Variable which tracks which image extension to use
+	 */
 	public $use_library;
 	
+	/**
+	 * Output Format
+	 * 
+	 * Configure image output format
+	 */
 	public $output_format = 'png';
 	
+	/**
+	 * Imagick Import
+	 * 
+	 * If using the Imagick extension, store the imported file somewhere 
+	 * where we can keep accessing it later if performing several actions.
+	 */
 	protected $imagick_import;
+	/**
+	 * GD Import
+	 * 
+	 * If using PHP's GD extension, store the imported file somewhere
+	 * where we can keep accessing it later if performing several actions.
+	 */
 	protected $gd_import;
 	protected $import = FALSE;
 
+	/**
+	 * Constructor
+	 * 
+	 * Determines which extension to use for modifying the image
+	 */
 	public function __construct() {
 		// If magickwand extension is present
 		if(extension_loaded('magickwand') && function_exists("NewMagickWand")) {
@@ -24,6 +56,16 @@ class Image {
 	
 	// This function imports the image and stores it in the object. 
 	// Need full path, file ext, raw_name
+	/**
+	 * Import
+	 * 
+	 * $image_info = array('full_path' => '..',
+	 * 					   'file_ext' => '...',
+	 * 						'raw_name' => '..');
+	 * 
+	 * This function imports the image and stores it in $this->{ext}_import,
+	 * where {ext} can be imagick or gd, depending on what's available.
+	 */
 	public function import($image_info) {
 		if($this->use_library == 'magickwand') {
 			$this->imagick_import = new Imagick($image_info['full_path']);
@@ -39,13 +81,25 @@ class Image {
 			} elseif($image_info['file_ext'] == '.gif' ){
 				// Load GIF image
 				$this->gd_import = imagecreatefromgif($image_info['full_path']);
-			}	
+			}
 			$this->import = $image_info;	
 		}
 	}
 	
-	// General function to resize an imported image, and export to new filename.
-	public function resize($width, $height, $new_name){
+	/**
+	 * Resize
+	 * 
+	 * General function to resize an imported image, and to export the
+	 * image into a new filename. Returns an array with information on
+	 * a successful resize, or FALSE if there is nothing to import.
+	 *
+	 * @param		int
+	 * @param		int
+	 * @param		string
+	 * @return		array / FALSE
+	 */	
+	public function resize($width, $height, $new_name) {
+		// Abort if the import wasn't done.
 		if($this->import == FALSE)
 			return FALSE;
 	
@@ -92,18 +146,29 @@ class Image {
 		return $results;
 	}
 
-	
+	// Yet to be needed.
 	public function display($img_hash, $height = NULL, $width = NULL){}
 	
-	// Create a temporary base64 image from a file.
+	/**
+	 * Encode
+	 * 
+	 * Temporarily create a base64 image from a file. This is used to 
+	 * display captchas, and other images which will only be used once
+	 * and don't need to be stored in the database.. Returns FALSE if
+	 * the file cannot be found.
+	 * 
+	 * @param		string
+	 * @return		string / FALSE
+	 */
 	public function encode($filename){
-		$file = file_get_contents('./assets/images/'.$filename);
-		
-		// Encode to base64
-		return base64_encode($file);
-	
+		return ($file = file_get_contents('./assets/images/'.$filename)) ? base64_encode($file) : FALSE;	
 	}
 		
+	/**
+	 * Temp
+	 * 
+	 * Create the HTML string that will display the image temporarily.
+	 */
 	public function temp($filename){
 		$image = $this->encode($filename);
 		$html = "<img src=\"data:image/png;base64,{$image}\" />\n";

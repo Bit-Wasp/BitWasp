@@ -221,7 +221,8 @@ class Listings extends CI_Controller {
 				
 				$upload_data = $this->upload->data();
 				$upload_data['upload_path'] = $config['upload_path'];
-				$this->image->import($upload_data);
+				
+				$this->image->import($upload_data);			// Should be error checking here
 										
 				$small = $this->image->resize('200','150',$upload_data['raw_name']."_s");
 				$thumb = $this->image->resize('100','75', $upload_data['raw_name']."_thumb");
@@ -231,11 +232,13 @@ class Listings extends CI_Controller {
 					$main_image = TRUE;
 				
 				$hash = $this->general->unique_hash('images','hash'); 
-				$add_small = $this->images_model->add_to_item($hash, $small['file_name'], $item_hash, $main_image);
+				
+				// If resizing fails, use the normal image.
+				$add_small = ($small !== FALSE) ? $this->images_model->add_to_item($hash, $small['file_name'], $item_hash, $main_image) : $this->images_model->add_to_item($hash, $upload_data['file_name'], $item_hash, $main_image);
 				$add_normal = $this->images_model->add($hash."_l", $upload_data['file_name']);
 				//$add_thumb = $this->images_model->add_to_item($thumb['file_name'], $item_hash);
 					
-				// Remove files.
+				// Remove files, images are now all stored in the database.
 				unlink($upload_data['full_path']);
 				unlink($small['full_path']);
 				unlink($thumb['full_path']);

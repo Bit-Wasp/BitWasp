@@ -33,7 +33,8 @@ class Openssl {
 	 */
 	public function __construct() {
 		$CI = &get_instance();
-		$this->private_key_bits = ($CI->bw_config->openssl_keysize == '') ? $this->private_key_bits : $CI->private_key_bits;
+		$CI->load->library('bw_config');
+		$this->private_key_bits = ($CI->bw_config->openssl_keysize == '') ? $this->private_key_bits : $CI->bw_config->openssl_keysize;
 	}
 
 	/**

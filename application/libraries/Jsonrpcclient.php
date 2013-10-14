@@ -27,6 +27,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @author sergio <jsonrpcphp@inservibile.org>
  */
+ 
+ /**
+  * This file has been modified to return an array containing details
+  * of an error instead of throwing an exception, to fit the BitWasp's
+  * purposes.
+  */
 class Jsonrpcclient {
 	
 	/**
