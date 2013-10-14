@@ -3,25 +3,22 @@
 		  <?php echo $nav; ?>
 			
 		  <div class="container-fluid">
-			  
-
 <?php 
 if($bitcoin_info == NULL) { ?>
-		  <div class="row-fluid">
-			<span class="span3">Bitcoind Status</span>
-			<span class="span7">The bitcoin daemon is currently disabled.</span>
-		  </div>
+		    <div class="row-fluid">
+			  <span class="span3">Bitcoind Status</span>
+			  <span class="span7">The bitcoin daemon is currently disabled.</span>
+		    </div>
 <?php } else { ?>
-		  <div class="row-fluid">
-			<span class="span3">Bitcoind Status</span>
-			<span class="span7">Bitcoind is currently running<?php if($bitcoin_info['testnet'] == TRUE) echo ' <b>in the testnet</b>'; ?>.</span>
-		  </div>
+		    <div class="row-fluid">
+		  	  <span class="span3">Bitcoind Status</span>
+			  <span class="span7">Bitcoind is currently running<?php if($bitcoin_info['testnet'] == TRUE) echo ' <b>in the testnet</b>'; ?>.</span>
+		    </div>
 		  
-		  <div class="row-fluid">
-			<span class="span3">Bitcoind Version</span>
-			<span class="span7"><?php echo $bitcoin_info['version']; ?></span>
-		  </div>
-		  
+		    <div class="row-fluid">
+			  <span class="span3">Bitcoind Version</span>
+			  <span class="span7"><?php echo $bitcoin_info['version']; ?></span>
+		    </div>
 <?php } ?>
 			  
 			<div class="row-fluid">

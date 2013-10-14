@@ -142,47 +142,147 @@ class Bw_bitcoin {
 		return $this->CI->jsonrpcclient->getinfo();
 	}
 
+	/**
+	 * Get Transaction
+	 * 
+	 * Function to query bitcoind for a transaction ($tx_id). The transaction
+	 * must belong to this wallet in order read this information. Returns
+	 * an array containing transaction information, or an error array
+	 * on failure.
+	 * 
+	 * @param		string
+	 * @return		array
+	 */		
 	public function gettransaction($tx_id) {
 		return $this->CI->jsonrpcclient->gettransaction($tx_id);
 	}
 	
+	/**
+	 * List Accounts
+	 * 
+	 * Function to query bitcoind for information about the accounts
+	 * in the wallet. Displays transactions with 0 confirmations.
+	 * 
+	 * @param		string
+	 * @return		array
+	 */			
 	public function listaccounts() {
 		return (array)$this->CI->jsonrpcclient->listaccounts(0);
 	}
 
+	/**
+	 * Cashout
+	 * 
+	 * Function to ask bitcoind to send $amount to the bitcoin address 
+	 * $to. Sends the funds from the "main" account. Returns a transaction
+	 * id ($tx_id) if the transaction is successful, otherwise returns 
+	 * an error on failure.
+	 * 
+	 * @param		string
+	 * @param		float
+	 * @return		array
+	 */		
 	public function cashout($to, $amount) {
 		return $this->CI->jsonrpcclient->sendfrom("main", $to, (float)$amount);
 	}
 	
+	/**
+	 * Move
+	 * 
+	 * Function to ask bitcoind to move funds from the $from account
+	 * to the $to account. Will create the account if it doesn't exist.
+	 * Already have error-checked this account name, we want it to exist 
+	 * already. Does not broadcast a transaction to the bitcoin network.
+	 * 
+	 * @param		string
+	 * @param		string
+	 * @param		float
+	 * @return		bool
+	 */			
 	public function move($from, $to, $amount) {
 		return $this->CI->jsonrpcclient->move($from, $to, (float)$amount);
 	}
 	
+	/**
+	 * Send From
+	 * 
+	 * Function to ask bitcoind to send $value BTC from any $src_ac, to 
+	 * $to_address. The transaction must belong to this wallet in order 
+	 * read this information. Returns a transaction id ($tx_id) if the 
+	 * transaction is successful, otherwise returns an error on failure.
+	 * 
+	 * @param		string
+	 * @param		string
+	 * @param		float
+	 * @return		bool
+	 */			
 	public function sendfrom($src_ac, $to_address, $value){
-		return $this->CI->jsonrpcclient->sendfrom($src_ac, $to_address, $value);
+		return $this->CI->jsonrpcclient->sendfrom($src_ac, $to_address, (float)$value);
 	}
 
+	/**
+	 * Validate Address
+	 * 
+	 * Function to validate a bitcoin address. Checks if there is a 
+	 * base58 address, and other tests. Returns a boolean with the answer.
+	 * 
+	 * @param		string
+	 * @return		bool
+	 */		
 	public function validateaddress($address) {
 		$valid = $this->CI->jsonrpcclient->validateaddress($address);
 		return $valid['isvalid'];
 	}
 
-	// To create a new address, create it using this.
+	/**
+	 * New Address
+	 * 
+	 * Function to ask bitcoind to create a new address for the topup 
+	 * account. Associates the address with the $user_hash. Sets the
+	 * users current bitcoin address - this function also logs it to the
+	 * users list of previously used addresses (in case the user ends up
+	 * reusing addresses). Does not return the address, sets it in the DB
+	 * to be read then.
+	 * 
+	 * @param		string
+	 * @return		bool
+	 */			
 	public function new_address($user_hash) {
 		$address = $this->CI->jsonrpcclient->getnewaddress("topup");
-		if($this->CI->bitcoin_model->set_user_address($user_hash, $address))
-			return TRUE;
-			
-		return FALSE;
+		return ($this->CI->bitcoin_model->set_user_address($user_hash, $address)) ? TRUE : FALSE;
 	}
 
-	// Generate an address for the main account.
+	/**
+	 * New "Main" Address
+	 * 
+	 * Function to ask bitcoind to create an address for the "main" account.
+	 * Used to forward funds from the topup account to the main account.
+	 * A new address is created for this every time.
+	 * 
+	 * @return		string / FALSE
+	 */			
 	public function new_main_address(){
-		$address = $this->CI->jsonrpcclient->getaccountaddress("main");
-		return $address;
+		return $this->CI->jsonrpcclient->getaccountaddress("main");
 	}
 
-	// Notify the site about a new transaction.
+	/**
+	 * Wallet Notify
+	 * 
+	 * Function to notify the marketplace about any new transactions. 
+	 * Checks if transaction is for our wallet, and if not, continues with
+	 * execution. Processes send/receive information to see if there are 
+	 * balances to credit/debit.
+	 * 
+	 * Immediately deducts a users balance if the transaction is a user
+	 * cashing out their account.
+	 * If the user is topping up, we create a new address for them to 
+	 * use next time.
+	 * Cashout/Topup functions are not themselves in an if/else block, because
+	 * a user may be putting in another users topup address to cashout.
+	 * Don't know why they'd do this, but this way we do the accounting properly.
+	 * 
+	 * @param		string
+	 */			
 	public function walletnotify($txn_id) {
 
 		$transaction = $this->gettransaction($txn_id);
@@ -190,11 +290,6 @@ class Bw_bitcoin {
 		if(isset($transaction['code']))
 			return FALSE;
 
-		/* Work out category stuff...... and upgrade to user_transaction() */
-		// Check we have never seen this transaction before.
-		if($this->CI->bitcoin_model->have_transaction($txn_id) !== FALSE) 
-			return FALSE;
-		
 		// Extract details for send/receive.
 		$send = array();
 		$receive = array();
@@ -205,6 +300,7 @@ class Bw_bitcoin {
 				array_push($receive, $detail);
 		}
 		
+		// Work out if the transaction is cashing out anything.
 		if(isset($send[0]) && $send[0]['account'] == "main" && $send[0]['category'] == "send") {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
 			$update = array('txn_id' => $txn_id,
@@ -227,6 +323,7 @@ class Bw_bitcoin {
 			}
 		}
 		
+		// Workout if the transaction is topping an account up.
 		if(isset($receive[0]) && $receive[0]['account'] == 'topup' && $receive[0]['category'] == "receive") {
 			$user_hash = $this->CI->bitcoin_model->get_address_owner($receive[0]['address']);
 			$update = array('txn_id' => $txn_id,
@@ -246,6 +343,27 @@ class Bw_bitcoin {
 		}
 	}
 	
+	/**
+	 * Block Notify
+	 * 
+	 * Function to inform the marketplace about new blocks. Upon receiving
+	 * a new block, we get the list of all pending transactions (uncredited
+	 * and have confirmations < 50) and check how many confirmations they
+	 * have now that we are looking at a new leading block. By refreshing
+	 * the number of confirmations every time we should be able to deal 
+	 * with a reorg if we were on the wrong fork.
+	 * 
+	 * If the transaction is a topup, and confirmations has reached 7,
+	 * then we set the transaction as credited, and move the funds from
+	 * the topup account (For unconfirmed transactions) to the main account.
+	 * 
+	 * If the number of confirmations for a transaction is >50, then we stop
+	 * tracking this transaction, by setting confirmations='>50'. This
+	 * causes the 'check' icon to appear in the transaction log.
+	 * 
+	 * @param		string
+	 * @return		void
+	 */		
 	public function blocknotify($block_id){
 		
 		// First task, maintain a record of the processed blocks.
@@ -257,26 +375,28 @@ class Bw_bitcoin {
 			}
 		}
 		
-		// Update the transactions on record.
+		// Load all pending transactions, and abort if there's none.
 		$pending = $this->CI->bitcoin_model->get_pending_txns();
-		
 		if($pending == FALSE)
 			return FALSE;
 			
+		// Prepare to build arrays of any transactions who need to be credited or have their confirmations changed.
 		$credits = array();
 		$confirmations = array();
 		
 		foreach($pending as $txn){
 			$transaction = $this->gettransaction($txn['txn_id']);
 
+			// Probably don't need this check as it will have been done before,
+			// but do it just in case.
 			if(!isset($transaction['code'])) {
 				$array = array('txn_id' => $txn['txn_id'],
 							   'user_hash' => $txn['user_hash'],
 							   'confirmations' => $transaction['confirmations'],
 							   'category' => $txn['category'],
-							   'value' => $txn['value'] );	// Re-cast as float, avoids error code=
+							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.s
 				
-				// Only worry about crediting 'receive'd transactions.
+				// Try to credit an account if the topup transaction has reached 7 confirmations.
 				if($txn['category'] == 'receive' && $txn['credited'] == '0' && $array['confirmations'] > 6){
 					array_push($credits, $array);
 					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
@@ -287,19 +407,29 @@ class Bw_bitcoin {
 						echo 'error sending funds - may not have enough to cover fees?\n';
 				}
 				
-				// Update confirmations for all transactions.
+				// If the transaction has more than 50 confirmations, stop tracking it.
 				if($array['confirmations'] > 50)
 					$array['confirmations'] = '>50';
 					
+				// If the number of confirmations has changed, update it.
 				if($txn['confirmations'] !== $transaction['confirmations'])
 					array_push($confirmations, $array);
 			}
 		}
 	
+		// Update confirmations/balances in the database.
 		$this->CI->bitcoin_model->update_confirmations($confirmations);
 		$this->CI->bitcoin_model->update_credits($credits);
 	}
 	
+	/**
+	 * Rate Notify
+	 * 
+	 * Function to query the selected bitcoin price index provider
+	 * for the latest exchange rates between USD/GBP/EUR.
+	 * 
+	 * @return		bool
+	 */		
 	public function ratenotify() {
 		$this->CI->load->model('currencies_model');
 		if($this->CI->bw_config->price_index == 'Disabled')
@@ -323,10 +453,7 @@ class Bw_bitcoin {
 					);
 		}
 
-		if($this->CI->currencies_model->update_exchange_rates($update) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->CI->currencies_model->update_exchange_rates($update) == TRUE) ? TRUE : FALSE;
 	}
 	
 };
