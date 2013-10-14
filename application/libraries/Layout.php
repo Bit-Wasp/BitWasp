@@ -1,9 +1,36 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
+/**
+ * Layout
+ *
+ * Library which takes care of loading the templates for displaying
+ * the site. If the user is logged in, we load their role, bitcoin balance,
+ * number of unread messages, new orders (if a vendor).
+ * If not logged in, we check if users are allowed to view the site without
+ * being logged in (set by the admin). 
+ * 
+ * Also contains a function to generate the menu's HTML.
+ * 
+ * @package		BitWasp
+ * @subpackage	Library
+ * @category	Layout
+ * @author		BitWasp
+ */
+
 class Layout {
 
 	protected $bw_config;
-	
+
+	/**
+	 * Construct
+	 * 
+	 * Load the CodeIgniter framework. Loads the sites title, description,
+	 * categories (if logged in, or logged out but the admin allows),
+	 * the users balance & role (if logged in).
+	 * 
+	 * This stores predefined information about the job, such as the name,
+	 * description, and the frequency at which it should be run.
+	 */	
 	public function __construct($data){
 
 		$CI = &get_instance();
@@ -28,6 +55,7 @@ class Layout {
 		if(!isset($data['currentCat'])) $data['currentCat'] = array(); 
 
 		if($CI->current_user->logged_in()) { 
+			
 			$CI->load->model('bitcoin_model');		
 			// If the user is logged in, load their role, and the categories. 
 			$bar['role'] = strtolower($CI->current_user->user_role);			
@@ -72,7 +100,12 @@ class Layout {
 			
 	}
 
-	//Output the categories as an unordered list.
+	/**
+	 * Menu
+	 * 
+	 * A recursive function to generate a menu from an array of categories.
+	 * Uses each categories parent ID to determine where it should be placed.
+	 */	
 	public function menu($categories, $level, $params){
 		if(!isset($content)) 
 			$content = ''; 
