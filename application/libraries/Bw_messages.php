@@ -4,8 +4,11 @@
  * 
  * Used to prepare messages for input to the table or output.
  * 
- * 
- */
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Messages
+ * @author		BitWasp
+ */ 
 class Bw_messages {
 	
 	protected $message_password;

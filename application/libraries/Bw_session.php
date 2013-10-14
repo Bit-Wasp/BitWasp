@@ -5,6 +5,7 @@
  * 
  * This session is used to manage the sessions in the application.
  * Performs checking if the session has expired
+ * 
  * @package		BitWasp
  * @subpackage	Libraries
  * @category	Session
