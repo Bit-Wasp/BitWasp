@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1129608747"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1389608622"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1129608747" class="accordion-body collapse in">
+            <div id="namespace-1389608622" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -457,7 +457,7 @@
             <article class="method">
                 <h3 class="public ">add()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">add( <span class="argument">$data</span>,  <span class="argument">$token_info</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">add( <span class="argument">$data</span>,  <span class="argument">$token_info</span>) : boolean</pre>
                 <p><em>Add User.</em></p>
                 <p>Add a user to the table. Use prepared statements..</p>
 
@@ -480,7 +480,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    bool
+                    boolean
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -500,7 +500,7 @@
             <article class="method">
                 <h3 class="public ">remove()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">remove( <span class="argument">$user_hash</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">remove( <span class="argument">$user_hash</span>) : boolean</pre>
                 <p><em>Remove</em></p>
                 <p>Remove a user. Haven't had to code this yet..</p>
 
@@ -517,7 +517,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    bool
+                    boolean
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -537,7 +537,7 @@
             <article class="method">
                 <h3 class="public ">get()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get(array <span class="argument">$user</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">get(array <span class="argument">$user</span>) : \array/FALSE</pre>
                 <p><em>Get</em></p>
                 <p>Get a user, based on $user['user_hash'], $user['id'], $user['user_name']</p>
 
@@ -554,9 +554,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    array
-                                            &mdash; <p>/ FALSE</p>
-
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -576,7 +574,7 @@
             <article class="method">
                 <h3 class="public ">message_data()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">message_data(array <span class="argument">$user</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">message_data(array <span class="argument">$user</span>) : \array/FALSE</pre>
                 <p><em>Message Data</em></p>
                 <p>Load information regarding the users RSA encryption keys.</p>
 
@@ -593,9 +591,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    array
-                                            &mdash; <p>/ FALSE</p>
-
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -615,7 +611,7 @@
             <article class="method">
                 <h3 class="public ">check_password()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">check_password( <span class="argument">$user_name</span>,  <span class="argument">$salt</span>,  <span class="argument">$password</span>) : \a</pre>
+                <pre class="signature" style="margin-right: 54px;">check_password(string <span class="argument">$user_name</span>, string <span class="argument">$salt</span>, string <span class="argument">$password</span>) : \array/FALSE</pre>
                 <p><em>Check Password.</em></p>
                 <p>Returns userdata when a users username, password and salt are entered correctly.</p>
 
@@ -623,19 +619,19 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$user_name</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$salt</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$password</td>
                                 <td>
 </td>
@@ -644,7 +640,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    \a
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -664,7 +660,7 @@
             <article class="method">
                 <h3 class="public ">add_registration_token()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">add_registration_token( <span class="argument">$token</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">add_registration_token(string <span class="argument">$token</span>) : boolean</pre>
                 <p><em>Add Registration Token</em></p>
                 <p>Add an array describing a registration token.</p>
 
@@ -672,7 +668,7 @@
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$token</td>
                                 <td>
 </td>
@@ -681,7 +677,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    bool
+                    boolean
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -701,7 +697,7 @@
             <article class="method">
                 <h3 class="public ">list_registration_tokens()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">list_registration_tokens() : array</pre>
+                <pre class="signature" style="margin-right: 54px;">list_registration_tokens() : \array/FALSE</pre>
                 <p><em>List Registration Tokens</em></p>
                 <p>This function loads a list of the current registration tokens
 on record.</p>
@@ -710,7 +706,7 @@ on record.</p>
                 
                 
                                     <h4>Returns</h4>
-                    array
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -730,7 +726,7 @@ on record.</p>
             <article class="method">
                 <h3 class="public ">check_registration_token()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">check_registration_token( <span class="argument">$token</span>) : \array/FALSE</pre>
+                <pre class="signature" style="margin-right: 54px;">check_registration_token(string <span class="argument">$token</span>) : \array/FALSE</pre>
                 <p><em>Check Registration Token</em></p>
                 <p>This function checks whether a registration token is valid or now.
 Returns info about the token on success, FALSE on failure.</p>
@@ -739,7 +735,7 @@ Returns info about the token on success, FALSE on failure.</p>
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$token</td>
                                 <td>
 </td>
@@ -768,7 +764,7 @@ Returns info about the token on success, FALSE on failure.</p>
             <article class="method">
                 <h3 class="public ">delete_registration_token()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">delete_registration_token(int <span class="argument">$id</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">delete_registration_token(int <span class="argument">$id</span>) : boolean</pre>
                 <p><em>Delete Registration Token</em></p>
                 <p>Delete a registration token as specified by $id.</p>
 
@@ -785,7 +781,7 @@ Returns info about the token on success, FALSE on failure.</p>
                 
                 
                                     <h4>Returns</h4>
-                    bool
+                    boolean
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -805,7 +801,7 @@ Returns info about the token on success, FALSE on failure.</p>
             <article class="method">
                 <h3 class="public ">set_login()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">set_login(int <span class="argument">$id</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">set_login(int <span class="argument">$id</span>) : boolean</pre>
                 <p><em>Set Login</em></p>
                 <p>Set the users login time (user specified by $id)</p>
 
@@ -822,7 +818,7 @@ Returns info about the token on success, FALSE on failure.</p>
                 
                 
                                     <h4>Returns</h4>
-                    bool
+                    boolean
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -923,7 +919,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 20:54.
+                    on October 14th, 2013 at 21:07.
                 </section>
             </section>
         </section>

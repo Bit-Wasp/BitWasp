@@ -30,7 +30,7 @@ class Users_model extends CI_Model {
 	 * @access	public
 	 * @param	array
 	 * @param	string
-	 * @return	bool
+	 * @return	boolean
 	 */					
 	public function add($data, $token_info = NULL) {
 		$sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -51,7 +51,7 @@ class Users_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	string
-	 * @return	bool
+	 * @return	boolean
 	 */				
 	public function remove($user_hash) {}
 	
@@ -62,8 +62,8 @@ class Users_model extends CI_Model {
 	 * Get a user, based on $user['user_hash'], $user['id'], $user['user_name']
 	 *
 	 * @access	public
-	 * @param	array
-	 * @return	array / FALSE
+	 * @param	array	$user
+	 * @return	array/FALSE
 	 */					
 	public function get(array $user) {
 
@@ -91,8 +91,8 @@ class Users_model extends CI_Model {
 	 * Load information regarding the users RSA encryption keys.
 	 *
 	 * @access	public
-	 * @param	array
-	 * @return	array / FALSE
+	 * @param	array	$user
+	 * @return	array/FALSE
 	 */					
 	public function message_data(array $user) {
 		$this->db->select('public_key, private_key, salt');
@@ -121,17 +121,16 @@ class Users_model extends CI_Model {
 		return FALSE;
 	}
 	
-	// Return valid data when a users username, password, salt are specified. 
 	/**
 	 * Check Password.
 	 * 
 	 * Returns userdata when a users username, password and salt are entered correctly.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @param	string
-	 * @return	a
+	 * @param	string	$user_name
+	 * @param	string	$salt
+	 * @param	string	$password
+	 * @return	array/FALSE
 	 */					
 	public function check_password($user_name, $salt, $password){
 		$this->db->select('id')
@@ -148,13 +147,11 @@ class Users_model extends CI_Model {
 	 * Add an array describing a registration token.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	bool
+	 * @param	string $token
+	 * @return	boolean
 	 */					
 	public function add_registration_token($token) {
-		if($this->db->insert('registration_tokens', $token) == TRUE)
-			return TRUE;
-		return FALSE;
+		return ($this->db->insert('registration_tokens', $token) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -163,7 +160,7 @@ class Users_model extends CI_Model {
 	 * This function loads a list of the current registration tokens 
 	 * on record.
 	 * 
-	 * @return		array
+	 * @return		array/FALSE
 	 */
 	public function list_registration_tokens() {
 		$query = $this->db->get('registration_tokens');
@@ -179,6 +176,7 @@ class Users_model extends CI_Model {
 	 * This function checks whether a registration token is valid or now.
 	 * Returns info about the token on success, FALSE on failure.
 	 * 
+	 * @param	string	$token
 	 * @return	array/FALSE
 	 */
 	public function check_registration_token($token) {
@@ -203,7 +201,7 @@ class Users_model extends CI_Model {
 	 * Delete a registration token as specified by $id.
 	 * 
 	 * @param	int	$id
-	 * @return	bool
+	 * @return	boolean
 	 */
 	public function delete_registration_token($id) {
 		return ($this->db->delete('registration_tokens', array('id' => $id)) == TRUE) ? TRUE : FALSE;
@@ -214,7 +212,7 @@ class Users_model extends CI_Model {
 	 * 
 	 * Set the users login time (user specified by $id)
 	 * @param	int $id
-	 * @return	bool
+	 * @return	boolean
 	 */
 	public function set_login($id) {
 		$change = array('login_time' => time());

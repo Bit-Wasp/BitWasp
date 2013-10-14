@@ -86,7 +86,7 @@ class Images_model extends CI_Model {
 	 * @access	public
 	 * @param	string	$image_hash
 	 * @param	string	$file_name
-	 * @return	bool
+	 * @return	boolean
 	 */					
 	public function add($image_hash, $file_name) {
 		$insert = array('hash' => $image_hash,
@@ -106,8 +106,8 @@ class Images_model extends CI_Model {
 	 * @param	string	$image_hash
 	 * @param	string	$file_name
 	 * @param	string	$item_hash
-	 * @param	bool	$mail_image
-	 * @return	bool
+	 * @param	boolean	$mail_image
+	 * @return	boolean
 	 */					
 	public function add_to_item($image_hash, $file_name, $item_hash, $main_image = FALSE) {
 		$insert = $this->add($image_hash, $file_name);
