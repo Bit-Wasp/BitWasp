@@ -14,20 +14,14 @@ if($bitcoin_info == NULL) { ?>
 <?php } else { ?>
 		  <div class="row-fluid">
 			<span class="span3">Bitcoind Status</span>
-			<span class="span7">Bitcoind is currently running.</span>
+			<span class="span7">Bitcoind is currently running<?php if($bitcoin_info['testnet'] == TRUE) echo ' <b>in the testnet</b>'; ?>.</span>
 		  </div>
 		  
 		  <div class="row-fluid">
 			<span class="span3">Bitcoind Version</span>
-			<span class="span7"><?php $bitcoin_info['version']; ?></span>
+			<span class="span7"><?php echo $bitcoin_info['version']; ?></span>
 		  </div>
 		  
-<?php if($bitcoin_info['testnet'] == TRUE) { ?>
-		  <div class="row-fluid">
-			<span class="span3">Bitcoind Status</span>
-			<span class="span7">asdf</span>
-		  </div>
-<?php } ?>
 <?php } ?>
 			  
 			<div class="row-fluid">
