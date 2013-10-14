@@ -35,10 +35,7 @@ class Order_model extends CI_Model {
 	 * @return	bool
 	 */
 	public function add($order) {
-		if($this->db->insert('orders', $order) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->insert('orders', $order) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/** 
@@ -53,10 +50,7 @@ class Order_model extends CI_Model {
 	 */
 	public function cancel($order_id){
 		$this->db->where('id', $order_id);
-		if($this->db->update('orders', array('progress' => '0')) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->update('orders', array('progress' => '0')) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -109,10 +103,8 @@ class Order_model extends CI_Model {
 		$this->db->where('buyer_id', $this->current_user->user_id)
 				 ->order_by('progress asc, time desc');
 		$query = $this->db->get('orders');
-		if($query->num_rows() > 0) 
-			return $this->build_array($query->result_array());
+		return ($query->num_rows() > 0) ? $this->build_array($query->result_array()) : FALSE;
 		
-		return FALSE;
 	}
 	
 	/**
