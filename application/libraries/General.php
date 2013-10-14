@@ -6,6 +6,10 @@
  * A general library containing miscellaneous functions used throughout
  * the application.
  * 
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	General
+ * @author		BitWasp
  */
 class General {
 	
@@ -190,7 +194,6 @@ class General {
 			return date('j F Y',$timestamp);
 		}
 	}
-
 };
 
  /* End of file General.php */

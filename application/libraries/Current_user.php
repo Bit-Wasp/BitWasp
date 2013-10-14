@@ -1,5 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Current User Library
+ * 
+ * This library is used to allow easy access to information about the
+ * user. User data is taken from the session, and the database, to allow
+ * a central source of frequently used data.
+ * 
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Current User
+ * @author		BitWasp
+ */
 class Current_User {
 	
 	protected $CI;
@@ -17,7 +29,13 @@ class Current_User {
 	public $user_role;
 	public $session_id;
 	public $URI;
-	
+
+	/**
+	 * Constructor
+	 * 
+	 * This function generates all the information we want to provide
+	 * using this library.
+	 */
 	public function __construct(){
 		$this->CI = &get_instance();
 			
@@ -42,11 +60,8 @@ class Current_User {
 			$user = $this->CI->accounts_model->get(array('user_hash' => $this->user_hash), array('own' => TRUE));
 			
 			$tmp = $this->CI->currencies_model->get($user['local_currency']);
-			if($tmp == FALSE || $this->CI->bw_config->price_index == 'Disabled') {
-				$this->currency = $this->CI->currencies_model->get('0');
-			} else {
-				$this->currency =  $tmp;
-			}
+			// Determine which currency the user has set for themselves.
+			$this->currency = ($tmp == FALSE || $this->CI->bw_config->price_index == 'Disabled') $this->CI->currencies_model->get('0') :  $tmp;
 
 		} else {
 			$id = $this->CI->session->userdata('user_id');
@@ -66,21 +81,43 @@ class Current_User {
 		}	
 	}
 	
+	/**
+	 * Status
+	 * 
+	 * Load all the information from this object.
+	 *
+	 * @return		array
+	 */
 	public function status() {
 		$vars = get_object_vars($this);
 		unset($vars['CI']);
 		return $vars;
 	}
 		
+	/** 
+	 * Logged In
+	 * 
+	 * Function to check if this user is logged in.
+	 *
+	 * @return 		bool
+	 */
 	public function logged_in() {
 		return $this->logged_in;
 	}
 	
+	/**
+	 * Set Message Password
+	 * 
+	 * Sets up the message password in the users session along with the
+	 * time it was set (to allow it to expire)
+	 * 
+	 * @param		string
+	 * @return		void
+	 */
 	public function set_message_password($password){
 		$this->CI->session->set_userdata('message_password',$password);
 		$this->CI->session->set_userdata('message_password_granted', time());
 	}
-	
 	
 };
 
