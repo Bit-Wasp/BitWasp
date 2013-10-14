@@ -89,7 +89,7 @@ if($force_vendor_pgp == 'Enabled') echo "If you are registering as a vendor, it 
 				  <div class="controls">
 					<select name='local_currency'>
 <?php foreach($currencies as $currency) : ?>
-					  <option value='<?php echo $currency['id']; ?>'<?php echo ($current['id'] == '0') ' selected="selected"' : NULL; ?>><?php echo $currency['name']; ?></option>
+					  <option value='<?php echo $currency['id']; ?>'<?php echo ($current['id'] == '0') ? ' selected="selected"' : NULL; ?>><?php echo $currency['name']; ?></option>
 <?php endforeach; ?>
 					</select>
                     <span class="help-inline"><?php echo form_error('local_currency'); ?></span>

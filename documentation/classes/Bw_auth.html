@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1049947980"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1410969608"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1049947980" class="accordion-body collapse in">
+            <div id="namespace-1410969608" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -180,7 +180,8 @@
                                                     <li class="class"><a href="../classes/User_Inactivity.html">User_Inactivity</a></li>
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
-                                                    <li class="class"><a href="../classes/BW_Session.html">BW_Session</a></li>
+                                                    <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
                                                     <li class="class"><a href="../classes/Listings.html">Listings</a></li>
                                                     <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
@@ -308,8 +309,21 @@
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
                     <h1><small>\</small>Bw_auth</h1>
-                    <p><em></em></p>
-                    
+                    <p><em>Authorization Library</em></p>
+                    <p>Used to check if a user must enter a password before viewing a page.
+Has automatic expiration of requests (called in Bw_session)
+Handles redirection to /authorize and to desired page.</p>
+
+<p>Successful auth requests are stored in the users session.
+This may be a mitigating factor in the choice of session data in a cookie</p>
+
+<p>Will eventually look after post data if there happens to be any.
+Same functions would treat visiting /admin for the first time, and the
+reaction to the eventual expiration, if it happens as a user is typing out a form.
+The result should be the post data is kept also. Functions like Admin/Account/PGP
+would need to check an as yet undesigned session identifier - if the user has just come from
+an auth request. Then, it would check for session data. (this bit of data is a counter.
+it will be deleted once it is incremented twice, and forgotten.</p>
 
 
                     <section id="summary">
@@ -378,7 +392,7 @@
                         <dt>File</dt>
                             <dd><a href="../files/application.libraries.Bw_auth.php.html"><div class="path-wrapper">application/libraries/Bw_auth.php</div></a></dd>
                                                 <dt>Package</dt>
-                            <dd><div class="namespace-wrapper">\Default</div></dd>
+                            <dd><div class="namespace-wrapper">\BitWasp\Libraries\Libraries</div></dd>
                                                 <dt>Class hierarchy</dt>
                             <dd class="hierarchy">
                                                                                                                                                                     <div class="namespace-wrapper">\Bw_auth</div>
@@ -390,7 +404,24 @@
                                                                         </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
-                                            <tr><td colspan="2"><em>None found</em></td></tr>
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>Authorization</p>
+
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>BitWasp</p>
+
+                                                            </td>
+                        </tr>
                                         </table>
                 </aside>
             </div>
@@ -854,7 +885,7 @@ returned. On failure, the function returns FALSE.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 18:40.
+                    on October 14th, 2013 at 19:50.
                 </section>
             </section>
         </section>

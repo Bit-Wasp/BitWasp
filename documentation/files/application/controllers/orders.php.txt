@@ -149,7 +149,7 @@ class Orders extends CI_Controller {
 				$details = array('username' => $current_order['vendor']['user_name'],
 								 'subject' => "Order #{$current_order['id']} has been finalized");
 				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. BTC {$current_order['price']} has been credited to your account.<br />\n";
-				$details['message'] = ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />\n';
+				$details['message'].= ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />\n';
 				$message = $this->bw_messages->prepare_input($data, $details);
 				$message['order_id'] = $current_order['id'];
 				$this->messages_model->send($message);
@@ -176,7 +176,6 @@ class Orders extends CI_Controller {
 	 * @see 	Libraries/Form_Validation
 	 * @see		Models/Order_Model
 	 * @see		Libraries/Bw_Messages
-	 * @
 	 * 
 	 * @param	string or null
 	 * @return	void

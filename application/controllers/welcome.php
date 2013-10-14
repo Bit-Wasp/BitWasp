@@ -11,9 +11,13 @@
  * @author		BitWasp
  * 
  */
-
 class Welcome extends CI_Controller {
 
+	/**
+	 * Index
+	 * 
+	 * Controller to handle the homepage.
+	 */
 	public function index()
 	{
 		$data['page'] = 'welcome_message';

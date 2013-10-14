@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 /**
- * General Library
+ * General
  * 
  * A general library containing miscellaneous functions used throughout
  * the application.
@@ -134,7 +134,7 @@ class General {
 		return FALSE;
 	}
 	
-	/*
+	/**
 	 * Role from ID
 	 * 
 	 * Used to determine which role the ID relates to.

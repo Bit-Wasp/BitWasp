@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-549922797"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1388362985"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-549922797" class="accordion-body collapse in">
+            <div id="namespace-1388362985" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -180,7 +180,8 @@
                                                     <li class="class"><a href="../classes/User_Inactivity.html">User_Inactivity</a></li>
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
-                                                    <li class="class"><a href="../classes/BW_Session.html">BW_Session</a></li>
+                                                    <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
                                                     <li class="class"><a href="../classes/Listings.html">Listings</a></li>
                                                     <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
@@ -307,10 +308,14 @@
                                             </nav>
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
-                    <h1><small>\</small>BW_Session</h1>
-                    <p><em>Session Library</em></p>
-                    <p>This session is used to manage the sessions in the application.
-Performs checking if the session has expired</p>
+                    <h1><small>\</small>Bw_bitcoin</h1>
+                    <p><em>Bitcoin Library</em></p>
+                    <p>This library is a socket for the JSON RPC interface.
+Configuration is loaded from ./application/config/bitcoin.php
+The class contains functions for bitcoind and functions for
+bitcoind to callback in order to track information about new transactions.
+Also contains a function to update exchange rates from the selected
+provider</p>
 
 
                     <section id="summary">
@@ -328,16 +333,28 @@ Performs checking if the session has expired</p>
                         </section>
                         <section class="row-fluid public">
                             <section class="span4">
-                                                                    <a href="../classes/BW_Session.html#method___construct" class="">__construct()</a><br />
-                                                                    <a href="../classes/BW_Session.html#method_create" class="">create()</a><br />
-                                                                    <a href="../classes/BW_Session.html#method_destroy" class="">destroy()</a><br />
-                                                                    <a href="../classes/BW_Session.html#method_validate_req" class="">validate_req()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_get_exchange_rates" class="">get_exchange_rates()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_getaccount" class="">getaccount()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_getbalance" class="">getbalance()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_getblock" class="">getblock()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_getblockhash" class="">getblockhash()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_getinfo" class="">getinfo()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_gettransaction" class="">gettransaction()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_listaccounts" class="">listaccounts()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_cashout" class="">cashout()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_move" class="">move()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_sendfrom" class="">sendfrom()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_validateaddress" class="">validateaddress()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_new_address" class="">new_address()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_new_main_address" class="">new_main_address()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_walletnotify" class="">walletnotify()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_blocknotify" class="">blocknotify()</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#method_ratenotify" class="">ratenotify()</a><br />
                                                             </section>
                             <section class="span4">
-                                                                    <a href="../classes/BW_Session.html#property_URI" class="">$URI</a><br />
-                                                                    <a href="../classes/BW_Session.html#property_session_id" class="">$session_id</a><br />
-                                                                    <a href="../classes/BW_Session.html#property_user_role" class="">$user_role</a><br />
-                                                                    <a href="../classes/BW_Session.html#property_auth_level" class="">$auth_level</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#property_CI" class="">$CI</a><br />
+                                                                    <a href="../classes/Bw_bitcoin.html#property_config" class="">$config</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No constants found</em>
@@ -348,7 +365,7 @@ Performs checking if the session has expired</p>
                                                                     <em>No protected methods found</em>
                                                             </section>
                             <section class="span4">
-                                                                    <a href="../classes/BW_Session.html#property_CI" class="">$CI</a><br />
+                                                                    <em>No protected properties found</em>
                                                             </section>
                             <section class="span4">
                                 <em>N/A</em>
@@ -372,12 +389,12 @@ Performs checking if the session has expired</p>
                     
                     <dl>
                         <dt>File</dt>
-                            <dd><a href="../files/application.libraries.Bw_session.php.html"><div class="path-wrapper">application/libraries/Bw_session.php</div></a></dd>
+                            <dd><a href="../files/application.libraries.Bw_bitcoin.php.html"><div class="path-wrapper">application/libraries/Bw_bitcoin.php</div></a></dd>
                                                 <dt>Package</dt>
                             <dd><div class="namespace-wrapper">\BitWasp\Libraries\Libraries</div></dd>
                                                 <dt>Class hierarchy</dt>
                             <dd class="hierarchy">
-                                                                                                                                                                    <div class="namespace-wrapper">\BW_Session</div>
+                                                                                                                                                                    <div class="namespace-wrapper">\Bw_bitcoin</div>
                             </dd>
 
                         
@@ -391,7 +408,7 @@ Performs checking if the session has expired</p>
                                 category
                             </th>
                             <td>
-                                                                    <p>Session</p>
+                                                                    <p>Bitcoin</p>
 
                                                             </td>
                         </tr>
@@ -419,101 +436,9 @@ Performs checking if the session has expired</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="property_URI" name="property_URI" class="anchor"></a>
-            <article class="property">
-                <h3 class="public ">$URI</h3>
-                <pre class="signature">$URI</pre>
-                <p><em></em></p>
-                
-
-
-                            </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                        <dl>
-                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr><td colspan="2"><em>None found</em></td></tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="property_session_id" name="property_session_id" class="anchor"></a>
-            <article class="property">
-                <h3 class="public ">$session_id</h3>
-                <pre class="signature">$session_id</pre>
-                <p><em></em></p>
-                
-
-
-                            </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                        <dl>
-                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr><td colspan="2"><em>None found</em></td></tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="property_user_role" name="property_user_role" class="anchor"></a>
-            <article class="property">
-                <h3 class="public ">$user_role</h3>
-                <pre class="signature">$user_role</pre>
-                <p><em></em></p>
-                
-
-
-                            </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                        <dl>
-                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr><td colspan="2"><em>None found</em></td></tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="property_auth_level" name="property_auth_level" class="anchor"></a>
-            <article class="property">
-                <h3 class="public ">$auth_level</h3>
-                <pre class="signature">$auth_level</pre>
-                <p><em></em></p>
-                
-
-
-                            </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                        <dl>
-                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr><td colspan="2"><em>None found</em></td></tr>
-                            </table>
-        </aside>
-    </div>
-
-                                                    <div class="row-fluid">
-        <div class="span8 content class">
             <a id="property_CI" name="property_CI" class="anchor"></a>
             <article class="property">
-                <h3 class="protected ">$CI</h3>
+                <h3 class="public ">$CI</h3>
                 <pre class="signature">$CI</pre>
                 <p><em></em></p>
                 
@@ -532,7 +457,31 @@ Performs checking if the session has expired</p>
         </aside>
     </div>
 
-                                            
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_config" name="property_config" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$config</h3>
+                <pre class="signature">$config</pre>
+                <p><em>Config</em></p>
+                <p>This variable contains the bitcoin credentials for the JSON rpc
+interface.</p>
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                            
                                     <a id="methods" name="methods"></a>
             <div class="row-fluid">
                 <div class="span8 content class"><h2>Methods</h2></div>
@@ -546,8 +495,10 @@ Performs checking if the session has expired</p>
                 <h3 class="public ">__construct()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">__construct()</pre>
-                <p><em></em></p>
-                
+                <p><em>Constructor</em></p>
+                <p>Load the bitcoin configuration using CodeIgniters config library.
+Load the jsonRPCclient library with the config, and the bitcoin
+model</p>
 
 
                 
@@ -567,29 +518,583 @@ Performs checking if the session has expired</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_create" name="method_create" class="anchor"></a>
+            <a id="method_get_exchange_rates" name="method_get_exchange_rates" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">create()</h3>
+                <h3 class="public ">get_exchange_rates()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">create( <span class="argument">$user</span>,  <span class="argument">$params</span>) : void</pre>
-                <p><em>Create</em></p>
-                <p>Create a session based on the supplied userdata $user, and an
-optional parameter specifying the type of the session (such
-as a full session (param=null), for two factor (param=two_factor)
-or to register a pgp key (param=force_pgp)</p>
+                <pre class="signature" style="margin-right: 54px;">get_exchange_rates() : array</pre>
+                <p><em>Get Exchange Rates</em></p>
+                <p>Load exchange rates from the defined BPI. Called by bw_bitcoin/ratenotify().</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getaccount" name="method_getaccount" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getaccount()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getaccount( <span class="argument">$address</span>) : string</pre>
+                <p><em>Get Account</em></p>
+                <p>Function to query bitcoind, to see which account owns $address.
+Returns a string containing the account name if successful, or
+an array describing the error on failure.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
                                 <td></td>
-                                <td>$user</td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ array</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getbalance" name="method_getbalance" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getbalance()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getbalance( <span class="argument">$account</span>) : float</pre>
+                <p><em>Get Balance</em></p>
+                <p>Function to query bitcoind, to get the balance of the account.
+Returns a float in each case, whether the account exists or not.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$account</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    float
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getblock" name="method_getblock" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getblock()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getblock( <span class="argument">$block_hash</span>) : array</pre>
+                <p><em>Get Block</em></p>
+                <p>Function to query bitcoind, to get information about a block ($block_hash)
+Returns an array containing the account name if successful, or
+an array describing the error on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$block_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getblockhash" name="method_getblockhash" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getblockhash()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getblockhash( <span class="argument">$block_no</span>) : string</pre>
+                <p><em>Get Block Hash</em></p>
+                <p>Function to query bitcoind, to get the block hash for a particular
+height.
+Returns a string containing the block hash if successful, or an
+array describing the error on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$block_no</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ array</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_getinfo" name="method_getinfo" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">getinfo()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">getinfo() : string</pre>
+                <p><em>Get Info</em></p>
+                <p>Function to query bitcoind for general information, like version,
+block height, balance, difficulty,</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ array</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_gettransaction" name="method_gettransaction" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">gettransaction()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">gettransaction( <span class="argument">$tx_id</span>) : array</pre>
+                <p><em>Get Transaction</em></p>
+                <p>Function to query bitcoind for a transaction ($tx_id). The transaction
+must belong to this wallet in order read this information. Returns
+an array containing transaction information, or an error array
+on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$tx_id</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_listaccounts" name="method_listaccounts" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">listaccounts()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">listaccounts() : array</pre>
+                <p><em>List Accounts</em></p>
+                <p>Function to query bitcoind for information about the accounts
+in the wallet. Displays transactions with 0 confirmations.</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cashout" name="method_cashout" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cashout()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cashout( <span class="argument">$to</span>,  <span class="argument">$amount</span>) : array</pre>
+                <p><em>Cashout</em></p>
+                <p>Function to ask bitcoind to send $amount to the bitcoin address
+$to. Sends the funds from the "main" account. Returns a transaction
+id ($tx_id) if the transaction is successful, otherwise returns
+an error on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$to</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
                                 <td></td>
-                                <td>$params</td>
+                                <td>$amount</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_move" name="method_move" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">move()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">move( <span class="argument">$from</span>,  <span class="argument">$to</span>,  <span class="argument">$amount</span>) : bool</pre>
+                <p><em>Move</em></p>
+                <p>Function to ask bitcoind to move funds from the $from account
+to the $to account. Will create the account if it doesn't exist.
+Already have error-checked this account name, we want it to exist
+already. Does not broadcast a transaction to the bitcoin network.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$from</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$to</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$amount</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_sendfrom" name="method_sendfrom" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">sendfrom()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">sendfrom( <span class="argument">$src_ac</span>,  <span class="argument">$to_address</span>,  <span class="argument">$value</span>) : bool</pre>
+                <p><em>Send From</em></p>
+                <p>Function to ask bitcoind to send $value BTC from any $src_ac, to
+$to_address. The transaction must belong to this wallet in order
+read this information. Returns a transaction id ($tx_id) if the
+transaction is successful, otherwise returns an error on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$src_ac</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$to_address</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$value</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_validateaddress" name="method_validateaddress" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">validateaddress()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">validateaddress( <span class="argument">$address</span>) : bool</pre>
+                <p><em>Validate Address</em></p>
+                <p>Function to validate a bitcoin address. Checks if there is a
+base58 address, and other tests. Returns a boolean with the answer.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_new_address" name="method_new_address" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">new_address()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">new_address( <span class="argument">$user_hash</span>) : bool</pre>
+                <p><em>New Address</em></p>
+                <p>Function to ask bitcoind to create a new address for the topup
+account. Associates the address with the $user_hash. Sets the
+users current bitcoin address - this function also logs it to the
+users list of previously used addresses (in case the user ends up
+reusing addresses). Does not return the address, sets it in the DB
+to be read then.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_new_main_address" name="method_new_main_address" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">new_main_address()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">new_main_address() : string</pre>
+                <p><em>New &quot;Main&quot; Address</em></p>
+                <p>Function to ask bitcoind to create an address for the "main" account.
+Used to forward funds from the topup account to the main account.
+A new address is created for this every time.</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_walletnotify" name="method_walletnotify" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">walletnotify()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">walletnotify( <span class="argument">$txn_id</span>)</pre>
+                <p><em>Wallet Notify</em></p>
+                <p>Function to notify the marketplace about any new transactions.
+Checks if transaction is for our wallet, and if not, continues with
+execution. Processes send/receive information to see if there are
+balances to credit/debit.</p>
+
+<p>Immediately deducts a users balance if the transaction is a user
+cashing out their account.
+If the user is topping up, we create a new address for them to
+use next time.
+Cashout/Topup functions are not themselves in an if/else block, because
+a user may be putting in another users topup address to cashout.
+Don't know why they'd do this, but this way we do the accounting properly.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$txn_id</td>
                                 <td>
 </td>
                             </tr>
@@ -611,16 +1116,37 @@ or to register a pgp key (param=force_pgp)</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_destroy" name="method_destroy" class="anchor"></a>
+            <a id="method_blocknotify" name="method_blocknotify" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">destroy()</h3>
+                <h3 class="public ">blocknotify()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">destroy() : void</pre>
-                <p><em>Destroy</em></p>
-                <p>Destroy the current session, remove userdata, and redirect
-to the login page.</p>
+                <pre class="signature" style="margin-right: 54px;">blocknotify( <span class="argument">$block_id</span>) : void</pre>
+                <p><em>Block Notify</em></p>
+                <p>Function to inform the marketplace about new blocks. Upon receiving
+a new block, we get the list of all pending transactions (uncredited
+and have confirmations &lt; 50) and check how many confirmations they
+have now that we are looking at a new leading block. By refreshing
+the number of confirmations every time we should be able to deal
+with a reorg if we were on the wrong fork.</p>
+
+<p>If the transaction is a topup, and confirmations has reached 7,
+then we set the transaction as credited, and move the funds from
+the topup account (For unconfirmed transactions) to the main account.</p>
+
+<p>If the number of confirmations for a transaction is >50, then we stop
+tracking this transaction, by setting confirmations='>50'. This
+causes the 'check' icon to appear in the transaction log.</p>
 
 
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$block_id</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
                 
                 
                             </article>
@@ -638,33 +1164,20 @@ to the login page.</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_validate_req" name="method_validate_req" class="anchor"></a>
+            <a id="method_ratenotify" name="method_ratenotify" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">validate_req()</h3>
+                <h3 class="public ">ratenotify()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">validate_req() : \void.</pre>
-                <p><em>Validate Request</em></p>
-                <p>Validate a users request to view a page.
-Authorization for a pages first uri (Current_user->URI[0]) is
-stored in the page_authorization's table. Some of the rules are
- - If the admin allows it, allow users to view the homepage, items/item, category, user pages.
- - If the authorization level is unset, allow the request.
- - If a two factor session is set, and the user isn't on that page or logout, redirect them to the two factor form.
- - If a user has the force_pgp flag set, and they're not on that page or the logout page, redirect to the PGP form.
- - If the page is restricted to guests only (login/register), the user must not be logged in.
- - If the authorization level == 'login' and the user is logged in, allow their request.
- - If the authorization level == 'vendor' and the user has that role, allow the request.
- - If the authorization level == 'buyer' and the user has that role, allow the request.
- - If the authorization level == 'admin' and the user has that role, allow the request.
- - If the authorization level == 'auth|all', all users must enter their password before viewing the page (record request for a few minutes)
- - If the authorization level == 'auth|admin', user MUST be an admin, and must enter their password.
- - If all these rules fail, direct the user to the login page.</p>
+                <pre class="signature" style="margin-right: 54px;">ratenotify() : bool</pre>
+                <p><em>Rate Notify</em></p>
+                <p>Function to query the selected bitcoin price index provider
+for the latest exchange rates between USD/GBP/EUR.</p>
 
 
                 
                 
                                     <h4>Returns</h4>
-                    \void.
+                    bool
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -684,10 +1197,10 @@ stored in the page_authorization's table. Some of the rules are
     <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="source-view-label">Bw_session.php</h3>
+            <h3 id="source-view-label">Bw_bitcoin.php</h3>
         </div>
         <div class="modal-body">
-            <pre data-src="../files/application/libraries/Bw_session.php.txt" class="language-php line-numbers"></pre>
+            <pre data-src="../files/application/libraries/Bw_bitcoin.php.txt" class="language-php line-numbers"></pre>
         </div>
     </div>
 
@@ -727,7 +1240,7 @@ stored in the page_authorization's table. Some of the rules are
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 18:40.
+                    on October 14th, 2013 at 19:50.
                 </section>
             </section>
         </section>

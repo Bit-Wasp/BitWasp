@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-/* Messages Library
+/**
+ * Messages Library
  * 
  * Used to prepare messages for input to the table or output.
  * 

@@ -11,7 +11,7 @@
  * @category	Session
  * @author		BitWasp
  */
-class BW_Session {
+class Bw_session {
 
 	protected $CI;
 

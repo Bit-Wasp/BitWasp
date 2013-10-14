@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Current User Library
+ * Current_User
  * 
  * This library is used to allow easy access to information about the
  * user. User data is taken from the session, and the database, to allow
@@ -9,7 +9,7 @@
  * 
  * @package		BitWasp
  * @subpackage	Libraries
- * @category	Current User
+ * @category	Current_User
  * @author		BitWasp
  */
 class Current_User {

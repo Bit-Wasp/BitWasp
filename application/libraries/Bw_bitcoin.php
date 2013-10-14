@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
 /**
  * Bitcoin Library
@@ -12,10 +12,9 @@
  * 
  * @package		BitWasp
  * @subpackage	Libraries
- * @category	Messages
+ * @category	Bitcoin
  * @author		BitWasp
  */  
- */
 
 class Bw_bitcoin {
 	

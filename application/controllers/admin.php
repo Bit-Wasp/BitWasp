@@ -662,7 +662,12 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}	
 
-	// Generate the navigation bar for the admin panel.
+	/**
+	 * Generate Nav
+	 * 
+	 * Generates the navigation bar for the admin panel. 
+	 * @return 	string
+	 */
 	public function generate_nav() { 
 		$links = '';
 		

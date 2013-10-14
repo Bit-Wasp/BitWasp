@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
-/* Bw_auth class.
+/**
+ * Authorization Library
+ * 
  * Used to check if a user must enter a password before viewing a page.
  * Has automatic expiration of requests (called in Bw_session)
  * Handles redirection to /authorize and to desired page.
@@ -15,6 +17,11 @@
  * would need to check an as yet undesigned session identifier - if the user has just come from 
  * an auth request. Then, it would check for session data. (this bit of data is a counter.
  * it will be deleted once it is incremented twice, and forgotten.
+  * 
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Authorization
+ * @author		BitWasp
  */
 
 class Bw_auth {
