@@ -1,0 +1,3491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                    <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                    </ul>
+                    </li>
+                    <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                    <i class="icon-list-alt"></i>&#160;Errors
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                    <i class="icon-list-alt"></i>&#160;Markers
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-873394032"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-873394032" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Currencies_model.html">Currencies_model</a></li>
+                                                    <li class="class"><a href="../classes/Categories_model.html">Categories_model</a></li>
+                                                    <li class="class"><a href="../classes/Escrow_model.html">Escrow_model</a></li>
+                                                    <li class="class"><a href="../classes/Admin_model.html">Admin_model</a></li>
+                                                    <li class="class"><a href="../classes/Images_model.html">Images_model</a></li>
+                                                    <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
+                                                    <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/General_model.html">General_model</a></li>
+                                                    <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
+                                                    <li class="class"><a href="../classes/Captchas_model.html">Captchas_model</a></li>
+                                                    <li class="class"><a href="../classes/Listings_model.html">Listings_model</a></li>
+                                                    <li class="class"><a href="../classes/Messages_model.html">Messages_model</a></li>
+                                                    <li class="class"><a href="../classes/Config_model.html">Config_model</a></li>
+                                                    <li class="class"><a href="../classes/Items_model.html">Items_model</a></li>
+                                                    <li class="class"><a href="../classes/Order_model.html">Order_model</a></li>
+                                                    <li class="class"><a href="../classes/Auth_model.html">Auth_model</a></li>
+                                                    <li class="class"><a href="../classes/General.html">General</a></li>
+                                                    <li class="class"><a href="../classes/Bw_captcha.html">Bw_captcha</a></li>
+                                                    <li class="class"><a href="../classes/Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Openssl.html">Openssl</a></li>
+                                                    <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
+                                                    <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
+                                                    <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
+                                                    <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/GPG.html">GPG</a></li>
+                                                    <li class="class"><a href="../classes/Current_User.html">Current_User</a></li>
+                                                    <li class="class"><a href="../classes/Jsonrpcclient.html">Jsonrpcclient</a></li>
+                                                    <li class="class"><a href="../classes/Backup_Wallet.html">Backup_Wallet</a></li>
+                                                    <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
+                                                    <li class="class"><a href="../classes/User_Inactivity.html">User_Inactivity</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/BW_Session.html">BW_Session</a></li>
+                                                    <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
+                                                    <li class="class"><a href="../classes/Listings.html">Listings</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Btc_internal.html">Btc_internal</a></li>
+                                                    <li class="class"><a href="../classes/Users.html">Users</a></li>
+                                                    <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
+                                                    <li class="class"><a href="../classes/Orders.html">Orders</a></li>
+                                                    <li class="class"><a href="../classes/Admin.html">Admin</a></li>
+                                                    <li class="class"><a href="../classes/Messages.html">Messages</a></li>
+                                                    <li class="class"><a href="../classes/Welcome.html">Welcome</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_Test.html">Bitcoin_Test</a></li>
+                                                    <li class="class"><a href="../classes/Items.html">Items</a></li>
+                                                    <li class="class"><a href="../classes/CI_Jquery.html">CI_Jquery</a></li>
+                                                    <li class="class"><a href="../classes/CI_Image_lib.html">CI_Image_lib</a></li>
+                                                    <li class="class"><a href="../classes/CI_SHA1.html">CI_SHA1</a></li>
+                                                    <li class="class"><a href="../classes/CI_Calendar.html">CI_Calendar</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache.html">CI_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_file.html">CI_Cache_file</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_dummy.html">CI_Cache_dummy</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_memcached.html">CI_Cache_memcached</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_apc.html">CI_Cache_apc</a></li>
+                                                    <li class="class"><a href="../classes/CI_Encrypt.html">CI_Encrypt</a></li>
+                                                    <li class="class"><a href="../classes/CI_Pagination.html">CI_Pagination</a></li>
+                                                    <li class="class"><a href="../classes/CI_Log.html">CI_Log</a></li>
+                                                    <li class="class"><a href="../classes/CI_Javascript.html">CI_Javascript</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cart.html">CI_Cart</a></li>
+                                                    <li class="class"><a href="../classes/CI_Migration.html">CI_Migration</a></li>
+                                                    <li class="class"><a href="../classes/CI_Trackback.html">CI_Trackback</a></li>
+                                                    <li class="class"><a href="../classes/CI_Profiler.html">CI_Profiler</a></li>
+                                                    <li class="class"><a href="../classes/CI_Typography.html">CI_Typography</a></li>
+                                                    <li class="class"><a href="../classes/CI_User_agent.html">CI_User_agent</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpcs.html">CI_Xmlrpcs</a></li>
+                                                    <li class="class"><a href="../classes/CI_Upload.html">CI_Upload</a></li>
+                                                    <li class="class"><a href="../classes/CI_Zip.html">CI_Zip</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpc.html">CI_Xmlrpc</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Client.html">XML_RPC_Client</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Response.html">XML_RPC_Response</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Message.html">XML_RPC_Message</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Values.html">XML_RPC_Values</a></li>
+                                                    <li class="class"><a href="../classes/CI_Session.html">CI_Session</a></li>
+                                                    <li class="class"><a href="../classes/CI_FTP.html">CI_FTP</a></li>
+                                                    <li class="class"><a href="../classes/CI_Table.html">CI_Table</a></li>
+                                                    <li class="class"><a href="../classes/CI_Unit_test.html">CI_Unit_test</a></li>
+                                                    <li class="class"><a href="../classes/CI_Parser.html">CI_Parser</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver_Library.html">CI_Driver_Library</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver.html">CI_Driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Form_validation.html">CI_Form_validation</a></li>
+                                                    <li class="class"><a href="../classes/CI_Email.html">CI_Email</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_result.html">CI_DB_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_forge.html">CI_DB_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_Cache.html">CI_DB_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_utility.html">CI_DB_sqlite_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_forge.html">CI_DB_sqlite_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_driver.html">CI_DB_sqlite_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_result.html">CI_DB_sqlite_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_forge.html">CI_DB_cubrid_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_utility.html">CI_DB_cubrid_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_driver.html">CI_DB_cubrid_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_result.html">CI_DB_cubrid_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_result.html">CI_DB_mssql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_utility.html">CI_DB_mssql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_driver.html">CI_DB_mssql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_forge.html">CI_DB_mssql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_forge.html">CI_DB_oci8_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_utility.html">CI_DB_oci8_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_driver.html">CI_DB_oci8_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_result.html">CI_DB_oci8_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_result.html">CI_DB_odbc_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_driver.html">CI_DB_odbc_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_utility.html">CI_DB_odbc_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_forge.html">CI_DB_odbc_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_forge.html">CI_DB_mysqli_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_utility.html">CI_DB_mysqli_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_result.html">CI_DB_mysqli_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_driver.html">CI_DB_mysqli_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_utility.html">CI_DB_mysql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_driver.html">CI_DB_mysql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_forge.html">CI_DB_mysql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_result.html">CI_DB_mysql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_forge.html">CI_DB_postgre_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_driver.html">CI_DB_postgre_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_result.html">CI_DB_postgre_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_utility.html">CI_DB_postgre_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_result.html">CI_DB_sqlsrv_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_driver.html">CI_DB_sqlsrv_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_utility.html">CI_DB_sqlsrv_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_forge.html">CI_DB_sqlsrv_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_forge.html">CI_DB_pdo_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_utility.html">CI_DB_pdo_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_driver.html">CI_DB_pdo_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_result.html">CI_DB_pdo_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_active_record.html">CI_DB_active_record</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_utility.html">CI_DB_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_driver.html">CI_DB_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Lang.html">CI_Lang</a></li>
+                                                    <li class="class"><a href="../classes/CI_Hooks.html">CI_Hooks</a></li>
+                                                    <li class="class"><a href="../classes/CI_Security.html">CI_Security</a></li>
+                                                    <li class="class"><a href="../classes/CI_Model.html">CI_Model</a></li>
+                                                    <li class="class"><a href="../classes/CI_Router.html">CI_Router</a></li>
+                                                    <li class="class"><a href="../classes/CI_Output.html">CI_Output</a></li>
+                                                    <li class="class"><a href="../classes/CI_Loader.html">CI_Loader</a></li>
+                                                    <li class="class"><a href="../classes/CI_Exceptions.html">CI_Exceptions</a></li>
+                                                    <li class="class"><a href="../classes/CI_Config.html">CI_Config</a></li>
+                                                    <li class="class"><a href="../classes/CI_Controller.html">CI_Controller</a></li>
+                                                    <li class="class"><a href="../classes/CI_Utf8.html">CI_Utf8</a></li>
+                                                    <li class="class"><a href="../classes/CI_URI.html">CI_URI</a></li>
+                                                    <li class="class"><a href="../classes/CI_Benchmark.html">CI_Benchmark</a></li>
+                                                    <li class="class"><a href="../classes/CI_Input.html">CI_Input</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\</small>CI_Email</h1>
+                    <p><em>CodeIgniter Email Class</em></p>
+                    <p>Permits email to be sent using Mail, Sendmail, or SMTP.</p>
+
+
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/CI_Email.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_initialize" class="">initialize()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_clear" class="">clear()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_from" class="">from()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_reply_to" class="">reply_to()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_to" class="">to()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_cc" class="">cc()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_bcc" class="">bcc()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_subject" class="">subject()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_message" class="">message()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_attach" class="">attach()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_set_alt_message" class="">set_alt_message()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_set_mailtype" class="">set_mailtype()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_set_wordwrap" class="">set_wordwrap()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_set_protocol" class="">set_protocol()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_set_priority" class="">set_priority()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_set_newline" class="">set_newline()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_set_crlf" class="">set_crlf()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_validate_email" class="">validate_email()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_valid_email" class="">valid_email()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_clean_email" class="">clean_email()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_word_wrap" class="">word_wrap()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_send" class="">send()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_batch_bcc_send" class="">batch_bcc_send()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method_print_debugger" class="">print_debugger()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/CI_Email.html#property_useragent" class="">$useragent</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_mailpath" class="">$mailpath</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_protocol" class="">$protocol</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_smtp_host" class="">$smtp_host</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_smtp_user" class="">$smtp_user</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_smtp_pass" class="">$smtp_pass</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_smtp_port" class="">$smtp_port</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_smtp_timeout" class="">$smtp_timeout</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_smtp_crypto" class="">$smtp_crypto</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_wordwrap" class="">$wordwrap</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_wrapchars" class="">$wrapchars</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_mailtype" class="">$mailtype</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_charset" class="">$charset</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_multipart" class="">$multipart</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_alt_message" class="">$alt_message</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_validate" class="">$validate</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_priority" class="">$priority</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_newline" class="">$newline</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_crlf" class="">$crlf</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_send_multipart" class="">$send_multipart</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_bcc_batch_mode" class="">$bcc_batch_mode</a><br />
+                                                                    <a href="../classes/CI_Email.html#property_bcc_batch_size" class="">$bcc_batch_size</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__safe_mode" class="">$_safe_mode</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__subject" class="">$_subject</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__body" class="">$_body</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__finalbody" class="">$_finalbody</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__alt_boundary" class="">$_alt_boundary</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__atc_boundary" class="">$_atc_boundary</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__header_str" class="">$_header_str</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__smtp_connect" class="">$_smtp_connect</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__encoding" class="">$_encoding</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__IP" class="">$_IP</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__smtp_auth" class="">$_smtp_auth</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__replyto_flag" class="">$_replyto_flag</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__debug_msg" class="">$_debug_msg</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__recipients" class="">$_recipients</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__cc_array" class="">$_cc_array</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__bcc_array" class="">$_bcc_array</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__headers" class="">$_headers</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__attach_name" class="">$_attach_name</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__attach_type" class="">$_attach_type</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__attach_disp" class="">$_attach_disp</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__protocols" class="">$_protocols</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__base_charsets" class="">$_base_charsets</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__bit_depths" class="">$_bit_depths</a><br />
+                                                                    <a href="../classes/CI_Email.html#property__priorities" class="">$_priorities</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <a href="../classes/CI_Email.html#method__set_header" class="">_set_header()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__str_to_array" class="">_str_to_array()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__set_boundaries" class="">_set_boundaries()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_message_id" class="">_get_message_id()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_protocol" class="">_get_protocol()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_encoding" class="">_get_encoding()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_content_type" class="">_get_content_type()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__set_date" class="">_set_date()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_mime_message" class="">_get_mime_message()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_alt_message" class="">_get_alt_message()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__build_headers" class="">_build_headers()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__write_headers" class="">_write_headers()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__build_message" class="">_build_message()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__prep_quoted_printable" class="">_prep_quoted_printable()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__prep_q_encoding" class="">_prep_q_encoding()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__unwrap_specials" class="">_unwrap_specials()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__remove_nl_callback" class="">_remove_nl_callback()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__spool_email" class="">_spool_email()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__send_with_mail" class="">_send_with_mail()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__send_with_sendmail" class="">_send_with_sendmail()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__send_with_smtp" class="">_send_with_smtp()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__smtp_connect" class="">_smtp_connect()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__send_command" class="">_send_command()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__smtp_authenticate" class="">_smtp_authenticate()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__send_data" class="">_send_data()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_smtp_data" class="">_get_smtp_data()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_hostname" class="">_get_hostname()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__get_ip" class="">_get_ip()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__set_error_message" class="">_set_error_message()</a><br />
+                                                                    <a href="../classes/CI_Email.html#method__mime_types" class="">_mime_types()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/system.libraries.Email.php.html"><div class="path-wrapper">system/libraries/Email.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\CodeIgniter\Libraries\Libraries</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\CI_Email</div>
+                            </dd>
+
+                        
+                        
+                                                                            <dt>See also</dt>
+                                                                                    <dd><a href="http://codeigniter.com/user_guide/libraries/email.html"><div class="namespace-wrapper">http://codeigniter.com/user_guide/libraries/email.html</div></a></dd>
+                                                    
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>Libraries</p>
+
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>ExpressionEngine Dev Team</p>
+
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_useragent" name="property_useragent" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$useragent</h3>
+                <pre class="signature">$useragent</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_mailpath" name="property_mailpath" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$mailpath</h3>
+                <pre class="signature">$mailpath</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_protocol" name="property_protocol" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$protocol</h3>
+                <pre class="signature">$protocol</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_smtp_host" name="property_smtp_host" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$smtp_host</h3>
+                <pre class="signature">$smtp_host</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_smtp_user" name="property_smtp_user" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$smtp_user</h3>
+                <pre class="signature">$smtp_user</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_smtp_pass" name="property_smtp_pass" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$smtp_pass</h3>
+                <pre class="signature">$smtp_pass</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_smtp_port" name="property_smtp_port" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$smtp_port</h3>
+                <pre class="signature">$smtp_port</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_smtp_timeout" name="property_smtp_timeout" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$smtp_timeout</h3>
+                <pre class="signature">$smtp_timeout</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_smtp_crypto" name="property_smtp_crypto" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$smtp_crypto</h3>
+                <pre class="signature">$smtp_crypto</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_wordwrap" name="property_wordwrap" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$wordwrap</h3>
+                <pre class="signature">$wordwrap</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_wrapchars" name="property_wrapchars" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$wrapchars</h3>
+                <pre class="signature">$wrapchars</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_mailtype" name="property_mailtype" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$mailtype</h3>
+                <pre class="signature">$mailtype</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_charset" name="property_charset" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$charset</h3>
+                <pre class="signature">$charset</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_multipart" name="property_multipart" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$multipart</h3>
+                <pre class="signature">$multipart</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_alt_message" name="property_alt_message" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$alt_message</h3>
+                <pre class="signature">$alt_message</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_validate" name="property_validate" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$validate</h3>
+                <pre class="signature">$validate</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_priority" name="property_priority" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$priority</h3>
+                <pre class="signature">$priority</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_newline" name="property_newline" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$newline</h3>
+                <pre class="signature">$newline</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_crlf" name="property_crlf" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$crlf</h3>
+                <pre class="signature">$crlf</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_send_multipart" name="property_send_multipart" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$send_multipart</h3>
+                <pre class="signature">$send_multipart</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_bcc_batch_mode" name="property_bcc_batch_mode" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$bcc_batch_mode</h3>
+                <pre class="signature">$bcc_batch_mode</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_bcc_batch_size" name="property_bcc_batch_size" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$bcc_batch_size</h3>
+                <pre class="signature">$bcc_batch_size</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__safe_mode" name="property__safe_mode" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_safe_mode</h3>
+                <pre class="signature">$_safe_mode</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__subject" name="property__subject" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_subject</h3>
+                <pre class="signature">$_subject</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__body" name="property__body" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_body</h3>
+                <pre class="signature">$_body</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__finalbody" name="property__finalbody" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_finalbody</h3>
+                <pre class="signature">$_finalbody</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__alt_boundary" name="property__alt_boundary" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_alt_boundary</h3>
+                <pre class="signature">$_alt_boundary</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__atc_boundary" name="property__atc_boundary" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_atc_boundary</h3>
+                <pre class="signature">$_atc_boundary</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__header_str" name="property__header_str" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_header_str</h3>
+                <pre class="signature">$_header_str</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__smtp_connect" name="property__smtp_connect" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_smtp_connect</h3>
+                <pre class="signature">$_smtp_connect</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__encoding" name="property__encoding" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_encoding</h3>
+                <pre class="signature">$_encoding</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__IP" name="property__IP" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_IP</h3>
+                <pre class="signature">$_IP</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__smtp_auth" name="property__smtp_auth" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_smtp_auth</h3>
+                <pre class="signature">$_smtp_auth</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__replyto_flag" name="property__replyto_flag" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_replyto_flag</h3>
+                <pre class="signature">$_replyto_flag</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__debug_msg" name="property__debug_msg" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_debug_msg</h3>
+                <pre class="signature">$_debug_msg</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__recipients" name="property__recipients" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_recipients</h3>
+                <pre class="signature">$_recipients</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__cc_array" name="property__cc_array" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_cc_array</h3>
+                <pre class="signature">$_cc_array</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__bcc_array" name="property__bcc_array" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_bcc_array</h3>
+                <pre class="signature">$_bcc_array</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__headers" name="property__headers" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_headers</h3>
+                <pre class="signature">$_headers</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__attach_name" name="property__attach_name" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_attach_name</h3>
+                <pre class="signature">$_attach_name</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__attach_type" name="property__attach_type" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_attach_type</h3>
+                <pre class="signature">$_attach_type</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__attach_disp" name="property__attach_disp" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_attach_disp</h3>
+                <pre class="signature">$_attach_disp</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__protocols" name="property__protocols" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_protocols</h3>
+                <pre class="signature">$_protocols</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__base_charsets" name="property__base_charsets" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_base_charsets</h3>
+                <pre class="signature">$_base_charsets</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__bit_depths" name="property__bit_depths" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_bit_depths</h3>
+                <pre class="signature">$_bit_depths</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__priorities" name="property__priorities" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_priorities</h3>
+                <pre class="signature">$_priorities</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct( <span class="argument">$config</span>)</pre>
+                <p><em>Constructor - Sets Email Preferences</em></p>
+                <p>The constructor can be passed an array of config values</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$config</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_initialize" name="method_initialize" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">initialize()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">initialize( <span class="argument">$config</span>) : void</pre>
+                <p><em>Initialize preferences</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$config</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_clear" name="method_clear" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">clear()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">clear( <span class="argument">$clear_attachments</span>) : void</pre>
+                <p><em>Initialize the Email Data</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$clear_attachments</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_from" name="method_from" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">from()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">from( <span class="argument">$from</span>,  <span class="argument">$name</span>) : void</pre>
+                <p><em>Set FROM</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$from</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$name</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_reply_to" name="method_reply_to" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">reply_to()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">reply_to( <span class="argument">$replyto</span>,  <span class="argument">$name</span>) : void</pre>
+                <p><em>Set Reply-to</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$replyto</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$name</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_to" name="method_to" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">to()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">to( <span class="argument">$to</span>) : void</pre>
+                <p><em>Set Recipients</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$to</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cc" name="method_cc" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cc()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cc( <span class="argument">$cc</span>) : void</pre>
+                <p><em>Set CC</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$cc</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_bcc" name="method_bcc" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">bcc()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">bcc( <span class="argument">$bcc</span>,  <span class="argument">$limit</span>) : void</pre>
+                <p><em>Set BCC</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$bcc</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$limit</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_subject" name="method_subject" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">subject()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">subject( <span class="argument">$subject</span>) : void</pre>
+                <p><em>Set Email Subject</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$subject</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_message" name="method_message" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">message()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">message( <span class="argument">$body</span>) : void</pre>
+                <p><em>Set Body</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$body</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_attach" name="method_attach" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">attach()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">attach( <span class="argument">$filename</span>,  <span class="argument">$disposition</span>) : void</pre>
+                <p><em>Assign file attachments</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$filename</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$disposition</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_alt_message" name="method_set_alt_message" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_alt_message()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_alt_message( <span class="argument">$str</span>) : void</pre>
+                <p><em>Set Multipart Value</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$str</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_mailtype" name="method_set_mailtype" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_mailtype()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_mailtype( <span class="argument">$type</span>) : void</pre>
+                <p><em>Set Mailtype</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$type</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_wordwrap" name="method_set_wordwrap" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_wordwrap()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_wordwrap( <span class="argument">$wordwrap</span>) : void</pre>
+                <p><em>Set Wordwrap</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$wordwrap</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_protocol" name="method_set_protocol" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_protocol()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_protocol( <span class="argument">$protocol</span>) : void</pre>
+                <p><em>Set Protocol</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$protocol</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_priority" name="method_set_priority" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_priority()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_priority( <span class="argument">$n</span>) : void</pre>
+                <p><em>Set Priority</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$n</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_newline" name="method_set_newline" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_newline()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_newline( <span class="argument">$newline</span>) : void</pre>
+                <p><em>Set Newline Character</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$newline</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_crlf" name="method_set_crlf" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_crlf()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_crlf( <span class="argument">$crlf</span>) : void</pre>
+                <p><em>Set CRLF</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$crlf</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_validate_email" name="method_validate_email" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">validate_email()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">validate_email( <span class="argument">$email</span>) : bool</pre>
+                <p><em>Validate Email Address</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$email</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_valid_email" name="method_valid_email" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">valid_email()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">valid_email( <span class="argument">$address</span>) : bool</pre>
+                <p><em>Email Validation</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_clean_email" name="method_clean_email" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">clean_email()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">clean_email( <span class="argument">$email</span>) : string</pre>
+                <p><em>Clean Extended Email Address: Joe Smith &lt;joe@smith.com&gt;</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$email</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_word_wrap" name="method_word_wrap" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">word_wrap()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">word_wrap( <span class="argument">$str</span>,  <span class="argument">$charlim</span>) : string</pre>
+                <p><em>Word Wrap</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$str</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$charlim</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_send" name="method_send" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">send()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">send() : bool</pre>
+                <p><em>Send Email</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_batch_bcc_send" name="method_batch_bcc_send" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">batch_bcc_send()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">batch_bcc_send() : bool</pre>
+                <p><em>Batch Bcc Send.  Sends groups of BCCs in batches</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_print_debugger" name="method_print_debugger" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">print_debugger()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">print_debugger() : string</pre>
+                <p><em>Get Debug Message</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__set_header" name="method__set_header" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_set_header()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_set_header( <span class="argument">$header</span>,  <span class="argument">$value</span>) : void</pre>
+                <p><em>Add a Header Item</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$header</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$value</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__str_to_array" name="method__str_to_array" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_str_to_array()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_str_to_array( <span class="argument">$email</span>) : array</pre>
+                <p><em>Convert a String to an Array</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$email</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__set_boundaries" name="method__set_boundaries" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_set_boundaries()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_set_boundaries() : void</pre>
+                <p><em>Set Message Boundary</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_message_id" name="method__get_message_id" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_message_id()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_message_id() : string</pre>
+                <p><em>Get the Message ID</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_protocol" name="method__get_protocol" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_protocol()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_protocol( <span class="argument">$return</span>) : string</pre>
+                <p><em>Get Mail Protocol</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$return</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_encoding" name="method__get_encoding" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_encoding()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_encoding( <span class="argument">$return</span>) : string</pre>
+                <p><em>Get Mail Encoding</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$return</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_content_type" name="method__get_content_type" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_content_type()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_content_type() : string</pre>
+                <p><em>Get content type (text/html/attachment)</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__set_date" name="method__set_date" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_set_date()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_set_date() : string</pre>
+                <p><em>Set RFC 822 Date</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_mime_message" name="method__get_mime_message" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_mime_message()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_mime_message() : string</pre>
+                <p><em>Mime message</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_alt_message" name="method__get_alt_message" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_alt_message()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_alt_message() : string</pre>
+                <p><em>Build alternative plain text message</em></p>
+                <p>This public function provides the raw message for use
+in plain-text headers of HTML-formatted emails.
+If the user hasn't specified his own alternative message
+it creates one by stripping the HTML</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__build_headers" name="method__build_headers" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_build_headers()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_build_headers() : string</pre>
+                <p><em>Build final headers</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__write_headers" name="method__write_headers" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_write_headers()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_write_headers() : void</pre>
+                <p><em>Write Headers as a string</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__build_message" name="method__build_message" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_build_message()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_build_message() : void</pre>
+                <p><em>Build Final Body and attachments</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__prep_quoted_printable" name="method__prep_quoted_printable" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_prep_quoted_printable()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_prep_quoted_printable( <span class="argument">$str</span>,  <span class="argument">$charlim</span>) : string</pre>
+                <p><em>Prep Quoted Printable</em></p>
+                <p>Prepares string for Quoted-Printable Content-Transfer-Encoding
+Refer to RFC 2045 http://www.ietf.org/rfc/rfc2045.txt</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$str</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$charlim</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__prep_q_encoding" name="method__prep_q_encoding" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_prep_q_encoding()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_prep_q_encoding( <span class="argument">$str</span>,  <span class="argument">$from</span>) : \str</pre>
+                <p><em>Prep Q Encoding</em></p>
+                <p>Performs "Q Encoding" on a string for use in email headers.  It's related
+but not identical to quoted-printable, so it has its own method</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$str</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$from</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \str
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__unwrap_specials" name="method__unwrap_specials" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_unwrap_specials()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_unwrap_specials() : void</pre>
+                <p><em>Unwrap special elements</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__remove_nl_callback" name="method__remove_nl_callback" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_remove_nl_callback()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_remove_nl_callback( <span class="argument">$matches</span>) : string</pre>
+                <p><em>Strip line-breaks via callback</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$matches</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__spool_email" name="method__spool_email" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_spool_email()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_spool_email() : bool</pre>
+                <p><em>Spool mail to the mail server</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__send_with_mail" name="method__send_with_mail" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_send_with_mail()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_send_with_mail() : bool</pre>
+                <p><em>Send using mail()</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__send_with_sendmail" name="method__send_with_sendmail" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_send_with_sendmail()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_send_with_sendmail() : bool</pre>
+                <p><em>Send using Sendmail</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__send_with_smtp" name="method__send_with_smtp" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_send_with_smtp()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_send_with_smtp() : bool</pre>
+                <p><em>Send using SMTP</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__smtp_connect" name="method__smtp_connect" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_smtp_connect()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_smtp_connect() : string</pre>
+                <p><em>SMTP Connect</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__send_command" name="method__send_command" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_send_command()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_send_command( <span class="argument">$cmd</span>,  <span class="argument">$data</span>) : string</pre>
+                <p><em>Send SMTP command</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$cmd</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$data</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__smtp_authenticate" name="method__smtp_authenticate" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_smtp_authenticate()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_smtp_authenticate() : bool</pre>
+                <p><em>SMTP Authenticate</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__send_data" name="method__send_data" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_send_data()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_send_data( <span class="argument">$data</span>) : bool</pre>
+                <p><em>Send SMTP data</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$data</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_smtp_data" name="method__get_smtp_data" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_smtp_data()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_smtp_data() : string</pre>
+                <p><em>Get SMTP data</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_hostname" name="method__get_hostname" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_hostname()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_hostname() : string</pre>
+                <p><em>Get Hostname</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_ip" name="method__get_ip" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_get_ip()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_ip() : string</pre>
+                <p><em>Get IP</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__set_error_message" name="method__set_error_message" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_set_error_message()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_set_error_message( <span class="argument">$msg</span>,  <span class="argument">$val</span>) : string</pre>
+                <p><em>Set Message</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$msg</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$val</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__mime_types" name="method__mime_types" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_mime_types()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_mime_types( <span class="argument">$ext</span>) : string</pre>
+                <p><em>Mime Types</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$ext</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Email.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/system/libraries/Email.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Errors</a></li>
+                                    <li><a href="">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 14th, 2013 at 18:40.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

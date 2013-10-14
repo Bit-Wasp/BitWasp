@@ -1,0 +1,2840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                    <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                    </ul>
+                    </li>
+                    <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                    <i class="icon-list-alt"></i>&#160;Errors
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                    <i class="icon-list-alt"></i>&#160;Markers
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1732595307"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-1732595307" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Currencies_model.html">Currencies_model</a></li>
+                                                    <li class="class"><a href="../classes/Categories_model.html">Categories_model</a></li>
+                                                    <li class="class"><a href="../classes/Escrow_model.html">Escrow_model</a></li>
+                                                    <li class="class"><a href="../classes/Admin_model.html">Admin_model</a></li>
+                                                    <li class="class"><a href="../classes/Images_model.html">Images_model</a></li>
+                                                    <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
+                                                    <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/General_model.html">General_model</a></li>
+                                                    <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
+                                                    <li class="class"><a href="../classes/Captchas_model.html">Captchas_model</a></li>
+                                                    <li class="class"><a href="../classes/Listings_model.html">Listings_model</a></li>
+                                                    <li class="class"><a href="../classes/Messages_model.html">Messages_model</a></li>
+                                                    <li class="class"><a href="../classes/Config_model.html">Config_model</a></li>
+                                                    <li class="class"><a href="../classes/Items_model.html">Items_model</a></li>
+                                                    <li class="class"><a href="../classes/Order_model.html">Order_model</a></li>
+                                                    <li class="class"><a href="../classes/Auth_model.html">Auth_model</a></li>
+                                                    <li class="class"><a href="../classes/General.html">General</a></li>
+                                                    <li class="class"><a href="../classes/Bw_captcha.html">Bw_captcha</a></li>
+                                                    <li class="class"><a href="../classes/Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Openssl.html">Openssl</a></li>
+                                                    <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
+                                                    <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
+                                                    <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
+                                                    <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/GPG.html">GPG</a></li>
+                                                    <li class="class"><a href="../classes/Current_User.html">Current_User</a></li>
+                                                    <li class="class"><a href="../classes/Jsonrpcclient.html">Jsonrpcclient</a></li>
+                                                    <li class="class"><a href="../classes/Backup_Wallet.html">Backup_Wallet</a></li>
+                                                    <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
+                                                    <li class="class"><a href="../classes/User_Inactivity.html">User_Inactivity</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/BW_Session.html">BW_Session</a></li>
+                                                    <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
+                                                    <li class="class"><a href="../classes/Listings.html">Listings</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Btc_internal.html">Btc_internal</a></li>
+                                                    <li class="class"><a href="../classes/Users.html">Users</a></li>
+                                                    <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
+                                                    <li class="class"><a href="../classes/Orders.html">Orders</a></li>
+                                                    <li class="class"><a href="../classes/Admin.html">Admin</a></li>
+                                                    <li class="class"><a href="../classes/Messages.html">Messages</a></li>
+                                                    <li class="class"><a href="../classes/Welcome.html">Welcome</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_Test.html">Bitcoin_Test</a></li>
+                                                    <li class="class"><a href="../classes/Items.html">Items</a></li>
+                                                    <li class="class"><a href="../classes/CI_Jquery.html">CI_Jquery</a></li>
+                                                    <li class="class"><a href="../classes/CI_Image_lib.html">CI_Image_lib</a></li>
+                                                    <li class="class"><a href="../classes/CI_SHA1.html">CI_SHA1</a></li>
+                                                    <li class="class"><a href="../classes/CI_Calendar.html">CI_Calendar</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache.html">CI_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_file.html">CI_Cache_file</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_dummy.html">CI_Cache_dummy</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_memcached.html">CI_Cache_memcached</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_apc.html">CI_Cache_apc</a></li>
+                                                    <li class="class"><a href="../classes/CI_Encrypt.html">CI_Encrypt</a></li>
+                                                    <li class="class"><a href="../classes/CI_Pagination.html">CI_Pagination</a></li>
+                                                    <li class="class"><a href="../classes/CI_Log.html">CI_Log</a></li>
+                                                    <li class="class"><a href="../classes/CI_Javascript.html">CI_Javascript</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cart.html">CI_Cart</a></li>
+                                                    <li class="class"><a href="../classes/CI_Migration.html">CI_Migration</a></li>
+                                                    <li class="class"><a href="../classes/CI_Trackback.html">CI_Trackback</a></li>
+                                                    <li class="class"><a href="../classes/CI_Profiler.html">CI_Profiler</a></li>
+                                                    <li class="class"><a href="../classes/CI_Typography.html">CI_Typography</a></li>
+                                                    <li class="class"><a href="../classes/CI_User_agent.html">CI_User_agent</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpcs.html">CI_Xmlrpcs</a></li>
+                                                    <li class="class"><a href="../classes/CI_Upload.html">CI_Upload</a></li>
+                                                    <li class="class"><a href="../classes/CI_Zip.html">CI_Zip</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpc.html">CI_Xmlrpc</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Client.html">XML_RPC_Client</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Response.html">XML_RPC_Response</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Message.html">XML_RPC_Message</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Values.html">XML_RPC_Values</a></li>
+                                                    <li class="class"><a href="../classes/CI_Session.html">CI_Session</a></li>
+                                                    <li class="class"><a href="../classes/CI_FTP.html">CI_FTP</a></li>
+                                                    <li class="class"><a href="../classes/CI_Table.html">CI_Table</a></li>
+                                                    <li class="class"><a href="../classes/CI_Unit_test.html">CI_Unit_test</a></li>
+                                                    <li class="class"><a href="../classes/CI_Parser.html">CI_Parser</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver_Library.html">CI_Driver_Library</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver.html">CI_Driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Form_validation.html">CI_Form_validation</a></li>
+                                                    <li class="class"><a href="../classes/CI_Email.html">CI_Email</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_result.html">CI_DB_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_forge.html">CI_DB_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_Cache.html">CI_DB_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_utility.html">CI_DB_sqlite_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_forge.html">CI_DB_sqlite_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_driver.html">CI_DB_sqlite_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_result.html">CI_DB_sqlite_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_forge.html">CI_DB_cubrid_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_utility.html">CI_DB_cubrid_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_driver.html">CI_DB_cubrid_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_result.html">CI_DB_cubrid_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_result.html">CI_DB_mssql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_utility.html">CI_DB_mssql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_driver.html">CI_DB_mssql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_forge.html">CI_DB_mssql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_forge.html">CI_DB_oci8_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_utility.html">CI_DB_oci8_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_driver.html">CI_DB_oci8_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_result.html">CI_DB_oci8_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_result.html">CI_DB_odbc_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_driver.html">CI_DB_odbc_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_utility.html">CI_DB_odbc_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_forge.html">CI_DB_odbc_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_forge.html">CI_DB_mysqli_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_utility.html">CI_DB_mysqli_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_result.html">CI_DB_mysqli_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_driver.html">CI_DB_mysqli_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_utility.html">CI_DB_mysql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_driver.html">CI_DB_mysql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_forge.html">CI_DB_mysql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_result.html">CI_DB_mysql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_forge.html">CI_DB_postgre_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_driver.html">CI_DB_postgre_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_result.html">CI_DB_postgre_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_utility.html">CI_DB_postgre_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_result.html">CI_DB_sqlsrv_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_driver.html">CI_DB_sqlsrv_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_utility.html">CI_DB_sqlsrv_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_forge.html">CI_DB_sqlsrv_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_forge.html">CI_DB_pdo_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_utility.html">CI_DB_pdo_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_driver.html">CI_DB_pdo_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_result.html">CI_DB_pdo_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_active_record.html">CI_DB_active_record</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_utility.html">CI_DB_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_driver.html">CI_DB_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Lang.html">CI_Lang</a></li>
+                                                    <li class="class"><a href="../classes/CI_Hooks.html">CI_Hooks</a></li>
+                                                    <li class="class"><a href="../classes/CI_Security.html">CI_Security</a></li>
+                                                    <li class="class"><a href="../classes/CI_Model.html">CI_Model</a></li>
+                                                    <li class="class"><a href="../classes/CI_Router.html">CI_Router</a></li>
+                                                    <li class="class"><a href="../classes/CI_Output.html">CI_Output</a></li>
+                                                    <li class="class"><a href="../classes/CI_Loader.html">CI_Loader</a></li>
+                                                    <li class="class"><a href="../classes/CI_Exceptions.html">CI_Exceptions</a></li>
+                                                    <li class="class"><a href="../classes/CI_Config.html">CI_Config</a></li>
+                                                    <li class="class"><a href="../classes/CI_Controller.html">CI_Controller</a></li>
+                                                    <li class="class"><a href="../classes/CI_Utf8.html">CI_Utf8</a></li>
+                                                    <li class="class"><a href="../classes/CI_URI.html">CI_URI</a></li>
+                                                    <li class="class"><a href="../classes/CI_Benchmark.html">CI_Benchmark</a></li>
+                                                    <li class="class"><a href="../classes/CI_Input.html">CI_Input</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\</small>CI_DB_driver</h1>
+                    <p><em>Database Driver Class</em></p>
+                    <p>This is the platform-independent base DB implementation class.
+This class will not be called directly. Rather, the adapter
+class for the specific database will extend and instantiate it.</p>
+
+
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/CI_DB_driver.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_initialize" class="">initialize()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_db_set_charset" class="">db_set_charset()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_platform" class="">platform()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_version" class="">version()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_query" class="">query()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_load_rdriver" class="">load_rdriver()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_simple_query" class="">simple_query()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_trans_off" class="">trans_off()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_trans_strict" class="">trans_strict()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_trans_start" class="">trans_start()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_trans_complete" class="">trans_complete()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_trans_status" class="">trans_status()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_compile_binds" class="">compile_binds()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_is_write_type" class="">is_write_type()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_elapsed_time" class="">elapsed_time()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_total_queries" class="">total_queries()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_last_query" class="">last_query()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_escape" class="">escape()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_escape_like_str" class="">escape_like_str()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_primary" class="">primary()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_list_tables" class="">list_tables()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_table_exists" class="">table_exists()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_list_fields" class="">list_fields()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_field_exists" class="">field_exists()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_field_data" class="">field_data()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_insert_string" class="">insert_string()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_update_string" class="">update_string()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method__has_operator" class="">_has_operator()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_call_function" class="">call_function()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_cache_set_path" class="">cache_set_path()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_cache_on" class="">cache_on()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_cache_off" class="">cache_off()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_cache_delete" class="">cache_delete()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_cache_delete_all" class="">cache_delete_all()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method__cache_init" class="">_cache_init()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_close" class="">close()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_display_error" class="">display_error()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method_protect_identifiers" class="">protect_identifiers()</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#method__protect_identifiers" class="">_protect_identifiers()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/CI_DB_driver.html#property_username" class="">$username</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_password" class="">$password</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_hostname" class="">$hostname</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_database" class="">$database</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_dbdriver" class="">$dbdriver</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_dbprefix" class="">$dbprefix</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_char_set" class="">$char_set</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_dbcollat" class="">$dbcollat</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_autoinit" class="">$autoinit</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_swap_pre" class="">$swap_pre</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_port" class="">$port</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_pconnect" class="">$pconnect</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_conn_id" class="">$conn_id</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_result_id" class="">$result_id</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_db_debug" class="">$db_debug</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_benchmark" class="">$benchmark</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_query_count" class="">$query_count</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_bind_marker" class="">$bind_marker</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_save_queries" class="">$save_queries</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_queries" class="">$queries</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_query_times" class="">$query_times</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_data_cache" class="">$data_cache</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_trans_enabled" class="">$trans_enabled</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_trans_strict" class="">$trans_strict</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property__trans_depth" class="">$_trans_depth</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property__trans_status" class="">$_trans_status</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_cache_on" class="">$cache_on</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_cachedir" class="">$cachedir</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_cache_autodel" class="">$cache_autodel</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_CACHE" class="">$CACHE</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property__protect_identifiers" class="">$_protect_identifiers</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property__reserved_identifiers" class="">$_reserved_identifiers</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_stmt_id" class="">$stmt_id</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_curs_id" class="">$curs_id</a><br />
+                                                                    <a href="../classes/CI_DB_driver.html#property_limit_used" class="">$limit_used</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <a href="../classes/CI_DB_driver.html#method__reset_select" class="">_reset_select()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/system.database.DB_driver.php.html"><div class="path-wrapper">system/database/DB_driver.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\CodeIgniter\Drivers\Drivers</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\CI_DB_driver</div>
+                            </dd>
+
+                        
+                        
+                                                                            <dt>See also</dt>
+                                                                                    <dd><a href="http://codeigniter.com/user_guide/database/"><div class="namespace-wrapper">http://codeigniter.com/user_guide/database/</div></a></dd>
+                                                    
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>Database</p>
+
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>ExpressionEngine Dev Team</p>
+
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_username" name="property_username" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$username</h3>
+                <pre class="signature">$username</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_password" name="property_password" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$password</h3>
+                <pre class="signature">$password</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_hostname" name="property_hostname" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$hostname</h3>
+                <pre class="signature">$hostname</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_database" name="property_database" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$database</h3>
+                <pre class="signature">$database</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_dbdriver" name="property_dbdriver" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$dbdriver</h3>
+                <pre class="signature">$dbdriver</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_dbprefix" name="property_dbprefix" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$dbprefix</h3>
+                <pre class="signature">$dbprefix</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_char_set" name="property_char_set" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$char_set</h3>
+                <pre class="signature">$char_set</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_dbcollat" name="property_dbcollat" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$dbcollat</h3>
+                <pre class="signature">$dbcollat</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_autoinit" name="property_autoinit" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$autoinit</h3>
+                <pre class="signature">$autoinit</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_swap_pre" name="property_swap_pre" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$swap_pre</h3>
+                <pre class="signature">$swap_pre</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_port" name="property_port" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$port</h3>
+                <pre class="signature">$port</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_pconnect" name="property_pconnect" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$pconnect</h3>
+                <pre class="signature">$pconnect</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_conn_id" name="property_conn_id" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$conn_id</h3>
+                <pre class="signature">$conn_id</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_result_id" name="property_result_id" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$result_id</h3>
+                <pre class="signature">$result_id</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_db_debug" name="property_db_debug" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$db_debug</h3>
+                <pre class="signature">$db_debug</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_benchmark" name="property_benchmark" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$benchmark</h3>
+                <pre class="signature">$benchmark</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_query_count" name="property_query_count" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$query_count</h3>
+                <pre class="signature">$query_count</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_bind_marker" name="property_bind_marker" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$bind_marker</h3>
+                <pre class="signature">$bind_marker</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_save_queries" name="property_save_queries" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$save_queries</h3>
+                <pre class="signature">$save_queries</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_queries" name="property_queries" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$queries</h3>
+                <pre class="signature">$queries</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_query_times" name="property_query_times" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$query_times</h3>
+                <pre class="signature">$query_times</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_data_cache" name="property_data_cache" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$data_cache</h3>
+                <pre class="signature">$data_cache</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_trans_enabled" name="property_trans_enabled" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$trans_enabled</h3>
+                <pre class="signature">$trans_enabled</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_trans_strict" name="property_trans_strict" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$trans_strict</h3>
+                <pre class="signature">$trans_strict</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__trans_depth" name="property__trans_depth" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_trans_depth</h3>
+                <pre class="signature">$_trans_depth</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__trans_status" name="property__trans_status" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_trans_status</h3>
+                <pre class="signature">$_trans_status</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_cache_on" name="property_cache_on" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$cache_on</h3>
+                <pre class="signature">$cache_on</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_cachedir" name="property_cachedir" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$cachedir</h3>
+                <pre class="signature">$cachedir</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_cache_autodel" name="property_cache_autodel" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$cache_autodel</h3>
+                <pre class="signature">$cache_autodel</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_CACHE" name="property_CACHE" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$CACHE</h3>
+                <pre class="signature">$CACHE</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__protect_identifiers" name="property__protect_identifiers" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_protect_identifiers</h3>
+                <pre class="signature">$_protect_identifiers</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property__reserved_identifiers" name="property__reserved_identifiers" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$_reserved_identifiers</h3>
+                <pre class="signature">$_reserved_identifiers</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_stmt_id" name="property_stmt_id" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$stmt_id</h3>
+                <pre class="signature">$stmt_id</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_curs_id" name="property_curs_id" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$curs_id</h3>
+                <pre class="signature">$curs_id</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_limit_used" name="property_limit_used" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$limit_used</h3>
+                <pre class="signature">$limit_used</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct( <span class="argument">$params</span>)</pre>
+                <p><em>Constructor.  Accepts one parameter containing the database
+connection settings.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$params</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_initialize" name="method_initialize" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">initialize()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">initialize() : void</pre>
+                <p><em>Initialize Database Settings</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_db_set_charset" name="method_db_set_charset" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">db_set_charset()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">db_set_charset( <span class="argument">$charset</span>,  <span class="argument">$collation</span>) : resource</pre>
+                <p><em>Set client character set</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$charset</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$collation</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    resource
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_platform" name="method_platform" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">platform()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">platform() : string</pre>
+                <p><em>The name of the platform in use (mysql, mssql, etc.</em></p>
+                <p>..)</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_version" name="method_version" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">version()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">version() : string</pre>
+                <p><em>Database Version Number.  Returns a string containing the
+version of the database being used</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_query" name="method_query" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">query()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">query( <span class="argument">$sql</span>,  <span class="argument">$binds</span>,  <span class="argument">$return_object</span>) : mixed</pre>
+                <p><em>Execute the query</em></p>
+                <p>Accepts an SQL string as input and returns a result object upon
+successful execution of a "read" type query.  Returns boolean TRUE
+upon successful execution of a "write" type query. Returns boolean
+FALSE upon failure, and if the $db_debug variable is set to TRUE
+will raise an error.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$sql</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$binds</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$return_object</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_load_rdriver" name="method_load_rdriver" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">load_rdriver()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">load_rdriver() : string</pre>
+                <p><em>Load the result drivers</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>the name of the result class</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_simple_query" name="method_simple_query" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">simple_query()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">simple_query( <span class="argument">$sql</span>) : mixed</pre>
+                <p><em>Simple Query
+This is a simplified version of the query() function.  Internally
+we only use it when running transaction commands since they do
+not require all the features of the main query() function.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$sql</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_trans_off" name="method_trans_off" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">trans_off()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">trans_off() : void</pre>
+                <p><em>Disable Transactions
+This permits transactions to be disabled at run-time.</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_trans_strict" name="method_trans_strict" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">trans_strict()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">trans_strict( <span class="argument">$mode</span>) : void</pre>
+                <p><em>Enable/disable Transaction Strict Mode
+When strict mode is enabled, if you are running multiple groups of
+transactions, if one group fails all groups will be rolled back.</em></p>
+                <p>If strict mode is disabled, each group is treated autonomously, meaning
+a failure of one group will not affect any others</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$mode</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_trans_start" name="method_trans_start" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">trans_start()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">trans_start( <span class="argument">$test_mode</span>) : void</pre>
+                <p><em>Start Transaction</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$test_mode</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_trans_complete" name="method_trans_complete" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">trans_complete()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">trans_complete() : bool</pre>
+                <p><em>Complete Transaction</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_trans_status" name="method_trans_status" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">trans_status()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">trans_status() : bool</pre>
+                <p><em>Lets you retrieve the transaction flag to determine if it has failed</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_compile_binds" name="method_compile_binds" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">compile_binds()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">compile_binds( <span class="argument">$sql</span>,  <span class="argument">$binds</span>) : string</pre>
+                <p><em>Compile Bindings</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$sql</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$binds</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_is_write_type" name="method_is_write_type" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">is_write_type()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">is_write_type( <span class="argument">$sql</span>) : boolean</pre>
+                <p><em>Determines if a query is a &quot;write&quot; type.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$sql</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_elapsed_time" name="method_elapsed_time" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">elapsed_time()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">elapsed_time( <span class="argument">$decimals</span>) : integer</pre>
+                <p><em>Calculate the aggregate query elapsed time</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$decimals</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    integer
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_total_queries" name="method_total_queries" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">total_queries()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">total_queries() : integer</pre>
+                <p><em>Returns the total number of queries</em></p>
+                
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    integer
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_last_query" name="method_last_query" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">last_query()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">last_query() : void</pre>
+                <p><em>Returns the last query that was executed</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_escape" name="method_escape" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">escape()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">escape( <span class="argument">$str</span>) : mixed</pre>
+                <p><em>&quot;Smart&quot; Escape String</em></p>
+                <p>Escapes data based on type
+Sets boolean and null types</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$str</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_escape_like_str" name="method_escape_like_str" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">escape_like_str()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">escape_like_str( <span class="argument">$str</span>) : mixed</pre>
+                <p><em>Escape LIKE String</em></p>
+                <p>Calls the individual driver for platform
+specific escaping for LIKE conditions</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$str</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_primary" name="method_primary" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">primary()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">primary( <span class="argument">$table</span>) : string</pre>
+                <p><em>Primary</em></p>
+                <p>Retrieves the primary key.  It assumes that the row in the first
+position is the primary key</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$table</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_list_tables" name="method_list_tables" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">list_tables()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">list_tables( <span class="argument">$constrain_by_prefix</span>) : array</pre>
+                <p><em>Returns an array of table names</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$constrain_by_prefix</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_table_exists" name="method_table_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">table_exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">table_exists( <span class="argument">$table_name</span>) : boolean</pre>
+                <p><em>Determine if a particular table exists</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$table_name</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_list_fields" name="method_list_fields" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">list_fields()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">list_fields( <span class="argument">$table</span>) : array</pre>
+                <p><em>Fetch MySQL Field Names</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$table</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_field_exists" name="method_field_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">field_exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">field_exists( <span class="argument">$field_name</span>,  <span class="argument">$table_name</span>) : boolean</pre>
+                <p><em>Determine if a particular field exists</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$field_name</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$table_name</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_field_data" name="method_field_data" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">field_data()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">field_data( <span class="argument">$table</span>) : object</pre>
+                <p><em>Returns an object with field data</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$table</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    object
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_insert_string" name="method_insert_string" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">insert_string()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">insert_string( <span class="argument">$table</span>,  <span class="argument">$data</span>) : string</pre>
+                <p><em>Generate an insert string</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$table</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$data</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_update_string" name="method_update_string" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">update_string()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">update_string( <span class="argument">$table</span>,  <span class="argument">$data</span>,  <span class="argument">$where</span>) : string</pre>
+                <p><em>Generate an update string</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$table</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$data</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$where</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__has_operator" name="method__has_operator" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_has_operator()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_has_operator( <span class="argument">$str</span>) : bool</pre>
+                <p><em>Tests whether the string has an SQL operator</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$str</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_call_function" name="method_call_function" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">call_function()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">call_function( <span class="argument">$function</span>) : mixed</pre>
+                <p><em>Enables a native PHP function to be run, using a platform agnostic wrapper.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$function</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cache_set_path" name="method_cache_set_path" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cache_set_path()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cache_set_path( <span class="argument">$path</span>) : void</pre>
+                <p><em>Set Cache Directory Path</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$path</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cache_on" name="method_cache_on" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cache_on()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cache_on() : void</pre>
+                <p><em>Enable Query Caching</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cache_off" name="method_cache_off" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cache_off()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cache_off() : void</pre>
+                <p><em>Disable Query Caching</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cache_delete" name="method_cache_delete" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cache_delete()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cache_delete( <span class="argument">$segment_one</span>,  <span class="argument">$segment_two</span>) : void</pre>
+                <p><em>Delete the cache files associated with a particular URI</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$segment_one</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$segment_two</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_cache_delete_all" name="method_cache_delete_all" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">cache_delete_all()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">cache_delete_all() : void</pre>
+                <p><em>Delete All cache files</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__cache_init" name="method__cache_init" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_cache_init()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_cache_init() : void</pre>
+                <p><em>Initialize the Cache Class</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_close" name="method_close" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">close()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">close() : void</pre>
+                <p><em>Close DB Connection</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_display_error" name="method_display_error" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">display_error()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">display_error( <span class="argument">$error</span>,  <span class="argument">$swap</span>,  <span class="argument">$native</span>) : string</pre>
+                <p><em>Display an error message</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$error</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$swap</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$native</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>sends the application/error_db.php template</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_protect_identifiers" name="method_protect_identifiers" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">protect_identifiers()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">protect_identifiers( <span class="argument">$item</span>,  <span class="argument">$prefix_single</span>) : mixed</pre>
+                <p><em>Protect Identifiers</em></p>
+                <p>This function adds backticks if appropriate based on db type</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$item</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$prefix_single</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    mixed
+                                            &mdash; <p>the item with backticks</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__protect_identifiers" name="method__protect_identifiers" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_protect_identifiers()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_protect_identifiers( <span class="argument">$item</span>,  <span class="argument">$prefix_single</span>,  <span class="argument">$protect_identifiers</span>,  <span class="argument">$field_exists</span>) : string</pre>
+                <p><em>Protect Identifiers</em></p>
+                <p>This function is used extensively by the Active Record class, and by
+a couple functions in this class.
+It takes a column or table name (optionally with an alias) and inserts
+the table prefix onto it.  Some logic is necessary in order to deal with
+column names that include the path.  Consider a query like this:</p>
+
+<p>SELECT * FROM hostname.database.table.column AS c FROM hostname.database.table</p>
+
+<p>Or a query with aliasing:</p>
+
+<p>SELECT m.member_id, m.member_name FROM members AS m</p>
+
+<p>Since the column name can include up to four segments (host, DB, table, column)
+or also have an alias prefix, we need to do a bit of work to figure this out and
+insert the table prefix (if it exists) in the proper position, and escape only
+the correct identifiers.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$item</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$prefix_single</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$protect_identifiers</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$field_exists</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__reset_select" name="method__reset_select" class="anchor"></a>
+            <article class="method">
+                <h3 class="protected ">_reset_select()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_reset_select() : void</pre>
+                <p><em>Dummy method that allows Active Record class to be disabled</em></p>
+                <p>This function is used extensively by every db driver.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">DB_driver.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/system/database/DB_driver.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Errors</a></li>
+                                    <li><a href="">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 14th, 2013 at 18:40.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

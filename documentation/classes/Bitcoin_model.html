@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                    <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                    </ul>
+                    </li>
+                    <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                    <i class="icon-list-alt"></i>&#160;Errors
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                    <i class="icon-list-alt"></i>&#160;Markers
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-443400916"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-443400916" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Currencies_model.html">Currencies_model</a></li>
+                                                    <li class="class"><a href="../classes/Categories_model.html">Categories_model</a></li>
+                                                    <li class="class"><a href="../classes/Escrow_model.html">Escrow_model</a></li>
+                                                    <li class="class"><a href="../classes/Admin_model.html">Admin_model</a></li>
+                                                    <li class="class"><a href="../classes/Images_model.html">Images_model</a></li>
+                                                    <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
+                                                    <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/General_model.html">General_model</a></li>
+                                                    <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
+                                                    <li class="class"><a href="../classes/Captchas_model.html">Captchas_model</a></li>
+                                                    <li class="class"><a href="../classes/Listings_model.html">Listings_model</a></li>
+                                                    <li class="class"><a href="../classes/Messages_model.html">Messages_model</a></li>
+                                                    <li class="class"><a href="../classes/Config_model.html">Config_model</a></li>
+                                                    <li class="class"><a href="../classes/Items_model.html">Items_model</a></li>
+                                                    <li class="class"><a href="../classes/Order_model.html">Order_model</a></li>
+                                                    <li class="class"><a href="../classes/Auth_model.html">Auth_model</a></li>
+                                                    <li class="class"><a href="../classes/General.html">General</a></li>
+                                                    <li class="class"><a href="../classes/Bw_captcha.html">Bw_captcha</a></li>
+                                                    <li class="class"><a href="../classes/Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Openssl.html">Openssl</a></li>
+                                                    <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
+                                                    <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
+                                                    <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
+                                                    <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/GPG.html">GPG</a></li>
+                                                    <li class="class"><a href="../classes/Current_User.html">Current_User</a></li>
+                                                    <li class="class"><a href="../classes/Jsonrpcclient.html">Jsonrpcclient</a></li>
+                                                    <li class="class"><a href="../classes/Backup_Wallet.html">Backup_Wallet</a></li>
+                                                    <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
+                                                    <li class="class"><a href="../classes/User_Inactivity.html">User_Inactivity</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/BW_Session.html">BW_Session</a></li>
+                                                    <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
+                                                    <li class="class"><a href="../classes/Listings.html">Listings</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Btc_internal.html">Btc_internal</a></li>
+                                                    <li class="class"><a href="../classes/Users.html">Users</a></li>
+                                                    <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
+                                                    <li class="class"><a href="../classes/Orders.html">Orders</a></li>
+                                                    <li class="class"><a href="../classes/Admin.html">Admin</a></li>
+                                                    <li class="class"><a href="../classes/Messages.html">Messages</a></li>
+                                                    <li class="class"><a href="../classes/Welcome.html">Welcome</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_Test.html">Bitcoin_Test</a></li>
+                                                    <li class="class"><a href="../classes/Items.html">Items</a></li>
+                                                    <li class="class"><a href="../classes/CI_Jquery.html">CI_Jquery</a></li>
+                                                    <li class="class"><a href="../classes/CI_Image_lib.html">CI_Image_lib</a></li>
+                                                    <li class="class"><a href="../classes/CI_SHA1.html">CI_SHA1</a></li>
+                                                    <li class="class"><a href="../classes/CI_Calendar.html">CI_Calendar</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache.html">CI_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_file.html">CI_Cache_file</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_dummy.html">CI_Cache_dummy</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_memcached.html">CI_Cache_memcached</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_apc.html">CI_Cache_apc</a></li>
+                                                    <li class="class"><a href="../classes/CI_Encrypt.html">CI_Encrypt</a></li>
+                                                    <li class="class"><a href="../classes/CI_Pagination.html">CI_Pagination</a></li>
+                                                    <li class="class"><a href="../classes/CI_Log.html">CI_Log</a></li>
+                                                    <li class="class"><a href="../classes/CI_Javascript.html">CI_Javascript</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cart.html">CI_Cart</a></li>
+                                                    <li class="class"><a href="../classes/CI_Migration.html">CI_Migration</a></li>
+                                                    <li class="class"><a href="../classes/CI_Trackback.html">CI_Trackback</a></li>
+                                                    <li class="class"><a href="../classes/CI_Profiler.html">CI_Profiler</a></li>
+                                                    <li class="class"><a href="../classes/CI_Typography.html">CI_Typography</a></li>
+                                                    <li class="class"><a href="../classes/CI_User_agent.html">CI_User_agent</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpcs.html">CI_Xmlrpcs</a></li>
+                                                    <li class="class"><a href="../classes/CI_Upload.html">CI_Upload</a></li>
+                                                    <li class="class"><a href="../classes/CI_Zip.html">CI_Zip</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpc.html">CI_Xmlrpc</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Client.html">XML_RPC_Client</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Response.html">XML_RPC_Response</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Message.html">XML_RPC_Message</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Values.html">XML_RPC_Values</a></li>
+                                                    <li class="class"><a href="../classes/CI_Session.html">CI_Session</a></li>
+                                                    <li class="class"><a href="../classes/CI_FTP.html">CI_FTP</a></li>
+                                                    <li class="class"><a href="../classes/CI_Table.html">CI_Table</a></li>
+                                                    <li class="class"><a href="../classes/CI_Unit_test.html">CI_Unit_test</a></li>
+                                                    <li class="class"><a href="../classes/CI_Parser.html">CI_Parser</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver_Library.html">CI_Driver_Library</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver.html">CI_Driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Form_validation.html">CI_Form_validation</a></li>
+                                                    <li class="class"><a href="../classes/CI_Email.html">CI_Email</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_result.html">CI_DB_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_forge.html">CI_DB_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_Cache.html">CI_DB_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_utility.html">CI_DB_sqlite_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_forge.html">CI_DB_sqlite_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_driver.html">CI_DB_sqlite_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_result.html">CI_DB_sqlite_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_forge.html">CI_DB_cubrid_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_utility.html">CI_DB_cubrid_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_driver.html">CI_DB_cubrid_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_result.html">CI_DB_cubrid_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_result.html">CI_DB_mssql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_utility.html">CI_DB_mssql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_driver.html">CI_DB_mssql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_forge.html">CI_DB_mssql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_forge.html">CI_DB_oci8_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_utility.html">CI_DB_oci8_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_driver.html">CI_DB_oci8_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_result.html">CI_DB_oci8_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_result.html">CI_DB_odbc_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_driver.html">CI_DB_odbc_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_utility.html">CI_DB_odbc_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_forge.html">CI_DB_odbc_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_forge.html">CI_DB_mysqli_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_utility.html">CI_DB_mysqli_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_result.html">CI_DB_mysqli_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_driver.html">CI_DB_mysqli_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_utility.html">CI_DB_mysql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_driver.html">CI_DB_mysql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_forge.html">CI_DB_mysql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_result.html">CI_DB_mysql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_forge.html">CI_DB_postgre_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_driver.html">CI_DB_postgre_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_result.html">CI_DB_postgre_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_utility.html">CI_DB_postgre_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_result.html">CI_DB_sqlsrv_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_driver.html">CI_DB_sqlsrv_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_utility.html">CI_DB_sqlsrv_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_forge.html">CI_DB_sqlsrv_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_forge.html">CI_DB_pdo_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_utility.html">CI_DB_pdo_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_driver.html">CI_DB_pdo_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_result.html">CI_DB_pdo_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_active_record.html">CI_DB_active_record</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_utility.html">CI_DB_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_driver.html">CI_DB_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Lang.html">CI_Lang</a></li>
+                                                    <li class="class"><a href="../classes/CI_Hooks.html">CI_Hooks</a></li>
+                                                    <li class="class"><a href="../classes/CI_Security.html">CI_Security</a></li>
+                                                    <li class="class"><a href="../classes/CI_Model.html">CI_Model</a></li>
+                                                    <li class="class"><a href="../classes/CI_Router.html">CI_Router</a></li>
+                                                    <li class="class"><a href="../classes/CI_Output.html">CI_Output</a></li>
+                                                    <li class="class"><a href="../classes/CI_Loader.html">CI_Loader</a></li>
+                                                    <li class="class"><a href="../classes/CI_Exceptions.html">CI_Exceptions</a></li>
+                                                    <li class="class"><a href="../classes/CI_Config.html">CI_Config</a></li>
+                                                    <li class="class"><a href="../classes/CI_Controller.html">CI_Controller</a></li>
+                                                    <li class="class"><a href="../classes/CI_Utf8.html">CI_Utf8</a></li>
+                                                    <li class="class"><a href="../classes/CI_URI.html">CI_URI</a></li>
+                                                    <li class="class"><a href="../classes/CI_Benchmark.html">CI_Benchmark</a></li>
+                                                    <li class="class"><a href="../classes/CI_Input.html">CI_Input</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\</small>Bitcoin_model</h1>
+                    <p><em>Bitcoin Model</em></p>
+                    <p>This class handles the database queries relating to orders.</p>
+
+
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/CI_Model.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_reset_a" class="">reset_a()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_current_balance" class="">current_balance()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_unverified_transactions" class="">unverified_transactions()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_user_txns" class="">user_txns()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_get_user_address" class="">get_user_address()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_get_cashout_address" class="">get_cashout_address()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_log_user_address" class="">log_user_address()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_set_user_address" class="">set_user_address()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_set_cashout_address" class="">set_cashout_address()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_get_address_owner" class="">get_address_owner()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_get_cashout_address_owner" class="">get_cashout_address_owner()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_add_pending_txn" class="">add_pending_txn()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_user_transaction" class="">user_transaction()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_have_transaction" class="">have_transaction()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_update_credits" class="">update_credits()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_set_credited" class="">set_credited()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_get_pending_txns" class="">get_pending_txns()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_update_confirmations" class="">update_confirmations()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_add_block" class="">add_block()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_have_block" class="">have_block()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_latest_block" class="">latest_block()</a><br />
+                                                                    <a href="../classes/Bitcoin_model.html#method_block_list" class="">block_list()</a><br />
+                                                                    <a href="../classes/CI_Model.html#method___get" class="">__get()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/application.models.bitcoin_model.php.html"><div class="path-wrapper">application/models/bitcoin_model.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\BitWasp\Models\Models</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                
+                                        <div class="namespace-wrapper"><a href="../classes/CI_Model.html">\CI_Model</a></div>
+                                                                                                    <div class="namespace-wrapper">\Bitcoin_model</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>Bitcoin</p>
+
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>BitWasp</p>
+
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                        
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct()</pre>
+                <p><em>Constructor</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CI_Model.html"><div class="path-wrapper">\CI_Model</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_reset_a" name="method_reset_a" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">reset_a()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">reset_a()</pre>
+                <p><em></em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_current_balance" name="method_current_balance" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">current_balance()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">current_balance( <span class="argument">$user_hash</span>) : int</pre>
+                <p><em>Current Balance</em></p>
+                <p>Will load the current users balance if $user_hash is not set. If
+$user_hash is set, we will load that users balance. Once the
+required user record is found, return the bitcoin balance. Returns
+FALSE if there is no record.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    int
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_unverified_transactions" name="method_unverified_transactions" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">unverified_transactions()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">unverified_transactions( <span class="argument">$user_hash</span>) : int</pre>
+                <p><em>Unverified Transactions</em></p>
+                <p>Load the balance of unverified transactions to do with the specified
+user's account.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    int
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_user_txns" name="method_user_txns" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">user_txns()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">user_txns( <span class="argument">$user_hash</span>) : bool</pre>
+                <p><em>User Transactions</em></p>
+                <p>Loads an array of user transactions, by searching for the users hash.
+If there are records, we format this information, and build up the
+results array. Returns an array if successful, returns FALSE on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_user_address" name="method_get_user_address" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_user_address()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_user_address( <span class="argument">$user_hash</span>) : string</pre>
+                <p><em>Get User Address</em></p>
+                <p>Search for the bitcoin topup address for the specified user. Once
+the user exists, check if the bitcoin_topup_address is unset for
+any reason (maybe bitcoind was down). If so, generate a new one.
+Return a bitcoin topup address if at all possible, otherwise
+return FALSE;</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_cashout_address" name="method_get_cashout_address" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_cashout_address()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_cashout_address( <span class="argument">$user_hash</span>) : string</pre>
+                <p><em>Get Cashout Address</em></p>
+                <p>Load the cashout address for the user. If the record exists, then
+return the bitcoin address. Otherwise, return FALSE.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_log_user_address" name="method_log_user_address" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">log_user_address()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">log_user_address( <span class="argument">$user_hash</span>,  <span class="argument">$address</span>) : bool</pre>
+                <p><em>Log User Address</em></p>
+                <p>Log the bitcoin address so we can search for it in future. This is
+in case the user tries to top up using one of their old addresses.
+Returns TRUE if the insert was successful, FALSE if it failed.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_user_address" name="method_set_user_address" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_user_address()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_user_address( <span class="argument">$user_hash</span>,  <span class="argument">$address</span>) : bool</pre>
+                <p><em>Set User Address</em></p>
+                <p>Set the address on the users profile. If the update is successful,
+log the address to the table. If unsuccessful, return FALSE.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_cashout_address" name="method_set_cashout_address" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_cashout_address()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_cashout_address( <span class="argument">$user_hash</span>,  <span class="argument">$address</span>) : bool</pre>
+                <p><em>Set Cashout Address</em></p>
+                <p>Update the users profile to record their cashout address. Returns
+TRUE if the update was successful. FALSE on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_address_owner" name="method_get_address_owner" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_address_owner()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_address_owner( <span class="argument">$address</span>) : string</pre>
+                <p><em>Get Address Owner</em></p>
+                <p>Called by Walletnotify, check to see who owns this address.
+Used to associate a transaction with a user_hash. Returns FALSE
+if no record is found, or returns the user_hash if successful.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ bool</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_cashout_address_owner" name="method_get_cashout_address_owner" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_cashout_address_owner()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_cashout_address_owner( <span class="argument">$address</span>) : string</pre>
+                <p><em>Get Cashout Address Owner</em></p>
+                <p>Called by Walletnotify, get the owner of the cashout address.
+Used for cashouts. Returns the user_hash if successful, returns
+FALSE on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$address</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_add_pending_txn" name="method_add_pending_txn" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">add_pending_txn()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">add_pending_txn( <span class="argument">$array</span>) : bool</pre>
+                <p><em>Add Pending Transaction</em></p>
+                <p>Records a transaction, with indexes of $array as column names.
+Is added once for a bitcoin topup/cashout. Also used to record
+the outcome of an order. Returns TRUE if successful. Returns FALSE
+if unsuccessful.</p>
+
+<p>$array =
+array( 'txn_id' => "...",
+     'user_hash' => "...",
+     'value' => (float)"...",
+     'confirmations' => "...",
+     'address' => "...",
+     'category' => "...",
+     'credited' => "...",
+     'time' => "...");</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$array</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_user_transaction" name="method_user_transaction" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">user_transaction()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">user_transaction( <span class="argument">$user_hash</span>,  <span class="argument">$txn_id</span>,  <span class="argument">$category</span>) : bool</pre>
+                <p><em>User Transaction</em></p>
+                <p>Check if there is already a record of this transaction. Looks the
+transaction up based on the user's hash, transaction ID, and the
+category. Makes the search more specific, to avoid issues. Returns
+TRUE if the transaction is on record already, FALSE if it's not.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$user_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$txn_id</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$category</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_have_transaction" name="method_have_transaction" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">have_transaction()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">have_transaction( <span class="argument">$txn_id</span>) : array</pre>
+                <p><em>Have Transaction</em></p>
+                <p>Checks if we have this transaction ID. Very very bad.
+Should be deprecated in favour of user_transaction()...
+Not specific enough. Returns the transaction if successful, or
+FALSE if it's not found.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$txn_id</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_update_credits" name="method_update_credits" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">update_credits()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">update_credits( <span class="argument">$updates</span>) : bool</pre>
+                <p><em>Update Credits</em></p>
+                <p>Called by Blocknotify when crediting accounts, and by bitcoin::cashout()
+when sending accounts. And by escrow_model::pay() to issue payment.
+And orders::place() to deduct the buyers account.
+Requires an array, where each update is contained as an entry in that array.
+Often only suppling one update. The value can be negative.</p>
+
+<p>Eg:
+$updates = array('0' => array('user_hash' => '...',
+                                 'value' => '...'),
+                    '1' => array('user_hash' => '...',
+                                 'value' => '...'));</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$updates</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_set_credited" name="method_set_credited" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">set_credited()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">set_credited( <span class="argument">$txn_id</span>) : bool</pre>
+                <p><em>Set Credited</em></p>
+                <p>Records that this transaction HAS been credited to a users balance.
+Called by Blocknotify.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$txn_id</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_pending_txns" name="method_get_pending_txns" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_pending_txns()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_pending_txns() : array</pre>
+                <p><em>Get Pending Transactions</em></p>
+                <p>Called by Blocknotify, loads the list of pending transactions.
+Returns an array of the transactions. Returns an empty array if
+there are no records. Script then checks each of these for updates.</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_update_confirmations" name="method_update_confirmations" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">update_confirmations()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">update_confirmations( <span class="argument">$updates</span>) : void</pre>
+                <p><em>Update Confirmations</em></p>
+                <p>An array of updates is supplied, taking the following format.
+$updates = array('0' => array('txn_id' => '...',
+                                 'confirmations' => '...'),
+                    .   .   .   .   .   .   .   .   .
+                );
+We update every transaction on record every time there's a new block
+This makes sure a reorg doesn't cause an orphaned transaction to
+go through.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$updates</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_add_block" name="method_add_block" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">add_block()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">add_block( <span class="argument">$block_hash</span>,  <span class="argument">$number</span>) : bool</pre>
+                <p><em>Add Block</em></p>
+                <p>Called by blocknotify to record the block &amp; its height. Returns TRUE
+if the insertion was successful, otherwise returns FALSE.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$block_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$number</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_have_block" name="method_have_block" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">have_block()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">have_block( <span class="argument">$block_hash</span>) : bool</pre>
+                <p><em>Have Block</em></p>
+                <p>Called by Blocknotify. Check if we have a block with that hash.
+Returns TRUE if we do, returns FALSE otherwise.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$block_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_latest_block" name="method_latest_block" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">latest_block()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">latest_block() : array</pre>
+                <p><em>Latest Block</em></p>
+                <p>Load information about the latest block on record. Not really used
+apart from testing purposes. Could display information on the admin
+panel. Might start storing the block generation time also?</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                            &mdash; <p>/ FALSE</p>
+
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_block_list" name="method_block_list" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">block_list()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">block_list() : bool</pre>
+                <p><em>Block List</em></p>
+                <p>Not really used.</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___get" name="method___get" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__get()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__get( <span class="argument">$key</span>)</pre>
+                <p><em>__get</em></p>
+                <p>Allows models to access CI's loaded classes using the same
+syntax as controllers.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$key</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CI_Model.html"><div class="path-wrapper">\CI_Model</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">bitcoin_model.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/application/models/bitcoin_model.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Errors</a></li>
+                                    <li><a href="">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 14th, 2013 at 18:39.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

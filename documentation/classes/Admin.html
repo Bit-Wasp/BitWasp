@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                    <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                    </ul>
+                    </li>
+                    <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                    <i class="icon-list-alt"></i>&#160;Errors
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                    <i class="icon-list-alt"></i>&#160;Markers
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-521947714"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-521947714" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                                                                    <li class="class"><a href="../classes/Currencies_model.html">Currencies_model</a></li>
+                                                    <li class="class"><a href="../classes/Categories_model.html">Categories_model</a></li>
+                                                    <li class="class"><a href="../classes/Escrow_model.html">Escrow_model</a></li>
+                                                    <li class="class"><a href="../classes/Admin_model.html">Admin_model</a></li>
+                                                    <li class="class"><a href="../classes/Images_model.html">Images_model</a></li>
+                                                    <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
+                                                    <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/General_model.html">General_model</a></li>
+                                                    <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
+                                                    <li class="class"><a href="../classes/Captchas_model.html">Captchas_model</a></li>
+                                                    <li class="class"><a href="../classes/Listings_model.html">Listings_model</a></li>
+                                                    <li class="class"><a href="../classes/Messages_model.html">Messages_model</a></li>
+                                                    <li class="class"><a href="../classes/Config_model.html">Config_model</a></li>
+                                                    <li class="class"><a href="../classes/Items_model.html">Items_model</a></li>
+                                                    <li class="class"><a href="../classes/Order_model.html">Order_model</a></li>
+                                                    <li class="class"><a href="../classes/Auth_model.html">Auth_model</a></li>
+                                                    <li class="class"><a href="../classes/General.html">General</a></li>
+                                                    <li class="class"><a href="../classes/Bw_captcha.html">Bw_captcha</a></li>
+                                                    <li class="class"><a href="../classes/Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Openssl.html">Openssl</a></li>
+                                                    <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
+                                                    <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
+                                                    <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
+                                                    <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/GPG.html">GPG</a></li>
+                                                    <li class="class"><a href="../classes/Current_User.html">Current_User</a></li>
+                                                    <li class="class"><a href="../classes/Jsonrpcclient.html">Jsonrpcclient</a></li>
+                                                    <li class="class"><a href="../classes/Backup_Wallet.html">Backup_Wallet</a></li>
+                                                    <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
+                                                    <li class="class"><a href="../classes/User_Inactivity.html">User_Inactivity</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/BW_Session.html">BW_Session</a></li>
+                                                    <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
+                                                    <li class="class"><a href="../classes/Listings.html">Listings</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Btc_internal.html">Btc_internal</a></li>
+                                                    <li class="class"><a href="../classes/Users.html">Users</a></li>
+                                                    <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
+                                                    <li class="class"><a href="../classes/Orders.html">Orders</a></li>
+                                                    <li class="class"><a href="../classes/Admin.html">Admin</a></li>
+                                                    <li class="class"><a href="../classes/Messages.html">Messages</a></li>
+                                                    <li class="class"><a href="../classes/Welcome.html">Welcome</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_Test.html">Bitcoin_Test</a></li>
+                                                    <li class="class"><a href="../classes/Items.html">Items</a></li>
+                                                    <li class="class"><a href="../classes/CI_Jquery.html">CI_Jquery</a></li>
+                                                    <li class="class"><a href="../classes/CI_Image_lib.html">CI_Image_lib</a></li>
+                                                    <li class="class"><a href="../classes/CI_SHA1.html">CI_SHA1</a></li>
+                                                    <li class="class"><a href="../classes/CI_Calendar.html">CI_Calendar</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache.html">CI_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_file.html">CI_Cache_file</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_dummy.html">CI_Cache_dummy</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_memcached.html">CI_Cache_memcached</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cache_apc.html">CI_Cache_apc</a></li>
+                                                    <li class="class"><a href="../classes/CI_Encrypt.html">CI_Encrypt</a></li>
+                                                    <li class="class"><a href="../classes/CI_Pagination.html">CI_Pagination</a></li>
+                                                    <li class="class"><a href="../classes/CI_Log.html">CI_Log</a></li>
+                                                    <li class="class"><a href="../classes/CI_Javascript.html">CI_Javascript</a></li>
+                                                    <li class="class"><a href="../classes/CI_Cart.html">CI_Cart</a></li>
+                                                    <li class="class"><a href="../classes/CI_Migration.html">CI_Migration</a></li>
+                                                    <li class="class"><a href="../classes/CI_Trackback.html">CI_Trackback</a></li>
+                                                    <li class="class"><a href="../classes/CI_Profiler.html">CI_Profiler</a></li>
+                                                    <li class="class"><a href="../classes/CI_Typography.html">CI_Typography</a></li>
+                                                    <li class="class"><a href="../classes/CI_User_agent.html">CI_User_agent</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpcs.html">CI_Xmlrpcs</a></li>
+                                                    <li class="class"><a href="../classes/CI_Upload.html">CI_Upload</a></li>
+                                                    <li class="class"><a href="../classes/CI_Zip.html">CI_Zip</a></li>
+                                                    <li class="class"><a href="../classes/CI_Xmlrpc.html">CI_Xmlrpc</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Client.html">XML_RPC_Client</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Response.html">XML_RPC_Response</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Message.html">XML_RPC_Message</a></li>
+                                                    <li class="class"><a href="../classes/XML_RPC_Values.html">XML_RPC_Values</a></li>
+                                                    <li class="class"><a href="../classes/CI_Session.html">CI_Session</a></li>
+                                                    <li class="class"><a href="../classes/CI_FTP.html">CI_FTP</a></li>
+                                                    <li class="class"><a href="../classes/CI_Table.html">CI_Table</a></li>
+                                                    <li class="class"><a href="../classes/CI_Unit_test.html">CI_Unit_test</a></li>
+                                                    <li class="class"><a href="../classes/CI_Parser.html">CI_Parser</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver_Library.html">CI_Driver_Library</a></li>
+                                                    <li class="class"><a href="../classes/CI_Driver.html">CI_Driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Form_validation.html">CI_Form_validation</a></li>
+                                                    <li class="class"><a href="../classes/CI_Email.html">CI_Email</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_result.html">CI_DB_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_forge.html">CI_DB_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_Cache.html">CI_DB_Cache</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_utility.html">CI_DB_sqlite_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_forge.html">CI_DB_sqlite_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_driver.html">CI_DB_sqlite_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlite_result.html">CI_DB_sqlite_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_forge.html">CI_DB_cubrid_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_utility.html">CI_DB_cubrid_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_driver.html">CI_DB_cubrid_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_cubrid_result.html">CI_DB_cubrid_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_result.html">CI_DB_mssql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_utility.html">CI_DB_mssql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_driver.html">CI_DB_mssql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mssql_forge.html">CI_DB_mssql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_forge.html">CI_DB_oci8_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_utility.html">CI_DB_oci8_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_driver.html">CI_DB_oci8_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_oci8_result.html">CI_DB_oci8_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_result.html">CI_DB_odbc_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_driver.html">CI_DB_odbc_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_utility.html">CI_DB_odbc_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_odbc_forge.html">CI_DB_odbc_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_forge.html">CI_DB_mysqli_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_utility.html">CI_DB_mysqli_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_result.html">CI_DB_mysqli_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysqli_driver.html">CI_DB_mysqli_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_utility.html">CI_DB_mysql_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_driver.html">CI_DB_mysql_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_forge.html">CI_DB_mysql_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_mysql_result.html">CI_DB_mysql_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_forge.html">CI_DB_postgre_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_driver.html">CI_DB_postgre_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_result.html">CI_DB_postgre_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_postgre_utility.html">CI_DB_postgre_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_result.html">CI_DB_sqlsrv_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_driver.html">CI_DB_sqlsrv_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_utility.html">CI_DB_sqlsrv_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_sqlsrv_forge.html">CI_DB_sqlsrv_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_forge.html">CI_DB_pdo_forge</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_utility.html">CI_DB_pdo_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_driver.html">CI_DB_pdo_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_pdo_result.html">CI_DB_pdo_result</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_active_record.html">CI_DB_active_record</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_utility.html">CI_DB_utility</a></li>
+                                                    <li class="class"><a href="../classes/CI_DB_driver.html">CI_DB_driver</a></li>
+                                                    <li class="class"><a href="../classes/CI_Lang.html">CI_Lang</a></li>
+                                                    <li class="class"><a href="../classes/CI_Hooks.html">CI_Hooks</a></li>
+                                                    <li class="class"><a href="../classes/CI_Security.html">CI_Security</a></li>
+                                                    <li class="class"><a href="../classes/CI_Model.html">CI_Model</a></li>
+                                                    <li class="class"><a href="../classes/CI_Router.html">CI_Router</a></li>
+                                                    <li class="class"><a href="../classes/CI_Output.html">CI_Output</a></li>
+                                                    <li class="class"><a href="../classes/CI_Loader.html">CI_Loader</a></li>
+                                                    <li class="class"><a href="../classes/CI_Exceptions.html">CI_Exceptions</a></li>
+                                                    <li class="class"><a href="../classes/CI_Config.html">CI_Config</a></li>
+                                                    <li class="class"><a href="../classes/CI_Controller.html">CI_Controller</a></li>
+                                                    <li class="class"><a href="../classes/CI_Utf8.html">CI_Utf8</a></li>
+                                                    <li class="class"><a href="../classes/CI_URI.html">CI_URI</a></li>
+                                                    <li class="class"><a href="../classes/CI_Benchmark.html">CI_Benchmark</a></li>
+                                                    <li class="class"><a href="../classes/CI_Input.html">CI_Input</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\</small>Admin</h1>
+                    <p><em>Administration Panel Controller</em></p>
+                    <p>This class object is the super class that every library in
+CodeIgniter will be assigned to.</p>
+
+
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/CI_Controller.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Admin.html#method_index" class="">index()</a><br />
+                                                                    <a href="../classes/Admin.html#method_edit_general" class="">edit_general()</a><br />
+                                                                    <a href="../classes/Admin.html#method_autorun" class="">autorun()</a><br />
+                                                                    <a href="../classes/Admin.html#method_edit_autorun" class="">edit_autorun()</a><br />
+                                                                    <a href="../classes/Admin.html#method_bitcoin" class="">bitcoin()</a><br />
+                                                                    <a href="../classes/Admin.html#method_edit_bitcoin" class="">edit_bitcoin()</a><br />
+                                                                    <a href="../classes/Admin.html#method_users" class="">users()</a><br />
+                                                                    <a href="../classes/Admin.html#method_edit_users" class="">edit_users()</a><br />
+                                                                    <a href="../classes/Admin.html#method_items" class="">items()</a><br />
+                                                                    <a href="../classes/Admin.html#method_edit_items" class="">edit_items()</a><br />
+                                                                    <a href="../classes/Admin.html#method_category_orphans" class="">category_orphans()</a><br />
+                                                                    <a href="../classes/Admin.html#method_user_tokens" class="">user_tokens()</a><br />
+                                                                    <a href="../classes/Admin.html#method_delete_token" class="">delete_token()</a><br />
+                                                                    <a href="../classes/Admin.html#method_delete_item" class="">delete_item()</a><br />
+                                                                    <a href="../classes/Admin.html#method_ban_user" class="">ban_user()</a><br />
+                                                                    <a href="../classes/Admin.html#method_generate_nav" class="">generate_nav()</a><br />
+                                                                    <a href="../classes/Admin.html#method_check_captcha_length" class="">check_captcha_length()</a><br />
+                                                                    <a href="../classes/Admin.html#method_check_bool" class="">check_bool()</a><br />
+                                                                    <a href="../classes/Admin.html#method_check_category_exists" class="">check_category_exists()</a><br />
+                                                                    <a href="../classes/Admin.html#method_check_can_delete_category" class="">check_can_delete_category()</a><br />
+                                                                    <a href="../classes/Admin.html#method_check_bitcoin_account_exists" class="">check_bitcoin_account_exists()</a><br />
+                                                                    <a href="../classes/Admin.html#method_check_admin_roles" class="">check_admin_roles()</a><br />
+                                                                    <a href="../classes/Admin.html#method_check_autorun_interval" class="">check_autorun_interval()</a><br />
+                                                                    <a href="../classes/Admin.html#method_is_positive" class="">is_positive()</a><br />
+                                                                    <a href="../classes/CI_Controller.html#method_get_instance" class="">get_instance()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Admin.html#property_nav" class="">$nav</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/CI_Controller.html#property_instance" class="">$instance</a><br />
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/application.controllers.admin.php.html"><div class="path-wrapper">application/controllers/admin.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\BitWasp\Controllers\Controllers</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                
+                                        <div class="namespace-wrapper"><a href="../classes/CI_Controller.html">\CI_Controller</a></div>
+                                                                                                    <div class="namespace-wrapper">\Admin</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>Admin</p>
+
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>BitWasp</p>
+
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_nav" name="property_nav" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$nav</h3>
+                <pre class="signature">$nav</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_instance" name="property_instance" class="anchor"></a>
+            <article class="property">
+                <h3 class="private ">$instance</h3>
+                <pre class="signature">$instance</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CI_Controller.html"><div class="path-wrapper">\CI_Controller</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct()</pre>
+                <p><em>Constructor</em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CI_Controller.html"><div class="path-wrapper">\CI_Controller</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_index" name="method_index" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">index()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">index() : void</pre>
+                <p><em>Load the General Information Panel.</em></p>
+                <p>URI: /admin</p>
+
+<p>Load general info about the site, like OpenSSL version, GPG version,
+and other general site settings from the database. Has Admin Nav Bar.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_edit_general" name="method_edit_general" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">edit_general()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">edit_general() : void</pre>
+                <p><em>Edit General Settings.</em></p>
+                <p>URI: /admin/edit</p>
+
+<p>Compare the POSTed fields with those on record. If there's any
+difference, this will be submitted to the database. If it's the same
+the variable is set to NULL, and filtered using array_filter.
+Changes are commited and the user is redirected to the info panel.
+Has Admin Nav Bar.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_autorun" name="method_autorun" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">autorun()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">autorun() : void</pre>
+                <p><em>Load the Logs Information Panel.</em></p>
+                <p>URI: /admin/autorun</p>
+
+<p>User is shown the amount of transcations, order's, and messages on
+record.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_edit_autorun" name="method_edit_autorun" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">edit_autorun()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">edit_autorun() : void</pre>
+                <p><em>Edit the settings regarding how long different information is kept.</em></p>
+                <p>URI: /admin/edit/autorun</p>
+
+<p>Need to add the form!</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_bitcoin" name="method_bitcoin" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">bitcoin()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">bitcoin() : void</pre>
+                <p><em>Load the Bitcoin Information Panel.</em></p>
+                <p>URI: /admin/bitcoin</p>
+
+<p>This panel displays information about the accounts in the bitcoin
+wallet, the number of transactions processed to date, the source
+of the bitcoin exchange rates, and the latest block.
+Has Admin Nav Bar.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_edit_bitcoin" name="method_edit_bitcoin" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">edit_bitcoin()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">edit_bitcoin() : void</pre>
+                <p><em>Edit the Bitcoin Settings.</em></p>
+                <p>URI: /admin/edit/bitcoin</p>
+
+<p>If the user submitted the Price Index form, we check for updates.
+If the source specified exists, then update the config setting.
++ If the source was previously disabled, re-setup the periodic updates.
++ Trigger a new update from the new price index.
+If the source is set to disabled, then disable the periodic updates.
+by setting the interval to zero.</p>
+
+<p>If the user submitted the form to transfer coins, check that the
+sending account has sufficient balance. If so, transfer coins, and
+redirect to Bitcoin Information Page. If not, display an error.
+Has Admin Nav Bar.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_users" name="method_users" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">users()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">users() : void</pre>
+                <p><em>Load the Users Information Panel.</em></p>
+                <p>URI: /admin/users</p>
+
+<p>Display user count, and global user configuration settings like
+session timeout, the captcha length, whether users can register on
+the register form, whether vendors may register on the site, whether
+PM's are encrypted using RSA, whether vendors should be forced to
+have a PGP associated with their account, or how long it takes before
+banning a user due to inactivity.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_edit_users" name="method_edit_users" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">edit_users()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">edit_users() : void</pre>
+                <p><em>Edit the User Settings.</em></p>
+                <p>URI: /admin/edit/users</p>
+
+<p>Alter the user settings. Work out which fields are different, and
+set the corresponding $changes[] entry to the POST fields. Unchanged
+entries are set to NULL and filtered. Changes are saved and the user
+redirected back to the User Info Page. Has Admin Nav Bar.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_items" name="method_items" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">items()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">items() : void</pre>
+                <p><em>Load the Items Information Panel.</em></p>
+                <p>URI: /admin/items</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_edit_items" name="method_edit_items" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">edit_items()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">edit_items() : void</pre>
+                <p><em>Edit the Items Settings.</em></p>
+                <p>URI: /admin/edit/items</p>
+
+<p>Edit Item settings. Mainly just add/rename/delete categories.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_category_orphans" name="method_category_orphans" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">category_orphans()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">category_orphans( <span class="argument">$hash</span>) : void</pre>
+                <p><em>Fix orphan categories/items.</em></p>
+                <p>URI: /admin/category/orphans/$hash</p>
+
+<p>If a category is to be deleted, where the result would orphan
+any items or categories, they need to be looked after. Calculate
+what we have to say to the user. If there's nothing to do for this
+category then redirect away from this form.</p>
+
+<p>If the form is submitted correctly, then update the records.
+Finally, if the category is successfully removed, return TRUE,
+otherwise return FALSE on failure.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_user_tokens" name="method_user_tokens" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">user_tokens()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">user_tokens() : void</pre>
+                <p><em>Manage User Invite Tokens.</em></p>
+                <p>URI: /admin/tokens</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_delete_token" name="method_delete_token" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">delete_token()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">delete_token( <span class="argument">$token</span>) : void</pre>
+                <p><em>Delete a User Token
+URI: /admin/tokens/delete/$token</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$token</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_delete_item" name="method_delete_item" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">delete_item()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">delete_item( <span class="argument">$hash</span>) : void</pre>
+                <p><em>Delete an Item, sending the vendor an explanation.</em></p>
+                <p>URI: /admin/delete_item/$hash</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_ban_user" name="method_ban_user" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">ban_user()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">ban_user( <span class="argument">$hash</span>) : void</pre>
+                <p><em>Alter a users ban toggle.</em></p>
+                <p>URI: /admin/ban_user/$hash</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                                            <dt>See also</dt>
+                                                                <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                            <dd><a href=""><span class="namespace-wrapper"></span></a></dd>
+                                                                </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_generate_nav" name="method_generate_nav" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">generate_nav()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">generate_nav()</pre>
+                <p><em></em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_captcha_length" name="method_check_captcha_length" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_captcha_length()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_captcha_length( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the captcha length is not too long.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bool" name="method_check_bool" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bool()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bool( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the supplied parameter is for a boolean.</em></p>
+                <p>.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_category_exists" name="method_check_category_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_category_exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_category_exists( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the required category exists (for parent_id)</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_can_delete_category" name="method_check_can_delete_category" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_can_delete_category()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_can_delete_category( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the category can be deleted (doesn&#039;t allow &#039;0&#039; for root category)</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bitcoin_account_exists" name="method_check_bitcoin_account_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bitcoin_account_exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bitcoin_account_exists( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the bitcoin account already exists in the server wallet.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_admin_roles" name="method_check_admin_roles" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_admin_roles()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_admin_roles( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the submitted parameter is either 1, 2, or 3.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_autorun_interval" name="method_check_autorun_interval" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_autorun_interval()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_autorun_interval( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the submitted parameter is a valid interval for an autorun job.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_is_positive" name="method_is_positive" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">is_positive()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">is_positive( <span class="argument">$param</span>) : bool</pre>
+                <p><em>Check the supplied parameter is a positive number.</em></p>
+                
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    bool
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_get_instance" name="method_get_instance" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">get_instance()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">get_instance()</pre>
+                <p><em></em></p>
+                
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                    <dt>Inherited from</dt>
+                    <dd><a href="../classes/CI_Controller.html"><div class="path-wrapper">\CI_Controller</div></a></dd>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">admin.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/application/controllers/admin.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="">Errors</a></li>
+                                    <li><a href="">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on October 14th, 2013 at 18:40.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

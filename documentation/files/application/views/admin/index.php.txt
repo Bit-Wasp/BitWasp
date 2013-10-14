@@ -1,0 +1,40 @@
+        <div class="span9 mainContent" id="admin-panel">
+		  
+		  <?php echo $nav; ?>
+			
+		  <div class="container-fluid">
+			  
+			<div class='row-fluid'>
+			  <span class='span3'>Site Title</span>
+			  <span class='span7'><?php echo $site_title; ?></span>
+			</div>
+			
+			<div class="row-fluid">
+			  <span class="span3">Site Description</span>
+			  <span class="span7"><?php echo $site_description; ?></span>
+			</div>
+			
+			<div class='row-fluid'>
+			  <span class='span3'>Allow Guests to Browse?</span>
+			  <span class='span7'><?php echo ($config['allow_guests'] == 1) ? 'Enabled' : 'Disabled'; ?></span>
+			</div>
+			
+			<?php if(isset($gpg)) { ?>
+			<div class="row-fluid">
+			  <span class="span3">GnuPG Version</span>
+			  <span class="span7"><?php echo $gpg; ?></span>
+			</div>
+			<?php } ?>
+			
+			<div class="row-fluid">
+			  <span class="span3">OpenSSL Version</span>
+			  <span class="span7"><?php echo $openssl; ?></span>
+			</div>
+
+			<div class="row-fluid">
+			  <span class="span3">OpenSSL Keysize</span>
+			  <span class="span7"><?php echo $config['openssl_keysize']; ?></span>
+			</div>
+		  </div>
+		</div>
+
