@@ -354,7 +354,7 @@ class Order_model extends CI_Model {
 	 * entry from each item).
 	 * 
 	 * @param	array $orders
-	 * return 	array
+	 * return 	array/FALSE
 	 */
 	public function build_array($orders ) {
 		$this->load->model('currencies_model');
@@ -362,7 +362,9 @@ class Order_model extends CI_Model {
 			$i = 0;
 			$item_array = array();
 			
+			// Loop through each order.
 			foreach($orders as $order) {
+				// Extract product hash/quantities.
 				$items = $order['items'];
 				$items = explode(":", $items);
 				$j = 0;
@@ -370,22 +372,26 @@ class Order_model extends CI_Model {
 				$price_b = 0.00000000;
 				$price_l = 0.00000000;
 				foreach($items as $item) {
+					// Load each item & quantity.
 					$array = explode("-", $item);
 					$item_info = $this->items_model->get($array[0]);
 					
 					$quantity = $array[1];
 					
+					// If the item no longer exists, display a message.
 					if($item_info == FALSE) {
 						$message = "Item ";
 						$message .= (strtolower($this->current_user->user_role) == 'vendor') ? 'has been removed' : 'was removed, contact your vendor' ;
 						$item_array[$j] = array('hash' => 'removed',
 												'name' => $message);
 					} else {
+						// Remove the vendor array, reduces the size of responses.
 						unset($item_info['vendor']);
 						$item_array[$j] = $item_info;
-						
+
+						// Convert from whatever currency the item's price is in
+						// to bitcoin, and add this up. Convert to local currency later.
 						$price_b_tmp = $item_info['price']/$item_info['currency']['rate'];
-						$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 						$price_b += $price_b_tmp*$quantity;
 						
 					}			
@@ -393,6 +399,8 @@ class Order_model extends CI_Model {
 					$item_array[$j++]['quantity'] = $quantity;					
 				}
 				
+				// Determine the progress message. Contains a status update
+				// for the order, and lets the user progress to the next step.
 				switch($order['progress']) {
 					case '0':	
 						$progress_message = '<input type="submit" class="btn btn-mini" name="recount['.$order['id'].']" value="Update" /> ';
@@ -427,7 +435,10 @@ class Order_model extends CI_Model {
 						break;
 				}
 				
+				
+				// Load the users local currency.
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
+				// Convert the order's price into the users own currency.
 				$price_l = ($order['price']*$local_currency['rate']);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
 

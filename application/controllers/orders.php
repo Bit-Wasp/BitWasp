@@ -479,7 +479,7 @@ class Orders extends CI_Controller {
 	 * 
 	 * Check the supplied balance is greater than zero, and <= the current balance.
 	 *
-	 * @param	int
+	 * @param	int	$param
 	 * @return	bool
 	 */
 	public function has_sufficient_balance($param) {
