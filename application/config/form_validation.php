@@ -360,7 +360,7 @@ $config = array('register_form'=>array(
 				'admin_edit_autorun' => array(
 										array('field' => 'jobs[]',
 											  'label' => 'Intervals',
-											  'rules' => 'numeric|callback_check_autorun_interval'
+											  'rules' => 'is_numeric|callback_is_positive'
 										)
 							),
 				'order_dispute' => array(

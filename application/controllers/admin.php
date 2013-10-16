@@ -151,13 +151,23 @@ class Admin extends CI_Controller {
 		if($this->form_validation->run('admin_edit_autorun') == TRUE){
 			$jobs = $this->input->post('jobs');
 			$update = FALSE;
+			$disabled_jobs = $this->input->post('disabled_jobs');
 			foreach($jobs as $index => $interval){
-				if(isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval){
-					if($this->autorun_model->set_interval($index, $interval) == TRUE)
+				if(!is_numeric($interval))
+					redirect('admin/autorun');
+					
+				if($data['jobs'][$index] !== '0' && $disabled_jobs[$index] == '1'){
+					if($this->autorun_model->set_interval($index, '0') == TRUE)
 						$update = TRUE;
-						
-					if($interval !== '0'){
-						$this->autorun->jobs[$index]->job();
+				} else {
+				
+					if(isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval){
+						if($this->autorun_model->set_interval($index, $interval) == TRUE)
+							$update = TRUE;
+							
+						if($interval !== '0'){
+							$this->autorun->jobs[$index]->job();
+						}
 					}
 				}
 			}
@@ -803,7 +813,7 @@ class Admin extends CI_Controller {
 	 * @return	bool
 	 */
 	public function is_positive($param) {
-		return (is_numeric($param) && $param > 0) ? TRUE : FALSE;
+		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;
 		
 	}
 };
