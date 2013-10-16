@@ -112,7 +112,8 @@ class Accounts extends CI_Controller {
 
 		// Check if the user is forced to user PGP. If so, display the 'Replace' link instead of 'Delete'
 		$data['option_replace_pgp'] = FALSE;
-		if($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor')
+		if($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor'
+			|| $this->current_user->user_role == 'Admin')
 			$data['option_replace_pgp'] = TRUE;
 			
 		// Different form validation rules depending on if the user has a PGP key uploaded.
@@ -164,7 +165,8 @@ class Accounts extends CI_Controller {
 	 */
 	public function delete_pgp() {
 		// If a user is forced to have a PGP key, they must replace it instead.
-		if($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor')
+		if($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor'
+		|| $this->current_user->user_role == 'Admin')
 			redirect('pgp/replace');
 		
 		// Load own account information.
@@ -264,7 +266,8 @@ class Accounts extends CI_Controller {
 	 */
 	public function add_pgp() {
 		// If the user is forced to have a PGP key, they must replace it.
-		if($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor')
+		if($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor'
+		|| $this->current_user->user_role == 'Admin')
 			redirect('pgp/replace');
 		
 		// If they have a PGP key, redirect them.

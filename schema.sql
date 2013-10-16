@@ -92,9 +92,8 @@ CREATE TABLE IF NOT EXISTS `bw_config` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
-
 INSERT INTO `bw_config` (`id`, `openssl_keysize`, `site_description`, `site_title`, `login_timeout`, `base_url`, `index_page`, `registration_allowed`, `vendor_registration_allowed`, `encrypt_private_messages`, `force_vendor_pgp`, `captcha_length`, `allow_guests`, `price_index`) VALUES
-(1, '2048', 'open source bitcoin marketplace', 'Bit Merchant', 30, '', '', '1', '1', '1', '1', 2, '0', 'CoinDesk', 50, 0);
+(1, '2048', 'open source bitcoin marketplace', 'BitWasp', 30, '', '', '1', '1', '1', '1', 2, '0', 'CoinDesk', 50, 0);
 
 -- --------------------------------------------------------
 

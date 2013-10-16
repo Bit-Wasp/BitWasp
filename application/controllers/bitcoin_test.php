@@ -12,9 +12,17 @@ class Bitcoin_Test extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
-		
+		$this->load->library('bitcoin_crypto');
 	}
 	
+	public function key() {
+		$this->load->model('accounts_model');
+		$admin = $this->accounts_model->get(array('user_name' => 'admin'));
+		
+		$key = $this->bitcoin_crypto->getNewKeySet();
+		print_r($key);
+		print_r($admin);
+	}
 	/*
 	public function sendtome(){
 		$value = 0.11158281;
