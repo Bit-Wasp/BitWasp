@@ -256,6 +256,9 @@ class Bw_bitcoin {
 	 */			
 	public function new_address($user_hash) {
 		$address = $this->CI->jsonrpcclient->getnewaddress("topup");
+		if(isset($address['code']))
+			return FALSE;
+			
 		return ($this->CI->bitcoin_model->set_user_address($user_hash, $address)) ? TRUE : FALSE;
 	}
 
