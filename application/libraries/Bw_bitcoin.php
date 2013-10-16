@@ -27,7 +27,7 @@ class Bw_bitcoin {
 	 * interface. 
 	 */
 	public $config;
-	
+	public $testnet;
 	/**
 	 * Constructor
 	 * 
@@ -250,7 +250,7 @@ class Bw_bitcoin {
 	 * users list of previously used addresses (in case the user ends up
 	 * reusing addresses). Does not return the address, sets it in the DB
 	 * to be read then.
-	 * 
+	 * se
 	 * @param		string	$user_hash
 	 * @return		bool
 	 */			

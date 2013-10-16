@@ -35,7 +35,7 @@ class Bw_config {
 			die('Error, BitWasp configuration not found.');
 		
 		// If any fields are missing, set them to NULL.
-		$config = $this->CI->general->expect_keys('site_description, delete_messages_after, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
+		$config = $this->CI->general->expect_keys('site_description, max_fees_balance, max_mail_balance, delete_messages_after, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
 		foreach($config as $key => $value) {
 			$this->$key = $value;
 		}

@@ -2,10 +2,9 @@
 -- version 3.4.11.1deb2
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Oct 03, 2013 at 01:49 AM
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u4
+
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -89,10 +88,13 @@ CREATE TABLE IF NOT EXISTS `bw_config` (
   `price_index` varchar(30) NOT NULL DEFAULT '',
   `ban_after_inactivity` int(4) NOT NULL,
   `delete_messages_after` int(4) NOT NULL DEFAULT '100' COMMENT 'Number of days to store messages in the database.`',  
+  `delete_transactions_after` int(4) NOT NULL DEFAULT '50',
+  `max_main_balance`	decimal(20,8) DEFAULT 0.00000000,
+  `max_fees_balance`	decimal(20,8) DEFAULT 0.00000000,  
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
-INSERT INTO `bw_config` (`id`, `openssl_keysize`, `site_description`, `site_title`, `login_timeout`, `base_url`, `index_page`, `registration_allowed`, `vendor_registration_allowed`, `encrypt_private_messages`, `force_vendor_pgp`, `captcha_length`, `allow_guests`, `price_index`) VALUES
+INSERT INTO `bw_config` (`id`, `openssl_keysize`, `site_description`, `site_title`, `login_timeout`, `base_url`, `index_page`, `registration_allowed`, `vendor_registration_allowed`, `encrypt_private_messages`, `force_vendor_pgp`, `captcha_length`, `allow_guests`, `price_index`, `ban_after_inactivity`, `delete_messages_after`) VALUES
 (1, '2048', 'open source bitcoin marketplace', 'BitWasp', 30, '', '', '1', '1', '1', '1', 2, '0', 'CoinDesk', 50, 0);
 
 -- --------------------------------------------------------
@@ -405,12 +407,13 @@ CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
   `eur` decimal(10,4) NOT NULL,
   `gbp` decimal(10,4) NOT NULL,
   `btc` int(11) NOT NULL DEFAULT '1',
+  `price_index` varchar(45),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 
-INSERT INTO `bw_exchange_rates` (`id`, `time`, `usd`, `eur`, `gbp`, `btc`) VALUES
-(1, '1380761400', 101.7737, 74.9879, 62.8264, 1);
+INSERT INTO `bw_exchange_rates` (`id`, `time`, `usd`, `eur`, `gbp`, `btc`, `price_index`) VALUES
+(1, '1380761400', 101.7737, 74.9879, 62.8264, 1, 'CoinDesk');
 
 
 -- --------------------------------------------------------

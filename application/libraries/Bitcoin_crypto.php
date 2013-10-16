@@ -2,15 +2,25 @@
 /**
  * Bitcoin Crypto Library
  * 
-* Bitcoin utility functions class (extended for sci lib)
+* Bitcoin utility functions class (extended for sci lib). Edited 
+* to detect whether BitWasp is running in the testnet. 
 *
 * @author theymos (functionality)
 * @author Mike Gogulski (http://www.gogulski.com/)
 * @author Jacob Bruce (private/public/mini key generation)
 * (encapsulation, string abstraction, PHPDoc)
+* @author BitWasp
 */
 require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
-define("BITCOIN_ADDRESS_VERSION", "00");// this is a hex byte
+
+/** 
+ * Determine bitcoin address version
+ */
+$CI = &get_instance();
+$CI->load->library('bw_bitcoin');
+$bitcoin_info = $CI->bw_bitcoin->getinfo();
+$byte = ($bitcoin_info['testnet'] == TRUE) ? '6F' : '00';
+define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
 
 class Bitcoin_crypto {
 
@@ -347,7 +357,7 @@ class Bitcoin_crypto {
 * @access public
 */
   public static function privKeyToWIF($privKey) {
-    return self::hash160ToAddress($privKey, '80');
+    return self::hash160ToAddress($privKey);
   }
   
   /**
