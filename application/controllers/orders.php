@@ -80,7 +80,7 @@ class Orders extends CI_Controller {
 				}
 			}
 			// If the order is being placed, redirect to there.
-			$url = (is_array($place_order)) ? 'order/place/;'.$current_order['id'] : 'order/list';
+			$url = (is_array($place_order)) ? 'order/place/'.$current_order['id'] : 'order/list';
 			redirect($url);
 		}
 		
