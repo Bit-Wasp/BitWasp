@@ -44,12 +44,16 @@ if($bitcoin_info == NULL) { ?>
 			  
 			<?php 
 			foreach($accounts as $acc => $bal) { 
-			if($acc !== '') { ?>
+			if($acc !== '') { 
+				$var = 'max_'.$acc.'_balance'; 
+			?>
 			<div class="row-fluid">
 			  <span class="span3"><?php echo ucfirst($acc); ?> balance</span>
-			  <span class="span7">BTC <?php echo $bal; ?></span>
+			  <span class="span2">BTC <?php echo $bal; ?></span>
+			  <span class="span5"><?php echo ($acc !== '' && $acc !== 'topup' && $config[$var] !== '0.00000000') ? 'Backup balances exceeding BTC '.$config[$var]."." : '' ; ?></span>
 			</div>
 			
+
 			<?php } } ?>
 			  
 		  </div>

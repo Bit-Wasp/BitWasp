@@ -24,13 +24,14 @@
 ?>
 			<div class="row-fluid">
 			  <div class="span3"><?php echo $job['name']; ?></div>
-			  <div class="span4"><?php 
+			  <div class="span2"><?php 
 			  
 			  if($job['interval'] == '0'){
 			      echo 'Disabled';
 		      } else {	
 				  echo $job['interval']." ".$job['interval_type']; 
 			  }?></div>
+			  <div class="span3">Run <?php echo $job['time_f']; ?>.</div>
 			</div>
 <?php } ?>
 		  </div>

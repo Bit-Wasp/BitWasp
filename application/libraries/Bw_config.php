@@ -70,9 +70,17 @@ class Bw_config {
 							'index_page' => $this->index_page,
 							'allow_guests' => $this->allow_guests);
 		} else if($panel == 'bitcoin') {
+			$this->CI->load->library('bw_bitcoin');
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,
 							'delete_transactions_after' => $this->delete_transactions_after);
+			$accounts = $this->CI->bw_bitcoin->listaccounts();
+			foreach($accounts as $account => $balance) {
+				$var = 'max_'.$account.'_balance';
+				if(isset($this->CI->bw_config->$var))
+					$result[$var] = $this->CI->bw_config->$var;
+			}
+							
 		} else if($panel == 'users') {
 			$result = array('registration_allowed' => $this->registration_allowed,
 							'vendor_registration_allowed' => $this->vendor_registration_allowed,

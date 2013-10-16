@@ -310,6 +310,9 @@ class Bw_bitcoin {
 		// Work out if the transaction is cashing out anything.
 		if(isset($send[0]) && $send[0]['account'] == "main" && $send[0]['category'] == "send") {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
+			if($user_hash == FALSE)
+				return FALSE;
+			
 			$update = array('txn_id' => $txn_hash,
 							'user_hash' => $user_hash,
 							'value' => $send[0]['amount'],
@@ -333,6 +336,9 @@ class Bw_bitcoin {
 		// Workout if the transaction is topping an account up.
 		if(isset($receive[0]) && $receive[0]['account'] == 'topup' && $receive[0]['category'] == "receive") {
 			$user_hash = $this->CI->bitcoin_model->get_address_owner($receive[0]['address']);
+			if($user_hash == FALSE)
+				return FALSE;
+			
 			$update = array('txn_id' => $txn_hash,
 							'user_hash' => $user_hash,
 							'value' => $receive[0]['amount'],

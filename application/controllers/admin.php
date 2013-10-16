@@ -234,10 +234,31 @@ class Admin extends CI_Controller {
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
 			
 			$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_transactions_after') : NULL ;						
-			
 			// If we're disabling auto-deleting transactions, set that.
-			if($this->input->post('delete_transactions_after_disabled') == '1') 		$changes['delete_transactions_after'] = "0";
-						
+			if($this->input->post('delete_transactions_after_disabled') == '1') $changes['delete_transactions_after'] = "0";
+
+			$backup_balances = $this->input->post('account');
+			if(is_array($backup_balances)) {
+				foreach($backup_balances as $account => $balance) {
+					if($this->general->matches_any($account, array('','topup')) == TRUE)
+						continue;
+					
+					$var = "max_".$account."_balance";
+					$changes[$var] = ($balance !== $data['config'][$var]) ? $balance: NULL;
+					
+				}
+			}
+			
+			$disabled_backups = $this->input->post('backup_disabled');
+			if(is_array($disabled_backups)) {
+				foreach($disabled_backups as $account => $value) {
+					if($this->general->matches_any($account, array('','topup')) == TRUE)
+						continue;
+
+					$var = "max_".$account."_balance";
+					$changes[$var] = ($balance !== $data['config'][$var]) ? 0.00000000 : NULL;					
+				}
+			}
 			
 			// Check if the selection exists.
 			if($data['config']['price_index'] !== $this->input->post('price_index')){

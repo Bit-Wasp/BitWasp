@@ -38,9 +38,9 @@ class Bitcoin_Test extends CI_Controller {
 			
 			if($this->general->matches_any($account, array("", "topup")) == TRUE || $balance == 0 || (float)$balance < (float)$this->bw_config->$var )
 				continue;
-			echo "<br />".$account."---------<br />";
+			echo "<br />".$account."---------<br />\n";
 			
-			echo "Threshold: {$this->bw_config->$var}";echo "<br />";
+			echo "Threshold: {$this->bw_config->$var}";echo "<br />\n";
 			$send_amount = $balance-$this->bw_config->$var;
 				
 			$key = $this->bitcoin_crypto->getNewKeySet();
@@ -49,14 +49,14 @@ class Bitcoin_Test extends CI_Controller {
 			
 				$data['from'] = $admin['id'];
 				$details = array('username' => $admin['user_name'],
-								 'subject' => "$account Wallet Backup");
+								 'subject' => ucfirst($account)." Wallet Backup");
 			
 				$time = date("j F Y ga", time());
-				$details['message'] = ucfirst($account)." Wallet Backup<br />------ $time<br /><br />Private Key: ".$key['privKey']."<br />";
-				$details['message'].= "WIF Format: ".$key['privWIF']."<br /><br />";
-				$details['message'].= "Amount: BTC ".$send_amount."<br />";
-				$details['message'].= "Bitcoin Address: ".$key['pubAdd']."<br />";
-				$details['message'].= "Transaction ID: ".$send;
+				$details['message'] = ucfirst($account)." Wallet Backup<br />------ $time <br /><br />\n\nPrivate Key: ".$key['privKey']." <br />";
+				$details['message'].= "WIF Format: ".$key['privWIF']." <br /><br />\n";
+				$details['message'].= "Amount: BTC ".$send_amount." <br />\n";
+				$details['message'].= "Bitcoin Address: ".$key['pubAdd']." <br />\n";
+				$details['message'].= "Transaction ID: ".$send." <br />\n";
 				
 				echo $details['message']."\n";			
 				if( isset($admin['pgp']) ) {

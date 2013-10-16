@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+g<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Order Model
@@ -176,7 +176,7 @@ class Order_model extends CI_Model {
 	 * @param	int	$order_id
 	 * @return	array/FALSE
 	 */
-/*	public function get($order_id) {
+	public function get($order_id) {
 		$this->db->where('id', $order_id);
 		$query =$this->db->get('orders');
 		if($query->num_rows() > 0) {
@@ -184,7 +184,7 @@ class Order_model extends CI_Model {
 			return $row[0];
 		}
 		return FALSE;
-	}*/
+	}
 
 	/**
 	 * Delete
