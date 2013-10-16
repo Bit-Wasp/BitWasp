@@ -705,7 +705,7 @@ class Admin extends CI_Controller {
 		$nav = '
 		  <div class="tabbable">
 			<label class="span3"><h2>'.$self['heading'].'</h2></label>
-			<label class="span1"><a href="'.site_url().'admin/edit'.$self['panel'].'" class="btn ">Edit</a></label>
+			<label class="span1"><a href="'.site_url().'/admin/edit'.$self['panel'].'" class="btn ">Edit</a></label>
 			<label class="span7">
 			  <ul class="nav nav-tabs">
 			  '.$links.'
