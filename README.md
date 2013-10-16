@@ -31,7 +31,7 @@ SQL Database
 Run the following to import the database schema:
 ```
 mysql -u root -p
-CREATE DATABAES bitwasp;
+CREATE DATABASE bitwasp;
 CREATE USER 'bitwasp'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON bitwasp.* to 'bitwasp'@'localhost';
 ```
@@ -72,12 +72,8 @@ There is no installer, so you need to set up the config files yourself:
 ./application/config/bitwasp.php :
 	- This needs your bitcoind JSON-rpc credentials as entered above. See ./application/config/bitcoin.php.sample
 
-To enable currency conversion, set up a cronjob:
-```
-*/10 * * * * curl http://localhost_or_your_vhost/callback/rates
-```
-
 Finally, double check your .htaccess. The only setting you need to change is the second line, for RewriteBase. This is the folder BitWasp resides in on your server. Eg; server.com/bitwasp/ would have this set as RewriteBase /bitwasp/
+You really should add a GPG key to the administrators account, as when backing up excess funds, the wallet information will be encrypted.
 
 Support BitWasp's Development
 ===
