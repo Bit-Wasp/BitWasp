@@ -201,6 +201,9 @@ class Bitcoin_model extends CI_Model {
 	 * @return	bool
 	 */			
 	public function set_user_address($user_hash, $address) {
+		if($address == NULL)
+			return FALSE;
+			
 		$this->db->where('user_hash', $user_hash);
 		if($this->db->update('users', array('bitcoin_topup_address' => $address))) {
 			$this->log_user_address($user_hash, $address);

@@ -28,9 +28,12 @@ class Config_model extends CI_Model {
 	 * config rows, but yet to be implemented.
 	 */
 	public function __construct($config = 1){	
-		$query = $this->db->get_where('config', array('id' => $config));
+		$query = $this->db->get('config');
 		if($query->num_rows() > 0){
-			$this->config = $query->row_array();
+			$this->config = $query->result_array();
+			foreach($query->result_array() as $config) {
+				$this->config[$config['parameter']] = $config['value'];
+			}
 		} else {
 			$this->config = FALSE;
 		}
@@ -60,8 +63,8 @@ class Config_model extends CI_Model {
 	public function update($records) {
 		$success = TRUE;
 		foreach($records as $key => $update){
-			$this->db->where('id', '1');
-			if($this->db->update('config', array($key => $update)) !== TRUE)
+			$this->db->where('parameter', $key);
+			if($this->db->update('config', array('value' => $update)) !== TRUE)
 				$success = FALSE;
 		}
 		return $success;

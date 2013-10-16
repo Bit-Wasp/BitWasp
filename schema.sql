@@ -72,31 +72,34 @@ CREATE TABLE IF NOT EXISTS `bw_categories` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
 
 CREATE TABLE IF NOT EXISTS `bw_config` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `openssl_keysize` enum('1024','2048','4096') NOT NULL,
-  `site_description` varchar(160) NOT NULL,
-  `site_title` varchar(50) NOT NULL,
-  `login_timeout` int(3) NOT NULL,
-  `base_url` varchar(100) NOT NULL,
-  `index_page` varchar(30) NOT NULL,
-  `registration_allowed` enum('0','1') NOT NULL,
-  `vendor_registration_allowed` enum('0','1') NOT NULL,
-  `encrypt_private_messages` enum('0','1') NOT NULL,
-  `force_vendor_pgp` enum('0','1') NOT NULL,
-  `captcha_length` int(11) NOT NULL,
-  `allow_guests` enum('0','1') NOT NULL,
-  `price_index` varchar(30) NOT NULL DEFAULT '',
-  `ban_after_inactivity` int(4) NOT NULL,
-  `delete_messages_after` int(4) NOT NULL DEFAULT '100' COMMENT 'Number of days to store messages in the database.`',  
-  `delete_transactions_after` int(4) NOT NULL DEFAULT '50',
-  `max_main_balance`	decimal(20,8) DEFAULT 0.00000000,
-  `max_fees_balance`	decimal(20,8) DEFAULT 0.00000000,  
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `parameter` varchar(30) NOT NULL,
+  `value` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `parameter` (`parameter`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
-INSERT INTO `bw_config` (`id`, `openssl_keysize`, `site_description`, `site_title`, `login_timeout`, `base_url`, `index_page`, `registration_allowed`, `vendor_registration_allowed`, `encrypt_private_messages`, `force_vendor_pgp`, `captcha_length`, `allow_guests`, `price_index`, `ban_after_inactivity`, `delete_messages_after`) VALUES
-(1, '2048', 'open source bitcoin marketplace', 'BitWasp', 30, '', '', '1', '1', '1', '1', 2, '0', 'CoinDesk', 50, 0);
+--
+-- Dumping data for table `bw_config`
+--
 
+INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
+(1, 'registration_allowed', '1'),
+(2, 'openssl_keysize', '2048'),
+(18, 'site_description', 'open source bitcoin marketplace'),
+(19, 'site_title', 'BitWasp'),
+(20, 'login_timeout', '30'),
+(21, 'vendor_registration_allowed', '1'),
+(22, 'encrypt_private_messages', '1'),
+(23, 'force_vendor_pgp', '1'),
+(24, 'captcha_length', '2'),
+(25, 'allow_guests', '1'),
+(26, 'price_index', 'CoinDesk'),
+(27, 'ban_after_inactivity', '45'),
+(28, 'delete_messages_after', '45'),
+(29, 'delete_transactions_after', '0'),
+(30, 'max_main_balance', '0.00000000'),
+(31, 'max_fees_balance', '0.00000000');
 -- --------------------------------------------------------
 
 --

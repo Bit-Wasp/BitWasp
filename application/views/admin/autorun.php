@@ -31,7 +31,7 @@
 		      } else {	
 				  echo $job['interval']." ".$job['interval_type']; 
 			  }?></div>
-			  <div class="span3">Run <?php echo $job['time_f']; ?>.</div>
+			  <div class="span4">Last Run: <?php echo $job['time_f']; ?>.</div>
 			</div>
 <?php } ?>
 		  </div>

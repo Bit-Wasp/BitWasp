@@ -267,7 +267,8 @@ class Accounts extends CI_Controller {
 	public function add_pgp() {
 		// If the user is forced to have a PGP key, they must replace it.
 		if($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor'
-		|| $this->current_user->user_role == 'Admin')
+		//|| $this->current_user->user_role == 'Admin'
+		)
 			redirect('pgp/replace');
 		
 		// If they have a PGP key, redirect them.

@@ -517,7 +517,7 @@ class Admin extends CI_Controller {
 			}
 			// Finally, delete the category and redirect.
 			if($this->categories_model->delete($data['category']['id']) == TRUE)
-				redirect('edit/items');
+				redirect('admin/edit/items');
 		}
 		
 		$data['page'] = 'admin/category_orphans';

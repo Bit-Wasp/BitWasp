@@ -4,6 +4,7 @@
 
   		  <fieldset>
 			
+			<?php if(count($accounts) > 0) { ?>
 			<?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>  	
 			  <div class="row-fluid">
 				<div class="span5 offset2"><strong>Transfer Between Accounts</strong></div>
@@ -50,6 +51,7 @@
 	          </div>
 	          
 		    </form>
+		    <?php } ?>
 			  
   		    <?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>
  			  <div class="row-fluid">
