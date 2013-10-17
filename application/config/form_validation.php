@@ -280,13 +280,13 @@ $config = array('register_form'=>array(
 										)										
 							),
 				'admin_edit_bitcoin' => array(
-										array('field' => '',
-											  'label' => '',
-											  'rules' => ''
+										array('field' => 'delete_transactions_after',
+											  'label' => 'Oldest transaction age',
+											  'rules' => 'callback_is_positive'
 										),
-										array('field' => '',
-											  'label' => '',
-											  'rules' => ''
+										array('field' => 'price_index',
+											  'label' => 'Price Index',
+											  'rules' => 'callback_check_price_index'
 										)
 							),
 				'admin_add_category' => array(

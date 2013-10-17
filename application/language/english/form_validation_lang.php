@@ -7,6 +7,7 @@ $lang['check_check_admin_roles'] = 'You must select a valid user role.';
 $lang['check_bitcoin_address'] = "You must enter a valid base58 address.";
 $lang['check_bitcoin_account_exists'] = 'You must select an account from your wallet.';
 $lang['check_captcha_length'] = 'Captcha length must not exceed 12 characters.';
+$lang['check_bitcoin_index'] = 'You must select a valid Bitcoin Index source';
 $lang['has_sufficient_balance'] = 'You have insufficient funds to carry out this transaction.';	
 $lang['check_captcha'] = "Enter correct captcha text.";
 $lang['check_pin_required'] = "You must enter a message PIN.";

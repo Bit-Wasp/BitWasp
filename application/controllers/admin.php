@@ -242,61 +242,63 @@ class Admin extends CI_Controller {
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
+			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
 			
-			$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_transactions_after') : NULL ;						
-			// If we're disabling auto-deleting transactions, set that.
-			if($this->input->post('delete_transactions_after_disabled') == '1') $changes['delete_transactions_after'] = "0";
+				$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_transactions_after') : NULL ;						
+				// If we're disabling auto-deleting transactions, set that.
+				if($this->input->post('delete_transactions_after_disabled') == '1') $changes['delete_transactions_after'] = "0";
 
-			$backup_balances = $this->input->post('account');
-			if(is_array($backup_balances)) {
-				foreach($backup_balances as $account => $balance) {
-					if($this->general->matches_any($account, array('','topup')) == TRUE)
-						continue;
-					
-					$var = "max_".$account."_balance";
-					$changes[$var] = ($balance !== $data['config'][$var]) ? $balance: NULL;
-					
-				}
-			}
-			
-			$disabled_backups = $this->input->post('backup_disabled');
-			if(is_array($disabled_backups)) {
-				foreach($disabled_backups as $account => $value) {
-					if($this->general->matches_any($account, array('','topup')) == TRUE)
-						continue;
-
-					$var = "max_".$account."_balance";
-					$changes[$var] = ($balance !== $data['config'][$var]) ? 0.00000000 : NULL;					
-				}
-			}
-			
-			// Check if the selection exists.
-			if($data['config']['price_index'] !== $this->input->post('price_index')){
-				if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
-				
-					$update = array('price_index' => $this->input->post('price_index'));
-					$this->config_model->update($update);
-					
-					if($this->input->post('price_index') !== 'Disabled'){		
-						// If the price index was previously disabled, set the auto-run script interval back up..
-						if($data['price_index'] == 'Disabled') 
-							$this->config_model->set_autorun_interval('price_index', '0.166666');
-							
-						// And request new exchange rates.
-						$this->bw_bitcoin->ratenotify();
-					} else {
-						// When disabling BPI updates, set the interval to 0.
-						$this->config_model->set_autorun_interval('price_index', '0');
+				$backup_balances = $this->input->post('account');
+				if(is_array($backup_balances)) {
+					foreach($backup_balances as $account => $balance) {
+						if($this->general->matches_any($account, array('','topup')) == TRUE)
+							continue;
+						
+						$var = "max_".$account."_balance";
+						$changes[$var] = ($balance !== $data['config'][$var]) ? $balance: NULL;
+						
 					}
-					// Redirect when complete.
-					redirect('admin/bitcoin');
 				}
+				
+				$disabled_backups = $this->input->post('backup_disabled');
+				if(is_array($disabled_backups)) {
+					foreach($disabled_backups as $account => $value) {
+						if($this->general->matches_any($account, array('','topup')) == TRUE)
+							continue;
+
+						$var = "max_".$account."_balance";
+						$changes[$var] = ($balance !== $data['config'][$var]) ? 0.00000000 : NULL;					
+					}
+				}
+				
+				// Check if the selection exists.
+				if($data['config']['price_index'] !== $this->input->post('price_index')){
+					if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
+					
+						$update = array('price_index' => $this->input->post('price_index'));
+						$this->config_model->update($update);
+						
+						if($this->input->post('price_index') !== 'Disabled'){		
+							// If the price index was previously disabled, set the auto-run script interval back up..
+							if($data['price_index'] == 'Disabled') 
+								$this->config_model->set_autorun_interval('price_index', '0.166666');
+								
+							// And request new exchange rates.
+							$this->bw_bitcoin->ratenotify();
+						} else {
+							// When disabling BPI updates, set the interval to 0.
+							$this->config_model->set_autorun_interval('price_index', '0');
+						}
+						// Redirect when complete.
+						redirect('admin/bitcoin');
+					}
+				}
+				
+				$changes = array_filter($changes, 'strlen');
+		
+				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+					redirect('admin/bitcoin');	
 			}
-			
-			$changes = array_filter($changes, 'strlen');
-	
-			if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
-				redirect('admin/bitcoin');	
 		}
 		
 		// If the bitcoin transfer form has been completed:
@@ -824,8 +826,12 @@ class Admin extends CI_Controller {
 	 * @return	bool
 	 */
 	public function is_positive($param) {
-		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;
-		
+		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
+	}
+	
+	public function check_price_index($param){
+		$config = $this->bw_config->price_index_config;
+		return (is_array($config[$param]) || $param == 'Disabled') ? TRUE : FALSE;
 	}
 };
 
