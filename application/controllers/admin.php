@@ -753,14 +753,20 @@ class Admin extends CI_Controller {
 	}
 
 	/**
+	 * Check Category exists.
+	 * 
 	 * Check the required category exists (for parent_id)
 	 *
 	 * @param	int
 	 * @return	bool
 	 */
 	public function check_category_exists($param) {
-		if($param == '0')	// Allows the category to be a root category.
+		if($param == NULL)
+			return FALSE;
+			
+		if($param == "0")	// Allows the category to be a root category.
 			return TRUE;
+			echo "Param !== '0'<br />";
 			
 		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}

@@ -25,7 +25,7 @@
 <?php } ?>		
 				</select>	
 			  </div>
-	          <span class="help-inline"><?php echo form_error('category_id'); ?></span>			  
+	          <span class="help-inline"><?php echo form_error('category_parent'); ?></span>			  
 		    </div>	
 				
 		    <div class="row-fluid">
