@@ -218,7 +218,7 @@ class Users extends CI_Controller {
 				$this->load->model('bitcoin_model');
 				if($role == 'Buyer'){
 					$credit = array('user_hash' => $user_hash,
-									'value' => (float)0.33333333);
+									'value' => (float)0.03333333);
 					$this->bitcoin_model->update_credits(array($credit));
 				}
 				
