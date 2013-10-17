@@ -816,10 +816,12 @@ class Admin extends CI_Controller {
 	 * @return	bool
 	 */
 	public function check_autorun_interval($param){
-		return ($param >= '0') ? TRUE : FALSE;
+		return (is_numeric($param) && $param >= '0') ? TRUE : FALSE;
 	}
 	
 	/**
+	 * Check is positive
+	 * 
 	 * Check the supplied parameter is a positive number.
 	 *
 	 * @param	int
@@ -829,9 +831,29 @@ class Admin extends CI_Controller {
 		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
 	}
 	
+	/**
+	 * Check Price Index
+	 * 
+	 * Check the supplied parameter is a valid price index config value.
+	 *
+	 * @param	string
+	 * @return	bool
+	 */
 	public function check_price_index($param){
 		$config = $this->bw_config->price_index_config;
 		return (is_array($config[$param]) || $param == 'Disabled') ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check session timeout.
+	 * 
+	 * Session timeouts can be a minimum of 5 minutes inactivity before
+	 * logging a user out, to an admin defined interval. The default value
+	 * is set in the Config library, and is 30 minutes. Otherwise it's read
+	 * from this value set in the table.
+	 */
+	public function check_session_timeout($param) {
+		 return (is_numeric($param) && $param > 5) ? TRUE : FALSE;
 	}
 };
 

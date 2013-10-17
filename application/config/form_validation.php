@@ -1,4 +1,4 @@
-i<?php
+<?php
 // Add errors for:
 //  callback_register_check_role
 // callback_check_delete_on_read
@@ -252,7 +252,7 @@ $config = array('register_form'=>array(
 				'admin_edit_users' => array(
 										array('field' => 'login_timeout',
 											  'label' => 'Session timeout',
-											  'rules' => 'trim|required|numeric'
+											  'rules' => 'trim|required|callback_check_session_timeout'
 										),
 										array('field' => 'captcha_length',
 											  'label' => 'Captcha length',
