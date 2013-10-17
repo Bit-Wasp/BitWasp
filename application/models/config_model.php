@@ -58,7 +58,7 @@ class Config_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	array	$records
-	 * @return	bool
+	 * @return	boolean
 	 */				
 	public function update($records) {
 		$success = TRUE;
@@ -68,6 +68,22 @@ class Config_model extends CI_Model {
 				$success = FALSE;
 		}
 		return $success;
+	}
+	
+	/**
+	 * Create
+	 * 
+	 * Create an entry in the config table. Setting name is set by $parameter,
+	 * and it's value is set by $value.
+	 * 
+	 * @param	string	$parameter
+	 * @param	string	$value
+	 * @return	boolean
+	 */
+	public function create($parameter, $value){
+		$insert = array('parameter' => $parameter,
+						'value'		=> $value);
+		return ($this->db->insert('config', $insert) == TRUE) ? TRUE : FALSE;
 	}
 	
 };
