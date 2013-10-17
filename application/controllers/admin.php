@@ -301,10 +301,13 @@ class Admin extends CI_Controller {
 		
 		// If the bitcoin transfer form has been completed:
 		if($this->input->post('admin_transfer_bitcoins') == 'Send') {
+			
 			if($this->form_validation->run('admin_transfer_bitcoins') == TRUE) {
+				
 				// Check that the account has the specified available balance.
 				$amount = $this->input->post('amount');
 				if($data['accounts'][$this->input->post('from')] >= (float)$amount) {
+					
 					if($this->bw_bitcoin->move($this->input->post('from'), $this->input->post('to'), (float)$amount) == TRUE)
 						redirect('admin/bitcoin');
 				} else {

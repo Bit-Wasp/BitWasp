@@ -27,7 +27,15 @@ class Bw_bitcoin {
 	 * interface. 
 	 */
 	public $config;
+	
+	/** 
+	 * Testnet
+	 * 
+	 * Flag to tell the site if we are currently working in the testnet or
+	 * the main bitcoin chain.
+	 */
 	public $testnet;
+	
 	/**
 	 * Constructor
 	 * 

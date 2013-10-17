@@ -13,10 +13,11 @@
 		      <div class="row-fluid">
 		        <div class="span2 offset1">From</div>
 			    <div class="span4">
-				  <select name='from'>
+				  <select name="from" autocomplete="off">
+					<option value=""></option>
 					<?php foreach($accounts as $acc => $bal) { 
 					if($acc !== '') { ?>
-					<option value='<?php echo $acc; ?>'><?php echo $acc; ?> (<?php echo $bal; ?>)</option>
+					<option value="<?php echo $acc; ?>"><?php echo $acc; ?> (<?php echo $bal; ?>)</option>
 				    <?php } } ?>
 				  </select>
 			    </div>
@@ -26,7 +27,8 @@
 		      <div class="row-fluid">
 		        <div class="span2 offset1">To</div>
 			    <div class="span4">
-				  <select name='to'>
+				  <select name='to' autocomplete="off">
+					<option value=""></option>
 					<?php foreach($accounts as $acc => $bal) { 
 					if($acc !== '') { ?>
 					<option value='<?php echo $acc; ?>'><?php echo $acc; ?></option>

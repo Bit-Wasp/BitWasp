@@ -81,7 +81,6 @@ class Bw_messages {
 		$content = array('from' => $from,
 						'subject' => $subject,
 						'message' => $message);
-
 		$check_encrypted[0] = stripos($message, '-----BEGIN PGP MESSAGE-----'); 
 		$check_encrypted[1] = stripos($message, '-----END PGP MESSAGE-----');
 		$encrypted = (($check_encrypted[0] !== FALSE) && ($check_encrypted[1] !== FALSE)) ? '1' : '0' ;
@@ -145,10 +144,11 @@ class Bw_messages {
 		$results = array();			
 
 		foreach($messages as $message) {
+
 			$tmp = base64_decode($message['content']);
 			$content = ($this->encrypt_private_messages == TRUE) ? $this->CI->openssl->decrypt($tmp, $this->private_key, $this->current_user->message_password) : $tmp;
 			$content = json_decode($content);
-			
+
 			$res = array('encrypted' => $message['encrypted'],
 						 'from' => $this->CI->accounts_model->get(array('id' => $content->from)),
 						 'hash' => $message['hash'],
@@ -165,7 +165,6 @@ class Bw_messages {
 			array_push($results, $res);
 			unset($res);
 		}
-			
 		return $results;
 	}
 	

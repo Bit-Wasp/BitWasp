@@ -47,12 +47,12 @@ class Backup_Wallet {
 	public function job() {
 		
 		$this->CI->load->library('bw_bitcoin');
-
+echo 'a<br />';
 		// Check if there are any accounts.
 		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
 		if(count($accounts) == 0) 
 			return TRUE;
-
+echo 'b<br />';
 		// Load models and libraries.
 		$this->CI->load->model('accounts_model');
 		$this->CI->load->model('messages_model');
@@ -62,25 +62,24 @@ class Backup_Wallet {
 		$admin = $this->CI->accounts_model->get(array('user_name' => 'admin'));
 		// Loop through each account
 		$success = TRUE;
-	
+	echo 'c - loop<br />';
 		foreach($accounts as $account => $balance){
 			$var = "max_".$account."_balance";
-			
+			echo $var."<br />";
 			// Do not touch the accounts "", "topup", ones with a zero balance, or 
 			// accounts whos balance is not above the backup threshold.
 			if($this->CI->general->matches_any($account, array("", "topup")) == TRUE || $balance == 0 || (float)$balance < (float)$this->CI->bw_config->$var ){
 				continue;		
 			}
-
+echo 'still going<br />';
 			// Generate a new keypair.
 			$key = $this->CI->bitcoin_crypto->getNewKeySet();
 			
 			// Send the excess amount to the newly generated public address.
 			$send_amount = $balance-$this->CI->bw_config->$var;
 			$send = $this->CI->bw_bitcoin->sendfrom($account, $key['pubAdd'], (float)$send_amount);
-			
+			echo 'just tried to send <br />';
 			if(!isset($send['code'])){
-			
 				// Send the wallet to the admin user.
 				$data['from'] = $admin['id'];
 				$details = array('username' => $admin['user_name'],
@@ -95,14 +94,20 @@ class Backup_Wallet {
 				
 				// If the user has GPG, encrypt the message.
 				if( isset($admin['pgp']) ) {
+					print_r($admin['pgp']);
 					$this->CI->load->library('gpg');			
 					$details['message'] = $this->CI->gpg->encrypt($admin['pgp']['fingerprint'], $details['message']);
 				}
-				
+				echo $details['message'];
 				// Prepare the input.
 				$message = $this->CI->bw_messages->prepare_input($data, $details);
-				if($this->CI->messages_model->send($message) !== TRUE)
+				print_r($message);
+				if($this->CI->messages_model->send($message) !== TRUE){
 					$success = FALSE; 
+					echo 'message failed<br />';
+				} else {
+					echo 'message sent<br />';
+				}
 				
 			} else {
 				$success = FALSE;
