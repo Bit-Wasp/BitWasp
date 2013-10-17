@@ -48,10 +48,11 @@ class Backup_Wallet {
 		
 		$this->CI->load->library('bw_bitcoin');
 
-		// Check if there are any accounts.
+		// Check if there are any accounts/bitcoind is offline.
 		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
 		if(count($accounts) == 0) 
 			return TRUE;
+			
 		// Load models and libraries.
 		$this->CI->load->model('accounts_model');
 		$this->CI->load->model('messages_model');
@@ -81,10 +82,11 @@ class Backup_Wallet {
 								 'subject' => ucfirst($account)." Wallet Backup");
 			
 				$time = date("j F Y ga", time());
-				$details['message'] = ucfirst($account)." Wallet Backup<br /> ------ $time <br /><br />\n\nPrivate Key: ".$key['privKey']." <br />\n";
-				$details['message'].= "WIF Format: ".$key['privWIF']." <br /><br />\n\n";
-				$details['message'].= "Amount: BTC ".$send_amount." <br />\n";
-				$details['message'].= "Bitcoin Address: ".$key['pubAdd']." <br />\n";
+				$details['message'] = ucfirst($account)." Wallet Backup\n ------ $time\n\n";
+				$details['message'] = "Private Key: ".$key['privKey']." \n";
+				$details['message'].= "WIF Format: ".$key['privWIF']." \n\n";
+				$details['message'].= "Amount: BTC ".$send_amount." \n";
+				$details['message'].= "Bitcoin Address: ".$key['pubAdd']." \n";
 				$details['message'].= "Transaction ID: ".$send." \n";
 				
 				// If the user has GPG, encrypt the message.

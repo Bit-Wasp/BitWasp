@@ -853,7 +853,7 @@ class Admin extends CI_Controller {
 	 * from this value set in the table.
 	 */
 	public function check_session_timeout($param) {
-		 return (is_numeric($param) && $param > 5) ? TRUE : FALSE;
+		 return (is_numeric($param) && $param >= 5) ? TRUE : FALSE;
 	}
 };
 
