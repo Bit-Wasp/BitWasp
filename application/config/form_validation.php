@@ -1,4 +1,4 @@
-<?php
+i<?php
 // Add errors for:
 //  callback_register_check_role
 // callback_check_delete_on_read
@@ -256,7 +256,7 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'captcha_length',
 											  'label' => 'Captcha length',
-											  'rules' => 'trim|required|numeric|callback_check_captcha_length'
+											  'rules' => 'trim|required|callback_check_captcha_length'
 										),
 										array('field' => 'registration_allowed',
 											  'label' => '',
@@ -271,18 +271,18 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_bool'
 										),
 										array('field' => 'ban_after_inactivity',
-											  'label' => 'Ban interval',
-											  'rules' => 'numeric|max_length[3]|callback_check_autorun_interval'
+											  'label' => 'User inactivity',
+											  'rules' => 'max_length[3]|callback_check_is_positive'
 										),
 										array('field' => 'delete_messages_after',
-											  'label' => 'Message-delete interval',
-											  'rules' => 'numeric|max_length[3]|callback_check_autorun_interval'
+											  'label' => 'Oldest message age',
+											  'rules' => 'max_length[3]|callback_check_is_positive'
 										)										
 							),
 				'admin_edit_bitcoin' => array(
 										array('field' => 'delete_transactions_after',
 											  'label' => 'Oldest transaction age',
-											  'rules' => 'callback_is_positive'
+											  'rules' => 'callback_check_is_positive'
 										),
 										array('field' => 'price_index',
 											  'label' => 'Price Index',
@@ -360,7 +360,7 @@ $config = array('register_form'=>array(
 				'admin_edit_autorun' => array(
 										array('field' => 'jobs[]',
 											  'label' => 'Intervals',
-											  'rules' => 'is_numeric|callback_is_positive'
+											  'rules' => 'is_numeric|callback_check_is_positive'
 										)
 							),
 				'order_dispute' => array(

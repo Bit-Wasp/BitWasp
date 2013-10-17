@@ -825,7 +825,7 @@ class Admin extends CI_Controller {
 	 * @param	int
 	 * @return	bool
 	 */
-	public function is_positive($param) {
+	public function check_is_positive($param) {
 		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
 	}
 	
