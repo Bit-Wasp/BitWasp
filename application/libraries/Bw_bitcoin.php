@@ -79,6 +79,9 @@ class Bw_bitcoin {
 		$json_result = curl_exec($curl);
 		curl_close($curl);
 		
+		if($json_result == FALSE)
+			return FALSE;
+			
 		$array =  json_decode($json_result);
 		if($array !== FALSE){
 			$array->price_index = $source_name;
@@ -462,6 +465,9 @@ class Bw_bitcoin {
 	
 		// Function to get the exchange rates via an API.
 		$rates = $this->get_exchange_rates();
+
+		if($rates == FALSE)
+			return FALSE;
 
 		// Parse results depending on where they're from.
 		if($this->CI->bw_config->price_index == 'CoinDesk') {
