@@ -290,8 +290,8 @@ $config = array('register_form'=>array(
 										)
 							),
 				'admin_add_category' => array(
-										array('field' => 'category_name',
-											  'label' => 'Category name',
+										array('field' => 'create_name',
+											  'label' => 'category name',
 											  'rules' => 'required|htmlentities'
 										),
 										array('field' => 'category_parent',
@@ -300,7 +300,7 @@ $config = array('register_form'=>array(
 										)
 							),
 				'admin_rename_category' => array(
-										array('field' => 'category_id',
+										array('field' => 'rename_id',
 											  'label' => 'Category',
 											  'rules' => 'callback_check_can_delete_category'
 										),
@@ -310,7 +310,7 @@ $config = array('register_form'=>array(
 										)
 							),
 				'admin_delete_category' => array(
-										array('field' => 'category_id',
+										array('field' => 'delete_id',
 											  'label' => 'Category',
 											  'rules' => 'callback_check_can_delete_category'
 										)

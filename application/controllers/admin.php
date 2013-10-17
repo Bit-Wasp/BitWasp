@@ -435,7 +435,7 @@ class Admin extends CI_Controller {
 		if($this->input->post('add_category') == 'Add') {
 			if($this->form_validation->run('admin_add_category') == TRUE) {
 				// Add the category.
-				$category = array(	'name' => $this->input->post('category_name'),
+				$category = array(	'name' => $this->input->post('create_name'),
 									'hash' => $this->general->unique_hash('categories','hash'),
 									'parent_id' => $this->input->post('category_parent'));
 				if($this->categories_model->add($category) == TRUE)
@@ -447,7 +447,7 @@ class Admin extends CI_Controller {
 		if($this->input->post('rename_category') == 'Rename') {
 			if($this->form_validation->run('admin_rename_category') == TRUE) {
 				// Rename the category.
-				if($this->categories_model->rename($this->input->post('category_id'), $this->input->post('category_name')) == TRUE)
+				if($this->categories_model->rename($this->input->post('rename_id'), $this->input->post('category_name')) == TRUE)
 					redirect('admin/edit/items');
 			}
 		}
@@ -456,12 +456,11 @@ class Admin extends CI_Controller {
 		if($this->input->post('delete_category') == 'Delete') {
 			if($this->form_validation->run('admin_delete_category') == TRUE) {
 		
-				$category = $this->categories_model->get(array('id' => $this->input->post('category_id')));
+				$category = $this->categories_model->get(array('id' => $this->input->post('delete_id')));
 				$cat_children = $this->categories_model->get_children($category['id']);
 
 				// Check if items or categories are orphaned by this action, redirect to move these.
 				if($category['count_items'] > 0 || $cat_children['count'] > 0) {
-					echo 'a';
 					redirect('admin/category/orphans/'.$category['hash']);
 				} else {
 					// Otherwise it's empty and can be deleted.
@@ -778,6 +777,9 @@ class Admin extends CI_Controller {
 	 * @return	bool
 	 */
 	public function check_can_delete_category($param) {
+		if($param == NULL)
+			return FALSE;
+			
 		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 	
