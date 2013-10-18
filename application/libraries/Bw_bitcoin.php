@@ -398,7 +398,6 @@ class Bw_bitcoin {
 			$block = $this->getblock($block_hash);
 			if(!isset($block['code'])){
 				$this->CI->bitcoin_model->add_block($block_hash, $block['height']);
-				echo "recorded $block_hash\n";
 			}
 		}
 		
