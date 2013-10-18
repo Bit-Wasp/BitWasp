@@ -14,6 +14,11 @@ class Bitcoin_Test extends CI_Controller {
 		$this->load->library('bw_bitcoin');
 		$this->load->library('bitcoin_crypto');
 		$this->load->library('mpkgen');
+		$this->load->model('logs_model');
+		$accounts = $this->bw_bitcoin->listaccounts();
+		print_r($accounts);
+		$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+
 	}
 	
 	public function keypair() {

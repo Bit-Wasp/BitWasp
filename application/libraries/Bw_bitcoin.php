@@ -8,7 +8,7 @@
  * The class contains functions for bitcoind and functions for 
  * bitcoind to callback in order to track information about new transactions.
  * Also contains a function to update exchange rates from the selected
- * provider
+ * provider.
  * 
  * @package		BitWasp
  * @subpackage	Libraries
@@ -51,6 +51,7 @@ class Bw_bitcoin {
 		
 		$this->CI->load->library('jsonrpcclient', $this->config);
 		$this->CI->load->model('bitcoin_model');
+		$this->CI->load->model('logs_model');
 	}
 	
 	/**
@@ -308,7 +309,7 @@ class Bw_bitcoin {
 
 		$transaction = $this->gettransaction($txn_hash);
 		// Abort if there's an error obtaining the transaction (not for our wallet)
-		if(isset($transaction['code']))
+		if(isset($transaction['code']) && $transaction == NULL)
 			return FALSE;
 
 		// Extract details for send/receive.
@@ -396,9 +397,12 @@ class Bw_bitcoin {
 		// First task, maintain a record of the processed blocks.
 		if($this->CI->bitcoin_model->have_block($block_hash) == FALSE) {
 			$block = $this->getblock($block_hash);
-			if(!isset($block['code'])){
+			
+			if($block == NULL)
+				return FALSE;
+			
+			if(!isset($block['code']) && isset($block['height']))
 				$this->CI->bitcoin_model->add_block($block_hash, $block['height']);
-			}
 		}
 		
 		// Load all pending transactions, and abort if there's none.
@@ -429,8 +433,10 @@ class Bw_bitcoin {
 					
 					$to_address = $this->new_main_address();
 					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
-					if(isset($send['code']))
-						echo 'error sending funds - may not have enough to cover fees?\n';
+					if(isset($send['code'])) {
+						$accounts = $this->bw_bitcoin->listaccounts();
+						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+					}
 				}
 				
 				// If the transaction has more than 50 confirmations, stop tracking it.
@@ -485,7 +491,7 @@ class Bw_bitcoin {
 					);
 		}
 
-		return ($this->CI->currencies_model->update_exchange_rates($update) == TRUE) ? TRUE : FALSE;
+		return (isset($update) && $this->CI->currencies_model->update_exchange_rates($update) == TRUE) ? TRUE : FALSE;
 	}
 	
 };

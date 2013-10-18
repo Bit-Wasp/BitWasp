@@ -34,6 +34,7 @@ class Backup_Wallet {
 	 */	
 	public function __construct() {
 		$this->CI = &get_instance();
+		$this->CI->load->library('bw_bitcoin');		
 	}
 	
 	/**
@@ -46,8 +47,6 @@ class Backup_Wallet {
 	 */	
 	public function job() {
 		
-		$this->CI->load->library('bw_bitcoin');
-
 		// Check if there are any accounts/bitcoind is offline.
 		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
 		if(count($accounts) == 0) 

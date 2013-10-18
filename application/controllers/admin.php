@@ -255,7 +255,7 @@ class Admin extends CI_Controller {
 							continue;
 						
 						$var = "max_".$account."_balance";
-						if(!isset($data['config'][$var])) {
+						if(!isset($data['config'][$var]) && isset($data['accounts'][$account])) {
 							if(!$this->config_model->create($var, '0.00000000'))
 								continue;
 						}
