@@ -58,6 +58,9 @@ class Backup_Wallet {
 		$this->CI->load->library('bw_messages');
 		$this->CI->load->library('bitcoin_crypto');		
 
+		$bitcoin_info = $this->CI->bw_bitcoin->getinfo();
+		$magicbyte = ($bitcoin_info['testnet'] == TRUE) ? '6F' : '00';
+
 		$admin = $this->CI->accounts_model->get(array('user_name' => 'admin'));
 		// Loop through each account
 		$success = TRUE;
@@ -69,7 +72,7 @@ class Backup_Wallet {
 				continue;		
 			}
 			// Generate a new keypair.
-			$key = $this->CI->bitcoin_crypto->getNewKeySet();
+			$key = $this->CI->bitcoin_crypto->getNewKeySet($magicbyte);
 			
 			// Send the excess amount to the newly generated public address.
 			$send_amount = $balance-$this->CI->bw_config->$var;

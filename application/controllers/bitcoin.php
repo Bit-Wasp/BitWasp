@@ -122,7 +122,7 @@ class Bitcoin extends CI_Controller {
 	 * @return	bool
 	 */
 	public function check_bitcoin_address($param) {
-		return ($param == '' || $this->bw_bitcoin_validateaddress($param) == TRUE) ? TRUE : FALSE;
+		return ($param == '' || $this->bw_bitcoin->validateaddress($param) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
