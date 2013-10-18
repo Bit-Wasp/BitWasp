@@ -228,7 +228,7 @@ $config = array('register_form'=>array(
 				'cashout_form' => array(
 										array('field' => 'amount',
 											  'label' => 'Amount',
-											  'rules' => 'decimal|callback_has_sufficient_balance'
+											  'rules' => 'callback_has_sufficient_balance'
 										)
 							),
 				'admin_edit_' => array(
