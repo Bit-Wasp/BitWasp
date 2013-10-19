@@ -495,13 +495,11 @@ class Bw_bitcoin {
 					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
 					
 					if($txn['details']['account'] == "fees"){
-						if($array['confirmations'] >= 6){
-							$this->CI->load->model('users_model');
-							$user_hash = $this->CI->users_model->get_payment_address_owner($transaction['address']);
-							if($this->CI->users_model->delete_entry_payment($user_hash))
-								$this->CI->users_model->set_entry_paid($user_hash);
+						$this->CI->load->model('users_model');
+						$user_hash = $this->CI->users_model->get_payment_address_owner($transaction['address']);
+						if($this->CI->users_model->delete_entry_payment($user_hash))
+							$this->CI->users_model->set_entry_paid($user_hash);
 							
-						}
 						
 					} else if($txn['details']['account'] == "fees"){
 						$to_address = $this->new_main_address();

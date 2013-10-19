@@ -364,11 +364,11 @@ class Users extends CI_Controller {
 			}
 		} else {
 			$data['entry_payment']['received'] = $this->bw_bitcoin->getreceivedbyaddress($data['entry_payment']['bitcoin_address']);
-			$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh one you have made the payment to check for receipt."; 	
+			$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh once you have made the payment to check for receipt."; 	
 		}
 		
 		if($data['entry_payment']['bitcoin_address'] !== ''){
-			if($data['entry_payment'] == FALSE){
+			if($data['entry_payment'] == FALSE && $data['user']['entry_paid'] == '1'){
 		
 				if ($data['user']['user_role'] == 'Vendor' 
 					&& $this->bw_config->force_vendor_pgp == TRUE
