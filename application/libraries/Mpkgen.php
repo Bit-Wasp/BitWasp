@@ -61,7 +61,7 @@ class Mpkgen {
 	}
 };
 
-class Curve {
+class CurveFp {
 
 	public function __construct($prime, $a, $b) {
 		$this->a = $a;
@@ -82,7 +82,7 @@ class Point {
 
 	const INFINITY = 'infinity';
 
-	public function __construct(Curve $curve, $x, $y, $order = null) {
+	public function __construct(CurveFp $curve, $x, $y, $order = null) {
 		$this->curve = $curve;
 		$this->x = $x;
 		$this->y = $y;

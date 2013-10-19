@@ -46,7 +46,7 @@ class Backup_Wallet {
 	 * 
 	 */	
 	public function job() {
-		
+		return TRUE;
 		// Check if there are any accounts/bitcoind is offline.
 		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
 		if(count($accounts) == 0) 
@@ -71,6 +71,7 @@ class Backup_Wallet {
 			if($this->CI->general->matches_any($account, array("", "topup")) == TRUE || $balance == 0 || (float)$balance < (float)$this->CI->bw_config->$var ){
 				continue;		
 			}
+			
 			// Generate a new keypair.
 			$key = $this->CI->bitcoin_crypto->getNewKeySet($magicbyte);
 			

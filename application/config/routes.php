@@ -45,7 +45,8 @@ $route['register'] = 'users/register';				// System. Require user is a guest.
 $route['register/(:any)'] = 'users/register/$1';
 $route['login'] = 'users/login';
 $route['login/two_factor'] = 'users/two_factor';	// half session.
-$route['register/pgp'] = 'users/register_pgp';		// half session
+$route['register/pgp'] = 'users/register_pgp';		// half session.
+$route['register/payment'] = 'users/payment';		// half session.
 $route['logout'] = 'users/logout';				
 $route['authorize'] = 'authorize';					// System. Require user is logged in.
 

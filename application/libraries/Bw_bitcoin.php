@@ -35,7 +35,7 @@ class Bw_bitcoin {
 	 * the main bitcoin chain.
 	 */
 	public $testnet;
-	
+		
 	/**
 	 * Constructor
 	 * 
@@ -51,7 +51,6 @@ class Bw_bitcoin {
 		
 		$this->CI->load->library('jsonrpcclient', $this->config);
 		$this->CI->load->model('bitcoin_model');
-		$this->CI->load->model('logs_model');
 	}
 	
 	/**
@@ -80,7 +79,7 @@ class Bw_bitcoin {
 		$json_result = curl_exec($curl);
 		curl_close($curl);
 		
-		if($json_result == FALSE)
+		if($json_result == NULL)
 			return FALSE;
 			
 		$array =  json_decode($json_result);
@@ -160,7 +159,17 @@ class Bw_bitcoin {
 	public function getinfo() {
 		return $this->CI->jsonrpcclient->getinfo();
 	}
-
+	
+	/**
+	 * Get Recevied By Address
+	 * 
+	 * Query bitcoind to get the balance this particular address has
+	 * received.
+	 */
+	public function getreceivedbyaddress($address){
+		return $this->CI->jsonrpcclient->getreceivedbyaddress($address);
+	}
+	
 	/**
 	 * Get Transaction
 	 * 
@@ -264,14 +273,14 @@ class Bw_bitcoin {
 	 * to be read then.
 	 * se
 	 * @param		string	$user_hash
-	 * @return		bool
+	 * @return		boolean
 	 */			
 	public function new_address($user_hash) {
 		$address = $this->CI->jsonrpcclient->getnewaddress("topup");
-		if(isset($address['code']))
+		if(isset($address['code']) || $address == NULL)
 			return FALSE;
 			
-		return ($this->CI->bitcoin_model->set_user_address($user_hash, $address)) ? TRUE : FALSE;
+		return ($this->CI->bitcoin_model->set_user_address($user_hash, $address)) ? $address : FALSE;
 	}
 
 	/**
@@ -281,12 +290,26 @@ class Bw_bitcoin {
 	 * Used to forward funds from the topup account to the main account.
 	 * A new address is created for this every time.
 	 * 
-	 * @return		string / FALSE
+	 * @return		string/FALSE
 	 */			
 	public function new_main_address(){
-		return $this->CI->jsonrpcclient->getaccountaddress("main");
+		$address = $this->CI->jsonrpcclient->getnewaddress("main");
+		return ($address == NULL || isset($address['code'])) ? FALSE : $address;
 	}
 
+	/**
+	 * New "Fees" Address
+	 * 
+	 * Function to ask bitcoind to create an address for the "fees" account
+	 * Used to accept payments for accounts, and for order fees.
+	 *
+	 * @return	string/FALSE
+	 */
+	public function new_fees_address(){
+		$address = $this->CI->jsonrpcclient->getnewaddress("fees");
+		return ($address == NULL || isset($address['code'])) ? FALSE : $address;
+	}
+	
 	/**
 	 * Wallet Notify
 	 * 
@@ -320,6 +343,46 @@ class Bw_bitcoin {
 				array_push($send, $detail);
 			if($detail['category'] == 'receive')
 				array_push($receive, $detail);
+		}
+	echo "new transaction\n";
+	print_r($send); echo "\n";print_r($receive);
+	
+		if(isset($receive[0]) && $receive[0]['account'] == 'fees' && $receive[0]['category'] == "receive") {
+			echo "received fees transaction\n";
+			$this->CI->load->model('users_model');
+			$address = $receive[0]['address'];
+			
+			$user_hash = $this->CI->users_model->get_payment_address_owner($address);
+			if($user_hash !== FALSE) {
+				echo "found user\n";
+				// Add payment.
+
+				$update = array('txn_id' => $txn_hash,
+								'user_hash' => $user_hash,
+								'value' => $receive[0]['amount'],
+								'confirmations' => $transaction['confirmations'],
+								'address' => $receive[0]['address'],
+								'category' => 'receive',
+								'credited' => '0',
+								'time' => $transaction['time']);
+				
+				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
+					echo "havent seen txn before\n";
+					$this->CI->bitcoin_model->add_pending_txn($update);
+				
+					// Check whether the user has exceeded their balance.
+					$entry_payment = $this->CI->users_model->get_entry_payment($user_hash);
+					$addr_balance = $this->getreceivedbyaddress($address);
+					if($entry_payment !== FALSE && $addr_balance >= $entry_payment['amount']){
+						echo "user accepted\n";
+						if($this->CI->users_model->set_entry_paid($user_hash) == TRUE)
+							$this->CI->users_model->delete_entry_payment($user_hash);
+						
+					}
+				}
+				
+			}
+			
 		}
 		
 		// Work out if the transaction is cashing out anything.
@@ -366,7 +429,7 @@ class Bw_bitcoin {
 				$this->CI->bitcoin_model->add_pending_txn($update);
 
 				if($this->CI->bitcoin_model->get_user_address($user_hash) == $update['address']) 
-					$this->new_address($user_hash);					
+					@$this->new_address($user_hash);					
 			}
 		}
 	}
@@ -431,12 +494,25 @@ class Bw_bitcoin {
 					array_push($credits, $array);
 					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
 					
-					$to_address = $this->new_main_address();
-					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
-					if(isset($send['code'])) {
-						$accounts = $this->bw_bitcoin->listaccounts();
-						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+					if($txn['details']['account'] == "fees"){
+						if($array['confirmations'] >= 6){
+							$this->CI->load->model('users_model');
+							$user_hash = $this->CI->users_model->get_payment_address_owner($transaction['address']);
+							if($this->CI->users_model->delete_entry_payment($user_hash))
+								$this->CI->users_model->set_entry_paid($user_hash);
+							
+						}
+						
+					} else if($txn['details']['account'] == "fees"){
+						$to_address = $this->new_main_address();
+						$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
+						if(isset($send['code'])) {
+							$accounts = $this->listaccounts();
+	//						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+						}	
 					}
+					
+					
 				}
 				
 				// If the transaction has more than 50 confirmations, stop tracking it.

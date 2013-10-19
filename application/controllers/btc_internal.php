@@ -41,6 +41,7 @@ class Btc_internal extends CI_Controller {
 		$bitcoin_info = $this->bw_bitcoin->getinfo();
 		$latest_hash = $this->bw_bitcoin->getblockhash($bitcoin_info['blocks']);
 		//$this->bitcoin_model->add_block($latest_hash, $bitcoin_info['blocks']);
+		print_r($latest_hash);
 	}
 	
 

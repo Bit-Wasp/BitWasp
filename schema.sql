@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `bw_captchas` (
   `time` int(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_categories` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `bw_categories` (
   `parent_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=27 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_config` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -100,6 +100,10 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (29, 'delete_transactions_after', '0'),
 (30, 'max_main_balance', '0.00000000'),
 (31, 'max_fees_balance', '0.00000000');
+(32, 'electrum_mpk', ''),
+(33, 'electrum_iteration', ''),
+(34, 'electrum_gap_limit', ''),
+(35, 'delete_logs_after', '14'),
 -- --------------------------------------------------------
 
 --
@@ -110,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `country` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=241 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 
 
@@ -417,6 +421,21 @@ CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
 
 INSERT INTO `bw_exchange_rates` (`id`, `time`, `usd`, `eur`, `gbp`, `btc`, `price_index`) VALUES
 (1, '1380761400', 101.7737, 74.9879, 62.8264, 1, 'CoinDesk');
+
+
+
+
+CREATE TABLE IF NOT EXISTS `bw_logs` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `caller` varchar(35) NOT NULL COMMENT 'Name of the script which left the log',
+  `message` varchar(250) NOT NULL COMMENT 'The message for the admins',
+  `title` varchar(50) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `info_level` varchar(20) NOT NULL,
+  `hash` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `hash` (`hash`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 
 -- --------------------------------------------------------

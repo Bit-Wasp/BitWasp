@@ -40,7 +40,7 @@ class Logs_Model extends CI_Model {
 												'title' => $title, 
 												'level' => $level,
 												'hash' => $this->general->unique_hash('logs','hash'),
-												'message' => $message) == TRUE)
+												'message' => $message)) == TRUE
 				) ? TRUE : FALSE;
 	}
 };

@@ -74,7 +74,7 @@ class Layout {
 		} else {
 			// If a numeric user_id is set and two_factor or force_pgp flags are set, choose the required bar.
 			if(isset($CI->current_user->user_id) && is_numeric($CI->current_user->user_id) &&
-			   $CI->current_user->two_factor == TRUE || $CI->current_user->force_pgp == TRUE ) 
+			   $CI->current_user->two_factor == TRUE || $CI->current_user->force_pgp == TRUE || $CI->current_user->entry_payment == TRUE) 
 					$bar['role'] = 'half';
 			
 			// If guests are allowed to browse, load the categories.

@@ -78,12 +78,17 @@ class Bw_session {
 			$userdata = array(	'user_id' => $user['id'],
 								'force_pgp' => 'true' );
 		} else if($params == 'two_factor') {
+			$this->CI->session->unset_userdata('entry_payment');
 			$userdata = array(	'user_id' => $user['id'],
 								'two_factor' => 'true' );
+		} else if($params == 'entry_payment') {
+			$userdata = array(	'user_id' => $user['id'],
+								'entry_payment' => 'true');
 		} else if($params == NULL) {
 			
 			$this->CI->session->unset_userdata('force_pgp');
 			$this->CI->session->unset_userdata('two_factor');
+			$this->CI->session->unset_userdata('entry_payment');
 			$userdata = array(	'logged_in' => 'true',
 								'last_activity' => time(),
 								'new_session' => 'true',
@@ -149,6 +154,9 @@ class Bw_session {
 		
 		if( $this->CI->current_user->force_pgp == TRUE && !$this->CI->general->matches_any(uri_string(), array('register/pgp', 'logout')) )
 			redirect('register/pgp');
+		
+		if( $this->CI->current_user->entry_payment == TRUE && !$this->CI->general->matches_any(uri_string(), array('register/payment', 'logout')) )
+			redirect('register/payment');			
 			
 		if($this->auth_level == 'guestonly') {
 			if($this->CI->current_user->logged_in())

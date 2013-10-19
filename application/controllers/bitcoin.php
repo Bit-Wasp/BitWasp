@@ -63,7 +63,7 @@ class Bitcoin extends CI_Controller {
 				redirect('bitcoin');
 			} else {
 				// Leave an error message if the user was not redirected.
-				$data['returnMessage'] = 'There was an error processing your transaction. Please ensure you entered a positive, decimal number to send.';
+				$data['returnMessage'] = 'There was an error processing your transaction. Please ensure you entered a positive, decimal number to send.<br />DEBUG: ';print_r($send);
 			}
 		} 
 		
@@ -86,12 +86,18 @@ class Bitcoin extends CI_Controller {
 	public function panel() {
 		$this->load->library('form_validation');
 		
+		// Check if user is looking to generate a new address.
 		if($this->input->post('generate_new') == 'Replace') {
 			// If 'Generate' has been clicked, create a new address for the user.
 			$this->bw_bitcoin->new_address($this->current_user->user_hash);
-		} else if($this->form_validation->run('update_cashout_address') === TRUE) {
-			// If the form is submitted correctly, set a cashout address.
-			$this->bitcoin_model->set_cashout_address($this->current_user->user_hash, $this->input->post('cashout_address'));
+		}
+		
+		// Check if the user is updating their cashout address.
+		if($this->input->post('update_cashout') == 'Update') {
+			if($this->form_validation->run('update_cashout_address') === TRUE) {
+				// If the form is submitted correctly, set a cashout address.
+				$this->bitcoin_model->set_cashout_address($this->current_user->user_hash, $this->input->post('cashout_address'));
+			}
 		}
 		
 		// If there is any information about a recent transaction, display it.
@@ -100,7 +106,7 @@ class Bitcoin extends CI_Controller {
 			$action = ($info['category'] == 'send') ? 'sent to' : 'received on';
 			$data['returnMessage'] = "{$info['value']}BTC was $action {$info['address']}.<br/ >Transaction ID: {$info['txn_id']}";
 		}
-		
+		 
 		// Load information about the user.
 		$data['current_balance'] = $this->bitcoin_model->current_balance();
 		$data['unverified_balance'] = $this->bitcoin_model->unverified_transactions($this->current_user->user_hash);

@@ -69,13 +69,13 @@ class Users_model extends CI_Model {
 
 		if (isset($user['user_hash'])) {
 			// Duplicate the select statement to prevent weird errors later on.
-			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');			
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth, entry_paid');			
 			$query = $this->db->get_where('users', array('user_hash' => $user['user_hash']));
 		} elseif (isset($user['id'])) {
-			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth, entry_paid');
 			$query = $this->db->get_where('users', array('id' => $user['id']));
 		} elseif (isset($user['user_name'])) {
-			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth');			
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth, entry_paid');			
 			$query = $this->db->get_where('users', array('user_name' => $user['user_name']));
 		} else {
 			return FALSE; //No suitable field found.
@@ -221,6 +221,98 @@ class Users_model extends CI_Model {
 		$query = $this->db->update('users', $change);
 		return ($query) ? TRUE : FALSE;
 	}
+	
+	/**
+	 * Set Entry Fee
+	 * 
+	 * This function is used to record a figure that the user must pay
+	 * in order to register on the website. $info['user_hash'], $info['amount']
+	 * and $info['bitcoin_address'] must be supplied. 
+	 * 
+	 * @param	array	info
+	 * @return	boolean
+	 */
+	 public function set_entry_payment($info){
+		 $info['time'] = time();
+		 return ($this->db->insert('entry_payment', $info)) ? TRUE : FALSE;
+	 }
+	 
+	/** 
+	 * Set Entry Paid
+	 * 
+	 * This function is run when entry is free or when the user has
+	 * paid for their site. If this entry is not set in the table, when
+	 * they try to log in, users will be directed to the intermediary 
+	 * payment page.
+	 * 
+	 * @param	string	$user_hash
+	 * @return	boolean
+	 */
+	public function set_entry_paid($user_hash) {
+		$array = array('entry_paid' => '1');
+		$this->db->where('user_hash', $user_hash);
+		return ($this->db->update('users', array('entry_paid' => '1'))) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Payment Address
+	 * 
+	 * If the bitcoin daemon is offline, when they register, we'll need
+	 * to add a proper address.
+	 * 
+	 * @param	string	$user_hash
+	 * @param	string	$address
+	 * return	boolean
+	 */
+	public function set_payment_address($user_hash, $address) {
+		if($address == NULL)
+			return FALSE;
+		$this->db->where('user_hash', $user_hash);
+		return ($this->db->update('entry_payment', array('bitcoin_address' => $address))) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Get Payment Address Owner
+	 * 
+	 * Function to return the user has associated with the particular
+	 * $address. Called in the bw_bitcoin->walletnotify() function to see
+	 * if the address belongs to a fee's account. If so, it will check the
+	 * amount received on that address. When it's >= to the required amount
+	 * the user can log in. Excesses are added to the user account!
+	 * 
+	 * @param	string	$address
+	 * return	string/FALSE
+	 */
+	public function get_payment_address_owner($address) {
+		$this->db->select('user_hash');
+		$this->db->where('bitcoin_address', $address);
+		$query = $this->db->get('entry_payment');
+		if($query->num_rows() > 0) {
+			$row = $query->row_array();
+			return($row['user_hash']);
+		}
+		return FALSE;
+	}
+	
+	/**
+	 * Get Entry Payment 
+	 * 
+	 * This function will load the details of the required entry
+	 * payment for this user. 
+	 * 
+	 * @param	string	$user_hash
+	 * @return 	array/FALSE
+	 */
+	 public function get_entry_payment($user_hash) { 
+		 $this->db->where('user_hash', $user_hash);
+		 $query = $this->db->get('entry_payment');
+		 return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
+	 }
+	 
+	 public function delete_entry_payment($user_hash){
+		 $this->db->where('user_hash', $user_hash);
+		 return ($this->db->delete('entry_payment') == TRUE) ? TRUE : FALSE;
+	} 
 };
 
 /* End of File: Users_Model.php */

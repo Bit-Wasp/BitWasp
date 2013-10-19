@@ -21,8 +21,6 @@ $CI->load->library('bw_bitcoin');
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
 $byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
 define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
-echo "Start: $byte<br />";
-echo "BITCOIN: ".BITCOIN_ADDRESS_VERSION."<br />";
 
 class Bitcoin_crypto {
 
@@ -170,7 +168,6 @@ class Bitcoin_crypto {
 * @access public
 */
   public static function hash160ToAddress($hash160, $addressversion = BITCOIN_ADDRESS_VERSION) {
-	echo "Used: $addressversion<br />";
     $hash160 = $addressversion . $hash160;
     $check = @pack("H*", $hash160);
     $check = hash("sha256", hash("sha256", $check, true));
@@ -238,7 +235,7 @@ class Bitcoin_crypto {
 * @access public
 */
   public static function pubKeyToAddress($pubkey, $addressversion = BITCOIN_ADDRESS_VERSION) {
-    return self::hash160ToAddress(self::hash160($pubkey));
+    return self::hash160ToAddress(self::hash160($pubkey), $addressversion);
   }
   
   /**
@@ -442,4 +439,6 @@ class Bitcoin_crypto {
   }
   
 }
+
+
 ?>
