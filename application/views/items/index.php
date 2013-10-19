@@ -9,7 +9,7 @@
 <?php foreach ($items as $item): ?>
             <div class="span3 well well-small" id="prod_<?php echo $item['hash']; ?>" >
                 <div class="itemImg">
-                  <?php echo anchor('item/'.$item['hash'], "<img src='data:image/jpeg;base64,{$item['main_image']['encoded']}' title='{$item['name']}' width='200'>"); ?>
+                  <?php echo anchor('item/'.$item['hash'], "<img src='data:image/jpeg;base64,{$item['main_image']['encoded']}' title='{$item['name']}' class='span12'>"); ?>
                 </div>
 
                 <div class="caption">
