@@ -237,9 +237,9 @@ class Users extends CI_Controller {
 						if($this->users_model->set_entry_payment($info) == TRUE){
 								
 							if($address == NULL){
-								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee.<br />Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
+								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
 							} else {
-								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee.<br />Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
+								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 							}
 						}
 					} else {
@@ -336,7 +336,7 @@ class Users extends CI_Controller {
 	 * @access	public
 	 */
 	 public function payment() {
-		 if($this->current_user->entry_payment !== TRUE)
+		if($this->current_user->entry_payment !== TRUE)
 			redirect('');
 
 		$this->load->library('bw_bitcoin');
@@ -344,10 +344,28 @@ class Users extends CI_Controller {
 		
 		$data['user'] = $this->users_model->get(array('id' => $this->current_user->user_id));
 		$data['entry_payment'] = $this->users_model->get_entry_payment($data['user']['user_hash']);
-		
-		
+		var_dump($data['entry_payment']);echo "<br>";
+
+		if($data['entry_payment'] == FALSE || $data['user']['entry_paid'] == '1'){
+	
+			if ($data['user']['user_role'] == 'Vendor' 
+				&& $this->bw_config->force_vendor_pgp == TRUE
+				&& $this->accounts_model->get_pgp_key($data['user']['id']) == FALSE){
+						
+				// Redirect to register a PGP key.
+				$this->session->unset_userdata('entry_payment');
+				$this->bw_session->create($data['user'], 'force_pgp');	// enable a half-session where the user registers a PGP key.
+				redirect('register/pgp');
+				
+			} else {
+				$this->session->unset_userdata('entry_payment');
+				$this->bw_session->create($data['user']);
+				redirect('');
+			}	
+		}
+			var_dump($data['entry_payment']['bitcoin_address']);
 		// Payment is still not completed, but the bitcoin address is not set.
-		if($data['entry_payment'] !== FALSE && $data['entry_payment']['bitcoin_address'] == ''){
+		if($data['entry_payment'] !== FALSE && $data['entry_payment']['bitcoin_address'] == '0'){
 			// Try to generate another.
 			$payment_address = $this->bw_bitcoin->new_fees_address();
 			if($payment_address !== NULL) {
@@ -362,32 +380,11 @@ class Users extends CI_Controller {
 					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. Unfortunately, the bitcoin processing system is unavailable at this time. Please try again later to check for the payment address.";
 				}
 			}
-		} else {
+		} else if($data['entry_payment'] !== FALSE) {
 			$data['entry_payment']['received'] = $this->bw_bitcoin->getreceivedbyaddress($data['entry_payment']['bitcoin_address']);
 			$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh once you have made the payment to check for receipt."; 	
 		}
-		
-		if($data['entry_payment']['bitcoin_address'] !== ''){
-			if($data['entry_payment'] == FALSE && $data['user']['entry_paid'] == '1'){
-		
-				if ($data['user']['user_role'] == 'Vendor' 
-					&& $this->bw_config->force_vendor_pgp == TRUE
-					&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE){
-							echo 'register pgp';
-					// Redirect to register a PGP key.
-					$this->bw_session->create($user_info, 'force_pgp');	// enable a half-session where the user registers a PGP key.
-					//redirect('register/pgp');
-					
-				} else {
-					$this->bw_session->create($data['user']);
-					echo 'full session';
-					//redirect('');
-				}	
-			
-			}
-			
-		}
-			
+				
 		$data['title'] = 'Entry Payment';
 		$data['page'] = 'users/payment';
 		

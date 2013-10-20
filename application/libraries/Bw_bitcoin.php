@@ -456,7 +456,8 @@ class Bw_bitcoin {
 	 * @return		void
 	 */		
 	public function blocknotify($block_hash){
-		
+		$this->CI->load->model('users_model');
+					
 		// First task, maintain a record of the processed blocks.
 		if($this->CI->bitcoin_model->have_block($block_hash) == FALSE) {
 			$block = $this->getblock($block_hash);
@@ -476,8 +477,10 @@ class Bw_bitcoin {
 		// Prepare to build arrays of any transactions who need to be credited or have their confirmations changed.
 		$credits = array();
 		$confirmations = array();
+		echo "Pending Transactions\n\n";
 		
 		foreach($pending as $txn){
+			print_r($txn);
 			$transaction = $this->gettransaction($txn['txn_id']);
 
 			// Probably don't need this check as it will have been done before,
@@ -487,28 +490,41 @@ class Bw_bitcoin {
 							   'user_hash' => $txn['user_hash'],
 							   'confirmations' => $transaction['confirmations'],
 							   'category' => $txn['category'],
-							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.s
+							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.
+				
+				
+				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'fees' && $transaction['confirmations'] >1 ){
+
+					$user_hash = $this->CI->users_model->get_payment_address_owner($txn['address']);
+					$entry = $this->CI->users_model->get_entry_payment($user_hash);
+			
+					if($entry !== FALSE){	
+						$addr_balance = $this->getreceivedbyaddress($txn['address']);
+
+						if($addr_balance >= $entry['amount']){
+							if($this->CI->users_model->delete_entry_payment($user_hash)){
+								$this->CI->users_model->set_entry_paid($user_hash);
+								echo "do fees clearance {address = {$txn['address']} && user_hash = {$user_hash} && received_balance = {$addr_balance}}\n";				
+							}
+						}
+					}
+				}
 				
 				// Try to credit an account if the topup transaction has reached 7 confirmations.
-				if($txn['category'] == 'receive' && $txn['credited'] == '0' && $array['confirmations'] > 6){
+				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'main' && $txn['credited'] == '0' && $array['confirmations'] > 6){
 					array_push($credits, $array);
 					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
 					
-					if($txn['details']['account'] == "fees"){
-						$this->CI->load->model('users_model');
-						$user_hash = $this->CI->users_model->get_payment_address_owner($transaction['address']);
-						if($this->CI->users_model->delete_entry_payment($user_hash))
-							$this->CI->users_model->set_entry_paid($user_hash);
-							
+					if($transaction['details']['account'] == "main"){
 						
-					} else if($txn['details']['account'] == "fees"){
+						echo "\nMain\n";
 						$to_address = $this->new_main_address();
 						$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
 						if(isset($send['code'])) {
 							$accounts = $this->listaccounts();
 	//						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
 						}	
-					}
+					} 
 					
 					
 				}

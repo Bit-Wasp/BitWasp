@@ -99,11 +99,11 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (28, 'delete_messages_after', '45'),
 (29, 'delete_transactions_after', '0'),
 (30, 'max_main_balance', '0.00000000'),
-(31, 'max_fees_balance', '0.00000000');
+(31, 'max_fees_balance', '0.00000000'),
 (32, 'electrum_mpk', ''),
 (33, 'electrum_iteration', ''),
 (34, 'electrum_gap_limit', ''),
-(35, 'delete_logs_after', '14'),
+(35, 'delete_logs_after', '14');
 -- --------------------------------------------------------
 
 --

@@ -29,6 +29,16 @@
 			</div>
 			
 			<div class="row-fluid">
+			  <span class="span3">Vendor Registration Fee:</span>
+			  <span class="span7"><?php echo ($config['entry_fee_vendor'] > 0) ? $config['entry_fee_vendor'] : 'Not Required'; ?></span>
+			</div>
+
+			<div class="row-fluid">
+			  <span class="span3">Buyer Registration Fee:</span>
+			  <span class="span7"><?php echo ($config['entry_fee_buyer'] > 0) ? $config['entry_fee_buyer'] : 'Not Required'; ?></span>
+			</div>
+			
+			<div class="row-fluid">
 			  <span class="span3">Registration Tokens</span>
 			  <span class="span7"><?php echo anchor('admin/tokens','Manage'); ?></span>
 			</div>

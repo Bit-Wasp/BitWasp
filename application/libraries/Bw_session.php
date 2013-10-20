@@ -110,13 +110,14 @@ class Bw_session {
 	 * 
 	 * @return		void
 	 */
-	public function destroy() {
+	public function destroy($redirect = TRUE) {
 		$this->CI->session->unset_userdata('logged_in');
 		$this->CI->session->unset_userdata('auth_reqs');
 		$this->CI->session->unset_userdata('message_password');
 		// Destroy the session.
 		$this->CI->session->sess_destroy();
-		redirect('login');
+		if($redirect == TRUE)
+			redirect('login');
 	}
 	
 	/**
@@ -155,8 +156,8 @@ class Bw_session {
 		if( $this->CI->current_user->force_pgp == TRUE && !$this->CI->general->matches_any(uri_string(), array('register/pgp', 'logout')) )
 			redirect('register/pgp');
 		
-		if( $this->CI->current_user->entry_payment == TRUE && !$this->CI->general->matches_any(uri_string(), array('register/payment', 'logout')) )
-			redirect('register/payment');			
+		//if( $this->CI->current_user->entry_payment == TRUE && !$this->CI->general->matches_any(uri_string(), array('register/payment', 'logout')) )
+			//redirect('register/payment');			
 			
 		if($this->auth_level == 'guestonly') {
 			if($this->CI->current_user->logged_in())

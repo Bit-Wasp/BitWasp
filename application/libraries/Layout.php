@@ -94,7 +94,6 @@ class Layout {
 		$CI->load->view('templates/bar/'.$bar['role'], $bar);
 		$CI->load->view('templates/midsection');
         $CI->load->view('templates/sidebar', $category_data);
-//        print_r($CI->current_user->status());
         $CI->load->view($data['page'], $data);
 		$CI->load->view('templates/footer',$footer);
 			
