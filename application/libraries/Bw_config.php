@@ -192,7 +192,7 @@ class Bw_config {
 			die('Error, BitWasp configuration not found.');
 		
 		// If any fields are missing, set them to NULL.
-		$config = $this->CI->general->expect_keys('site_description, max_fees_balance, max_main_balance, delete_messages_after, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
+		$config = $this->CI->general->expect_keys('site_description, entry_payment_vendor, entry_payment_buyer, max_fees_balance, max_main_balance, delete_messages_after, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
 		foreach($config as $key => $value) {
 			$this->$key = $value;
 		}
@@ -246,7 +246,9 @@ class Bw_config {
 							'login_timeout' => $this->login_timeout/60,
 							'captcha_length' => $this->captcha_length,
 							'ban_after_inactivity' => $this->ban_after_inactivity,
-							'delete_messages_after' => $this->delete_messages_after);
+							'delete_messages_after' => $this->delete_messages_after,
+							'entry_payment_vendor' => $this->entry_payment_vendor,
+							'entry_payment_buyer' => $this->entry_payment_buyer);
 		} else if($panel == 'items') {
 			$result = array();
 		} else if($panel == 'autorun') {

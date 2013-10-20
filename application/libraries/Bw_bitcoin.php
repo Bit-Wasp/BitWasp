@@ -345,7 +345,7 @@ class Bw_bitcoin {
 				array_push($receive, $detail);
 		}
 	echo "new transaction\n";
-	print_r($send); echo "\n";print_r($receive);
+		print_r($send); echo "\n";print_r($receive);
 	
 		if(isset($receive[0]) && $receive[0]['account'] == 'fees' && $receive[0]['category'] == "receive") {
 			echo "received fees transaction\n";
