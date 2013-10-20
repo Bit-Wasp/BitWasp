@@ -382,12 +382,18 @@ class Admin extends CI_Controller {
 			$changes['force_vendor_pgp'] = ((int)$this->input->post('force_vendor_pgp') !== $data['config']['force_vendor_pgp']) ? $this->input->post('force_vendor_pgp') : NULL;
 			$changes['ban_after_inactivity'] = ($this->input->post('ban_after_inactivity') !== $data['config']['ban_after_inactivity']) ? $this->input->post('ban_after_inactivity') : NULL ;			
 			$changes['delete_messages_after'] = ($this->input->post('delete_messages_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_messages_after') : NULL ;			
+			$changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
+			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
 			
 			// If we're disabling auto-banning users after inactivity, set that.
 			if($this->input->post('ban_after_inactivity_disabled') == '1') 		$changes['ban_after_inactivity'] = "0";
 
 			// If we're disabling auto-clearing of user messages.
 			if($this->input->post('delete_messages_after_disabled') == '1')		$changes['delete_messages_after'] = "0";				
+			
+			// Set registration payments for buyer/vendor to zero if disabled.
+			if($this->input->post('entry_payment_buyer_disabled') == '1')		$changes['entry_payment_buyer'] = '0';
+			if($this->input->post('entry_payment_vendor_disabled') == '1')		$changes['entry_payment_vendor'] = '0';
 			
 			$changes = array_filter($changes, 'strlen');
 

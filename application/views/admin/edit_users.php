@@ -36,6 +36,30 @@
 		      <span class="help-inline offset2"><?php echo form_error('vendor_registration_allowed'); ?></span>
 			
 			  <div class="row-fluid">
+				<div class="span3">Vendor Registration Fee</div>
+				<div class="span7">
+				  <div class="input-prepend">
+				    <span class="add-on"><i>BTC</i></span>
+					<input type='text' class='span10' name='entry_payment_vendor' value='<?php echo $config['entry_payment_vendor']; ?>' /> 
+				  </div>
+				  <label class="inline"><input type='checkbox' name='entry_payment_vendor_disabled' <?php echo ($config['entry_payment_vendor'] > 0) ? NULL : 'checked'; ?>	value='1' /> Disabled</label>
+				</div>
+			  </div>
+		      <span class="help-inline offset2"><?php echo form_error('entry_payment_vendor'); ?></span>
+			
+			  <div class="row-fluid">
+				<div class="span3">Buyer Registration Fee</div>
+				<div class="span7">
+				  <div class="input-prepend">
+				    <span class="add-on"><i>BTC</i></span>
+					<input type='text' class='span10' name='entry_payment_buyer' value='<?php echo $config['entry_payment_buyer']; ?>' /> 
+				  </div>
+				  <label class="inline"><input type='checkbox' name='entry_payment_buyer_disabled' <?php echo ($config['entry_payment_buyer'] > 0) ? NULL : 'checked'; ?>	value='1' /> Disabled</label>
+				</div>
+			  </div>
+		      <span class="help-inline offset2"><?php echo form_error('entry_payment_buyer'); ?></span>
+			
+			  <div class="row-fluid">
 			    <div class="span3">Encrypt Private Message's?</div>
 			    <div class="span7">
                   <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='0' <?php echo ($config['encrypt_private_messages'] == '0') ? 'checked' : ''; ?> /> Disabled</label>

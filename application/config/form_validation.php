@@ -270,6 +270,10 @@ $config = array('register_form'=>array(
 											  'label' => '',
 											  'rules' => 'callback_check_bool'
 										),
+										array('field' => 'force_vendor_pgp',
+											  'label' => '',
+											  'rules' => 'callback_check_bool'
+										),
 										array('field' => 'ban_after_inactivity',
 											  'label' => 'User inactivity',
 											  'rules' => 'max_length[3]|callback_check_is_positive'
@@ -277,7 +281,15 @@ $config = array('register_form'=>array(
 										array('field' => 'delete_messages_after',
 											  'label' => 'Oldest message age',
 											  'rules' => 'max_length[3]|callback_check_is_positive'
-										)										
+										),
+										array('field' => 'entry_payment_vendor',
+											  'label' => 'Vendor registration fee',
+											  'rules' => 'callback_check_is_postive'
+										),
+										array('field' => 'entry_payment_buyer',
+											  'label' => 'Buyer registration fee',
+											  'rules' => 'callback_check_is_positive'
+										)
 							),
 				'admin_edit_bitcoin' => array(
 										array('field' => 'delete_transactions_after',

@@ -103,7 +103,9 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (32, 'electrum_mpk', ''),
 (33, 'electrum_iteration', ''),
 (34, 'electrum_gap_limit', ''),
-(35, 'delete_logs_after', '14');
+(35, 'delete_logs_after', '14'),
+(36, 'entry_payment_vendor', '0.00000000'),
+(37, 'entry_payment_buyer', '0.00000000');
 -- --------------------------------------------------------
 
 --

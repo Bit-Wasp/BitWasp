@@ -161,17 +161,35 @@ class Bw_config {
 	 * code, or allow CodeIgniter to try and work it out. The default is
 	 * to leave this to CodeIgniter.
 	 */
-	 public $base_url;
+	public $base_url;
 	 
-	 /**
-	  * Index Page
-	  * 
-	  * (planned feature) Administrators can specify whether they want URL's
-	  * to include the index.php string, or use mod_rewrite to tidy the URL's.
-	  * The default is to support mod_rewrite.
-	  */
-	  public $index_page;
+	/**
+	 * Index Page
+	 * 
+	 * (planned feature) Administrators can specify whether they want URL's
+	 * to include the index.php string, or use mod_rewrite to tidy the URL's.
+	 * The default is to support mod_rewrite.
+	 */
+	public $index_page;
 	  
+	/**
+	 * Entry Payment Vendor
+	 * 
+	 * This setting determines how much the vendor must pay in order to 
+	 * create an account on the website. The default is for vendors to
+	 * be able to register without payment
+	 */
+	public $entry_payment_vendor	= 0.00000000;
+
+	/**
+	 * Entry Payment Buyer
+	 * 
+	 * This setting determines how much a buyer has to pay in order
+	 * to create an account on the site. The default is for this to be 
+	 * disabled
+	 */
+	public $entry_payment_buyer		= 0.00000000;
+	
 	/**
 	 * Constructor
 	 * 
