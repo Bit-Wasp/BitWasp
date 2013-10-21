@@ -620,6 +620,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `bitcoin_cashout_address` varchar(40) NOT NULL,
   `bitcoin_topup_address` varchar(40) NOT NULL,
   `bitcoin_balance` decimal(10,8) NOT NULL,
+  `entry_paid` enum('0','1') default '0',
   `force_pgp_messages` enum('0','1') NOT NULL,
   `location` int(3) NOT NULL,
   `login_time` int(20) NOT NULL,

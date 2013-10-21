@@ -318,6 +318,9 @@ class Bw_bitcoin {
 	 * execution. Processes send/receive information to see if there are 
 	 * balances to credit/debit.
 	 * 
+	 * If a transaction is for paying a registration fee, check if the
+	 * user has paid the required figure. Activate the account if the
+	 * user has met the amount.
 	 * Immediately deducts a users balance if the transaction is a user
 	 * cashing out their account.
 	 * If the user is topping up, we create a new address for them to 
@@ -335,7 +338,7 @@ class Bw_bitcoin {
 		if(isset($transaction['code']) && $transaction == NULL)
 			return FALSE;
 
-		// Extract details for send/receive.
+		// Extract details for send/receive from inputs and oupputs.
 		$send = array();
 		$receive = array();
 		foreach($transaction['details'] as $detail) {
@@ -344,19 +347,15 @@ class Bw_bitcoin {
 			if($detail['category'] == 'receive')
 				array_push($receive, $detail);
 		}
-	echo "new transaction\n";
-		print_r($send); echo "\n";print_r($receive);
-	
+
+		// Work out if the transaction is for a registration payment.
 		if(isset($receive[0]) && $receive[0]['account'] == 'fees' && $receive[0]['category'] == "receive") {
-			echo "received fees transaction\n";
 			$this->CI->load->model('users_model');
 			$address = $receive[0]['address'];
 			
 			$user_hash = $this->CI->users_model->get_payment_address_owner($address);
 			if($user_hash !== FALSE) {
-				echo "found user\n";
 				// Add payment.
-
 				$update = array('txn_id' => $txn_hash,
 								'user_hash' => $user_hash,
 								'value' => $receive[0]['amount'],
@@ -366,70 +365,61 @@ class Bw_bitcoin {
 								'credited' => '0',
 								'time' => $transaction['time']);
 				
+				// If we don't have the payment, add it.
 				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
-					echo "havent seen txn before\n";
 					$this->CI->bitcoin_model->add_pending_txn($update);
 				
-					// Check whether the user has exceeded their balance.
-					$entry_payment = $this->CI->users_model->get_entry_payment($user_hash);
-					$addr_balance = $this->getreceivedbyaddress($address);
-					if($entry_payment !== FALSE && $addr_balance >= $entry_payment['amount']){
-						echo "user accepted\n";
-						if($this->CI->users_model->set_entry_paid($user_hash) == TRUE)
-							$this->CI->users_model->delete_entry_payment($user_hash);
-						
-					}
 				}
-				
 			}
-			
 		}
 		
 		// Work out if the transaction is cashing out anything.
 		if(isset($send[0]) && $send[0]['account'] == "main" && $send[0]['category'] == "send") {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
-			if($user_hash == FALSE)
-				return FALSE;
-			
-			$update = array('txn_id' => $txn_hash,
-							'user_hash' => $user_hash,
-							'value' => $send[0]['amount'],
-							'confirmations' => $transaction['confirmations'],
-							'address' => $send[0]['address'],
-							'category' => 'send',
-							'credited' => '1',
-							'time' => $transaction['time']);
+			if($user_hash !== FALSE) {
+				$update = array('txn_id' => $txn_hash,
+								'user_hash' => $user_hash,
+								'value' => $send[0]['amount'],
+								'confirmations' => $transaction['confirmations'],
+								'address' => $send[0]['address'],
+								'category' => 'send',
+								'credited' => '1',
+								'time' => $transaction['time']);
 
-			if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
+				// If we do not already have this transaction, add it, and deduct the users balance.
+				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
 
-				$this->CI->bitcoin_model->add_pending_txn($update);
-				
-				// Immediately deduct a users balance if cashing out.
-				$debit = array('user_hash' => $user_hash,
-							'value' => $update['value']);
-				$this->CI->bitcoin_model->update_credits(array($debit));
+					$this->CI->bitcoin_model->add_pending_txn($update);
+					
+					// Immediately deduct a users balance if cashing out.
+					$debit = array( 'user_hash' => $user_hash,
+									'value' => $update['value']);
+					$this->CI->bitcoin_model->update_credits(array($debit));
+				}
 			}
 		}
 		
 		// Workout if the transaction is topping an account up.
 		if(isset($receive[0]) && $receive[0]['account'] == 'topup' && $receive[0]['category'] == "receive") {
 			$user_hash = $this->CI->bitcoin_model->get_address_owner($receive[0]['address']);
-			if($user_hash == FALSE)
-				return FALSE;
+			if($user_hash !== FALSE) {
 			
-			$update = array('txn_id' => $txn_hash,
-							'user_hash' => $user_hash,
-							'value' => $receive[0]['amount'],
-							'confirmations' => $transaction['confirmations'],
-							'address' => $receive[0]['address'],
-							'category' => 'receive',
-							'time' => $transaction['time']);
+				$update = array('txn_id' => $txn_hash,
+								'user_hash' => $user_hash,
+								'value' => $receive[0]['amount'],
+								'confirmations' => $transaction['confirmations'],
+								'address' => $receive[0]['address'],
+								'category' => 'receive',
+								'time' => $transaction['time']);
 
-			if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
-				$this->CI->bitcoin_model->add_pending_txn($update);
+				// If we do not already have the transaction, add it, and generate a new address if needed.
+				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
+					$this->CI->bitcoin_model->add_pending_txn($update);
 
-				if($this->CI->bitcoin_model->get_user_address($user_hash) == $update['address']) 
-					@$this->new_address($user_hash);					
+					// If the users current topup equals the one used to top up, generate a new one.
+					if($this->CI->bitcoin_model->get_user_address($user_hash) == $update['address']) 
+						@$this->new_address($user_hash);					
+				}
 			}
 		}
 	}
@@ -477,10 +467,9 @@ class Bw_bitcoin {
 		// Prepare to build arrays of any transactions who need to be credited or have their confirmations changed.
 		$credits = array();
 		$confirmations = array();
-		echo "Pending Transactions\n\n";
 		
+		// Loop through pending transactions.
 		foreach($pending as $txn){
-			print_r($txn);
 			$transaction = $this->gettransaction($txn['txn_id']);
 
 			// Probably don't need this check as it will have been done before,
@@ -493,40 +482,33 @@ class Bw_bitcoin {
 							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.
 				
 				
+				// If the transaction is to do with fee's, then check if the number of transactions exceeds one.
+				// If the entry_payment still exists, and the confirmed balance >= the amount, then delete the 
+				// record and activate the account.
 				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'fees' && $transaction['confirmations'] >1 ){
-
 					$user_hash = $this->CI->users_model->get_payment_address_owner($txn['address']);
 					$entry = $this->CI->users_model->get_entry_payment($user_hash);
 			
 					if($entry !== FALSE){	
 						$addr_balance = $this->getreceivedbyaddress($txn['address']);
 
-						if($addr_balance >= $entry['amount']){
-							if($this->CI->users_model->delete_entry_payment($user_hash)){
+						if($addr_balance >= $entry['amount'])
+							if($this->CI->users_model->delete_entry_payment($user_hash))
 								$this->CI->users_model->set_entry_paid($user_hash);
-								echo "do fees clearance {address = {$txn['address']} && user_hash = {$user_hash} && received_balance = {$addr_balance}}\n";				
-							}
-						}
 					}
 				}
 				
-				// Try to credit an account if the topup transaction has reached 7 confirmations.
+				// Try to credit the balance to a users account if the topup transaction has reached 7 confirmations.
 				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'main' && $txn['credited'] == '0' && $array['confirmations'] > 6){
 					array_push($credits, $array);
 					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
 					
-					if($transaction['details']['account'] == "main"){
-						
-						echo "\nMain\n";
-						$to_address = $this->new_main_address();
-						$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
-						if(isset($send['code'])) {
-							$accounts = $this->listaccounts();
-	//						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
-						}	
-					} 
-					
-					
+					$to_address = $this->new_main_address();
+					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
+					if(isset($send['code'])) {
+						$accounts = $this->listaccounts();
+//						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+					}	
 				}
 				
 				// If the transaction has more than 50 confirmations, stop tracking it.
