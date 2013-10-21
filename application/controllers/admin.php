@@ -730,7 +730,7 @@ class Admin extends CI_Controller {
 				$links .= ' class="active" ';
 				$self = $entry;
 				$heading = $entry['heading'];
-				$panel_url = $admin_url.$self['panel'];
+				$panel_url = $self['panel'];
 			}
 			$links .= '>'.anchor('admin'.$entry['panel'], $entry['title']).'</li>';
 		}
@@ -738,7 +738,7 @@ class Admin extends CI_Controller {
 		$nav = '
 		  <div class="tabbable">
 			<label class="span3"><h2>'.$self['heading'].'</h2></label>
-			<label class="span1">'.anchor($panel_url, 'Edit').'</label>
+			<label class="span1">'.anchor('admin/edit'.$panel_url, 'Edit', 'class="btn"').'</label>
 			<label class="span7">
 			  <ul class="nav nav-tabs">
 			  '.$links.'
