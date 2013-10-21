@@ -115,6 +115,12 @@ class Items_model extends CI_Model {
 		$query = $this->db->get('items');
 		if($query->num_rows() > 0) {
 			$row = $query->row_array();
+			
+			// Check if the vendor is banned. Fail if that is the case.
+			$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
+			if($row['vendor']['banned'] == '1')
+				return FALSE;
+			
 			$row['description_f'] = nl2br($row['description']);
 			$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
 			$row['currency'] = $this->currencies_model->get($row['currency']);

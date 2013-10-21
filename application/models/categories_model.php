@@ -187,6 +187,7 @@ class Categories_model extends CI_Model {
 	 * @return	array
 	 */				
 	public function menu(){
+		$this->load->model('items_model');
 		
 		$this->db->select('id, description, name, hash, parent_id');
 		//Load all categories and sort by parent category
@@ -199,15 +200,14 @@ class Categories_model extends CI_Model {
 			
 		// Add all categories to $menu[] array.
 		foreach($query->result() as $result){
-      		$this->db->where('category',"{$result->id}");
-      		$this->db->where('hidden !=', '1');
-			$products = $this->db->get('items');
+			$items = $this->items_model->get_list(array('category' => $result->id));
+			
 			
 			$menu[$result->id] = array(	'id' => $result->id,
 										'name' => $result->name,
 										'description' => $result->description,
 										'hash' => $result->hash,
-										'count' => $products->num_rows(),
+										'count' => count($items),
 										'parent_id' => $result->parent_id
 									);
 		}
