@@ -67,7 +67,7 @@
 					  <input type='hidden' name='user_type' value='<?php echo $token_info['user_type']['int']; ?>' />
 	              </div>
 	            </div>
-	      <?php } else { ?>
+	    <?php } else { ?>
 
 				<div class="control-group">
 				  <label class="control-label" for="user_type">Role</label>

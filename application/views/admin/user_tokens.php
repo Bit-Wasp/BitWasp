@@ -68,7 +68,7 @@
 			  <tr>
 				<td class='span2'><?php echo anchor('register/'.$token['token_content'], 'Right click to copy', 'class="btn btn-mini"'); ?></td>
 				<td class='span2'><?php echo anchor('admin/tokens/delete/'.$token['token_content'], 'Delete', 'class="btn btn-danger btn-mini"'); ?></td>
-				<td class='span2'><?php echo $token['role']; ?></td>
+				<td class='span1'><?php echo $token['role']; ?></td>
 				<td class='span2'>BTC <?php echo $token['entry_payment']; ?></td>
 				<td class='span6'><?php echo $token['comment']; ?></td>
 			  </tr>
