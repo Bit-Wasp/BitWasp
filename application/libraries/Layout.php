@@ -41,15 +41,15 @@ class Layout {
 		if(!isset($data['header_meta'])) 
 			$data['header_meta'] = ''; 
 
-		$bar['role'] = 'guest';
-		$bar['allow_guests'] = $CI->bw_config->allow_guests;
-		$category_data['cats'] = '';
-		$category_data['block'] = FALSE;
+		$bar['role'] 				= 'guest';
+		$bar['allow_guests'] 		= $CI->bw_config->allow_guests;
+		$category_data['cats'] 		= '';
+		$category_data['block'] 	= FALSE;
 		
-		$data['site_title'] = $CI->bw_config->site_title;
-		$data['site_description'] = $CI->bw_config->site_description;
-		$footer['price_index'] = $CI->bw_config->price_index;
-		$footer['exchange_rates'] = $CI->currencies_model->get_exchange_rates();
+		$data['site_title'] 		= $CI->bw_config->site_title;
+		$data['site_description']	= $CI->bw_config->site_description;
+		$footer['price_index']		= $CI->bw_config->price_index;
+		$footer['exchange_rates']	= $CI->currencies_model->get_exchange_rates();
 		
 		//Check if there are categories to display
 		if(!isset($data['currentCat'])) $data['currentCat'] = array(); 
@@ -114,6 +114,8 @@ class Layout {
 		if($level !== 1) 
 			$content .= "<ul>\n";
 
+		// Pregenerate the URL. Checks for trailing slashes, fixes up
+		// issues when mod_rewrite is disabled.
 		// Loop through each parent category
 		foreach($categories as $category) {
 			//Check if were are currently viewing this category, if so, set it as active
@@ -123,9 +125,8 @@ class Layout {
 					$content .= "class='active'"; 
 			} $content .= ">\n";
 
-			// Display link if category contains items.
-			$content .= ($category['count'] == 0) ? '<span>'.$category['name'].'</span>' : '<a href="'.site_url().'category/'.$category['hash'].'">'.$category['name'].' ('. $category['count'] .")</a>\n";
-
+			// Display link if category contains items. 
+			$content .= ($category['count'] == 0) ? '<span>'.$category['name'].'</span>' : anchor('category/'.$category['hash'], $category['name'].' ('.$category['count'].")</a>\n");
 			// Check if we need to recurse into children.
 			if(isset($category['children']))  
 			$content .= $this->menu($category['children'], $level, $params); 

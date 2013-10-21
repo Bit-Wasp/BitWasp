@@ -416,13 +416,13 @@ class Order_model extends CI_Model {
 						break;
 					case '3':
 						$progress_message = "Awaiting dispatch.<br />";
-						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/dispute/'.$order['id'].'">Dispute</a>';	
+						$progress_message.= anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
 						break;
 					case '4':
 						$progress_message = "Item has been dispatched.<br />";
 						$progress_message.= '<input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="';
 						$progress_message.= ($order['finalized'] == '0') ? 'Finalize' : 'Received'; $progress_message.='" /> ';
-						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/dispute/'.$order['id'].'">Dispute</a>';	
+						$progress_message.= anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
 						break;
 					case '5':
 						$progress_message = "Disputed transaction. Awaiting outcome.";
