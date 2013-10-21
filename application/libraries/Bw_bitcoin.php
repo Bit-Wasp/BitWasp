@@ -356,7 +356,7 @@ class Bw_bitcoin {
 			$user_hash = $this->CI->users_model->get_payment_address_owner($address);
 			if($user_hash !== FALSE) {
 				// Add payment.
-				$update = array('txn_id' => $txn_hash,
+				$update = array('txn_id' => "Fee's Payment",
 								'user_hash' => $user_hash,
 								'value' => $receive[0]['amount'],
 								'confirmations' => $transaction['confirmations'],

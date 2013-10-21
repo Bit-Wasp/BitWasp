@@ -80,6 +80,7 @@ class Bitcoin_model extends CI_Model {
 	public function unverified_transactions($user_hash) {
 		$this->db->select('value')
 				 ->where('user_hash', $user_hash)
+				 ->where('txn_id !=', "Fee's Payment")
 				 ->where('category', 'receive')
 				 ->where('credited', '0');
 				 
