@@ -697,7 +697,7 @@ class Admin extends CI_Controller {
 			if($this->input->post('ban_user') !== $data['user']['banned']) {
 				if( $this->accounts_model->toggle_ban($data['user']['id'], $this->input->post('ban_user') ) ) {
 					$data['returnMessage'] = $data['user']['user_name']." has now been ";
-					$data['returnMessage'].= ($this->input->post('ban_user') == '0') ? 'banned.' : 'unbanned.'; 
+					$data['returnMessage'].= ($this->input->post('ban_user') == '1') ? 'banned.' : 'unbanned.'; 
 					$data['page'] = 'accounts/view';
 					$data['title'] = $data['user']['user_name'];
 					

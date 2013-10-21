@@ -22,6 +22,7 @@
 	        
 <?php endforeach; ?>
           </div>
+<?php } else { ?>There are no items at present, please try again later!
 <?php } ?>
         </div>
 
