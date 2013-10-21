@@ -566,10 +566,18 @@ class Admin extends CI_Controller {
 		if($this->input->post('create_token') == "Create"){
 			if($this->form_validation->run('admin_create_token') == TRUE){
 				
+				// Get the registration fee for the chosen user role, and
+				// if it does not exist then set the default to 0.0000000 ($config_val)
+				// If the admin has chosen the default fee, use that $config_val,
+				// otherwise use the number they've given.
+				$var = 'entry_payment_'.strtolower($this->general->role_from_id($this->input->post('user_role')));
+				$config_val = (isset($this->bw_config->$var)) ? $this->bw_config->$var : 0.00000000 ;
+				$entry_payment = ($this->input->post('entry_payment') == 'default') ? $config_val : $this->input->post('entry_payment') ;
 				// Generate a unique has as the token.
 				$update = array('user_type' => $this->input->post('user_role'),
 								'token_content' => $this->general->unique_hash('registration_tokens','token_content', 128),
-								'comment' => $this->input->post('token_comment'));
+								'comment' => $this->input->post('token_comment'),
+								'entry_payment' => $entry_payment );
 								
 				$data['returnMessage'] = 'Unable to create your token at this time.';
 				if($this->users_model->add_registration_token($update) == TRUE){
@@ -746,30 +754,32 @@ class Admin extends CI_Controller {
 	/**
 	 * Check the captcha length is not too long.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_captcha_length($param) {
 		return ($param > 0 && $param < 13) ? TRUE : FALSE;
 	}
 
 	/**
+	 * Check Bool
+	 * 
 	 * Check the supplied parameter is for a boolean..
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_bool($param) {
 		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
 	}
 
 	/**
-	 * Check Category exists.
+	 * Check Category Exists.
 	 * 
 	 * Check the required category exists (for parent_id)
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_category_exists($param) {
 		if($param == NULL)
@@ -783,10 +793,12 @@ class Admin extends CI_Controller {
 	}
 	
 	/**
-	 * Check the category can be deleted (doesn't allow '0' for root category)
+	 * Check Can Delete Category
+	 * 
+	 * Check the category can be deleted (doesn't allow '0' for root category).
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param	
+	 * @return	boolean
 	 */
 	public function check_can_delete_category($param) {
 		if($param == NULL)
@@ -796,10 +808,26 @@ class Admin extends CI_Controller {
 	}
 	
 	/**
+	 * Check Registration Token Fee
+	 * 
+	 * This function checks if the supplied 'amount' for the registration
+	 * is 'default', which will trigger the user to be charged the config value,
+	 * or else if the admin has specified a figure.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_registration_token_fee($param) {
+		return ($param == 'default' || is_numeric($param) && $param >= 0) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Bitcoin Account Exists
+	 * 
 	 * Check the bitcoin account already exists in the server wallet.
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param	string	$param
+	 * @return	boolean
 	 */
 	public function check_bitcoin_account_exists($param) {
 		if($param == '')
@@ -810,20 +838,24 @@ class Admin extends CI_Controller {
 	}
 	
 	/**
+	 * Check Admin Roles
+	 * 
 	 * Check the submitted parameter is either 1, 2, or 3.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_admin_roles($param){
 		return ($this->general->matches_any($param, array('1','2','3')) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
+	 * Check Autorun Interval 
+	 * 
 	 * Check the submitted parameter is a valid interval for an autorun job.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_autorun_interval($param){
 		return (is_numeric($param) && $param >= '0') ? TRUE : FALSE;
@@ -834,8 +866,8 @@ class Admin extends CI_Controller {
 	 * 
 	 * Check the supplied parameter is a positive number.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_is_positive($param) {
 		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
@@ -846,8 +878,8 @@ class Admin extends CI_Controller {
 	 * 
 	 * Check the supplied parameter is a valid price index config value.
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param	string	$param
+	 * @return	boolean
 	 */
 	public function check_price_index($param){
 		$config = $this->bw_config->price_index_config;
@@ -861,6 +893,9 @@ class Admin extends CI_Controller {
 	 * logging a user out, to an admin defined interval. The default value
 	 * is set in the Config library, and is 30 minutes. Otherwise it's read
 	 * from this value set in the table.
+	 * 
+	 * @param	string	$param
+	 * return	boolean
 	 */
 	public function check_session_timeout($param) {
 		 return (is_numeric($param) && $param >= 5) ? TRUE : FALSE;

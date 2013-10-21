@@ -166,6 +166,8 @@ class Users extends CI_Controller {
 		$register_page = ($data['encrypt_private_messages'] == TRUE) ? 'users/register' : 'users/register_no_pin';
 		$register_validation = ($data['encrypt_private_messages'] == TRUE) ? 'register_form' : 'register_no_pin_form';
 		
+		$data['role'] = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['txt'];
+		
 		// Check if we need the message_pin form, or the other one!
 		if ($this->form_validation->run($register_validation) == FALSE) {
 			// Show the register form.
@@ -177,7 +179,6 @@ class Users extends CI_Controller {
 			
 		} else {
 			// Work out if the role was supplied via a token, take that.
-			$role = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['str'];
 			
 			// Generate the users salt and encrypted password.
 			$salt = $this->general->generate_salt();
@@ -208,7 +209,7 @@ class Users extends CI_Controller {
 									'salt' => $salt,
 									'user_hash' => $user_hash,
 									'user_name' => $user_name,
-									'user_role' => $role,
+									'user_role' => $data['role'],
 									'public_key' => $message_keys['public_key'],
 									'private_key' => $message_keys['private_key'],
 									'local_currency' => $this->input->post('local_currency') );		
@@ -223,17 +224,17 @@ class Users extends CI_Controller {
 				$data['page'] = 'users/login';
 				$data['action_page'] = 'login';
    				$data['captcha'] = $this->bw_captcha->generate();
-	
-				if($role !== 'Admin'){
-					$entry_fee = 'entry_payment_'.strtolower($role);
-					$entry_fee = $this->bw_config->$entry_fee;
-					if(isset($entry_fee) && $entry_fee > 0){
-						
+
+				$entry_fee = 'entry_payment_'.strtolower($data['role']);
+				$entry_fee = $this->bw_config->$entry_fee;
+				
+				if(isset($data['token_info'])){
+					if($data['token_info']['entry_payment'] > 0) {
 						$address = $this->bw_bitcoin->new_fees_address();
-						
+						$entry_fee = $data['token_info']['entry_payment'];
 						$info = array(	'user_hash' => $user_hash,
-										'amount' => $entry_fee,
-										'bitcoin_address' => $address );
+										'amount' => $data['token_info'],
+										'bitcoin_address' => $address);
 						if($this->users_model->set_entry_payment($info) == TRUE){
 								
 							if($address == NULL){
@@ -241,11 +242,28 @@ class Users extends CI_Controller {
 							} else {
 								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 							}
-						}
+						}				
 					} else {
-						if($this->users_model->set_entry_paid($user_hash)){
-							$data['returnMessage'] = 'Your account has been created, please login below.';
+						$data['returnMessage'] = 'Your account has been created, please login below.';
+					}
+				} else if(isset($entry_fee) && $entry_fee > 0){
+		
+					$address = $this->bw_bitcoin->new_fees_address();
+					
+					$info = array(	'user_hash' => $user_hash,
+									'amount' => $entry_fee,
+									'bitcoin_address' => $address );
+					if($this->users_model->set_entry_payment($info) == TRUE){
+							
+						if($address == NULL){
+							$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
+						} else {
+							$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 						}
+					}
+				} else {
+					if($this->users_model->set_entry_paid($user_hash)){
+						$data['returnMessage'] = 'Your account has been created, please login below.';
 					}
 				}
 				
@@ -253,7 +271,7 @@ class Users extends CI_Controller {
 
 				// REMOVE BEFORE PRODUCTION
 				$this->load->model('bitcoin_model');
-				if($role == 'Buyer'){
+				if($data['role'] == 'Buyer'){
 					$credit = array('user_hash' => $user_hash,
 									'value' => (float)0.03333333);
 					$this->bitcoin_model->update_credits(array($credit));

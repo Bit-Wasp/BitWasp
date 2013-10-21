@@ -84,7 +84,6 @@ class Users_model extends CI_Model {
 		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 	
-	// Load a users RSA public and pw-protected private key.
 	/**
 	 * Message Data
 	 * 
@@ -164,9 +163,13 @@ class Users_model extends CI_Model {
 	 */
 	public function list_registration_tokens() {
 		$query = $this->db->get('registration_tokens');
-		if($query->num_rows() > 0)
-			return $query->result_array();
-			
+		if ($query->num_rows() > 0) {
+			$array = $query->result_array();
+			foreach($array as &$entry) {
+				$entry['role'] = $this->general->role_from_id($entry['user_type']);
+			}
+			return $array;
+		}
 		return FALSE;
 	}
 	
@@ -181,7 +184,7 @@ class Users_model extends CI_Model {
 	 */
 	public function check_registration_token($token) {
 		
-		$this->db->select('id, user_type, token_content');
+		$this->db->select('id, user_type, token_content, entry_payment');
 		$query = $this->db->get_where('registration_tokens', array('token_content' => $token));
 		
 		if($query->num_rows() > 0){
@@ -309,6 +312,15 @@ class Users_model extends CI_Model {
 		 return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	 }
 	 
+	 /**
+	  * Delete Entry Payment
+	  * 
+	  * This function deletes the record of the users entry payment once
+	  * they have registered their account.
+	  * 
+	  * @param	string	$user_hash
+	  * @return	boolean
+	  */
 	 public function delete_entry_payment($user_hash){
 		 $this->db->where('user_hash', $user_hash);
 		 return ($this->db->delete('entry_payment') == TRUE) ? TRUE : FALSE;

@@ -603,6 +603,7 @@ CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   `comment` varchar(100) NOT NULL,
   `user_type` enum('1','2','3') NOT NULL,
   `token_content` varchar(128) NOT NULL,
+  `entry_payment` decimal(20,8),
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;

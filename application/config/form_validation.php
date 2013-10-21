@@ -355,6 +355,10 @@ $config = array('register_form'=>array(
 										array('field' => 'token_comment',
 											  'label' => 'Comment (optional)',
 											  'rules' => 'htmlentities'
+										),
+										array('field' => 'entry_payment',
+											  'label' => 'Registration Fee',
+											  'rules' => 'callback_check_registration_token_fee'
 										)
 							),
 				'admin_delete_item' => array(
