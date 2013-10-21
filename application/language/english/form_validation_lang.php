@@ -15,6 +15,7 @@ $lang['check_pin_required'] = "You must enter a message PIN.";
 $lang['check_bool'] = 'You must select Enabled or Disabled.';
 $lang['check_currency_exists'] = "Please select a valid currency.";
 $lang['check_category_exists'] = "Please select a valid category.";
+$lang['check_pgp_is_required'] = "The recipient user has blocked messages which are not PGP encrypted.";
 $lang['check_can_delete_category'] = "Please select a valid category.";
 $lang['check_role'] = "The %s field must be for a buyer, or vendor.";
 $lang['alpha_dash'] = "The %s field must only contain letters, numbers, and dashes (-).";

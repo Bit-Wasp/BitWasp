@@ -102,12 +102,13 @@ $config = array('register_form'=>array(
 										),
 										array(	'field' => 'message',
 												'label' => 'message',
-												'rules' => 'trim|required|htmlspecialchars|xss_clean|nl2br'
+												'rules' => 'trim|required|htmlspecialchars|xss_clean|nl2br|callback_check_pgp_is_required'
 										),
 										array(	'field' => 'delete_on_read',
 												'label' => 'Delete After Reading?',
 												'rules' => 'callback_check_delete_on_read'			// callback for NULL or 1.
 										)
+									
 							),
 				'add_pgp' =>		array(
 										array(	'field' => 'public_key',
@@ -141,6 +142,10 @@ $config = array('register_form'=>array(
 										array(	'field' => 'two_factor_auth',
 												'label' => 'two-factor authentication.',
 												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
+										),
+										array(	'field' => 'block_non_pgp',
+												'label' => 'blocking non PGP messages.',
+												'rules' => 'callback_check_bool'
 										)
 							),
 				'account_edit_no_pgp'=>	array(

@@ -42,9 +42,9 @@ class Accounts_model extends CI_Model {
 			return FALSE;
 		
 		if(count($opt) == 0) {
-			$this->db->select('id, banned, display_login_time, force_pgp_messages, login_time, location, register_time, user_name, user_hash, user_role');
+			$this->db->select('id, banned, display_login_time, force_pgp_messages, block_non_pgp, login_time, location, register_time, user_name, user_hash, user_role');
 		} else if($opt['own'] == TRUE) {
-			$this->db->select('id, banned, display_login_time, local_currency, force_pgp_messages, login_time, location, register_time, two_factor_auth, user_name, user_hash, user_role');
+			$this->db->select('id, banned, display_login_time, local_currency, block_non_pgp, force_pgp_messages, login_time, location, register_time, two_factor_auth, user_name, user_hash, user_role');
 		}
 
 		if (isset($identifier['user_hash'])) {
@@ -131,7 +131,8 @@ class Accounts_model extends CI_Model {
 		if($this->db->delete('pgp_keys') == TRUE) {
 			// When deleting the PGP key, 
 			$changes = array('two_factor_auth' => '0',
-							 'force_pgp_messages' => '0');
+							 'force_pgp_messages' => '0',
+							 'block_non_pgp' => '0');
 			$this->update($changes);
 			return TRUE;
 		}

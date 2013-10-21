@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Messages extends CI_Controller {
 	
 	/**
@@ -74,9 +73,10 @@ class Messages extends CI_Controller {
 			$this->messages_model->delete($data['message']['id']);
 	}
 		
-	// Display a users messages.
 	
 	/**
+	 * Inbox 
+	 * 
 	 * Load a Users Inbox.
 	 * URI: /listings/edit/$hash
 	 * 
@@ -229,6 +229,8 @@ class Messages extends CI_Controller {
 	}
 
 	/**
+	 * Sent
+	 * 
 	 * Catcher page for sent messages. Avoids refresh issues.
 	 * URI: /messages/sent
 	 * 
@@ -253,7 +255,12 @@ class Messages extends CI_Controller {
 	}
 
 	/**
-	 * Prompt for a users message PIN if it's not set.
+	 * Enter PIN.
+	 * 
+	 * Prompt for a users message PIN if it's not set. Determines if the
+	 * PIN is correct by encrypting a challenge with the users public key,
+	 * and tries to unlock the challenge again using the users private key
+	 * and the generated password for that key.
 	 * URI: /messages/pin
 	 * 
 	 * @access	public
@@ -297,25 +304,46 @@ class Messages extends CI_Controller {
 	// Callback functions for form validation.
 	
 	/**
+	 * Check delete on read. 
+	 * 
 	 * Check that the delete on read function is set appropriately.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */	
 	public function check_delete_on_read($param) {
 		return ($this->general->matches_any($param, array(NULL,'1')) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
-	 * Check the supplied username exists.
+	 * User Exists
+	 * 
+	 * This function checks if the supplied username exists. Used to 
+	 * verify a recipient exists.
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param	string	$param
+	 * @return	boolean
 	 */
 	public function user_exists($param) {
 		$this->load->model('users_model');
 		return ($this->users_model->get(array('user_name' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 		
+	/**
+	 * Check PGP is required.
+	 * 
+	 * This function checks that if the recipient has requested all 
+	 * messages are encrypted on the clientside, the sent message has 
+	 * in fact been encrypted with PGP.
+	 * 
+	 * @param	string	$param (the message body)
+	 * @return	boolean
+	 */
+	public function check_pgp_is_required($param){
+		$this->load->model('accounts_model');
+		$encrypted = ((stripos($param, '-----BEGIN PGP MESSAGE-----') !== FALSE) && (stripos($param, '-----END PGP MESSAGE-----') !== FALSE)) ? '1' : '0' ;
+		$user = $this->accounts_model->get(array('user_name' => $this->input->post('user_name')));
+		return ($user['block_non_pgp'] == '1' && $encrypted == '0') ? FALSE : TRUE;
+	}
 };
 /* End of file Messages.php */

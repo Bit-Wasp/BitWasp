@@ -133,6 +133,7 @@ class Accounts extends CI_Controller {
 			if(isset($data['user']['pgp'])) {
 				$changes['two_factor_auth'] = ($data['user']['two_factor_auth'] == $this->input->post('two_factor_auth')) ? NULL : $this->input->post('two_factor_auth');
 				$changes['force_pgp_messages'] = ($data['user']['force_pgp_messages'] == $this->input->post('force_pgp_messages')) ? NULL : $this->input->post('force_pgp_messages');
+				$changes['block_non_pgp'] = ($data['user']['block_non_pgp'] == $this->input->post('block_non_pgp')) ? NULL : $this->input->post('block_non_pgp');
 			}
 			$changes = array_filter($changes, 'strlen');
 
