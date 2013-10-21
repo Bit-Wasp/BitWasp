@@ -54,7 +54,7 @@
 				    <span class="add-on"><i>BTC</i></span>
 					<input type='text' class='span10' name='entry_payment_buyer' value='<?php echo $config['entry_payment_buyer']; ?>' /> 
 				  </div>
-				  <label class="inline"><input type='checkbox' name='entry_payment_buyer_disabled' <?php echo ($config['entry_payment_buyer'] > 0) ? NULL : 'checked'; ?>	value='1' /> Disabled</label>
+				  <label class="inline"><input type='checkbox' name='entry_payment_buyer_disabled' <?php echo ($config['entry_payment_buyer'] > 0) ? NULL : 'checked'; ?> value='1' /> Disabled</label>
 				</div>
 			  </div>
 		      <span class="help-inline offset2"><?php echo form_error('entry_payment_buyer'); ?></span>

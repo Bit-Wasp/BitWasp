@@ -383,7 +383,7 @@ class Admin extends CI_Controller {
 			$changes['ban_after_inactivity'] = ($this->input->post('ban_after_inactivity') !== $data['config']['ban_after_inactivity']) ? $this->input->post('ban_after_inactivity') : NULL ;			
 			$changes['delete_messages_after'] = ($this->input->post('delete_messages_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_messages_after') : NULL ;			
 			$changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
-			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
+			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_vendor') !== $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
 			
 			// If we're disabling auto-banning users after inactivity, set that.
 			if($this->input->post('ban_after_inactivity_disabled') == '1') 		$changes['ban_after_inactivity'] = "0";
