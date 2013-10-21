@@ -403,6 +403,18 @@ CREATE TABLE IF NOT EXISTS `bw_escrow` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
+
+CREATE TABLE IF NOT EXISTS `bw_entry_payment` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `user_hash` varchar(20) NOT NULL,
+  `amount` decimal(20,8) NOT NULL,
+  `time` varchar(20) NOT NULL,
+  `bitcoin_address` varchar(40) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `user_hash` (`user_hash`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+
+
 -- --------------------------------------------------------
 
 --

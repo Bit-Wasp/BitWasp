@@ -344,7 +344,6 @@ class Users extends CI_Controller {
 		
 		$data['user'] = $this->users_model->get(array('id' => $this->current_user->user_id));
 		$data['entry_payment'] = $this->users_model->get_entry_payment($data['user']['user_hash']);
-		var_dump($data['entry_payment']);echo "<br>";
 
 		if($data['entry_payment'] == FALSE || $data['user']['entry_paid'] == '1'){
 	
@@ -363,7 +362,7 @@ class Users extends CI_Controller {
 				redirect('');
 			}	
 		}
-			var_dump($data['entry_payment']['bitcoin_address']);
+
 		// Payment is still not completed, but the bitcoin address is not set.
 		if($data['entry_payment'] !== FALSE && $data['entry_payment']['bitcoin_address'] == '0'){
 			// Try to generate another.
