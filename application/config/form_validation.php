@@ -279,8 +279,8 @@ $config = array('register_form'=>array(
 											  'label' => '',
 											  'rules' => 'callback_check_bool'
 										),
-										array('field' => 'ban_after_inactivity',
-											  'label' => 'User inactivity',
+										array('field' => 'refund_after_inactivity',
+											  'label' => 'Refund interval',
 											  'rules' => 'max_length[3]|callback_check_is_positive'
 										),
 										array('field' => 'delete_messages_after',

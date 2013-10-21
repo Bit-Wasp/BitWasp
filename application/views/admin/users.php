@@ -54,8 +54,8 @@
 			</div>
 			
 			<div class="row-fluid">
-			  <span class="span3">Ban After Inactivity</span>
-			  <span class="span7"><?php echo ($config['ban_after_inactivity'] == '0') ? 'Disabled' : $config['ban_after_inactivity'].' days'; ?></span>
+			  <span class="span3">Refund After Inactivity</span>
+			  <span class="span7"><?php echo ($config['refund_after_inactivity'] == '0') ? 'Disabled' : $config['refund_after_inactivity'].' days'; ?></span>
 			</div>
 			
 			<div class="row-fluid">

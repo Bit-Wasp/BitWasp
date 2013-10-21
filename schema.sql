@@ -95,7 +95,7 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (24, 'captcha_length', '2'),
 (25, 'allow_guests', '1'),
 (26, 'price_index', 'CoinDesk'),
-(27, 'ban_after_inactivity', '45'),
+(27, 'refund_after_inactivity', '45'),
 (28, 'delete_messages_after', '45'),
 (29, 'delete_transactions_after', '0'),
 (30, 'max_main_balance', '0.00000000'),

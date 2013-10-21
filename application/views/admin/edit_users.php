@@ -60,7 +60,7 @@
 		      <span class="help-inline offset2"><?php echo form_error('entry_payment_buyer'); ?></span>
 			
 			  <div class="row-fluid">
-			    <div class="span3">Encrypt Private Message's?</div>
+			    <div class="span3">Encrypt Private Messages?</div>
 			    <div class="span7">
                   <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='0' <?php echo ($config['encrypt_private_messages'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
                   <label class="radio inline"><input type='radio' name='encrypt_private_messages' value='1' <?php echo ($config['encrypt_private_messages'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
@@ -78,13 +78,13 @@
 			  <span class="help-inline offset2"><?php echo form_error('force_vendor_pgp'); ?></span>			
 			
 			  <div class="row-fluid">
-				<div class="span3">Ban After Inactivity</div>
+				<div class="span3">Refund After Inactivity</div>
 				<div class="span7">
-				  <label class="inline"><input type='text' class='span2' name='ban_after_inactivity' value='<?php echo $config['ban_after_inactivity']; ?>' /> days</label>
-				  <label class="inline"><input type='checkbox' name='ban_after_inactivity_disabled' <?php echo ($config['ban_after_inactivity'] == '0') ? 'checked ' : NULL; ?>	value='1' /> Disabled</label>
+				  <label class="inline"><input type='text' class='span2' name='refund_after_inactivity' value='<?php echo $config['refund_after_inactivity']; ?>' /> days</label>
+				  <label class="inline"><input type='checkbox' name='refund_after_inactivity_disabled' <?php echo ($config['refund_after_inactivity'] == '0') ? 'checked ' : NULL; ?>	value='1' /> Disabled</label>
 				</div>
 			  </div>
-			  <span class="help-inline offset2"><?php echo form_error('ban_after_inactivity'); ?></span>
+			  <span class="help-inline offset2"><?php echo form_error('refund_after_inactivity'); ?></span>
 
 			  <div class="row-fluid">
 				<div class="span3">Delete Messages After</div>

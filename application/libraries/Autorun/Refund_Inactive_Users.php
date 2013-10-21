@@ -1,13 +1,13 @@
 <?php
 
 /**
- * User Inactivity Job
+ * Refund Inactive Users
  *
- * This job is used to ban inactive users. Called by the autorun class,
+ * This job is used to refund inactive users. Called by the autorun class,
  * it is run periodically to check for users who have not logged in for
  * a set period. 
- * The default is to run every 24 hours, where stale users will be banned
- * and have any balances refunded if they have a cashout address set.
+ * The default is to run every 24 hours, where stale users will have their
+ * balances refunded to their cashout address.
  * 
  * @package		BitWasp
  * @subpackage	Autorun
@@ -15,7 +15,7 @@
  * @author		BitWasp
  */
 
-class User_Inactivity {
+class Refund_Inactive_Users {
 
 	/**
 	 * Config
@@ -23,9 +23,9 @@ class User_Inactivity {
 	 * This stores predefined information about the job, such as the name,
 	 * description, and the frequency at which it should be run.
 	 */
-	public $config = array(	'name' => 'Ban User: Inactivity',
-							'description' => 'An autorun job to ban inactive users.',
-							'index' => 'user_inactivity',
+	public $config = array(	'name' => 'Refund Inactive Users',
+							'description' => 'An autorun job to refund inactive users balances.',
+							'index' => 'refund_inactive_users',
 							'interval' => '24',
 							'interval_type' => 'hours');
 	public $CI;
@@ -45,15 +45,14 @@ class User_Inactivity {
 	 * This function is called by the Autorun script. 
 	 * We load the time users may be inactive for from the config library. If 
 	 * set to zero, we don't need to run the job and execution terminates.
-	 * Otherwise, load the inactive users, and ban them. Once banned,
-	 * the script will check if the user has a cashout address set up. If 
-	 * so, we will return their bitcoins to that address.
+	 * Otherwise, load the inactive users, and refund their coins to their
+	 * bitcoin cashout address if it's set.
 	 * 
 	 * @see		Models/Accounts_Model
 	 * @see		Libraries/Bw_Bitcoin
 	 */
 	public function job() {
-		$interval = $this->CI->bw_config->ban_after_inactivity*24*60*60;
+		$interval = $this->CI->bw_config->refund_after_inactivity*24*60*60;
 
 		if($interval == 0)		// Check if this feature is disabled.
 			return TRUE;		
@@ -69,20 +68,13 @@ class User_Inactivity {
 		$result = TRUE;
 		foreach($stale_users as $user) {
 			
-			if($this->CI->accounts_model->toggle_ban($user['id'], '1') == FALSE) {
-				// If there's some error, return FALSE so the script will be run again.
-				$result = FALSE;
-			} else {
-				// If the users balance is > 0, and they have a valid cashout address, refund their bitcoins.
-				if($user['bitcoin_balance'] > 0 && $this->CI->bw_bitcoin->validateaddress($user['bitcoin_cashout_address']) !== FALSE) {
+			// If the users balance is > 0, and they have a valid cashout address, refund their bitcoins.
+			if($user['bitcoin_balance'] > 0 && $this->CI->bw_bitcoin->validateaddress($user['bitcoin_cashout_address']) !== FALSE) {
 					
-					$send = $this->bw_bitcoin->cashout($data['cashout_address'], (float)$user['bitcoin_balance']);
-					if(!isset($send['code'])) {
-						$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
-					}
-				}
+				$send = $this->bw_bitcoin->cashout($data['cashout_address'], (float)$user['bitcoin_balance']);
+				if(!isset($send['code'])) 
+					$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
 			}
-			
 		}
 		return $result;
 	}
