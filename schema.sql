@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `bw_autorun` (
   `name` varchar(40) NOT NULL,
   `interval` varchar(8) NOT NULL,
   `interval_type` varchar(10) NOT NULL,
-  `last_update` varchar(20) NOT NULL,
+  `last_update` varchar(20) DEFAULT '0',
   `description` varchar(200) NOT NULL,
   `index` varchar(40) NOT NULL,
   PRIMARY KEY (`id`),
