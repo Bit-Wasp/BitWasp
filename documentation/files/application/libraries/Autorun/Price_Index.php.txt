@@ -4,9 +4,7 @@
  * Price Index Job.
  *
  * This job is used to update exchange rates. Called by the autorun library.
- * It is run periodically to update the exchange records. 
- * The default is to run every 24 hours, where stale users will be banned
- * and have any balances refunded if they have a cashout address set.
+ * It is run periodically (default is 10 minutes) to update the exchange reates on record. 
  * 
  * @package		BitWasp
  * @subpackage	Autorun

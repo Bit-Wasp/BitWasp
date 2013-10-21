@@ -75,6 +75,7 @@ class Listings_model extends CI_Model {
 			$row['currency'] = $this->currencies_model->get($row['currency']);
 			
 			$row['price_b'] = $row['price']/$row['currency']['rate'];
+			
 			$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 			$row['price_l'] = (float)round(($row['price_b']*$local_currency['rate']), 8, PHP_ROUND_HALF_UP);
 			$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];

@@ -69,6 +69,15 @@
 			    </div>
               </div>
           
+              <div class="control-group">
+			    <label class="control-label" for="block_non_pgp">Block non-PGP Messages</label>
+			    <div class="controls">
+			      <label class="radio inline"><input type='radio' name='block_non_pgp' value='0' <?php echo ($user['block_non_pgp'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
+			      <label class="radio inline"><input type='radio' name='block_non_pgp' value='1' <?php echo ($user['block_non_pgp'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
+   			      <span class="help-inline"><?php echo form_error('block_non_pgp'); ?></span>
+			    </div>
+              </div>
+          
 <?php } else { ?>
 		      <div class="control-group">
                 <label class="control-label" for="pgp">PGP Features</label>

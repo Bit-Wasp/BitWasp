@@ -80,6 +80,7 @@ class Bitcoin_model extends CI_Model {
 	public function unverified_transactions($user_hash) {
 		$this->db->select('value')
 				 ->where('user_hash', $user_hash)
+				 ->where('txn_id !=', "Fee's Payment")
 				 ->where('category', 'receive')
 				 ->where('credited', '0');
 				 
@@ -201,6 +202,9 @@ class Bitcoin_model extends CI_Model {
 	 * @return	bool
 	 */			
 	public function set_user_address($user_hash, $address) {
+		if($address == NULL)
+			return FALSE;
+			
 		$this->db->where('user_hash', $user_hash);
 		if($this->db->update('users', array('bitcoin_topup_address' => $address))) {
 			$this->log_user_address($user_hash, $address);
@@ -339,14 +343,14 @@ class Bitcoin_model extends CI_Model {
 	 * @param	string	$txn_id
 	 * @return	array/FALSE
 	 */		
-	public function have_transaction($txn_id) {
+	/*public function have_transaction($txn_id) {
 		$this->db->where('txn_id', $txn_id);
 		$query = $this->db->get('pending_txns');
 		if($query->num_rows() > 0)
 			return $query->row_array();
 			
 		return FALSE;
-	}
+	}*/
 	
 	/**
 	 * Update Credits 

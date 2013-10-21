@@ -47,7 +47,7 @@ class Items_model extends CI_Model {
 	/**
 	 * Get list of pages. (need to build in pagination).
 	 * 
-	 * Display all items.
+	 * Display all items which are not hidden, or for a banned user.
 	 *
 	 * @access	public
 	 * @param	array	$opt
@@ -72,13 +72,16 @@ class Items_model extends CI_Model {
 		
 		if($query->num_rows() > 0){
 			foreach($query->result_array() as $row){
+				// Load vendor information. Skip item if the user is banned.
+				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
+				if($row['vendor']['banned'] == '1')
+					continue;
+					
 				// Load information about the items.
 				$row['description_s'] = substr(strip_tags($row['description']),0,70);
 				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
 				$row['main_image'] = $this->images_model->get($row['main_image']);
-				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
 				$row['currency'] = $this->currencies_model->get($row['currency']);
-
 				$row['price_b'] = round(($row['price']/$row['currency']['rate']), '8', PHP_ROUND_HALF_UP);
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 				$price_l = (float)($row['price_b']*$local_currency['rate']);
@@ -112,6 +115,12 @@ class Items_model extends CI_Model {
 		$query = $this->db->get('items');
 		if($query->num_rows() > 0) {
 			$row = $query->row_array();
+			
+			// Check if the vendor is banned. Fail if that is the case.
+			$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
+			if($row['vendor']['banned'] == '1')
+				return FALSE;
+			
 			$row['description_f'] = nl2br($row['description']);
 			$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
 			$row['currency'] = $this->currencies_model->get($row['currency']);

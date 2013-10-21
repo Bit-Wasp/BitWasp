@@ -22,10 +22,22 @@ class Logs_Model extends CI_Model {
 	public function __construct() {
 	}
 	
+	/**
+	 * Fetch
+	 * 
+	 * Fetches the list of log entries, or a specific log item (specified
+	 * by $hash). Returns an array describing an item if $hash is set,
+	 * a multi-dimensional array if returning a list, or FALSE on failure.
+	 * 
+	 * @param	string	$hash (optional)
+	 * @return	array/FALSE
+	 */
 	public function fetch($hash = NULL) {
+		// Load the whole list, or just one.
 		$query = ($hash == NULL) ? $this->db->get('logs') : $this->db->get_where('logs', array('hash', $hash));
 
 		if($query->num_rows() > 0) {
+			// If any records exist, process them and return.
 			$results = $query->result_array();
 			foreach($results as &$result) {
 				$result['time_f'] = $this->general->format_time($result['time']);
@@ -35,6 +47,19 @@ class Logs_Model extends CI_Model {
 		return FALSE;
 	}
 	
+	/**
+	 * Add
+	 * 
+	 * Add a record to the log table. Specify the script/uri which is
+	 * recording the log ($caller), the title of the log ($title),
+	 * the log message ($message) and the warning level $level.
+	 * 
+	 * @param	string	$caller
+	 * @param	string	$title
+	 * @param	string	$message
+	 * @param	string	$level
+	 * return	boolean
+	 */
 	public function add($caller, $title, $message, $level){
 		return ($this->db->insert('logs', array('caller' => $caller,
 												'title' => $title, 

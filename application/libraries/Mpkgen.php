@@ -1,5 +1,15 @@
 <?php
 /**
+ * Mpkgen Library
+ * 
+ * This library is used to generate bitcoin addresses in order to back up
+ * a wallet balance. Based on the electrum master public key and an 
+ * iteration index, we can generate a new address for each backup.
+ * 
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Autorun
+ * 
  * Copyright (c) 2012 Matyas Danter
  * Copyright (c) 2012 Chris Savery
  * Copyright (c) 2013 Pavol Rusnak
@@ -22,8 +32,18 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-
 class Mpkgen {
+	/**
+	 * Generate
+	 * 
+	 * Generate a deterministic bitcoin address to receive coins on. Derived
+	 * from the master public key $mpk and an iteration index $iteration (both
+	 * are stored in the config table).
+	 * 
+	 * @param	string	$mpk
+	 * @param	int	$iteration
+	 * @return	string
+	 */
 	function generate($mpk, $iteration)
 	{
 		// create the ecc curve

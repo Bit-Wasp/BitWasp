@@ -53,6 +53,12 @@
 			  <div class="span3"><strong>Force PGP Messages?</strong></div>
 			  <div class="span7"><?php echo ($user['force_pgp_messages'] == '1') ? 'Enabled':'Disabled'; ?></div>
             </div>
+
+            <div class="row-fluid">
+			  <div class="span3"><strong>Block non-PGP messages?</strong></div>
+			  <div class="span7"><?php echo ($user['block_non_pgp'] == '1') ? 'Enabled':'Disabled'; ?></div>
+            </div>
+            
 <?php } else { ?>
 			<div class="row-fluid">
 			  <div class="span3"><strong>PGP Features</strong></div>

@@ -102,12 +102,13 @@ $config = array('register_form'=>array(
 										),
 										array(	'field' => 'message',
 												'label' => 'message',
-												'rules' => 'trim|required|htmlspecialchars|xss_clean|nl2br'
+												'rules' => 'trim|required|htmlspecialchars|xss_clean|nl2br|callback_check_pgp_is_required'
 										),
 										array(	'field' => 'delete_on_read',
 												'label' => 'Delete After Reading?',
 												'rules' => 'callback_check_delete_on_read'			// callback for NULL or 1.
 										)
+									
 							),
 				'add_pgp' =>		array(
 										array(	'field' => 'public_key',
@@ -141,6 +142,10 @@ $config = array('register_form'=>array(
 										array(	'field' => 'two_factor_auth',
 												'label' => 'two-factor authentication.',
 												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
+										),
+										array(	'field' => 'block_non_pgp',
+												'label' => 'blocking non PGP messages.',
+												'rules' => 'callback_check_bool'
 										)
 							),
 				'account_edit_no_pgp'=>	array(
@@ -228,7 +233,7 @@ $config = array('register_form'=>array(
 				'cashout_form' => array(
 										array('field' => 'amount',
 											  'label' => 'Amount',
-											  'rules' => 'decimal|callback_has_sufficient_balance'
+											  'rules' => 'callback_has_sufficient_balance'
 										)
 							),
 				'admin_edit_' => array(
@@ -252,11 +257,11 @@ $config = array('register_form'=>array(
 				'admin_edit_users' => array(
 										array('field' => 'login_timeout',
 											  'label' => 'Session timeout',
-											  'rules' => 'trim|required|numeric'
+											  'rules' => 'trim|required|callback_check_session_timeout'
 										),
 										array('field' => 'captcha_length',
 											  'label' => 'Captcha length',
-											  'rules' => 'trim|required|numeric|callback_check_captcha_length'
+											  'rules' => 'trim|required|callback_check_captcha_length'
 										),
 										array('field' => 'registration_allowed',
 											  'label' => '',
@@ -270,28 +275,40 @@ $config = array('register_form'=>array(
 											  'label' => '',
 											  'rules' => 'callback_check_bool'
 										),
+										array('field' => 'force_vendor_pgp',
+											  'label' => '',
+											  'rules' => 'callback_check_bool'
+										),
 										array('field' => 'ban_after_inactivity',
-											  'label' => 'Ban interval',
-											  'rules' => 'numeric|max_length[3]|callback_check_autorun_interval'
+											  'label' => 'User inactivity',
+											  'rules' => 'max_length[3]|callback_check_is_positive'
 										),
 										array('field' => 'delete_messages_after',
-											  'label' => 'Message-delete interval',
-											  'rules' => 'numeric|max_length[3]|callback_check_autorun_interval'
-										)										
+											  'label' => 'Oldest message age',
+											  'rules' => 'max_length[3]|callback_check_is_positive'
+										),
+										array('field' => 'entry_payment_vendor',
+											  'label' => 'Vendor registration fee',
+											  'rules' => 'callback_check_is_postive'
+										),
+										array('field' => 'entry_payment_buyer',
+											  'label' => 'Buyer registration fee',
+											  'rules' => 'callback_check_is_positive'
+										)
 							),
 				'admin_edit_bitcoin' => array(
-										array('field' => '',
-											  'label' => '',
-											  'rules' => ''
+										array('field' => 'delete_transactions_after',
+											  'label' => 'Oldest transaction age',
+											  'rules' => 'callback_check_is_positive'
 										),
-										array('field' => '',
-											  'label' => '',
-											  'rules' => ''
+										array('field' => 'price_index',
+											  'label' => 'Price Index',
+											  'rules' => 'callback_check_price_index'
 										)
 							),
 				'admin_add_category' => array(
-										array('field' => 'category_name',
-											  'label' => 'Category name',
+										array('field' => 'create_name',
+											  'label' => 'category name',
 											  'rules' => 'required|htmlentities'
 										),
 										array('field' => 'category_parent',
@@ -300,7 +317,7 @@ $config = array('register_form'=>array(
 										)
 							),
 				'admin_rename_category' => array(
-										array('field' => 'category_id',
+										array('field' => 'rename_id',
 											  'label' => 'Category',
 											  'rules' => 'callback_check_can_delete_category'
 										),
@@ -310,7 +327,7 @@ $config = array('register_form'=>array(
 										)
 							),
 				'admin_delete_category' => array(
-										array('field' => 'category_id',
+										array('field' => 'delete_id',
 											  'label' => 'Category',
 											  'rules' => 'callback_check_can_delete_category'
 										)
@@ -343,6 +360,10 @@ $config = array('register_form'=>array(
 										array('field' => 'token_comment',
 											  'label' => 'Comment (optional)',
 											  'rules' => 'htmlentities'
+										),
+										array('field' => 'entry_payment',
+											  'label' => 'Registration Fee',
+											  'rules' => 'callback_check_registration_token_fee'
 										)
 							),
 				'admin_delete_item' => array(
@@ -360,7 +381,7 @@ $config = array('register_form'=>array(
 				'admin_edit_autorun' => array(
 										array('field' => 'jobs[]',
 											  'label' => 'Intervals',
-											  'rules' => 'numeric|callback_check_autorun_interval'
+											  'rules' => 'is_numeric|callback_check_is_positive'
 										)
 							),
 				'order_dispute' => array(

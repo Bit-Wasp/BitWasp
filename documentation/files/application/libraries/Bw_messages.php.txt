@@ -61,6 +61,7 @@ class Bw_messages {
 	 */
 	public function prepare_input($data, $system = NULL) {
 		
+		// If the message isn't being sent by the system, take info from POST.
 		if($system == NULL) {
 			$username = $this->CI->input->post('recipient');
 			$subject = $this->CI->input->post('subject');
@@ -69,22 +70,25 @@ class Bw_messages {
 			$message = $this->CI->input->post('message');
 			$remove_on_read = ($this->CI->input->post('delete_on_read') == '1') ? '1' : '0';
 		} else if(is_array($system)){
+			// If it's a system message, load from the array.
 			$username = $system['username'];
 			$subject = $system['subject'];
 			$message = $system['message'];
 			$remove_on_read = '0';
 		} 
 		
+		
 		$from = $data['from'];
+		
+		// Load the account the message is being sentto.
 		$to = $this->CI->users_model->get(array('user_name' => $username));
 				
 		$content = array('from' => $from,
 						'subject' => $subject,
 						'message' => $message);
-
-		$check_encrypted[0] = stripos($message, '-----BEGIN PGP MESSAGE-----'); 
-		$check_encrypted[1] = stripos($message, '-----END PGP MESSAGE-----');
-		$encrypted = (($check_encrypted[0] !== FALSE) && ($check_encrypted[1] !== FALSE)) ? '1' : '0' ;
+						
+		// Check if the message is encrypted.
+		$encrypted = ((stripos($message, '-----BEGIN PGP MESSAGE-----') !== FALSE) && (stripos($message, '-----END PGP MESSAGE-----') !== FALSE)) ? '1' : '0' ;
 		
 		// If the message isn't already encrypted with PGP..
 		if($encrypted == '0'){
@@ -99,11 +103,13 @@ class Bw_messages {
 					$encrypted = '1';
 			}		
 		}
-		
+
+		// JSON encode the content array, and encrypt it if able.
 		$content = json_encode($content);
 		if($this->encrypt_private_messages)
 			$content = $this->CI->openssl->encrypt($content, $to['public_key']);
-			
+		
+		// Encode the data before insertion.
 		$content = base64_encode($content);
 		$hash = $this->CI->general->unique_hash('messages','hash');
 	
@@ -136,19 +142,23 @@ class Bw_messages {
 		$this->CI->load->model('users_model');
 		$this->CI->load->model('accounts_model');
 		
+		// If there are no messages, return false.
 		if($messages == NULL)
 			return FALSE;
 			
+		// If messages are encrypted, load the private key.
 		if($this->encrypt_private_messages == TRUE)
 			$this->private_key = $this->CI->users_model->load_message_key('private');
 			
 		$results = array();			
 
+		// Loop through messages, decoding, decrypting the content.
 		foreach($messages as $message) {
+
 			$tmp = base64_decode($message['content']);
 			$content = ($this->encrypt_private_messages == TRUE) ? $this->CI->openssl->decrypt($tmp, $this->private_key, $this->current_user->message_password) : $tmp;
 			$content = json_decode($content);
-			
+
 			$res = array('encrypted' => $message['encrypted'],
 						 'from' => $this->CI->accounts_model->get(array('id' => $content->from)),
 						 'hash' => $message['hash'],
@@ -165,7 +175,6 @@ class Bw_messages {
 			array_push($results, $res);
 			unset($res);
 		}
-			
 		return $results;
 	}
 	

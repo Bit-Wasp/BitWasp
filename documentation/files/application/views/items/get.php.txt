@@ -31,7 +31,7 @@
 
             <li class="span2 productBox" id="prod_<?php echo $item['hash']; ?>">
               <div class="thumbnail">
-				<?php echo anchor('image/'.$image['hash'], "<img src='data:image/jpeg;base64,{$image['encoded']}' class='productImg' title='{$item['name']}' width='100'>"); ?>
+				<?php echo anchor('image/'.$image['hash'], "<img src='data:image/jpeg;base64,{$image['encoded']}' class='productImg' title='{$item['name']}' >"); ?>
               </div>
             </li>
 <?php endforeach; ?>

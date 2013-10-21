@@ -101,6 +101,7 @@
                                                                                                     <li><a href="#application/models/users_model.php"><i class="icon-file"></i> application/models/users_model.php</a></li>
                                                                                                     <li><a href="#application/models/bitcoin_model.php"><i class="icon-file"></i> application/models/bitcoin_model.php</a></li>
                                                                                                     <li><a href="#application/models/captchas_model.php"><i class="icon-file"></i> application/models/captchas_model.php</a></li>
+                                                                                                    <li><a href="#application/models/logs_model.php"><i class="icon-file"></i> application/models/logs_model.php</a></li>
                                                                                                     <li><a href="#application/models/listings_model.php"><i class="icon-file"></i> application/models/listings_model.php</a></li>
                                                                                                     <li><a href="#application/models/messages_model.php"><i class="icon-file"></i> application/models/messages_model.php</a></li>
                                                                                                     <li><a href="#application/models/config_model.php"><i class="icon-file"></i> application/models/config_model.php</a></li>
@@ -118,12 +119,33 @@
                                                                                                     <li><a href="#application/libraries/Openssl.php"><i class="icon-file"></i> application/libraries/Openssl.php</a></li>
                                                                                                     <li><a href="#application/libraries/Bw_config.php"><i class="icon-file"></i> application/libraries/Bw_config.php</a></li>
                                                                                                     <li><a href="#application/libraries/Bw_messages.php"><i class="icon-file"></i> application/libraries/Bw_messages.php</a></li>
+                                                                                                    <li><a href="#application/libraries/Mpkgen.php"><i class="icon-file"></i> application/libraries/Mpkgen.php</a></li>
                                                                                                     <li><a href="#application/libraries/Bw_auth.php"><i class="icon-file"></i> application/libraries/Bw_auth.php</a></li>
                                                                                                     <li><a href="#application/libraries/Autorun.php"><i class="icon-file"></i> application/libraries/Autorun.php</a></li>
                                                                                                     <li><a href="#application/libraries/Image.php"><i class="icon-file"></i> application/libraries/Image.php</a></li>
                                                                                                     <li><a href="#application/libraries/Gpg.php"><i class="icon-file"></i> application/libraries/Gpg.php</a></li>
                                                                                                     <li><a href="#application/libraries/Current_user.php"><i class="icon-file"></i> application/libraries/Current_user.php</a></li>
                                                                                                     <li><a href="#application/libraries/Jsonrpcclient.php"><i class="icon-file"></i> application/libraries/Jsonrpcclient.php</a></li>
+                                                                                                    <li><a href="#application/libraries/Bitcoin_crypto.php"><i class="icon-file"></i> application/libraries/Bitcoin_crypto.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/auto_load.php"><i class="icon-file"></i> application/libraries/ecc-lib/auto_load.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/interface/EcDHInterface.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/interface/EcDHInterface.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/interface/PrivateKeyInterface.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/interface/PrivateKeyInterface.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/interface/PublicKeyInterface.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/interface/PublicKeyInterface.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/interface/CurveFpInterface.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/interface/CurveFpInterface.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/interface/PointInterface.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/interface/PointInterface.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/interface/SignatureInterface.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/interface/SignatureInterface.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/CurveFp.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/CurveFp.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/PublicKey.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/PublicKey.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/util/gmp_Utils.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/util/gmp_Utils.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/util/TestSuite.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/util/TestSuite.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/util/bcmath_Utils.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/util/bcmath_Utils.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/SECcurve.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/SECcurve.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/Point.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/Point.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/EcDH.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/EcDH.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/NumberTheory.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/NumberTheory.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/NISTcurve.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/NISTcurve.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/Signature.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/Signature.php</a></li>
+                                                                                                    <li><a href="#application/libraries/ecc-lib/classes/PrivateKey.php"><i class="icon-file"></i> application/libraries/ecc-lib/classes/PrivateKey.php</a></li>
                                                                                                     <li><a href="#application/libraries/Autorun/Backup_Wallet.php"><i class="icon-file"></i> application/libraries/Autorun/Backup_Wallet.php</a></li>
                                                                                                     <li><a href="#application/libraries/Autorun/Price_Index.php"><i class="icon-file"></i> application/libraries/Autorun/Price_Index.php</a></li>
                                                                                                     <li><a href="#application/libraries/Autorun/User_Inactivity.php"><i class="icon-file"></i> application/libraries/Autorun/User_Inactivity.php</a></li>
@@ -165,6 +187,7 @@
                                                                                                     <li><a href="#application/views/orders/place.php"><i class="icon-file"></i> application/views/orders/place.php</a></li>
                                                                                                     <li><a href="#application/views/orders/list_orders.php"><i class="icon-file"></i> application/views/orders/list_orders.php</a></li>
                                                                                                     <li><a href="#application/views/users/register.php"><i class="icon-file"></i> application/views/users/register.php</a></li>
+                                                                                                    <li><a href="#application/views/users/payment.php"><i class="icon-file"></i> application/views/users/payment.php</a></li>
                                                                                                     <li><a href="#application/views/users/two_factor.php"><i class="icon-file"></i> application/views/users/two_factor.php</a></li>
                                                                                                     <li><a href="#application/views/users/login.php"><i class="icon-file"></i> application/views/users/login.php</a></li>
                                                                                                     <li><a href="#application/views/users/register_no_pin.php"><i class="icon-file"></i> application/views/users/register_no_pin.php</a></li>
@@ -623,6 +646,32 @@
                         <h3>
                             <i class="icon-file"></i>
                             application/models/captchas_model.php
+                            <small style="float: right;padding-right: 10px;">1</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/models/logs_model.php" id="application/models/logs_model.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/models/logs_model.php
                             <small style="float: right;padding-right: 10px;">1</small>
                         </h3>
                         <div>
@@ -1112,6 +1161,92 @@
                         </div>
                                     </div>
                             <div class="package-contents">
+                                            <a name="application/libraries/Mpkgen.php" id="application/libraries/Mpkgen.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/Mpkgen.php
+                            <small style="float: right;padding-right: 10px;">13</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method generate()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>64</td>
+                                        <td>No summary for class \CurveFp</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>66</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>72</td>
+                                        <td>No summary for method contains()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>76</td>
+                                        <td>No summary for method cmp()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>81</td>
+                                        <td>No summary for class \Point</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>85</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>105</td>
+                                        <td>No summary for method cmp()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>121</td>
+                                        <td>No summary for method add()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>152</td>
+                                        <td>No summary for method mul()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>182</td>
+                                        <td>No summary for method leftmost_bit()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>192</td>
+                                        <td>No summary for method double()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
                                             <a name="application/libraries/Bw_auth.php" id="application/libraries/Bw_auth.php"></a>
                         <h3>
                             <i class="icon-file"></i>
@@ -1230,7 +1365,7 @@
                         <h3>
                             <i class="icon-file"></i>
                             application/libraries/Current_user.php
-                            <small style="float: right;padding-right: 10px;">16</small>
+                            <small style="float: right;padding-right: 10px;">17</small>
                         </h3>
                         <div>
                             <table class="table markers table-bordered">
@@ -1322,6 +1457,11 @@
                                         <td>31</td>
                                         <td>No summary for property $URI</td>
                                     </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for property $entry_payment</td>
+                                    </tr>
                                                             </tbody>
                             </table>
                         </div>
@@ -1347,6 +1487,1576 @@
                                         <td>error</td>
                                         <td>0</td>
                                         <td>No summary was found for this file</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/Bitcoin_crypto.php" id="application/libraries/Bitcoin_crypto.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/Bitcoin_crypto.php
+                            <small style="float: right;padding-right: 10px;">4</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for class \Bitcoin_crypto</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>31</td>
+                                        <td>No summary for property $hexchars</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for property $base58chars</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/auto_load.php" id="application/libraries/ecc-lib/auto_load.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/auto_load.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for function \__autoload()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/interface/EcDHInterface.php" id="application/libraries/ecc-lib/classes/interface/EcDHInterface.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/interface/EcDHInterface.php
+                            <small style="float: right;padding-right: 10px;">9</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method calculateKey()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method getPublicPoint()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for method setPublicPoint()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method encrypt()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method decrypt()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>38</td>
+                                        <td>No summary for method encryptFile()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>40</td>
+                                        <td>No summary for method decryptFile()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/interface/PrivateKeyInterface.php" id="application/libraries/ecc-lib/classes/interface/PrivateKeyInterface.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/interface/PrivateKeyInterface.php
+                            <small style="float: right;padding-right: 10px;">7</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method sign()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method int_to_string()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for method string_to_int()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method digest_integer()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method point_is_valid()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/interface/PublicKeyInterface.php" id="application/libraries/ecc-lib/classes/interface/PublicKeyInterface.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/interface/PublicKeyInterface.php
+                            <small style="float: right;padding-right: 10px;">6</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method verifies()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method getCurve()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for method getGenerator()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method getPoint()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/interface/CurveFpInterface.php" id="application/libraries/ecc-lib/classes/interface/CurveFpInterface.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/interface/CurveFpInterface.php
+                            <small style="float: right;padding-right: 10px;">7</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method contains()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method getA()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for method getB()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method getPrime()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method cmp()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/interface/PointInterface.php" id="application/libraries/ecc-lib/classes/interface/PointInterface.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/interface/PointInterface.php
+                            <small style="float: right;padding-right: 10px;">13</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method cmp()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method add()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for method mul()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method leftmost_bit()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for method rmul()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>38</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>40</td>
+                                        <td>No summary for method double()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>No summary for method getX()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>44</td>
+                                        <td>No summary for method getY()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>46</td>
+                                        <td>No summary for method getCurve()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>No summary for method getOrder()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/interface/SignatureInterface.php" id="application/libraries/ecc-lib/classes/interface/SignatureInterface.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/interface/SignatureInterface.php
+                            <small style="float: right;padding-right: 10px;">4</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method getR()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for method getS()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/CurveFp.php" id="application/libraries/ecc-lib/classes/CurveFp.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/CurveFp.php
+                            <small style="float: right;padding-right: 10px;">10</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>29</td>
+                                        <td>No summary for property $a</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for property $b</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>31</td>
+                                        <td>No summary for property $prime</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>40</td>
+                                        <td>No summary for method contains()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>66</td>
+                                        <td>No summary for method getA()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>70</td>
+                                        <td>No summary for method getB()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>74</td>
+                                        <td>No summary for method getPrime()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>78</td>
+                                        <td>No summary for method cmp()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/PublicKey.php" id="application/libraries/ecc-lib/classes/PublicKey.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/PublicKey.php
+                            <small style="float: right;padding-right: 10px;">10</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>24</td>
+                                        <td>No summary for property $curve</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for property $generator</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for property $point</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>55</td>
+                                        <td>No summary for method verifies()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>109</td>
+                                        <td>No summary for method getCurve()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>113</td>
+                                        <td>No summary for method getGenerator()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>117</td>
+                                        <td>No summary for method getPoint()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>121</td>
+                                        <td>No summary for method getPublicKey()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/util/gmp_Utils.php" id="application/libraries/ecc-lib/classes/util/gmp_Utils.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/util/gmp_Utils.php
+                            <small style="float: right;padding-right: 10px;">5</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method gmp_mod2()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>39</td>
+                                        <td>No summary for method gmp_random()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>No summary for method gmp_hexdec()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>63</td>
+                                        <td>No summary for method gmp_dechex()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/util/TestSuite.php" id="application/libraries/ecc-lib/classes/util/TestSuite.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/util/TestSuite.php
+                            <small style="float: right;padding-right: 10px;">25</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for property $START_PRIME</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for property $NUM_PRIMES</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>121</td>
+                                        <td>No summary for method gmp_NextPrime()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>151</td>
+                                        <td>No summary for method gmp_squareRootModP()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>186</td>
+                                        <td>No summary for method gmp_multInverseModP()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>215</td>
+                                        <td>No summary for method gmp_EcArithmetic()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>260</td>
+                                        <td>No summary for method gmp_NISTCurveTest()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>306</td>
+                                        <td>No summary for method gmp_pointValidity()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>354</td>
+                                        <td>No summary for method gmp_signatureValidity()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>559</td>
+                                        <td>No summary for method gmp_diffieHellman()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>591</td>
+                                        <td>No summary for method bcmath_NextPrime()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>624</td>
+                                        <td>No summary for method bcmath_squareRootModP()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>661</td>
+                                        <td>No summary for method bcmath_multInverseModP()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>693</td>
+                                        <td>No summary for method bcmath_EcArithmetic()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>746</td>
+                                        <td>No summary for method bcmath_NISTCurveTest()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>799</td>
+                                        <td>No summary for method bcmath_pointValidity()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>849</td>
+                                        <td>No summary for method bcmath_signatureValidity()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>1067</td>
+                                        <td>No summary for method bcmath_diffieHellman()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>1102</td>
+                                        <td>No summary for method test_add()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>1136</td>
+                                        <td>No summary for method test_double()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>1172</td>
+                                        <td>No summary for method test_multiply()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>1229</td>
+                                        <td>No summary for method test_point_validity()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>1241</td>
+                                        <td>No summary for method test_signature_validity()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/util/bcmath_Utils.php" id="application/libraries/ecc-lib/classes/util/bcmath_Utils.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/util/bcmath_Utils.php
+                            <small style="float: right;padding-right: 10px;">20</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for class \bcmath_Utils</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method bcrand()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>43</td>
+                                        <td>No summary for method bchexdec()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>56</td>
+                                        <td>No summary for method bcdechex()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>81</td>
+                                        <td>No summary for method bcand()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>91</td>
+                                        <td>No summary for method bcor()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>101</td>
+                                        <td>No summary for method bcxor()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>111</td>
+                                        <td>No summary for method bcleftshift()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>122</td>
+                                        <td>No summary for method bcrightshift()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>135</td>
+                                        <td>No summary for method _bcand()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>140</td>
+                                        <td>No summary for method _bcor()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>145</td>
+                                        <td>No summary for method _bcxor()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>161</td>
+                                        <td>No summary for method _bcbitwise_internal()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>182</td>
+                                        <td>No summary for method bc2bin()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>187</td>
+                                        <td>No summary for method bin2bc()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>191</td>
+                                        <td>No summary for method dec2base()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>211</td>
+                                        <td>No summary for method base2dec()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>233</td>
+                                        <td>No summary for method digits()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>247</td>
+                                        <td>No summary for method equalbinpad()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>257</td>
+                                        <td>No summary for method fixedbinpad()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/SECcurve.php" id="application/libraries/ecc-lib/classes/SECcurve.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/SECcurve.php
+                            <small style="float: right;padding-right: 10px;">25</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>26</td>
+                                        <td>No summary for method secp128r1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>48</td>
+                                        <td>No summary for method secp160k1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>70</td>
+                                        <td>No summary for method secp160r1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>92</td>
+                                        <td>No summary for method secp192k1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>114</td>
+                                        <td>No summary for method secp192r1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>136</td>
+                                        <td>No summary for method secp224r1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>158</td>
+                                        <td>No summary for method secp256r1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>180</td>
+                                        <td>No summary for method secp256k1_params()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>202</td>
+                                        <td>No summary for method curve_secp128r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>209</td>
+                                        <td>No summary for method generator_secp128r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>216</td>
+                                        <td>No summary for method curve_secp160k1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>223</td>
+                                        <td>No summary for method generator_secp160k1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>230</td>
+                                        <td>No summary for method curve_secp160r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>237</td>
+                                        <td>No summary for method generator_secp160r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>244</td>
+                                        <td>No summary for method curve_secp192k1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>251</td>
+                                        <td>No summary for method generator_secp192k1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>258</td>
+                                        <td>No summary for method curve_secp192r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>265</td>
+                                        <td>No summary for method generator_secp192r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>272</td>
+                                        <td>No summary for method curve_secp224r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>279</td>
+                                        <td>No summary for method generator_secp224r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>286</td>
+                                        <td>No summary for method curve_secp256r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>293</td>
+                                        <td>No summary for method generator_secp256r1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>300</td>
+                                        <td>No summary for method curve_secp256k1()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>307</td>
+                                        <td>No summary for method generator_secp256k1()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/Point.php" id="application/libraries/ecc-lib/classes/Point.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/Point.php
+                            <small style="float: right;padding-right: 10px;">19</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>31</td>
+                                        <td>No summary for class \Point</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>No summary for property $curve</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for property $x</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>35</td>
+                                        <td>No summary for property $y</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>36</td>
+                                        <td>No summary for property $order</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>37</td>
+                                        <td>No summary for property $infinity</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>39</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>61</td>
+                                        <td>No summary for method cmp()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>107</td>
+                                        <td>No summary for method add()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>188</td>
+                                        <td>No summary for method mul()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>274</td>
+                                        <td>No summary for method leftmost_bit()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>296</td>
+                                        <td>No summary for method rmul()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>300</td>
+                                        <td>No summary for method __toString()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>306</td>
+                                        <td>No summary for method double()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>357</td>
+                                        <td>No summary for method getX()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>361</td>
+                                        <td>No summary for method getY()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>365</td>
+                                        <td>No summary for method getCurve()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>369</td>
+                                        <td>No summary for method getOrder()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/EcDH.php" id="application/libraries/ecc-lib/classes/EcDH.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/EcDH.php
+                            <small style="float: right;padding-right: 10px;">14</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>31</td>
+                                        <td>No summary for property $generator</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>32</td>
+                                        <td>No summary for property $pubPoint</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>No summary for property $receivedPubPoint</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>34</td>
+                                        <td>No summary for property $secret</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>35</td>
+                                        <td>No summary for property $agreed_key</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>37</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>41</td>
+                                        <td>No summary for method calculateKey()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>46</td>
+                                        <td>No summary for method getPublicPoint()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>72</td>
+                                        <td>No summary for method setPublicPoint()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>76</td>
+                                        <td>No summary for method encrypt()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>84</td>
+                                        <td>No summary for method decrypt()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>91</td>
+                                        <td>No summary for method encryptFile()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>104</td>
+                                        <td>No summary for method decryptFile()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/NumberTheory.php" id="application/libraries/ecc-lib/classes/NumberTheory.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/NumberTheory.php
+                            <small style="float: right;padding-right: 10px;">24</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>807</td>
+                                        <td>No summary for property $miller_rabin_test_count</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>808</td>
+                                        <td>No summary for property $smallprimes</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>31</td>
+                                        <td>No summary for method modular_exp()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>51</td>
+                                        <td>No summary for method polynomial_reduce_mod()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>89</td>
+                                        <td>No summary for method polynomial_multiply_mod()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>123</td>
+                                        <td>No summary for method polynomial_exp_mod()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>185</td>
+                                        <td>No summary for method jacobi()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>222</td>
+                                        <td>No summary for method square_root_mod_prime()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>301</td>
+                                        <td>No summary for method inverse_mod()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>353</td>
+                                        <td>No summary for method gcd2()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>375</td>
+                                        <td>No summary for method gcd()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>387</td>
+                                        <td>No summary for method lcm2()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>407</td>
+                                        <td>No summary for method lcm()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>419</td>
+                                        <td>No summary for method factorization()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>541</td>
+                                        <td>No summary for method phi()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>587</td>
+                                        <td>No summary for method carmichael()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>597</td>
+                                        <td>No summary for method carmichael_of_factorized()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>625</td>
+                                        <td>No summary for method carmichael_of_ppower()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>647</td>
+                                        <td>No summary for method order_mod()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>683</td>
+                                        <td>No summary for method largest_factor_relatively_prime()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>723</td>
+                                        <td>No summary for method kinda_order_mod()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>733</td>
+                                        <td>No summary for method is_prime()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>787</td>
+                                        <td>No summary for method next_prime()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/NISTcurve.php" id="application/libraries/ecc-lib/classes/NISTcurve.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/NISTcurve.php
+                            <small style="float: right;padding-right: 10px;">11</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method curve_192()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>53</td>
+                                        <td>No summary for method curve_224()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>77</td>
+                                        <td>No summary for method curve_256()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>101</td>
+                                        <td>No summary for method curve_384()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>125</td>
+                                        <td>No summary for method curve_521()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>149</td>
+                                        <td>No summary for method generator_192()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>173</td>
+                                        <td>No summary for method generator_224()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>197</td>
+                                        <td>No summary for method generator_256()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>221</td>
+                                        <td>No summary for method generator_384()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>245</td>
+                                        <td>No summary for method generator_521()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/Signature.php" id="application/libraries/ecc-lib/classes/Signature.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/Signature.php
+                            <small style="float: right;padding-right: 10px;">6</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for property $r</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>28</td>
+                                        <td>No summary for property $s</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>30</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>38</td>
+                                        <td>No summary for method getR()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>42</td>
+                                        <td>No summary for method getS()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/ecc-lib/classes/PrivateKey.php" id="application/libraries/ecc-lib/classes/PrivateKey.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/ecc-lib/classes/PrivateKey.php
+                            <small style="float: right;padding-right: 10px;">9</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>24</td>
+                                        <td>No summary for property $public_key</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for property $secret_multiplier</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>27</td>
+                                        <td>No summary for method __construct()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>33</td>
+                                        <td>No summary for method sign()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>73</td>
+                                        <td>No summary for method int_to_string()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>111</td>
+                                        <td>No summary for method string_to_int()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>131</td>
+                                        <td>No summary for method digest_integer()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>136</td>
+                                        <td>No summary for method point_is_valid()</td>
                                     </tr>
                                                             </tbody>
                             </table>
@@ -1407,7 +3117,7 @@
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>30</td>
+                                        <td>28</td>
                                         <td>No summary for property $CI</td>
                                     </tr>
                                                             </tbody>
@@ -2457,6 +4167,32 @@
                         <h3>
                             <i class="icon-file"></i>
                             application/views/users/register.php
+                            <small style="float: right;padding-right: 10px;">1</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/views/users/payment.php" id="application/views/users/payment.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/views/users/payment.php
                             <small style="float: right;padding-right: 10px;">1</small>
                         </h3>
                         <div>
@@ -3736,7 +5472,7 @@
                         <h3>
                             <i class="icon-file"></i>
                             application/controllers/bitcoin_test.php
-                            <small style="float: right;padding-right: 10px;">4</small>
+                            <small style="float: right;padding-right: 10px;">6</small>
                         </h3>
                         <div>
                             <table class="table markers table-bordered">
@@ -3760,12 +5496,22 @@
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>27</td>
+                                        <td>20</td>
+                                        <td>No summary for method keypair()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for method electrum()</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>62</td>
                                         <td>No summary for method transaction()</td>
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>35</td>
+                                        <td>70</td>
                                         <td>No summary for method get_block()</td>
                                     </tr>
                                                             </tbody>
@@ -10605,7 +12351,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 14th, 2013 at 21:24.
+                    on October 21st, 2013 at 17:27.
                 </section>
             </section>
         </section>

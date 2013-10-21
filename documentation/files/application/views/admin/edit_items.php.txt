@@ -10,8 +10,8 @@
 			  
 		    <div class="row-fluid">
 		      <div class="span2 offset1">Name</div>
-			  <div class="span4"><input type='text' name='category_name' value='' /></div>
-			  <span class="help-inline"><?php echo form_error('category_name'); ?></span>	
+			  <div class="span4"><input type='text' name='create_name' value='' /></div>
+			  <span class="help-inline"><?php echo form_error('create_name'); ?></span>	
 	        </div>	
 	        
 		    <div class="row-fluid">
@@ -25,7 +25,7 @@
 <?php } ?>		
 				</select>	
 			  </div>
-	          <span class="help-inline"><?php echo form_error('category_id'); ?></span>			  
+	          <span class="help-inline"><?php echo form_error('category_parent'); ?></span>			  
 		    </div>	
 				
 		    <div class="row-fluid">
@@ -42,14 +42,14 @@
 		    <div class="row-fluid">
 			  <div class="span2 offset1">Category</div>
 			  <div class="span4">
-				<select name='category_id' autocomplete="off">
+				<select name='rename_id' autocomplete="off">
 				  <option value=''></option>
 <?php foreach($categories as $category) { ?>
 				  <option value='<?php echo $category['id']; ?>'><?php echo $category['name']; ?></option>
 <?php } ?>				  
 				</select>
 			  </div>
-	          <span class="help-inline"><?php echo form_error('category_id'); ?></span>			  			  
+	          <span class="help-inline"><?php echo form_error('rename_id'); ?></span>			  			  
 		    </div>
 		    
 		    <div class="row-fluid">
@@ -72,14 +72,14 @@
 			<div class="row-fluid">
 			  <div class="span2 offset1">Category</div>
 			  <div class="span4">
-				<select name='category_id' autocomplete="off">
+				<select name='delete_id' autocomplete="off">
 				  <option value=''></option>
 <?php foreach($categories as $category) { ?>
 				  <option value='<?php echo $category['id']; ?>'><?php echo $category['name']; ?></option>
 <?php } ?>		
 				</select>
 			  </div>
-			  <span class="help-inline"><?php echo form_error('category_id'); ?></span>
+			  <span class="help-inline"><?php echo form_error('delete_id'); ?></span>
 			</div>
 			
 		    <div class="row-fluid">

@@ -14,7 +14,182 @@
 class Bw_config {
 
 	protected $CI;
+	
+	/**
+	 * Registration Allowed
+	 * 
+	 * An administrator can disable registration for the site. The default is to allow users to register an account.
+	 */
+	public $registration_allowed	= TRUE;
+	
+	/**
+	 * OpenSSL Keysize
+	 * 
+	 * This is the default keysize for RSA private keys. These keys are used to 
+	 * protect user private messages while stored in the database. The default
+	 * is 2048 bits.
+	 */
+	public $openssl_keysize			= 2048;
+	
+	/**
+	 * Site Description
+	 * 
+	 * This is the sites META description, which is processed by search
+	 * engines to describe your site.
+	 */
+	public $site_description		= "Bitcoin Marketplace";
+	
+	/**
+	 * Site Title
+	 * 
+	 * The title of the marketplace.
+	 */
+	public $site_title				= "";
+	
+	/**
+	 * Login Timeout
+	 * 
+	 * This specifies how long a user can remain idle before being logged out.
+	 * The default setting is 30 minutes inactivity before forcing the user
+	 * to login again.
+	 */
+	public $login_timeout			= 30;
+	
+	/**
+	 * Vendor Registration Allowed
+	 * 
+	 * It is possible to disable vendor registration for the website. 
+	 * Default setting is to allow vendors to register.
+	 */
+	public $vendor_registration_allowed = TRUE;
+	
+	/**
+	 * Encrypt Private Messages
+	 * 
+	 * Private messages can be encrypted with RSA keys to store them securely 
+	 * until the user log's in. Private key's are protected by a password,
+	 * generated from the users salt and a chosen PIN. The password is 
+	 * never stored on the server.
+	 */
+	public $encrypt_private_messages = TRUE;
+	
+	/**
+	 * Force Vendor PGP
+	 * 
+	 * Administrators can require that vendors have GPG keys enabled. 
+	 * The default setting is to require vendors to register PGP keys when
+	 * they sign up for an account.
+	 */
+	public $force_vendor_pgp		= TRUE;
+	
+	/**
+	 * Captcha Length
+	 * 
+	 * Administrators can set the length of the capthca using this setting.
+	 * The default length is 5 characters.
+	 */
+	public $captcha_length			= 5;
+	
+	/**
+	 * Allow Guests
+	 * 
+	 * The administrator may chose to force users to sign up for an account
+	 * before they can see the sites items, users, categories, and homepage.
+	 */
+	public $allow_guests			= TRUE;
+	
+	/**
+	 * Price Index
+	 * 
+	 * Bitcoin exchange rates can be loaded at a specified frequency by
+	 * the system. This is driven by users clicking on the site. The default
+	 * is to have this feature disabled.
+	 */
+	public $price_index 			= "Disabled";
+	
+	/**
+	 * Ban After Inactivity
+	 * 
+	 * Users can be banned after a certain period of inactivity. This ban
+	 * will trigger an automatic refund of bitcoins to the users cashout address.
+	 * The default is to allow accounts to remain active indefinitely.
+	 */
+	public $ban_after_inactivity	= 0;
+	
+	/**
+	 * Delete Transactions After
+	 * 
+	 * Administrators may chose to clear transaction history after a certain
+	 * period of time. The default setting is to store all transaction history.
+	 */
+	public $delete_transactions_after = 0;
+	
+	/**
+	 * Delete Messages After
+	 * 
+	 * Administrators may chose to clear user messages after a certain period 
+	 * of time. The default setting is to store all transaction history.
+	 */
+	public $delete_messages_after	= 0;
+	
+	/**
+	 * Max Main Balance
+	 * 
+	 * Administrators may chose to send excessive funds in the "main"
+	 * wallet account to a secured, offline wallet. By setting this threshold,
+	 * the script will check daily for a balance in the main account exceding
+	 * this amount. If this is the case, the excess will be sent to the offline
+	 * address. The default setting is to let the funds remain in the wallet.
+	 */
+	public $max_main_balance		= 0.00000000;	
+	
+	/**
+	 * Max Fees Balance
+	 * 
+	 * Administrators may chose to send excessive funds in the "fees"
+	 * wallet account to a secured, offline wallet. By setting this threshold,
+	 * the script will check daily for a balance in the fees account exceding
+	 * this amount. If this is the case, the excess will be sent to the offline
+	 * address. The default setting is to let the funds remain in the wallet.
+	 */
+	public $max_fees_balance		= 0.00000000;
 
+	/**
+	 * Base URL
+	 * 
+	 * (planned feature) Administrators can hard code the base URL of the
+	 * code, or allow CodeIgniter to try and work it out. The default is
+	 * to leave this to CodeIgniter.
+	 */
+	public $base_url;
+	 
+	/**
+	 * Index Page
+	 * 
+	 * (planned feature) Administrators can specify whether they want URL's
+	 * to include the index.php string, or use mod_rewrite to tidy the URL's.
+	 * The default is to support mod_rewrite.
+	 */
+	public $index_page;
+	  
+	/**
+	 * Entry Payment Vendor
+	 * 
+	 * This setting determines how much the vendor must pay in order to 
+	 * create an account on the website. The default is for vendors to
+	 * be able to register without payment
+	 */
+	public $entry_payment_vendor	= 0.00000000;
+
+	/**
+	 * Entry Payment Buyer
+	 * 
+	 * This setting determines how much a buyer has to pay in order
+	 * to create an account on the site. The default is for this to be 
+	 * disabled
+	 */
+	public $entry_payment_buyer		= 0.00000000;
+	
 	/**
 	 * Constructor
 	 * 
@@ -35,7 +210,7 @@ class Bw_config {
 			die('Error, BitWasp configuration not found.');
 		
 		// If any fields are missing, set them to NULL.
-		$config = $this->CI->general->expect_keys('site_description, delete_messages_after, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
+		$config = $this->CI->general->expect_keys('site_description, entry_payment_vendor, entry_payment_buyer, max_fees_balance, max_main_balance, delete_messages_after, ban_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
 		foreach($config as $key => $value) {
 			$this->$key = $value;
 		}
@@ -70,9 +245,17 @@ class Bw_config {
 							'index_page' => $this->index_page,
 							'allow_guests' => $this->allow_guests);
 		} else if($panel == 'bitcoin') {
+			$this->CI->load->library('bw_bitcoin');
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,
 							'delete_transactions_after' => $this->delete_transactions_after);
+			$accounts = $this->CI->bw_bitcoin->listaccounts();
+			foreach($accounts as $account => $balance) {
+				$var = 'max_'.$account.'_balance';
+				if(isset($this->CI->bw_config->$var))
+					$result[$var] = $this->CI->bw_config->$var;
+			}
+							
 		} else if($panel == 'users') {
 			$result = array('registration_allowed' => $this->registration_allowed,
 							'vendor_registration_allowed' => $this->vendor_registration_allowed,
@@ -81,7 +264,9 @@ class Bw_config {
 							'login_timeout' => $this->login_timeout/60,
 							'captcha_length' => $this->captcha_length,
 							'ban_after_inactivity' => $this->ban_after_inactivity,
-							'delete_messages_after' => $this->delete_messages_after);
+							'delete_messages_after' => $this->delete_messages_after,
+							'entry_payment_vendor' => $this->entry_payment_vendor,
+							'entry_payment_buyer' => $this->entry_payment_buyer);
 		} else if($panel == 'items') {
 			$result = array();
 		} else if($panel == 'autorun') {

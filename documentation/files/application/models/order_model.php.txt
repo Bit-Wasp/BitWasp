@@ -35,10 +35,7 @@ class Order_model extends CI_Model {
 	 * @return	bool
 	 */
 	public function add($order) {
-		if($this->db->insert('orders', $order) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->insert('orders', $order) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/** 
@@ -53,10 +50,7 @@ class Order_model extends CI_Model {
 	 */
 	public function cancel($order_id){
 		$this->db->where('id', $order_id);
-		if($this->db->update('orders', array('progress' => '0')) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->db->update('orders', array('progress' => '0')) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -109,10 +103,8 @@ class Order_model extends CI_Model {
 		$this->db->where('buyer_id', $this->current_user->user_id)
 				 ->order_by('progress asc, time desc');
 		$query = $this->db->get('orders');
-		if($query->num_rows() > 0) 
-			return $this->build_array($query->result_array());
+		return ($query->num_rows() > 0) ? $this->build_array($query->result_array()) : FALSE;
 		
-		return FALSE;
 	}
 	
 	/**
@@ -362,7 +354,7 @@ class Order_model extends CI_Model {
 	 * entry from each item).
 	 * 
 	 * @param	array $orders
-	 * return 	array
+	 * return 	array/FALSE
 	 */
 	public function build_array($orders ) {
 		$this->load->model('currencies_model');
@@ -370,7 +362,9 @@ class Order_model extends CI_Model {
 			$i = 0;
 			$item_array = array();
 			
+			// Loop through each order.
 			foreach($orders as $order) {
+				// Extract product hash/quantities.
 				$items = $order['items'];
 				$items = explode(":", $items);
 				$j = 0;
@@ -378,22 +372,26 @@ class Order_model extends CI_Model {
 				$price_b = 0.00000000;
 				$price_l = 0.00000000;
 				foreach($items as $item) {
+					// Load each item & quantity.
 					$array = explode("-", $item);
 					$item_info = $this->items_model->get($array[0]);
 					
 					$quantity = $array[1];
 					
+					// If the item no longer exists, display a message.
 					if($item_info == FALSE) {
 						$message = "Item ";
 						$message .= (strtolower($this->current_user->user_role) == 'vendor') ? 'has been removed' : 'was removed, contact your vendor' ;
 						$item_array[$j] = array('hash' => 'removed',
 												'name' => $message);
 					} else {
+						// Remove the vendor array, reduces the size of responses.
 						unset($item_info['vendor']);
 						$item_array[$j] = $item_info;
-						
+
+						// Convert from whatever currency the item's price is in
+						// to bitcoin, and add this up. Convert to local currency later.
 						$price_b_tmp = $item_info['price']/$item_info['currency']['rate'];
-						$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 						$price_b += $price_b_tmp*$quantity;
 						
 					}			
@@ -401,6 +399,8 @@ class Order_model extends CI_Model {
 					$item_array[$j++]['quantity'] = $quantity;					
 				}
 				
+				// Determine the progress message. Contains a status update
+				// for the order, and lets the user progress to the next step.
 				switch($order['progress']) {
 					case '0':	
 						$progress_message = '<input type="submit" class="btn btn-mini" name="recount['.$order['id'].']" value="Update" /> ';
@@ -416,13 +416,13 @@ class Order_model extends CI_Model {
 						break;
 					case '3':
 						$progress_message = "Awaiting dispatch.<br />";
-						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/dispute/'.$order['id'].'">Dispute</a>';	
+						$progress_message.= anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
 						break;
 					case '4':
 						$progress_message = "Item has been dispatched.<br />";
 						$progress_message.= '<input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="';
 						$progress_message.= ($order['finalized'] == '0') ? 'Finalize' : 'Received'; $progress_message.='" /> ';
-						$progress_message.= '<a class="btn btn-mini" href="'.site_url().'order/dispute/'.$order['id'].'">Dispute</a>';	
+						$progress_message.= anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
 						break;
 					case '5':
 						$progress_message = "Disputed transaction. Awaiting outcome.";
@@ -435,7 +435,10 @@ class Order_model extends CI_Model {
 						break;
 				}
 				
+				
+				// Load the users local currency.
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
+				// Convert the order's price into the users own currency.
 				$price_l = ($order['price']*$local_currency['rate']);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
 

@@ -70,6 +70,7 @@ class Autorun_model extends CI_Model {
 					break;
 			}
 			
+			$results[$result['index']]['time_f'] = $this->general->format_time($result['last_update']);
 			unset($results[$result['index']]['index']);
 		}
 		return $results;

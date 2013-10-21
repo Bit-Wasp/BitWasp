@@ -29,6 +29,7 @@ class Current_User {
 	public $user_role;
 	public $session_id;
 	public $URI;
+	public $entry_payment = FALSE;
 
 	/**
 	 * Constructor
@@ -77,6 +78,9 @@ class Current_User {
 			
 				if($this->CI->session->userdata('force_pgp') == 'true')
 					$this->force_pgp = TRUE;
+					
+				if($this->CI->session->userdata('entry_payment') == 'true')
+					$this->entry_payment = TRUE;
 			}
 		}	
 	}

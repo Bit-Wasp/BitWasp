@@ -12,6 +12,41 @@ class Bitcoin_Test extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
+		$this->load->library('bitcoin_crypto');
+		$this->load->library('mpkgen');
+
+	}
+	
+	public function keypair() {
+		$key = $this->bitcoin_crypto->getNewKeySet('6F');
+		print_r($key);
+	}
+
+	public function electrum() {
+	
+		$account = "main";
+	
+		if(!isset($this->bw_config->electrum_mpk))
+			return FALSE;
+		// Load the MPK
+		$mpk = trim($this->bw_config->electrum_mpk);
+			
+		// If the iteration record doesn't exist, create one at 0.
+		if(!isset($this->bw_config->electrum_iteration)){
+			$iteration = 0;
+			// Exit if we can't create the record.
+			if(!$this->config_model->create('electrum_iteration', '0'))
+				return FALSE;
+		} else {
+			// Record exists, use that.
+			$iteration = $this->bw_config->electrum_iteration;
+		}
+		$address = $this->mpkgen->generate($mpk, $iteration);
+		if(!is_string($address))
+			return FALSE;
+			
+		echo $address;
+		
 		
 	}
 	

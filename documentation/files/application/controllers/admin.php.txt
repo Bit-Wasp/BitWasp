@@ -151,13 +151,23 @@ class Admin extends CI_Controller {
 		if($this->form_validation->run('admin_edit_autorun') == TRUE){
 			$jobs = $this->input->post('jobs');
 			$update = FALSE;
+			$disabled_jobs = $this->input->post('disabled_jobs');
 			foreach($jobs as $index => $interval){
-				if(isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval){
-					if($this->autorun_model->set_interval($index, $interval) == TRUE)
+				if(!is_numeric($interval))
+					redirect('admin/autorun');
+					
+				if($data['jobs'][$index] !== '0' && $disabled_jobs[$index] == '1'){
+					if($this->autorun_model->set_interval($index, '0') == TRUE)
 						$update = TRUE;
-						
-					if($interval !== '0'){
-						$this->autorun->jobs[$index]->job();
+				} else {
+				
+					if(isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval){
+						if($this->autorun_model->set_interval($index, $interval) == TRUE)
+							$update = TRUE;
+							
+						if($interval !== '0'){
+							$this->autorun->jobs[$index]->job();
+						}
 					}
 				}
 			}
@@ -232,48 +242,78 @@ class Admin extends CI_Controller {
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
+			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
 			
-			$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_transactions_after') : NULL ;						
-			
-			// If we're disabling auto-deleting transactions, set that.
-			if($this->input->post('delete_transactions_after_disabled') == '1') 		$changes['delete_transactions_after'] = "0";
+				$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_transactions_after') : NULL ;						
+				// If we're disabling auto-deleting transactions, set that.
+				if($this->input->post('delete_transactions_after_disabled') == '1') $changes['delete_transactions_after'] = "0";
+
+				$backup_balances = $this->input->post('account');
+				if(is_array($backup_balances)) {
+					foreach($backup_balances as $account => $balance) {
+						if($this->general->matches_any($account, array('','topup')) == TRUE)
+							continue;
 						
-			
-			// Check if the selection exists.
-			if($data['config']['price_index'] !== $this->input->post('price_index')){
-				if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
-				
-					$update = array('price_index' => $this->input->post('price_index'));
-					$this->config_model->update($update);
-					
-					if($this->input->post('price_index') !== 'Disabled'){		
-						// If the price index was previously disabled, set the auto-run script interval back up..
-						if($data['price_index'] == 'Disabled') 
-							$this->config_model->set_autorun_interval('price_index', '0.166666');
-							
-						// And request new exchange rates.
-						$this->bw_bitcoin->ratenotify();
-					} else {
-						// When disabling BPI updates, set the interval to 0.
-						$this->config_model->set_autorun_interval('price_index', '0');
+						$var = "max_".$account."_balance";
+						if(!isset($data['config'][$var]) && isset($data['accounts'][$account])) {
+							if(!$this->config_model->create($var, '0.00000000'))
+								continue;
+						}
+
+						$changes[$var] = ($balance !== $data['config'][$var]) ? $balance: NULL;						
 					}
-					// Redirect when complete.
-					redirect('admin/bitcoin');
 				}
+				
+				$disabled_backups = $this->input->post('backup_disabled');
+				if(is_array($disabled_backups)) {
+					foreach($disabled_backups as $account => $value) {
+						if($this->general->matches_any($account, array('','topup')) == TRUE)
+							continue;
+
+						$var = "max_".$account."_balance";
+						$changes[$var] = ($balance !== $data['config'][$var]) ? 0.00000000 : NULL;					
+					}
+				}
+				
+				// Check if the selection exists.
+				if($data['config']['price_index'] !== $this->input->post('price_index')){
+					if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
+					
+						$update = array('price_index' => $this->input->post('price_index'));
+						$this->config_model->update($update);
+						
+						if($this->input->post('price_index') !== 'Disabled'){		
+							// If the price index was previously disabled, set the auto-run script interval back up..
+							if($data['price_index'] == 'Disabled') 
+								$this->config_model->set_autorun_interval('price_index', '0.166666');
+								
+							// And request new exchange rates.
+							$this->bw_bitcoin->ratenotify();
+						} else {
+							// When disabling BPI updates, set the interval to 0.
+							$this->config_model->set_autorun_interval('price_index', '0');
+						}
+						// Redirect when complete.
+						redirect('admin/bitcoin');
+					}
+				}
+				
+				$changes = array_filter($changes, 'strlen');
+		
+				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+					redirect('admin/bitcoin');	
 			}
-			
-			$changes = array_filter($changes, 'strlen');
-	
-			if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
-				redirect('admin/bitcoin');	
 		}
 		
 		// If the bitcoin transfer form has been completed:
 		if($this->input->post('admin_transfer_bitcoins') == 'Send') {
+			
 			if($this->form_validation->run('admin_transfer_bitcoins') == TRUE) {
+				
 				// Check that the account has the specified available balance.
 				$amount = $this->input->post('amount');
 				if($data['accounts'][$this->input->post('from')] >= (float)$amount) {
+					
 					if($this->bw_bitcoin->move($this->input->post('from'), $this->input->post('to'), (float)$amount) == TRUE)
 						redirect('admin/bitcoin');
 				} else {
@@ -342,12 +382,18 @@ class Admin extends CI_Controller {
 			$changes['force_vendor_pgp'] = ((int)$this->input->post('force_vendor_pgp') !== $data['config']['force_vendor_pgp']) ? $this->input->post('force_vendor_pgp') : NULL;
 			$changes['ban_after_inactivity'] = ($this->input->post('ban_after_inactivity') !== $data['config']['ban_after_inactivity']) ? $this->input->post('ban_after_inactivity') : NULL ;			
 			$changes['delete_messages_after'] = ($this->input->post('delete_messages_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_messages_after') : NULL ;			
+			$changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
+			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_vendor') !== $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
 			
 			// If we're disabling auto-banning users after inactivity, set that.
 			if($this->input->post('ban_after_inactivity_disabled') == '1') 		$changes['ban_after_inactivity'] = "0";
 
 			// If we're disabling auto-clearing of user messages.
 			if($this->input->post('delete_messages_after_disabled') == '1')		$changes['delete_messages_after'] = "0";				
+			
+			// Set registration payments for buyer/vendor to zero if disabled.
+			if($this->input->post('entry_payment_buyer_disabled') == '1')		$changes['entry_payment_buyer'] = '0';
+			if($this->input->post('entry_payment_vendor_disabled') == '1')		$changes['entry_payment_vendor'] = '0';
 			
 			$changes = array_filter($changes, 'strlen');
 
@@ -401,7 +447,7 @@ class Admin extends CI_Controller {
 		if($this->input->post('add_category') == 'Add') {
 			if($this->form_validation->run('admin_add_category') == TRUE) {
 				// Add the category.
-				$category = array(	'name' => $this->input->post('category_name'),
+				$category = array(	'name' => $this->input->post('create_name'),
 									'hash' => $this->general->unique_hash('categories','hash'),
 									'parent_id' => $this->input->post('category_parent'));
 				if($this->categories_model->add($category) == TRUE)
@@ -413,7 +459,7 @@ class Admin extends CI_Controller {
 		if($this->input->post('rename_category') == 'Rename') {
 			if($this->form_validation->run('admin_rename_category') == TRUE) {
 				// Rename the category.
-				if($this->categories_model->rename($this->input->post('category_id'), $this->input->post('category_name')) == TRUE)
+				if($this->categories_model->rename($this->input->post('rename_id'), $this->input->post('category_name')) == TRUE)
 					redirect('admin/edit/items');
 			}
 		}
@@ -422,12 +468,11 @@ class Admin extends CI_Controller {
 		if($this->input->post('delete_category') == 'Delete') {
 			if($this->form_validation->run('admin_delete_category') == TRUE) {
 		
-				$category = $this->categories_model->get(array('id' => $this->input->post('category_id')));
+				$category = $this->categories_model->get(array('id' => $this->input->post('delete_id')));
 				$cat_children = $this->categories_model->get_children($category['id']);
 
 				// Check if items or categories are orphaned by this action, redirect to move these.
 				if($category['count_items'] > 0 || $cat_children['count'] > 0) {
-					echo 'a';
 					redirect('admin/category/orphans/'.$category['hash']);
 				} else {
 					// Otherwise it's empty and can be deleted.
@@ -496,7 +541,7 @@ class Admin extends CI_Controller {
 			}
 			// Finally, delete the category and redirect.
 			if($this->categories_model->delete($data['category']['id']) == TRUE)
-				redirect('edit/items');
+				redirect('admin/edit/items');
 		}
 		
 		$data['page'] = 'admin/category_orphans';
@@ -521,10 +566,18 @@ class Admin extends CI_Controller {
 		if($this->input->post('create_token') == "Create"){
 			if($this->form_validation->run('admin_create_token') == TRUE){
 				
+				// Get the registration fee for the chosen user role, and
+				// if it does not exist then set the default to 0.0000000 ($config_val)
+				// If the admin has chosen the default fee, use that $config_val,
+				// otherwise use the number they've given.
+				$var = 'entry_payment_'.strtolower($this->general->role_from_id($this->input->post('user_role')));
+				$config_val = (isset($this->bw_config->$var)) ? $this->bw_config->$var : 0.00000000 ;
+				$entry_payment = ($this->input->post('entry_payment') == 'default') ? $config_val : $this->input->post('entry_payment') ;
 				// Generate a unique has as the token.
 				$update = array('user_type' => $this->input->post('user_role'),
 								'token_content' => $this->general->unique_hash('registration_tokens','token_content', 128),
-								'comment' => $this->input->post('token_comment'));
+								'comment' => $this->input->post('token_comment'),
+								'entry_payment' => $entry_payment );
 								
 				$data['returnMessage'] = 'Unable to create your token at this time.';
 				if($this->users_model->add_registration_token($update) == TRUE){
@@ -644,7 +697,7 @@ class Admin extends CI_Controller {
 			if($this->input->post('ban_user') !== $data['user']['banned']) {
 				if( $this->accounts_model->toggle_ban($data['user']['id'], $this->input->post('ban_user') ) ) {
 					$data['returnMessage'] = $data['user']['user_name']." has now been ";
-					$data['returnMessage'].= ($this->input->post('ban_user') == '0') ? 'banned.' : 'unbanned.'; 
+					$data['returnMessage'].= ($this->input->post('ban_user') == '1') ? 'banned.' : 'unbanned.'; 
 					$data['page'] = 'accounts/view';
 					$data['title'] = $data['user']['user_name'];
 					
@@ -677,6 +730,7 @@ class Admin extends CI_Controller {
 				$links .= ' class="active" ';
 				$self = $entry;
 				$heading = $entry['heading'];
+				$panel_url = $admin_url.$self['panel'];
 			}
 			$links .= '>'.anchor('admin'.$entry['panel'], $entry['title']).'</li>';
 		}
@@ -684,7 +738,7 @@ class Admin extends CI_Controller {
 		$nav = '
 		  <div class="tabbable">
 			<label class="span3"><h2>'.$self['heading'].'</h2></label>
-			<label class="span1"><a href="'.site_url().'admin/edit'.$self['panel'].'" class="btn ">Edit</a></label>
+			<label class="span1">'.anchor($panel_url, 'Edit').'</label>
 			<label class="span7">
 			  <ul class="nav nav-tabs">
 			  '.$links.'
@@ -700,51 +754,80 @@ class Admin extends CI_Controller {
 	/**
 	 * Check the captcha length is not too long.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_captcha_length($param) {
 		return ($param > 0 && $param < 13) ? TRUE : FALSE;
 	}
 
 	/**
+	 * Check Bool
+	 * 
 	 * Check the supplied parameter is for a boolean..
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_bool($param) {
 		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
 	}
 
 	/**
+	 * Check Category Exists.
+	 * 
 	 * Check the required category exists (for parent_id)
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_category_exists($param) {
-		if($param == '0')	// Allows the category to be a root category.
+		if($param == NULL)
+			return FALSE;
+			
+		if($param == "0")	// Allows the category to be a root category.
 			return TRUE;
+			echo "Param !== '0'<br />";
 			
 		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 	
 	/**
-	 * Check the category can be deleted (doesn't allow '0' for root category)
+	 * Check Can Delete Category
+	 * 
+	 * Check the category can be deleted (doesn't allow '0' for root category).
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param	
+	 * @return	boolean
 	 */
 	public function check_can_delete_category($param) {
+		if($param == NULL)
+			return FALSE;
+			
 		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
 	
 	/**
+	 * Check Registration Token Fee
+	 * 
+	 * This function checks if the supplied 'amount' for the registration
+	 * is 'default', which will trigger the user to be charged the config value,
+	 * or else if the admin has specified a figure.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_registration_token_fee($param) {
+		return ($param == 'default' || is_numeric($param) && $param >= 0) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Bitcoin Account Exists
+	 * 
 	 * Check the bitcoin account already exists in the server wallet.
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param	string	$param
+	 * @return	boolean
 	 */
 	public function check_bitcoin_account_exists($param) {
 		if($param == '')
@@ -755,34 +838,67 @@ class Admin extends CI_Controller {
 	}
 	
 	/**
+	 * Check Admin Roles
+	 * 
 	 * Check the submitted parameter is either 1, 2, or 3.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_admin_roles($param){
 		return ($this->general->matches_any($param, array('1','2','3')) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
+	 * Check Autorun Interval 
+	 * 
 	 * Check the submitted parameter is a valid interval for an autorun job.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_autorun_interval($param){
-		return ($param >= '0') ? TRUE : FALSE;
+		return (is_numeric($param) && $param >= '0') ? TRUE : FALSE;
 	}
 	
 	/**
+	 * Check is positive
+	 * 
 	 * Check the supplied parameter is a positive number.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
-	public function is_positive($param) {
-		return (is_numeric($param) && $param > 0) ? TRUE : FALSE;
-		
+	public function check_is_positive($param) {
+		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
+	}
+	
+	/**
+	 * Check Price Index
+	 * 
+	 * Check the supplied parameter is a valid price index config value.
+	 *
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_price_index($param){
+		$config = $this->bw_config->price_index_config;
+		return (is_array($config[$param]) || $param == 'Disabled') ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check session timeout.
+	 * 
+	 * Session timeouts can be a minimum of 5 minutes inactivity before
+	 * logging a user out, to an admin defined interval. The default value
+	 * is set in the Config library, and is 30 minutes. Otherwise it's read
+	 * from this value set in the table.
+	 * 
+	 * @param	string	$param
+	 * return	boolean
+	 */
+	public function check_session_timeout($param) {
+		 return (is_numeric($param) && $param >= 5) ? TRUE : FALSE;
 	}
 };
 
