@@ -228,12 +228,13 @@ class Users extends CI_Controller {
 				$entry_fee = 'entry_payment_'.strtolower($data['role']);
 				$entry_fee = $this->bw_config->$entry_fee;
 				
-				if(isset($data['token_info'])){
+				if(isset($data['token_info']) && $data['token_info'] !== FALSE){
+					var_dump($data['token_info']);
 					if($data['token_info']['entry_payment'] > 0) {
 						$address = $this->bw_bitcoin->new_fees_address();
 						$entry_fee = $data['token_info']['entry_payment'];
 						$info = array(	'user_hash' => $user_hash,
-										'amount' => $data['token_info'],
+										'amount' => $data['token_info']['entry_payment'],
 										'bitcoin_address' => $address);
 						if($this->users_model->set_entry_payment($info) == TRUE){
 								
@@ -242,9 +243,10 @@ class Users extends CI_Controller {
 							} else {
 								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 							}
-						}				
+						}
 					} else {
-						$data['returnMessage'] = 'Your account has been created, please login below.';
+						if($this->users_model->set_entry_paid($user_hash))
+							$data['returnMessage'] = 'Your account has been created, please login below.';
 					}
 				} else if(isset($entry_fee) && $entry_fee > 0){
 		
@@ -254,17 +256,14 @@ class Users extends CI_Controller {
 									'amount' => $entry_fee,
 									'bitcoin_address' => $address );
 					if($this->users_model->set_entry_payment($info) == TRUE){
-							
-						if($address == NULL){
-							$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
-						} else {
-							$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
-						}
+						// Work out which return message to display.
+						// $address == NULL: bitcoind offline.
+						// Otherwise display the normal message.
+						$data['returnMessage'] = ($address == NULL) ? "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details." : "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 					}
 				} else {
-					if($this->users_model->set_entry_paid($user_hash)){
+					if($this->users_model->set_entry_paid($user_hash))
 						$data['returnMessage'] = 'Your account has been created, please login below.';
-					}
 				}
 				
 				$this->bw_bitcoin->new_address($user_hash);
@@ -363,8 +362,9 @@ class Users extends CI_Controller {
 		$data['user'] = $this->users_model->get(array('id' => $this->current_user->user_id));
 		$data['entry_payment'] = $this->users_model->get_entry_payment($data['user']['user_hash']);
 
+		// If no entry payment exists in the table for the registration,
+		// or the user has been flagged as paid, redirect to the next page.
 		if($data['entry_payment'] == FALSE || $data['user']['entry_paid'] == '1'){
-	
 			if ($data['user']['user_role'] == 'Vendor' 
 				&& $this->bw_config->force_vendor_pgp == TRUE
 				&& $this->accounts_model->get_pgp_key($data['user']['id']) == FALSE){
@@ -375,6 +375,7 @@ class Users extends CI_Controller {
 				redirect('register/pgp');
 				
 			} else {
+				// Log the user in fully.
 				$this->session->unset_userdata('entry_payment');
 				$this->bw_session->create($data['user']);
 				redirect('');
