@@ -43,7 +43,9 @@ class Orders extends CI_Controller {
 	
 	/**
 	 * List Purchases
-	 * User Role: Buyer
+	 * 
+	 * Lists all purchases a buyer has made in the past. Required User Role: Buyer.
+	 * Also handles updating an order, placing/cancelling/finalizing an order.
 	 * URI: /order/list
 	 * 
 	 * @access	public

@@ -22,10 +22,9 @@
 			  <div class="row-fluid">
 				<div class="span1 offset1">Price</div>
 				<div class="span5">BTC <?php echo $order['price_b']; ?> 
-<?php if($local_currency['id'] !== '0'); echo '<br />' . $local_currency['symbol'] . ' ' . $order['price_l']; ?></div>
+<?php if($local_currency['id'] !== '0') echo '<br />' . $local_currency['symbol'] . ' ' . $order['price_l']; ?></div>
 			  </div>
 
-<br />
 			  <div class="row-fluid">
 				<div class="span1 offset1"></div>
 				<div class="span6">Enter your exact shipping address. You may choose to encrypt it using the vendors PGP public key before entering it. In fact, it will be encrypted before it leaves your browser if you have javascript enabled. </div>

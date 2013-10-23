@@ -175,7 +175,6 @@ class General {
 		// Load the current time, and check the difference between the times in seconds.
 		$currentTime = time();
 		$difference = $currentTime-$timestamp;
-
 		if ($difference < 60) {					// within a minute.
 			return 'less than a minute ago';
 		} else if($difference < 120) {			// 60-120 seconds.
@@ -188,10 +187,10 @@ class General {
 			return 'about ' . round($difference / 3600) . ' hours ago';
 		} else if($difference < (48*60*60)) {		// Just over a day.
 			return '1 day ago';
-		} else if($timestamp == '0' || $timestamp == NULL){ //The timestamp wasn't set which means it has never happened.
+		} else if($timestamp == "0" || $timestamp == NULL){ //The timestamp wasn't set which means it has never happened.
 			return 'Never';
 		} else { // Otherwise just return the basic date.
-			return date('j F Y',$timestamp);
+			return date('j F Y',(int)$timestamp);
 		}
 	}
 };

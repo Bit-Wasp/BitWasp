@@ -76,7 +76,6 @@ class Escrow_model extends CI_Model {
 		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 
-
 	/**
 	 * Delete
 	 * 
@@ -162,7 +161,7 @@ class Escrow_model extends CI_Model {
 	 * @param	string 	$user
 	 * @return	bool
 	 */					
-	public function pay($order_id, $user) {
+	public function pay($order_id, $user, $message = NULL) {
 		// Abort if escrow record does not exist.
 		$escrow = $this->get($order_id);
 		if($escrow == FALSE)
@@ -192,9 +191,11 @@ class Escrow_model extends CI_Model {
 			
 			if($user == 'vendor')
 				$this->order_model->set_finalized($order_id); 
+							
+			$message = ($message == NULL) ? "Order #$order_id" : $message;
 								 
 			// Record the transaction in the senders account.
-			$debit_txn = array( 'txn_id' => "Order #$order_id",
+			$debit_txn = array( 'txn_id' => $message,
 								 'user_hash' => $sender['user_hash'],
 								 'value' => "-".(float)$escrow['amount'],
 								 'confirmations' => '>50',
@@ -205,7 +206,7 @@ class Escrow_model extends CI_Model {
 			$this->bitcoin_model->add_pending_txn($debit_txn);						
 			
 			// Record the transaction in the recipients account.
-			$credit_txn = array( 'txn_id' => "Order #$order_id",
+			$credit_txn = array( 'txn_id' => $message,
 								 'user_hash' => $recipient['user_hash'],
 								 'value' => (float)$escrow['amount'],
 								 'confirmations' => '>50',

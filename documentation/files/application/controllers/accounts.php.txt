@@ -8,7 +8,6 @@
  * @category	Accounts
  * @author		BitWasp
  */
-
 class Accounts extends CI_Controller {
 
 	/**

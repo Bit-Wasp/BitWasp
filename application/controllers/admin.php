@@ -421,6 +421,7 @@ class Admin extends CI_Controller {
 	public function items() {
 		$data['nav'] = $this->generate_nav();
 		$data['item_count'] = $this->general_model->count_entries('items');
+		$data['config'] = $this->bw_config->load_admin('items');
 		$data['categories'] = $this->categories_model->list_all();
 		$data['page'] = 'admin/items';
 		$data['title'] = $this->nav['items']['heading'];
@@ -442,7 +443,19 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$data['nav'] = $this->generate_nav();
 		$data['categories'] = $this->categories_model->list_all();
-		
+		$data['config'] = $this->bw_config->load_admin('items');
+				
+		if($this->input->post('admin_edit_items') == 'Update') {
+			if($this->form_validation->run('admin_edit_items') == TRUE) {
+				$changes['auto_finalize_threshold'] = ($data['config']['auto_finalize_threshold'] == $this->input->post('auto_finalize_threshold') ) ? NULL : $this->input->post('auto_finalize_threshold');
+				
+				$changes = array_filter($changes, 'strlen');
+				if(count($changes) > 0)
+					if($this->config_model->update($changes) == TRUE)
+						redirect('admin/users');
+			}
+		}	
+			
 		// If the Add Category form has been submitted:
 		if($this->input->post('add_category') == 'Add') {
 			if($this->form_validation->run('admin_add_category') == TRUE) {

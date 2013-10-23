@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1554082673"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-2018338855"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1554082673" class="accordion-body collapse in">
+            <div id="namespace-2018338855" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -200,8 +200,9 @@
                                                     <li class="class"><a href="../classes/PrivateKey.html">PrivateKey</a></li>
                                                     <li class="class"><a href="../classes/Backup_Wallet.html">Backup_Wallet</a></li>
                                                     <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
-                                                    <li class="class"><a href="../classes/User_Inactivity.html">User_Inactivity</a></li>
+                                                    <li class="class"><a href="../classes/Auto_Finalize_Orders.html">Auto_Finalize_Orders</a></li>
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
+                                                    <li class="class"><a href="../classes/Refund_Inactive_Users.html">Refund_Inactive_Users</a></li>
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
                                                     <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
                                                     <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
@@ -331,13 +332,13 @@
                                             </nav>
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
-                    <h1><small>\</small>User_Inactivity</h1>
-                    <p><em>User Inactivity Job</em></p>
-                    <p>This job is used to ban inactive users. Called by the autorun class,
+                    <h1><small>\</small>Refund_Inactive_Users</h1>
+                    <p><em>Refund Inactive Users</em></p>
+                    <p>This job is used to refund inactive users. Called by the autorun class,
 it is run periodically to check for users who have not logged in for
 a set period.
-The default is to run every 24 hours, where stale users will be banned
-and have any balances refunded if they have a cashout address set.</p>
+The default is to run every 24 hours, where stale users will have their
+balances refunded to their cashout address.</p>
 
 
                     <section id="summary">
@@ -355,12 +356,12 @@ and have any balances refunded if they have a cashout address set.</p>
                         </section>
                         <section class="row-fluid public">
                             <section class="span4">
-                                                                    <a href="../classes/User_Inactivity.html#method___construct" class="">__construct()</a><br />
-                                                                    <a href="../classes/User_Inactivity.html#method_job" class="">job()</a><br />
+                                                                    <a href="../classes/Refund_Inactive_Users.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Refund_Inactive_Users.html#method_job" class="">job()</a><br />
                                                             </section>
                             <section class="span4">
-                                                                    <a href="../classes/User_Inactivity.html#property_config" class="">$config</a><br />
-                                                                    <a href="../classes/User_Inactivity.html#property_CI" class="">$CI</a><br />
+                                                                    <a href="../classes/Refund_Inactive_Users.html#property_config" class="">$config</a><br />
+                                                                    <a href="../classes/Refund_Inactive_Users.html#property_CI" class="">$CI</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No constants found</em>
@@ -395,12 +396,12 @@ and have any balances refunded if they have a cashout address set.</p>
                     
                     <dl>
                         <dt>File</dt>
-                            <dd><a href="../files/application.libraries.Autorun.User_Inactivity.php.html"><div class="path-wrapper">application/libraries/Autorun/User_Inactivity.php</div></a></dd>
+                            <dd><a href="../files/application.libraries.Autorun.Refund_Inactive_Users.php.html"><div class="path-wrapper">application/libraries/Autorun/Refund_Inactive_Users.php</div></a></dd>
                                                 <dt>Package</dt>
                             <dd><div class="namespace-wrapper">\BitWasp\Autorun\Autorun</div></dd>
                                                 <dt>Class hierarchy</dt>
                             <dd class="hierarchy">
-                                                                                                                                                                    <div class="namespace-wrapper">\User_Inactivity</div>
+                                                                                                                                                                    <div class="namespace-wrapper">\Refund_Inactive_Users</div>
                             </dd>
 
                         
@@ -531,9 +532,8 @@ description, and the frequency at which it should be run.</p>
                 <p>This function is called by the Autorun script.
 We load the time users may be inactive for from the config library. If
 set to zero, we don't need to run the job and execution terminates.
-Otherwise, load the inactive users, and ban them. Once banned,
-the script will check if the user has a cashout address set up. If
-so, we will return their bitcoins to that address.</p>
+Otherwise, load the inactive users, and refund their coins to their
+bitcoin cashout address if it's set.</p>
 
 
                 
@@ -560,10 +560,10 @@ so, we will return their bitcoins to that address.</p>
     <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="source-view-label">User_Inactivity.php</h3>
+            <h3 id="source-view-label">Refund_Inactive_Users.php</h3>
         </div>
         <div class="modal-body">
-            <pre data-src="../files/application/libraries/Autorun/User_Inactivity.php.txt" class="language-php line-numbers"></pre>
+            <pre data-src="../files/application/libraries/Autorun/Refund_Inactive_Users.php.txt" class="language-php line-numbers"></pre>
         </div>
     </div>
 
@@ -603,7 +603,7 @@ so, we will return their bitcoins to that address.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 21st, 2013 at 17:26.
+                    on October 23rd, 2013 at 11:50.
                 </section>
             </section>
         </section>

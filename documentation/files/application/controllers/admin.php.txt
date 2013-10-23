@@ -380,13 +380,13 @@ class Admin extends CI_Controller {
 			$changes['vendor_registration_allowed'] = ((int)$this->input->post('vendor_registration_allowed') !== $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
 			$changes['encrypt_private_messages'] = ((int)$this->input->post('encrypt_private_messages') !== $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_messages'): NULL;
 			$changes['force_vendor_pgp'] = ((int)$this->input->post('force_vendor_pgp') !== $data['config']['force_vendor_pgp']) ? $this->input->post('force_vendor_pgp') : NULL;
-			$changes['ban_after_inactivity'] = ($this->input->post('ban_after_inactivity') !== $data['config']['ban_after_inactivity']) ? $this->input->post('ban_after_inactivity') : NULL ;			
+			$changes['refund_after_inactivity'] = ($this->input->post('refund_after_inactivity') !== $data['config']['refund_after_inactivity']) ? $this->input->post('refund_after_inactivity') : NULL ;			
 			$changes['delete_messages_after'] = ($this->input->post('delete_messages_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_messages_after') : NULL ;			
 			$changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
 			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_vendor') !== $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
 			
 			// If we're disabling auto-banning users after inactivity, set that.
-			if($this->input->post('ban_after_inactivity_disabled') == '1') 		$changes['ban_after_inactivity'] = "0";
+			if($this->input->post('refund_after_inactivity_disabled') == '1') 		$changes['refund_after_inactivity'] = "0";
 
 			// If we're disabling auto-clearing of user messages.
 			if($this->input->post('delete_messages_after_disabled') == '1')		$changes['delete_messages_after'] = "0";				
@@ -421,6 +421,7 @@ class Admin extends CI_Controller {
 	public function items() {
 		$data['nav'] = $this->generate_nav();
 		$data['item_count'] = $this->general_model->count_entries('items');
+		$data['config'] = $this->bw_config->load_admin('items');
 		$data['categories'] = $this->categories_model->list_all();
 		$data['page'] = 'admin/items';
 		$data['title'] = $this->nav['items']['heading'];
@@ -442,7 +443,19 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$data['nav'] = $this->generate_nav();
 		$data['categories'] = $this->categories_model->list_all();
-		
+		$data['config'] = $this->bw_config->load_admin('items');
+				
+		if($this->input->post('admin_edit_items') == 'Update') {
+			if($this->form_validation->run('admin_edit_items') == TRUE) {
+				$changes['auto_finalize_threshold'] = ($data['config']['auto_finalize_threshold'] == $this->input->post('auto_finalize_threshold') ) ? NULL : $this->input->post('auto_finalize_threshold');
+				
+				$changes = array_filter($changes, 'strlen');
+				if(count($changes) > 0)
+					if($this->config_model->update($changes) == TRUE)
+						redirect('admin/users');
+			}
+		}	
+			
 		// If the Add Category form has been submitted:
 		if($this->input->post('add_category') == 'Add') {
 			if($this->form_validation->run('admin_add_category') == TRUE) {
@@ -730,7 +743,7 @@ class Admin extends CI_Controller {
 				$links .= ' class="active" ';
 				$self = $entry;
 				$heading = $entry['heading'];
-				$panel_url = $admin_url.$self['panel'];
+				$panel_url = $self['panel'];
 			}
 			$links .= '>'.anchor('admin'.$entry['panel'], $entry['title']).'</li>';
 		}
@@ -738,7 +751,7 @@ class Admin extends CI_Controller {
 		$nav = '
 		  <div class="tabbable">
 			<label class="span3"><h2>'.$self['heading'].'</h2></label>
-			<label class="span1">'.anchor($panel_url, 'Edit').'</label>
+			<label class="span1">'.anchor('admin/edit'.$panel_url, 'Edit', 'class="btn"').'</label>
 			<label class="span7">
 			  <ul class="nav nav-tabs">
 			  '.$links.'

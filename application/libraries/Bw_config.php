@@ -191,6 +191,17 @@ class Bw_config {
 	public $entry_payment_buyer		= 0.00000000;
 	
 	/**
+	 * Auto Finalize Threshold
+	 * 
+	 * This setting determines how long an order can go on where:
+	 * (1) the progress=3 but the vendor hasn't logged in for X days.
+	 * (2) the progress=4 and finalized=0 but the buyer hasn't logged in for X days.
+	 * In 1, the buyer will receive a refund, and in 2, the vendor will
+	 * receive the funds for the item.
+	 */
+	public $auto_finalize_threshold	= 0;
+	
+	/**
 	 * Constructor
 	 * 
 	 * Load the CodeIgniter framework, along with the config/currencies 
@@ -268,7 +279,7 @@ class Bw_config {
 							'entry_payment_vendor' => $this->entry_payment_vendor,
 							'entry_payment_buyer' => $this->entry_payment_buyer);
 		} else if($panel == 'items') {
-			$result = array();
+			$result = array('auto_finalize_threshold' => $this->auto_finalize_threshold);
 		} else if($panel == 'autorun') {
 			$result = array('refund_after_inactivity' => $this->refund_after_inactivity,
 							'delete_messages_after' => $this->delete_messages_after,

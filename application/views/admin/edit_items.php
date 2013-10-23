@@ -3,6 +3,25 @@
 		  <?php echo $nav; ?>
 
 		  <?php echo form_open('admin/edit/items', array('class' => 'form-horizontal')); ?>
+			
+			<div class="row-fluid">
+		      <div class="span3">Auto Finalize/Refund:</div>
+		      <div class="span7"><input type='text' class='span2' name='auto_finalize_threshold' value='<?php echo $config['auto_finalize_threshold']; ?>' /> days</div>
+			</div>
+			<div class="row-fluid">
+		      <div class="span7 offset3"><input type='checkbox' name='auto_finalize_threshold' value='1' <?php echo ($config['auto_finalize_threshold'] == '0') ? ' checked' : NULL; ?>' /> Disabled</div>
+			</div>
+		    <span class="help-inline offset2"><?php echo form_error('auto_finalize_threshold'); ?></span>
+
+            <div class="form-actions">
+		      <input type='submit' name='admin_edit_items' value='Update' class='btn btn-primary' />
+              <?php echo anchor('account','Cancel', array('class'=>'returnLink btn'));?>
+		    </div>
+			
+		  </form>
+
+
+		  <?php echo form_open('admin/edit/items', array('class' => 'form-horizontal')); ?>
 				
 		    <div class="row-fluid">
 			  <div class="span4 offset2"><strong>Add A Category</strong></div>

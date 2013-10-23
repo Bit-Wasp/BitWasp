@@ -466,6 +466,43 @@ class Order_model extends CI_Model {
 		}
 	}
 
+	/**
+	 * Admin Orders By Progress
+	 * 
+	 * This function is used by autorun jobs. Loads all orders which have 
+	 * progress=$progress, and finalized=$finalized.  Returns a n
+	 * multidimensional array if any records exist, or FALSE on failure.
+	 * 
+	 * @param	int	$progress
+	 * @param	int	$finalized
+	 * @return	array/FALSE
+	 */
+	public function admin_orders_by_progress($progress, $finalized) {
+		$this->db->where('progress', "$progress");
+		$this->db->where('finalized', "$finalized");
+		$query = $this->db->get('orders');
+		return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
+		
+	}
+	
+	/**
+	 * Admin Set Progress
+	 * 
+	 * This function is used by autorun jobs to set the progress of
+	 * the order $order_id to $progress. Unlike the normal progress_order()
+	 * function, which requires the current progress and calculates the next
+	 * progress number accordingly, this function can arbitrarily set
+	 * an order to any stage in the order process.
+	 * 
+	 * @param	int	$order_id
+	 * @param	int	$progress
+	 * @return	boolean
+	 */
+	public function admin_set_progress($order_id, $progress) {
+		$this->db->where('id', "$order_id");
+		return ($this->db->update('orders', array('progress' => $progress)) == TRUE) ? TRUE : FALSE;
+	}
+
 };
 
 /* End Of File: order_model.php */
