@@ -456,7 +456,7 @@ class Bitcoin_model extends CI_Model {
 	 * @return	bool
 	 */			
 	public function add_block($block_hash, $height) {
-		return ($this->db->insert('blocks', array('hash' => $block_hash, 'number' => $height)) == TRUE) ? TRUE : FALSE;
+		return ($this->db->insert('blocks', array('hash' => $block_hash, 'number' => "$height")) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -467,11 +467,11 @@ class Bitcoin_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	string	$block_hash
-	 * @return	bool
+	 * @return	boolean
 	 */		
 	public function have_block($block_hash) {
 		$this->db->select('id')
-				 ->where('hash', $block_hash);
+				 ->where('hash', "$block_hash");
 		$query = $this->db->get('blocks');
 		return ($query->num_rows() > 0) ? TRUE : FALSE;
 	}
