@@ -5,9 +5,9 @@
 		  
 <?php if($items !== FALSE) { 
 	foreach($items as $item): ?>
-			<div class='span11 well'>
+			<div class='span12 well'>
 			  <div class='span2'><?php echo anchor('item/'.$item['hash'], "<img src='data:image/jpeg;base64,{$item['main_image']['encoded']}' title='{$item['name']}' >"); ?></div>
-			  <div class='span6'><?php echo anchor('item/'.$item['hash'], $item['name']);?><br /><?php echo $item['price_f']; ?><br /><?php echo $item['description_s']; ?></div>
+			  <div class='span5'><?php echo anchor('item/'.$item['hash'], $item['name']);?><br /><?php echo $item['price_f']; ?><br /><?php echo $item['description_s']; ?></div>
 			  <div class='span2'><?php if($item['hidden'] == '1') echo "[hidden]"; ?></div>
 			  <div class='span3'><?php echo anchor('listings/edit/'.$item['hash'], 'Edit', 'class="btn btn-mini"'); ?> 
 <?php echo anchor('listings/images/'.$item['hash'], 'Images', 'class="btn btn-mini"'); ?> 
