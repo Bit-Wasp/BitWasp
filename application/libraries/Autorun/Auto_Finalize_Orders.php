@@ -164,7 +164,7 @@ class Auto_Finalize_Orders {
 						$data['from'] = $admin['id'];
 						$details = array('username' => $vendor['user_name'],
 										 'subject' => "Order #{$order['id']} has been auto-finalized.");
-						$details['message'] = "Today the order #{$order['id']} has automatically been finalized on the behalf of {$buyer['user_name']}, as they have not logged in for {$this->threshold} days. BTC {$escrow['amount']} has been credited to your account to complete this order. Please now review this user. If you wish to discuss this further, click reply to send a message to admin.";
+						$details['message'] = "Today the order #{$order['id']} has automatically been finalized on the behalf of {$buyer['user_name']}, as they have not logged in for {$this->threshold} days. BTC {$escrow_record['amount']} has been credited to your account to complete this order. Please now review this user. If you wish to discuss this further, click reply to send a message to admin.";
 						$message = $this->CI->bw_messages->prepare_input($data, $details);
 						$message['order_id'] = $order['id'];
 						$this->CI->messages_model->send($message);
