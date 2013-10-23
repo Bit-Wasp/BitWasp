@@ -48,12 +48,14 @@ class Auto_Finalize_Orders {
 		
 		$this->CI = &get_instance();
 		$this->threshold = $this->CI->bw_config->auto_finalize_threshold;
-			
+		if($this->threshold == '0') // Leave loading dependencies here if job disabled.
+			return TRUE;
 		$this->CI->load->model('order_model');
 		$this->CI->load->model('accounts_model');
 		$this->CI->load->model('escrow_model');
 		$this->CI->load->model('messages_model');
 		$this->CI->load->model('bitcoin_model');
+		$this->CI->load->model('logs_model');
 		$this->CI->load->library('bw_messages');
 	}
 	
@@ -90,7 +92,7 @@ class Auto_Finalize_Orders {
 		$orders = $this->CI->order_model->admin_orders_by_progress('3','1');
 		if($orders !== FALSE) {
 			
-			foreach($orders as $order){
+			foreach($orders as $order) {
 				
 				$vendor = $this->CI->accounts_model->get(array('user_hash' => $order['vendor_hash']));
 				
@@ -126,6 +128,8 @@ class Auto_Finalize_Orders {
 						$message = $this->CI->bw_messages->prepare_input($data, $details);
 						$message['order_id'] = $order['id'];
 						$this->CI->messages_model->send($message);
+						
+						@$this->logs_model->add("Auto Finalize Job", "Auto-Refunded #{$order['id']}", "The early-finalized balance of BTC {$order['amount']} has been refunded to {$buyer['user_name']} as {$vendor['user_name']} has not logged in for {$this->timeout} days.", "Info");
 						
 					} else {
 						$result = FALSE;
@@ -178,6 +182,8 @@ class Auto_Finalize_Orders {
 						$message['order_id'] = $order['id'];
 						$this->CI->messages_model->send($message);
 					
+						@$this->logs_model->add("Auto Finalize Job", "Auto-Finalize #{$order['id']}", "The escrow balance of BTC {$order['amount']} has been credited to {$vendor['user_name']} as {$buyer['user_name']} has not logged in for {$this->threshold} days.", "Info");
+						
 					} else {
 						$result = FALSE;
 					}
