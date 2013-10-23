@@ -113,7 +113,7 @@ class Auto_Finalize_Orders {
 						$data['from'] = $admin['id'];
 						$details = array('username' => $vendor['user_name'],
 										 'subject' => "Order #{$order['id']} has been auto-refunded.");
-						$details['message'] = "Today the balance for order #{$order['id']} has been refunded to {$buyer['user_name']}, as you have not logged in to confirm dispatch in {$timeout} days. BTC {$order['amount']} has been debited from your account and credited back to the user. Please note that failure to confirm dispatch, even if you have done so, within the allowed period of time, will result in this happening again, and will give users a reasonable opportunity to rate you negatively. If you wish to discuss this further, click reply to send a message to admin.";
+						$details['message'] = "Today the balance for order #{$order['id']} has been refunded to {$buyer['user_name']}, as you have not logged in to confirm dispatch in {$this->threshold} days. BTC {$order['amount']} has been debited from your account and credited back to the user. Please note that failure to confirm dispatch, even if you have done so, within the allowed period of time, will result in this happening again, and will give users a reasonable opportunity to rate you negatively. If you wish to discuss this further, click reply to send a message to admin.";
 						$message = $this->bw_messages->prepare_input($data, $details);
 						$message['order_id'] = $order['id'];
 						$this->messages_model->send($message);
@@ -122,7 +122,7 @@ class Auto_Finalize_Orders {
 						$data['from'] = $admin['id'];
 						$details = array('username' => $buyer['user_name'],
 										 'subject' => "Order #{$order['id']} has been auto-finalized.");
-						$details['message'] = "Today the balance for order #{$order['id']} has automatically refunded to you, as {$vendor['user_name']} has not logged in for the last {$timeout} days. If you have any concerns after the order has been made, you can always raise a dispute regarding an order, and bring it to the attention of the site administrator, but in cases where the vendor does not log in, you will receive an automatic update. Please note the threshold of time for this may change as the administrator sees fit. If you wish to discuss this further, click reply to send a message to admin.";
+						$details['message'] = "Today the balance for order #{$order['id']} has automatically refunded to you, as {$vendor['user_name']} has not logged in for the last {$this->threshold} days. If you have any concerns after the order has been made, you can always raise a dispute regarding an order, and bring it to the attention of the site administrator, but in cases where the vendor does not log in, you will receive an automatic update. Please note the threshold of time for this may change as the administrator sees fit. If you wish to discuss this further, click reply to send a message to admin.";
 						$message = $this->bw_messages->prepare_input($data, $details);
 						$message['order_id'] = $order['id'];
 						$this->messages_model->send($message);
@@ -142,7 +142,7 @@ class Auto_Finalize_Orders {
 			foreach($orders as $order){
 				$buyer = $this->CI->accounts_model->get(array('id' => $order['buyer_id']));
 				
-				if($buyer !== FALSE && $vendor['login_activity'] < (time()-$tis->threshold*24*60*60)) {
+				if($buyer !== FALSE && $buyer['login_activity'] < (time()-$this->threshold*24*60*60)) {
 					
 					$escrow_record = $this->CI->escrow_model->get($order['id']);
 					$payment_message = "Autofinalize #{$order['id']}";
@@ -164,7 +164,7 @@ class Auto_Finalize_Orders {
 						$data['from'] = $admin['id'];
 						$details = array('username' => $vendor['user_name'],
 										 'subject' => "Order #{$order['id']} has been auto-finalized.");
-						$details['message'] = "Today the order #{$order['id']} has automatically been finalized on the behalf of {$buyer['user_name']}, as they have not logged in for {$timeout} days. BTC {$escrow['amount']} has been credited to your account to complete this order. Please now review this user. If you wish to discuss this further, click reply to send a message to admin.";
+						$details['message'] = "Today the order #{$order['id']} has automatically been finalized on the behalf of {$buyer['user_name']}, as they have not logged in for {$this->threshold} days. BTC {$escrow['amount']} has been credited to your account to complete this order. Please now review this user. If you wish to discuss this further, click reply to send a message to admin.";
 						$message = $this->bw_messages->prepare_input($data, $details);
 						$message['order_id'] = $order['id'];
 						$this->messages_model->send($message);
