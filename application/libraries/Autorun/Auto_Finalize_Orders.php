@@ -129,7 +129,7 @@ class Auto_Finalize_Orders {
 						$message['order_id'] = $order['id'];
 						$this->CI->messages_model->send($message);
 						
-						@$this->logs_model->add("Auto Finalize Job", "Auto-Refunded #{$order['id']}", "The early-finalized balance of BTC {$order['amount']} has been refunded to {$buyer['user_name']} as {$vendor['user_name']} has not logged in for {$this->timeout} days.", "Info");
+						@$this->logs_model->add("Auto Finalize Job", "Auto-Refunded #{$order['id']}", "The early-finalized balance of BTC {$order['amount']} has been refunded to the buyer as the vendor has not logged in for {$this->timeout} days.", "Info");
 						
 					} else {
 						$result = FALSE;
@@ -182,7 +182,7 @@ class Auto_Finalize_Orders {
 						$message['order_id'] = $order['id'];
 						$this->CI->messages_model->send($message);
 					
-						@$this->logs_model->add("Auto Finalize Job", "Auto-Finalize #{$order['id']}", "The escrow balance of BTC {$order['amount']} has been credited to {$vendor['user_name']} as {$buyer['user_name']} has not logged in for {$this->threshold} days.", "Info");
+						@$this->logs_model->add("Auto Finalize Job", "Auto-Finalize #{$order['id']}", "The escrow balance of BTC {$order['amount']} has been credited to the vendor, as the buyer has not logged in for {$this->threshold} days.", "Info");
 						
 					} else {
 						$result = FALSE;
