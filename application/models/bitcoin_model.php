@@ -456,7 +456,7 @@ class Bitcoin_model extends CI_Model {
 	 * @return	bool
 	 */			
 	public function add_block($block_hash, $height) {
-		return ($this->db->insert('blocks', array('hash' => $block_hash, 'number' => "$height")) == TRUE) ? TRUE : FALSE;
+		return ($this->db->insert('blocks', array('hash' => "$block_hash", 'number' => "$height")) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**

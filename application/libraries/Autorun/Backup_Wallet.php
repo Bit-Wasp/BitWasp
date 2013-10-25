@@ -46,20 +46,21 @@ class Backup_Wallet {
 	 * 
 	 */	
 	public function job() {
-		return TRUE;
+		
 		// Check if there are any accounts/bitcoind is offline.
 		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
 		if(count($accounts) == 0) 
 			return TRUE;
-			
+
+		$bitcoin_info = $this->CI->bw_bitcoin->getinfo();
+		//if($bitcoin_info['testnet'] == TRUE)
+			//return FALSE;
+						
 		// Load models and libraries.
 		$this->CI->load->model('accounts_model');
 		$this->CI->load->model('messages_model');
 		$this->CI->load->library('bw_messages');
 		$this->CI->load->library('bitcoin_crypto');		
-
-		$bitcoin_info = $this->CI->bw_bitcoin->getinfo();
-		$magicbyte = ($bitcoin_info['testnet'] == TRUE) ? '6F' : '00';
 
 		$admin = $this->CI->accounts_model->get(array('user_name' => 'admin'));
 		// Loop through each account
@@ -68,15 +69,17 @@ class Backup_Wallet {
 			$var = "max_".$account."_balance";
 			// Do not touch the accounts "", "topup", ones with a zero balance, or 
 			// accounts whos balance is not above the backup threshold.
-			if($this->CI->general->matches_any($account, array("", "topup")) == TRUE || $balance == 0 || (float)$balance < (float)$this->CI->bw_config->$var ){
-				continue;		
-			}
+			if(!isset($this->CI->bw_config->$var) || $account == 'topup' || $balance <= 0 || $balance < $this->CI->bw_config->$var) 
+				continue;
 			
+			//if($this->CI->general->matches_any($account, array("", "topup")) == TRUE || $balance <= 0 || (float)$balance < (float)$this->CI->bw_config->$var )
+				//continue;		
+						
 			// Generate a new keypair.
-			$key = $this->CI->bitcoin_crypto->getNewKeySet($magicbyte);
+			$key = $this->CI->bitcoin_crypto->getNewKeySet();
 			
 			// Send the excess amount to the newly generated public address.
-			$send_amount = $balance-$this->CI->bw_config->$var;
+			$send_amount = ($balance-$this->CI->bw_config->$var);
 			$send = $this->CI->bw_bitcoin->sendfrom($account, $key['pubAdd'], (float)$send_amount);
 			if(!isset($send['code'])){
 				// Send the wallet to the admin user.
@@ -99,9 +102,8 @@ class Backup_Wallet {
 				}
 				// Prepare the input.
 				$message = $this->CI->bw_messages->prepare_input($data, $details);
-				if($this->CI->messages_model->send($message) !== TRUE){
+				if($this->CI->messages_model->send($message) !== TRUE)
 					$success = FALSE; 
-				}
 				
 			} else {
 				$success = FALSE;

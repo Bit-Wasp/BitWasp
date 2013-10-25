@@ -12,18 +12,19 @@ class Bitcoin_Test extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
-		$this->load->library('bitcoin_crypto');
-		$this->load->library('mpkgen');
 
 	}
 	
 	public function keypair() {
-		$key = $this->bitcoin_crypto->getNewKeySet('6F');
-		print_r($key);
+		
+		$this->load->library('bitcoin_crypto');
+		$key = $this->bitcoin_crypto->getNewKeySet();
+		echo '<pre>';print_r($key);echo '</pre>';
 	}
 
 	public function electrum() {
 	
+		$this->load->library('mpkgen');
 		$account = "main";
 	
 		if(!isset($this->bw_config->electrum_mpk))
@@ -41,13 +42,12 @@ class Bitcoin_Test extends CI_Controller {
 			// Record exists, use that.
 			$iteration = $this->bw_config->electrum_iteration;
 		}
-		$address = $this->mpkgen->generate($mpk, $iteration);
+		$address = $this->mpkgen->address($mpk, $iteration);
 		if(!is_string($address))
 			return FALSE;
 			
+		// Now need to update electrum_iteration
 		echo $address;
-		
-		
 	}
 	
 	/*

@@ -57,6 +57,7 @@ if(is_array($await_dispatch)) {
 if(is_array($await_finalize_early)) {
 	foreach($await_finalize_early as $order) { ?>
 			  <tr>
+			    <?php echo form_open('orders'); ?>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>
 			    <td>BTC <?php echo $order['price']; ?></td>
@@ -65,7 +66,8 @@ if(is_array($await_finalize_early)) {
 		foreach($order['items'] as $item) { ?>
 			      <li><?php echo $item['quantity']; ?> x <?php echo anchor('item/'.$item['hash'], $item['name']); ?></li>
 	<?php } ?></ul></td>
-			    <td>Awaiting early finalization. <?php echo anchor('orders/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"'); ?></td>	
+			    <td>Awaiting early finalization. <input type='submit' name='cancel[<?php echo $order['id']; ?>]' value='Cancel' class='btn btn-mini'/></td>	
+			    </form>
 			  </tr>
 <?php } } ?>
 

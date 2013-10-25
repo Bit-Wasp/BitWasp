@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Escrow_model extends CI_Model {
 	
 	/**
@@ -23,7 +22,6 @@ class Escrow_model extends CI_Model {
 	 * @see		Models/Bitcoin_Model
 	 * @see		Models/Accounts_Model
 	 */
-	 
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('accounts_model');
@@ -150,7 +148,6 @@ class Escrow_model extends CI_Model {
 		return $balance;		
 	}
 	
-
 	/**
 	 * Update Exchange Rates
 	 * 
@@ -189,33 +186,34 @@ class Escrow_model extends CI_Model {
 						 'value' => (float)$escrow['amount']);
 		if( $this->bitcoin_model->update_credits(array($credits)) == TRUE) {
 			
-			if($user == 'vendor')
+			if($user == 'vendor'){
 				$this->order_model->set_finalized($order_id); 
 							
-			$message = ($message == NULL) ? "Order #$order_id" : $message;
+				$message = ($message == NULL) ? "Order #$order_id" : $message;
 								 
-			// Record the transaction in the senders account.
-			$debit_txn = array( 'txn_id' => $message,
-								 'user_hash' => $sender['user_hash'],
-								 'value' => "-".(float)$escrow['amount'],
-								 'confirmations' => '>50',
-								 'address' => '[payment]',
-								 'category' => 'send',
-								 'credited' => '1',
-								 'time' => time());
-			$this->bitcoin_model->add_pending_txn($debit_txn);						
+				// Record the transaction in the senders account.
+				$debit_txn = array( 'txn_id' => $message,
+									'user_hash' => $sender['user_hash'],
+									'value' => "-".(float)$escrow['amount'],
+									'confirmations' => '>50',
+									'address' => '[payment]',
+									'category' => 'send',
+									'credited' => '1',
+									'time' => time());
+				$this->bitcoin_model->add_pending_txn($debit_txn);						
 			
-			// Record the transaction in the recipients account.
-			$credit_txn = array( 'txn_id' => $message,
-								 'user_hash' => $recipient['user_hash'],
-								 'value' => (float)$escrow['amount'],
-								 'confirmations' => '>50',
-								 'address' => '[payment]',
-								 'category' => 'receive',
-								 'credited' => '1',
-								 'time' => time());
-			$this->bitcoin_model->add_pending_txn($credit_txn);
-
+				// Record the transaction in the recipients account.
+				$credit_txn = array( 'txn_id' => $message,
+									'user_hash' => $recipient['user_hash'],
+									'value' => (float)$escrow['amount'],
+									'confirmations' => '>50',
+									'address' => '[payment]',
+									'category' => 'receive',
+									'credited' => '1',
+									'time' => time());
+				$this->bitcoin_model->add_pending_txn($credit_txn);
+			}
+			
 			if($this->delete($order_id) == TRUE)
 				return TRUE;
 		}
@@ -223,7 +221,6 @@ class Escrow_model extends CI_Model {
 		return FALSE;
 	}
 	
-
 	/**
 	 * Dispute
 	 *
@@ -257,7 +254,6 @@ class Escrow_model extends CI_Model {
 		return FALSE;
 	}
 	
-
 	/**
 	 * Update Dispute
 	 * 

@@ -447,6 +447,7 @@ class Bw_bitcoin {
 	 */		
 	public function blocknotify($block_hash){
 		$this->CI->load->model('users_model');
+		$this->CI->load->model('logs_model');
 					
 		// First task, maintain a record of the processed blocks.
 		if($this->CI->bitcoin_model->have_block($block_hash) == FALSE) {
@@ -507,7 +508,7 @@ class Bw_bitcoin {
 					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
 					if(isset($send['code'])) {
 						$accounts = $this->listaccounts();
-//						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+						$this->CI->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
 					}	
 				}
 				

@@ -260,6 +260,32 @@ class Orders extends CI_Controller {
 			redirect('orders');
 		}
 
+		// If cancelling an order..
+		$cancel_order = $this->input->post('cancel');
+		if(is_array($cancel_order)) {
+			$id = array_keys($cancel_order); $id = $id[0];
+			$current_order = $this->order_model->load_order($id, array('2'));
+			
+			if($current_order == FALSE) 	redirect('orders');
+			
+			// If the refund goes through, and cancelling it works:
+			if(	$this->escrow_model->pay($current_order['id'], 'buyer') == TRUE &&
+				$this->order_model->cancel($current_order['id']) == TRUE ){
+					
+				// Send message to vendor
+				$data['from'] = $this->current_user->user_id;
+				$details = array('username' => $current_order['buyer']['user_name'],
+								 'subject' => "Order #{$current_order['id']} has been cancelled.");
+				$details['message'] = "Order #{$current_order['id']} has cancelled their order with you.<br />\n";
+				// Prepare the input.
+				$message = $this->bw_messages->prepare_input($data, $details);
+				$message['order_id'] = $current_order['id'];
+				$this->messages_model->send($message);
+				
+				redirect('orders');
+			}
+		}
+
 		// Load orders..
 		$data['new_orders'] = $this->order_model->order_by_progress('1');
 		$data['await_finalize_early'] = $this->order_model->order_by_progress('2');
@@ -364,7 +390,7 @@ class Orders extends CI_Controller {
 		
 		if($this->form_validation->run('order_place') == TRUE) {
 
-			if($balance <= 0 || $balance <= $data['order']['price']) {
+			if($balance <= 0 || $balance < $data['order']['price_b']) {
 				$data['returnMessage'] = 'You have insufficient funds to place this order. Please top up and try again';
 			} else {
 				$escrow = array('order_id' => $data['order']['id'],
@@ -426,10 +452,13 @@ class Orders extends CI_Controller {
 	 * @return	void
 	 */
 	public function dispute($id) {
+		$list_page = ($this->current_user->user_role == 'Vendor') ? 'orders' : 'order/list';
+		$dispute_page = ($this->current_user->user_role == 'Vendor') ? 'orders/dispute/'.$id : 'order/dispute'.$id;
+		
 		// Abort if order is not currently disputable.
-		$current_order = $this->order_model->load_order($id, array('4','2'));
+		$current_order = $this->order_model->load_order($id, array('4','3'));
 		if($current_order == FALSE)
-			redirect('order/list');
+			redirect($list_page);
 			
 		$this->load->library('form_validation');	
 			
@@ -437,6 +466,7 @@ class Orders extends CI_Controller {
 		$data['form'] = FALSE;
 		
 		if($data['dispute'] == FALSE) {
+			// Display form to allow user to raise a dispute.
 			$data['role'] = strtolower($this->current_user->user_role);
 			$data['other_role'] = (strtolower($this->current_user->user_role) == 'vendor') ? 'buyer' : 'vendor';
 				
@@ -447,25 +477,23 @@ class Orders extends CI_Controller {
 								 'dispute_message' => $this->input->post('dispute_message'),
 								 'last_update' => time());
 					
-				if($this->escrow_model->dispute($dispute) == TRUE) {
-					if($this->order_model->progress_order($id, '5') == TRUE) {
-						// Send message to vendor
-						$data['from'] = $this->current_user->user_id;
-						$details = array('username' => $current_order[$data['other_role']]['user_name'],
-										'subject' => "Dispute raised for Order #{$current_order['id']}"); 
-						$details['message'] = "{$this->current_user->user_name} has made a dispute regarding Order #{$current_order['id']}. Their issue has been outlined below. An administrator will contact you soon to discuss the issue, but you should contact the other party to try come to some resolution.<br /><br />\n";
-						$details['message'].= "Dispute Reason:<br />\n".$this->input->post('dispute_message')."\n<br /><br />";
-						for($i = 0; $i < count($current_order['items']); $i++){
-							$details['message'] .= "{$current_order['items'][$i]['quantity']} x {$current_order['items'][$i]['name']}<br />\n";
-						}
-						$details['message'] .= "<br />Total price: {$current_order['currency']['symbol']}{$current_order['price']}";
-					 
-						$message = $this->bw_messages->prepare_input($data, $details);
-						$message['order_id'] = $current_order['id'];
-						$this->messages_model->send($message);
-						
-						$data['returnMessage'] = 'Your dispute has been logged, and will be checked by an administrator soon.';
+				if($this->escrow_model->dispute($dispute) == TRUE && $this->order_model->progress_order($id, '5') == TRUE) {
+					// Send message to vendor
+					$data['from'] = $this->current_user->user_id;
+					$details = array('username' => $current_order[$data['other_role']]['user_name'],
+									'subject' => "Dispute raised for Order #{$current_order['id']}"); 
+					$details['message'] = "{$this->current_user->user_name} has made a dispute regarding Order #{$current_order['id']}. Their issue has been outlined below. An administrator will contact you soon to discuss the issue, but you should contact the other party to try come to some resolution.<br /><br />\n";
+					$details['message'].= "Dispute Reason:<br />\n".$this->input->post('dispute_message')."\n<br /><br />";
+					for($i = 0; $i < count($current_order['items']); $i++){
+						$details['message'] .= "{$current_order['items'][$i]['quantity']} x {$current_order['items'][$i]['name']}<br />\n";
 					}
+					$details['message'] .= "<br />Total price: {$current_order['currency']['symbol']}{$current_order['price']}";
+				 
+					$message = $this->bw_messages->prepare_input($data, $details);
+					$message['order_id'] = $current_order['id'];
+					$this->messages_model->send($message);
+
+					redirect($dispute_page);
 				}			
 			} 
 			$data['form'] = TRUE;

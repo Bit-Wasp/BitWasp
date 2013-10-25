@@ -142,11 +142,11 @@ class Order_model extends CI_Model {
 	 * @return	array/FALSE
 	 */
 	public function load_order($id, $allowed_progress = array()){
-		switch(strtolower($this->current_user->user_role)){
-			case 'vendor':
+		switch($this->current_user->user_role){
+			case 'Vendor':
 				$this->db->where('vendor_hash', $this->current_user->user_hash);
 				break;
-			case 'buyer':
+			case 'Buyer':
 				$this->db->where('buyer_id', $this->current_user->user_id);
 				break;
 			default:
@@ -303,9 +303,10 @@ class Order_model extends CI_Model {
 	// 		Buyer: Cancel (set=0)
 	// 3: User has finalized. Vendor must send product.
 	//		Vendor: Confirm Dispatch. (set=4)
+	//		Buyer: Dispute				*************
 	// 4: Item is dispatched.
-	//		Buyer: May Dispute because product hasnt arrived. (set=5)
-	//		Buyer: Received. (set=6)
+	//		Buyer: May Dispute because product hasnt arrived. (set=5) **********
+	//		Buyer: Received. (set=6)	
 	// 5: Dispute Transaction.
 	// 		??? : Resolved (set=7)
 	// 6: Buyer received item (if no finalize early, auto pay vendor)
