@@ -12,11 +12,9 @@ class Bitcoin_Test extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
-
 	}
 	
 	public function keypair() {
-		
 		$this->load->library('bitcoin_crypto');
 		$key = $this->bitcoin_crypto->getNewKeySet();
 		echo '<pre>';print_r($key);echo '</pre>';

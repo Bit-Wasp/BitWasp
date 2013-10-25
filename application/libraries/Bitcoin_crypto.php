@@ -1,12 +1,5 @@
 <?php
 require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
-require_once(dirname(__FILE__).'/Crypt/Math/BigInteger.php');
-require_once(dirname(__FILE__).'/Crypt/Random.php');
-require_once(dirname(__FILE__).'/Crypt/Hash.php');
-require_once(dirname(__FILE__).'/Crypt/AES.php');
-require_once(dirname(__FILE__).'/Crypt/RSA.php');
-require_once(dirname(__FILE__).'/Crypt/Hash.php');
-
 // Determine bitcoin address version
 $CI = &get_instance();
 $CI->load->library('bw_bitcoin');
