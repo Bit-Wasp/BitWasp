@@ -361,13 +361,13 @@ INSERT INTO `bw_currencies` (`id`, `name`, `symbol`, `code`) VALUES
 
 CREATE TABLE IF NOT EXISTS `bw_disputes` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `order_id` int(9) NOT NULL,
-  `disputee` int(9) NOT NULL,
   `dispute_message` text NOT NULL,
+  `disputing_user_id` int(9) NOT NULL,
   `last_update` varchar(20) NOT NULL,
+  `order_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `order_id` (`order_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `bw_escrow` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -375,9 +375,6 @@ CREATE TABLE IF NOT EXISTS `bw_escrow` (
   `vendor_id` int(9) NOT NULL,
   `order_id` int(9) NOT NULL,
   `amount` decimal(20,8) NOT NULL,
-  `disputed` enum('0','1') NOT NULL DEFAULT '0',
-  `dispute_message` text NOT NULL,
-  `dispute_by_id` int(9) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
@@ -389,7 +386,7 @@ CREATE TABLE IF NOT EXISTS `bw_entry_payment` (
   `bitcoin_address` varchar(40) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_hash` (`user_hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
