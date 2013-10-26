@@ -245,7 +245,7 @@ class Admin extends CI_Controller {
 			if($this->form_validation->run('admin_wallet_topup') == TRUE) {
 				$import = $this->bw_bitcoin->importprivkey($this->input->post('wif'), $this->input->post('topup_account'));
 				if(isset($import['code'])){
-					$import_wallet_error = $import['error'];
+					$import_wallet_error = $import['message'];
 				} else if($import == NULL) {
 					redirect('admin/bitcoin');
 				}

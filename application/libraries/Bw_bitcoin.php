@@ -350,7 +350,7 @@ class Bw_bitcoin {
 
 		$transaction = $this->gettransaction($txn_hash);
 		// Abort if there's an error obtaining the transaction (not for our wallet)
-		if(isset($transaction['code']) && $transaction == NULL)
+		if(isset($transaction['code']) || $transaction == NULL)
 			return FALSE;
 
 		// Extract details for send/receive from inputs and oupputs.
