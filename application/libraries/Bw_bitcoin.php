@@ -196,9 +196,7 @@ class Bw_bitcoin {
 	 * @return		????
 	 */
 	public function importprivkey($wif, $account) {
-		$import =  $this->CI->jsonrpcclient->importprivkey("$wif", "$account", TRUE);
-		var_dump($import);
-		return $import;
+		return $this->CI->jsonrpcclient->importprivkey("$wif", "$account", TRUE);
 	}
 	/**
 	 * List Accounts
