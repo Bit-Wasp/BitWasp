@@ -458,7 +458,7 @@ class Orders extends CI_Controller {
 		// Abort if order is not currently disputable.
 		// Progress 3: Buyer is disputing
 		// Progress 4: Vendor is disputing
-		// Progress 5: 
+		// Progress 5: Dispute is recorded.
 		$current_order = $this->order_model->load_order($id, array('5','4','3'));
 		if($current_order == FALSE)
 			redirect($list_page);
