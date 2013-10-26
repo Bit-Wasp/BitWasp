@@ -361,8 +361,8 @@ INSERT INTO `bw_currencies` (`id`, `name`, `symbol`, `code`) VALUES
 
 CREATE TABLE IF NOT EXISTS `bw_disputes` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `dispute_message` text NOT NULL,
-  `admin_message` test NOT NULL,
+  `dispute_message` text NOT NULL,tes
+  `admin_message` text NOT NULL,
   `disputing_user_id` int(9) NOT NULL,
   `last_update` varchar(20) NOT NULL,
   `order_id` int(9) NOT NULL,
