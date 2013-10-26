@@ -77,7 +77,10 @@
 				<div class="span7"><input type="text" name="wif" value="" /></div>
 				<span class='help-inline'><?php echo form_error('wif'); ?></span>
 	          </div>		
-
+			  <?php if(isset($import_wallet_error)) { ?>
+			  <span class="help-inline offset3"><?php echo $import_wallet_error; ?></span>
+			  <?php } ?>
+			  
 		      <div class="row-fluid">
 			    <div class="span4 offset3"><input type="submit" name="submit_wallet_topup" value="Topup" class="btn" /></div>
 	          </div>
