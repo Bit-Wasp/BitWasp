@@ -1,6 +1,5 @@
         <div class="span9 mainContent" id="order_view">
           <h2>Orders</h2>
-          
 <?php if($escrow_balance > 0) { ?>
 		  <div class="row-fluid">
 			<div class="span3">Escrow Balance</div>
@@ -9,7 +8,7 @@
 		  <br />
 <?php } ?>
 
-<?php if(is_array($new_orders) || is_array($await_finalization) || is_array($await_finalize_early) || is_array($await_dispatch)) { ?>
+<?php if(is_array($new_orders) || is_array($await_finalization) || is_array($await_finalize_early) || is_array($await_dispatch) || is_array($in_dispute)) { ?>
 		  <table class='table table-condensed table-hover'>
 		  <thead>
 			<tr>
@@ -87,7 +86,7 @@ if(is_array($await_finalization)) {
 			  </tr>
 <?php } } ?>
 
-<?php 
+<?php
 if(is_array($in_dispute)) {
 	foreach($in_dispute as $order) { ?>
 			  <tr>
@@ -99,7 +98,7 @@ if(is_array($in_dispute)) {
 		foreach($order['items'] as $item) { ?>
 			      <li><?php echo $item['quantity']; ?> x <?php echo anchor('item/'.$item['hash'], $item['name']); ?></li>
 	<?php } ?></ul></td>
-			    <td>In dispute. <?php echo anchor('orders/dispute/'.$order['id'], 'Read Dispute', 'class="btn btn-mini"'); ?></td>	
+			    <td>In dispute. <?php echo anchor('orders/dispute/'.$order['id'], 'View', 'class="btn btn-mini"'); ?></td>	
 			  </tr>
 <?php } } ?>
 

@@ -292,7 +292,7 @@ class Orders extends CI_Controller {
 		$data['await_dispatch'] = $this->order_model->order_by_progress('3');
 		$data['await_finalization'] = $this->order_model->order_by_progress('4');
 		$data['in_dispute'] = $this->order_model->order_by_progress('5');
-		
+
 		// Load info for display..
 		$data['local_currency'] = $this->current_user->currency;	
 		$data['balance'] = $this->bitcoin_model->current_balance(); //Maybe not needed?
@@ -453,51 +453,54 @@ class Orders extends CI_Controller {
 	 */
 	public function dispute($id) {
 		$list_page = ($this->current_user->user_role == 'Vendor') ? 'orders' : 'order/list';
-		$dispute_page = ($this->current_user->user_role == 'Vendor') ? 'orders/dispute/'.$id : 'order/dispute'.$id;
+		$dispute_page = ($this->current_user->user_role == 'Vendor') ? 'orders/dispute/'.$id : 'order/dispute/'.$id;
 		
 		// Abort if order is not currently disputable.
-		$current_order = $this->order_model->load_order($id, array('4','3'));
+		// Progress 3: Buyer is disputing
+		// Progress 4: Vendor is disputing
+		// Progress 5: 
+		$current_order = $this->order_model->load_order($id, array('5','4','3'));
 		if($current_order == FALSE)
 			redirect($list_page);
-			
+
 		$this->load->library('form_validation');	
 			
 		$data['dispute'] = $this->escrow_model->get_dispute($id);
-		$data['form'] = FALSE;
+		$data['form'] = TRUE;
 		
 		if($data['dispute'] == FALSE) {
 			// Display form to allow user to raise a dispute.
 			$data['role'] = strtolower($this->current_user->user_role);
-			$data['other_role'] = (strtolower($this->current_user->user_role) == 'vendor') ? 'buyer' : 'vendor';
+			$data['other_role'] = ($data['role'] == 'vendor') ? 'buyer' : 'vendor';
 				
 			if($this->form_validation->run('order_dispute') == TRUE) {
 					
-				$dispute = array('order_id' => $id,
-								 'disputee' => $this->current_user->user_id,
+				$dispute = array('disputing_user_id' => $this->current_user->user_id,
 								 'dispute_message' => $this->input->post('dispute_message'),
-								 'last_update' => time());
+								 'last_update' => time(),
+								 'order_id' => $id);
 					
-				if($this->escrow_model->dispute($dispute) == TRUE && $this->order_model->progress_order($id, '5') == TRUE) {
+				$new_progress = ($current_order['progress'] == '3') ? '5' : '0';// 0 means unset, default value.
+				
+				if($this->escrow_model->dispute($id, $dispute) == TRUE && $this->order_model->progress_order($id, $current_order['progress'], $new_progress) == TRUE) {
+					$get = $this->order_model->get($current_order['id']);
 					// Send message to vendor
-					$data['from'] = $this->current_user->user_id;
+					$info['from'] = $this->current_user->user_id;
 					$details = array('username' => $current_order[$data['other_role']]['user_name'],
 									'subject' => "Dispute raised for Order #{$current_order['id']}"); 
-					$details['message'] = "{$this->current_user->user_name} has made a dispute regarding Order #{$current_order['id']}. Their issue has been outlined below. An administrator will contact you soon to discuss the issue, but you should contact the other party to try come to some resolution.<br /><br />\n";
-					$details['message'].= "Dispute Reason:<br />\n".$this->input->post('dispute_message')."\n<br /><br />";
-					for($i = 0; $i < count($current_order['items']); $i++){
-						$details['message'] .= "{$current_order['items'][$i]['quantity']} x {$current_order['items'][$i]['name']}<br />\n";
-					}
-					$details['message'] .= "<br />Total price: {$current_order['currency']['symbol']}{$current_order['price']}";
-				 
-					$message = $this->bw_messages->prepare_input($data, $details);
+					$details['message'] = "{$this->current_user->user_name} has made a dispute regarding Order #{$current_order['id']}. Their issue has been outlined below. An administrator will contact you soon to discuss the issue, but you should contact the other party to try come to some resolution.<br /><br />\nDispute Reason:<br />\n".$this->input->post('dispute_message')."\n<br /><br />";
+					$message = $this->bw_messages->prepare_input($info, $details);
 					$message['order_id'] = $current_order['id'];
 					$this->messages_model->send($message);
 
 					redirect($dispute_page);
-				}			
+				} else {
+					$data['returnMessage']='There was an error';
+				}
 			} 
-			$data['form'] = TRUE;
-		} 
+		} else {
+			$data['form'] = FALSE;
+		}
 		
 		$data['current_order'] = $current_order;
 		$data['page'] = 'orders/dispute';

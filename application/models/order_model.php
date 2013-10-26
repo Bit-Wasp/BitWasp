@@ -334,17 +334,19 @@ class Order_model extends CI_Model {
 		$update['time'] = time();
 		if($current_progress == '1' && $this->general->matches_any($set_progress, array('2','4')) == TRUE){
 			$update['progress'] = ($set_progress == '2') ? '2' : '4';
+			
+		} else if($current_progress == '3' && $this->general->matches_any($set_progress, array('4','5'))== TRUE){
+			$update['progress'] = ($set_progress == '5') ? '5' : '4';
+			
 		} else if($current_progress == '4' && $this->general->matches_any($set_progress, array('5','6')) == TRUE){
 			$update['progress'] = ($set_progress == '5') ? '5' : '7';
+			
 		} else {
 			$update['progress'] = ($current_progress+1);
 		}
 		
 		$this->db->where('id', $current_order['id']);
-		if($this->db->update('orders', $update) == TRUE)
-			return TRUE;
-		
-		return FALSE;
+		return ($this->db->update('orders', $update) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -426,7 +428,8 @@ class Order_model extends CI_Model {
 						$progress_message.= anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
 						break;
 					case '5':
-						$progress_message = "Disputed transaction. Awaiting outcome.";
+						$progress_message = "Disputed transaction.<br />";
+						$progress_message.= anchor('order/dispute/'.$order['id'], 'View', 'class="btn btn-mini"');
 						break;
 					case '6':
 						$progress_message = "Item received. Pending confirmation.";
@@ -435,7 +438,6 @@ class Order_model extends CI_Model {
 						$progress_message = "Purchase completed. Please review.";
 						break;
 				}
-				
 				
 				// Load the users local currency.
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);

@@ -126,7 +126,7 @@ class Layout {
 			} $content .= ">\n";
 
 			// Display link if category contains items. 
-			$content .= ($category['count'] == 0) ? '<span>'.$category['name'].'</span>' : anchor('category/'.$category['hash'], $category['name'].' ('.$category['count'].")</a>\n");
+			$content .= ($category['count'] == 0) ? '<span>'.$category['name'].'</span>' : anchor('category/'.$category['hash'], $category['name'].' ('.$category['count'].")\n");
 			// Check if we need to recurse into children.
 			if(isset($category['children']))  
 			$content .= $this->menu($category['children'], $level, $params); 

@@ -105,6 +105,9 @@ $route['admin/delete_item/(:any)'] = 'admin/delete_item/$1';
 $route['admin/tokens'] = 'admin/user_tokens';
 $route['admin/tokens/delete/(:any)'] = 'admin/delete_token/$1';
 
+
+$route['order/dispute/(:num)'] = 'orders/dispute/$1';
+$route['orders/dispute/(:num)'] = 'orders/dispute/$1';
 // Vendor
 $route['orders'] = 'orders/list_orders';
 // Buye
@@ -116,8 +119,6 @@ $route['order/cancel/(:num)'] = 'orders/cancel/$1';
 $route['order/received/(:any)'] = 'orders/received_order/$1';
 $route['order/(:any)'] = 'orders/purchase_item/$1';
 // Both
-$route['order/dispute/(:num)'] = 'orders/dispute/$1';
-$route['orders/dispute/(:num)'] = 'orders/dispute/$1';
 
 $route['category/(:any)'] = 'items/category/$1';
 

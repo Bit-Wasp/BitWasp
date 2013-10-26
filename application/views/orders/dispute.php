@@ -11,11 +11,11 @@
           
           if($form == TRUE) {
 			
-			echo form_open($action, array('class' => 'form-horizontal')); ?>
+		  echo form_open($action, array('class' => 'form-horizontal')); ?>
             
             <div class="row-fluid">
 	  	      <div class="span2"><strong>Items</strong></div>
-		      <div class="span4"><ul><?php foreach($current_order['items'] as $item) { ?>
+		      <div class="span9"><ul><?php foreach($current_order['items'] as $item) { ?>
 				<li><?php echo $item['quantity']." x ".$item['name']; ?></li>
 		  <?php } ?></ul></div>
             </div>
@@ -34,5 +34,22 @@
             </div>      
             
           </form>             
-<?php } ?>              
+<?php } else { ?>
+		  <div class="row-fluid">
+		    <div class="span2">Last Update</div>
+		    <div class="span5"><?php echo $dispute['last_update_f']; ?></div>
+		  </div>
+		  
+		  <div class="row-fluid">
+	  	    <div class="span2">Items</div>
+		    <div class="span9"><ul><?php foreach($current_order['items'] as $item) { ?>
+			  <li><?php echo $item['quantity']." x ".$item['name']; ?></li>
+		  <?php } ?></ul></div>
+          </div>
+		  
+		  <div class="row-fluid">
+		    <div class="span2">Message</div>
+		    <div class="span5"><?php echo $dispute['dispute_message']; ?></div>
+		  </div>
+<?php } ?>
         </div>

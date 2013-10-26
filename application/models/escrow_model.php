@@ -230,7 +230,7 @@ class Escrow_model extends CI_Model {
 	 * @param	array	$info
 	 * @return	bool
 	 */					
-	public function dispute($info) {
+	public function dispute($order_id, $info) {
 		return ($this->db->insert('disputes', $info) == TRUE) ? TRUE : FALSE;
 	}
 
@@ -248,6 +248,7 @@ class Escrow_model extends CI_Model {
 		$query = $this->db->get('disputes');
 		if($query->num_rows() > 0){
 			$row = $query->row_array();
+			$row['dispute_message'] = nl2br($row['dispute_message']);
 			$row['last_update_f'] = $this->general->format_time($row['last_update']);
 			return $row;
 		}
