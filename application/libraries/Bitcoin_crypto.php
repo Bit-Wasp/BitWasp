@@ -6,8 +6,6 @@ $CI->load->library('bw_bitcoin');
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
 $byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
 define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
-echo '<pre>';
-print_r($bitcoin_info);echo '</pre>';
 
 /**
  * Bitcoin Crypto Library

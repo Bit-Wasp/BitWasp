@@ -241,6 +241,15 @@ class Admin extends CI_Controller {
 		$data['price_index'] = $this->bw_config->price_index;
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		
+		if($this->input->post('submit_wallet_topup') == 'Topup') {
+			if($this->form_validation->run('admin_wallet_topup') == TRUE) {
+				if($this->bw_bitcoin->importprivkey($this->input->post('wif'), $this->input->post('account')))
+					echo '';
+					//redirect('admin/bitcoin');
+			}
+		}
+		
+		
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
 			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
 			

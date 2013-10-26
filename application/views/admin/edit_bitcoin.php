@@ -21,9 +21,9 @@
 				    <?php } } ?>
 				  </select>
 			    </div>
-			    <span class="help-inline"><?php echo form_error('from'); ?></span>
+				<span class="help-inline"><?php echo form_error('from'); ?></span>				
 	          </div>				  
-				
+
 		      <div class="row-fluid">
 		        <div class="span2 offset1">To</div>
 			    <div class="span4">
@@ -35,7 +35,7 @@
 				    <?php } } ?>
 				  </select>
 			    </div>
-			    <span class="help-inline"><?php echo form_error('from'); ?></span>
+   			    <span class="help-inline"><?php echo form_error('from'); ?></span>
 	          </div>				  
 
 		      <div class="row-fluid">
@@ -50,9 +50,39 @@
 
 		      <div class="row-fluid">
 			    <div class="span4 offset3"><input type="submit" name="admin_transfer_bitcoins" value="Send" class="btn" /></div>
-	          </div>
-	          
+	          </div>	          
 		    </form>
+
+			<?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>  	
+			  <div class="row-fluid">
+				<div class="span5 offset2"><strong>Topup Wallet Balance</strong></div>
+			  </div>				
+<?php echo validation_errors(); ?>
+		      <div class="row-fluid">
+		        <div class="span2 offset1">Account</div>
+			    <div class="span4">
+				  <select name="topup_account" autocomplete="off">
+					<option value=""></option>
+					<?php foreach($accounts as $acc => $bal) { 
+					if($acc !== '') { ?>
+					<option value="<?php echo $acc; ?>"><?php echo $acc; ?> (<?php echo $bal; ?>)</option>
+				    <?php } } ?>
+				  </select>
+			    </div>
+				<span class="help-inline"><?php echo form_error('topup_account'); ?></span>
+	          </div>				  
+				
+		      <div class="row-fluid">
+		        <div class="span2 offset1">Private WIF key</div>
+				<div class="span7"><input type="text" name="wif" value="" /></div>
+				<span class='help-inline'><?php echo form_error('wif'); ?></span>
+	          </div>		
+
+		      <div class="row-fluid">
+			    <div class="span4 offset3"><input type="submit" name="submit_wallet_topup" value="Topup" class="btn" /></div>
+	          </div>
+		    </form>
+
 		    <?php } ?>
 			  
   		    <?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>

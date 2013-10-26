@@ -184,7 +184,22 @@ class Bw_bitcoin {
 	public function gettransaction($tx_hash) {
 		return $this->CI->jsonrpcclient->gettransaction($tx_hash);
 	}
-	
+
+	/**
+	 * Import Private Key
+	 * 
+	 * Function to ask bitcoind to import the wallet import format private
+	 * key.
+	 *
+	 * @param		string	$wif
+	 * @param		string	$account
+	 * @return		????
+	 */
+	public function importprivkey($wif, $account) {
+		$import =  $this->CI->jsonrpcclient->gettransaction($wif, $account, TRUE);
+		var_dump($import);
+		return $import;
+	}
 	/**
 	 * List Accounts
 	 * 

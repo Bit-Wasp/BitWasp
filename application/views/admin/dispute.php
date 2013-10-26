@@ -18,9 +18,14 @@
           </div>
 		  
 		  <div class="row-fluid">
+			<div class="span2">Price</div>
+			<div class="span5"><?php </div>
+		  </div>
+		  
+		  <div class="row-fluid">
 		    <div class="span2">Message</div>
 		    <div class="span5"><?php echo $dispute['dispute_message']; ?></div>
-		  </div>		  
+		  </div>
 		  
 		  <div class="row-fluid">
 			<div class="span2">Response</div>

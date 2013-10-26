@@ -384,6 +384,16 @@ $config = array('register_form'=>array(
 											  'rules' => 'is_numeric|callback_check_is_positive'
 										)
 							),
+				'admin_wallet_topup' => array(
+										array('field' => 'topup_account',
+											  'label' => 'account',
+											  'rules' => 'required|callback_check_bitcoin_account_exists'
+										),
+										array('field' => 'wif',
+											  'label' => 'private WIF',
+											  'rules' => 'required'
+										)
+							),
 				'order_dispute' => array(
 										array('field' => 'dispute_message',
 											  'label' => 'Dispute reason',
