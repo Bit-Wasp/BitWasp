@@ -438,6 +438,9 @@ class Order_model extends CI_Model {
 						$progress_message = "Purchase completed. Please review.";
 						break;
 				}
+				$currency = $this->currencies_model->get($order['currency']);
+				
+				$price = ($currency !== '0') ? $order['price']/$currency['rate'] : $order['price'];
 				
 				// Load the users local currency.
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
@@ -445,11 +448,10 @@ class Order_model extends CI_Model {
 				$price_l = ($order['price']*$local_currency['rate']);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
 
-				$currency = $this->currencies_model->get($order['currency']);
 				$orders[$i++] = array('id' => $order['id'],
 									'vendor' => $this->accounts_model->get(array('user_hash' => $order['vendor_hash'])),
 									'buyer' => $this->accounts_model->get(array('id' => $order['buyer_id'])),
-									'price' => (float)$order['price'],
+									'price' => $price,
 									'price_b' => (float)round($price_b, 8, PHP_ROUND_HALF_UP),
 									'price_l' => $price_l,
 									'currency' => $currency,

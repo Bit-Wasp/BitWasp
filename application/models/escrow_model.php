@@ -256,6 +256,29 @@ class Escrow_model extends CI_Model {
 	}
 	
 	/**
+	 * Disputes List
+	 * 
+	 * Used in the admin panel to display a list of outstanding disputes
+	 * 
+	 * @access	public
+	 * @return	array/FALSE
+	 */
+	public function disputes_list() {
+		$this->db->order_by('last_update ASC');
+		$query = $this->db->get('disputes');
+		if($query->num_rows() > 0){
+			$result = $query->result_array();
+			foreach($result as &$dispute){
+				$dispute['disputing_user'] = $this->accounts_model->get(array('id' => $dispute['disputing_user_id']));
+				$dispute['other_user'] = $this->accounts_model->get(array('id' => $dispute['other_user_id']));
+				$dispute['last_update_f'] = $this->general->format_time($dispute['last_update']);
+			}
+			return $result;
+		}
+		return FALSE;
+	}
+	
+	/**
 	 * Update Dispute
 	 * 
 	 * Update Dispute number $order_id with info $info.

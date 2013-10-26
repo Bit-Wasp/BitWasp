@@ -104,7 +104,7 @@ $route['admin/edit/autorun'] = 'admin/edit_autorun';
 $route['admin/delete_item/(:any)'] = 'admin/delete_item/$1';
 $route['admin/tokens'] = 'admin/user_tokens';
 $route['admin/tokens/delete/(:any)'] = 'admin/delete_token/$1';
-
+$route['admin/disputes'] = 'admin/dispute';
 
 $route['order/dispute/(:num)'] = 'orders/dispute/$1';
 $route['orders/dispute/(:num)'] = 'orders/dispute/$1';

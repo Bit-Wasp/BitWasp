@@ -728,6 +728,32 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}	
 
+	public function dispute($order_id = NULL){
+		$this->load->library('form_validation');
+		$this->load->model('escrow_model');
+		if($order_id == NULL){
+			$data['page'] = 'admin/disputes_list';
+			$data['title'] = 'Active Disputes';
+			$data['disputes'] = $this->escrow_model->disputes_list();
+			
+		} else {
+			$data['dispute'] = $this->escrow_model->get_dispute($order_id);
+			if($data['dispute'] == FALSE)
+				redirect('admin/disputes');
+				
+			$data['page'] = 'admin/dispute';
+			$data['title'] = "Disputed Order #{$order_id}";
+			$data['current_order'] = $this->order_model->get($order_id);
+			if($this->input->post('update_message') == 'Update'){
+				if($this->form_validation->run('admin_dispute_message') == TRUE){
+					if($this->escrow_model->update_dispute($order_id, array('admin_message' => $this->input->post('dispute_message')) == TRUE))
+						redirect('admin/dispute/'.$order_id);
+				}
+			}
+		}
+		$this->load->library('Layout', $data);
+	}
+
 	/**
 	 * Generate Nav
 	 * 
