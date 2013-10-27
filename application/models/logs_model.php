@@ -63,8 +63,9 @@ class Logs_Model extends CI_Model {
 	public function add($caller, $title, $message, $level){
 		return ($this->db->insert('logs', array('caller' => $caller,
 												'title' => $title, 
-												'level' => $level,
+												'info_level' => $level,
 												'hash' => $this->general->unique_hash('logs','hash'),
+												'time' => time(),
 												'message' => $message)) == TRUE
 				) ? TRUE : FALSE;
 	}

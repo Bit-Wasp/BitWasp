@@ -24,7 +24,7 @@ class Version_Checker {
 							'description' => 'An autorun job to check for updates to the BitWasp source code.',
 							'index' => 'version_checker',
 							'interval' => '7',
-							'interval_type' => 'days');
+							'interval_type' => 'minutes');
 	public $CI;
 	
 	/**
@@ -46,12 +46,12 @@ class Version_Checker {
 		$pluggable_timestamp = '0';
 
 		$branch = json_decode($this->call_curl('https://api.github.com/repos/Bit-Wasp/BitWasp/branches'));
-		if(is_array($branch)){
+		if(is_array($branch)) {
 			
 			$commit = json_decode($this->call_curl($branch[0]->commit->url));
-			if(is_object($commit)){
+			if(is_object($commit)) {
 				$timestamp = strtotime($commit->commit->author->date);
-				if($timestamp > $pluggable_timestamp){
+				if($timestamp > $pluggable_timestamp) {
 					$this->CI->load->model('logs_model');
 					if($this->CI->logs_model->add('Version Checker', 'New BitWasp code available', 'There is a new version of BitWasp available on GitHub. It is recommended that you download this new version', 'Info') == TRUE)
 						return TRUE;
@@ -59,29 +59,6 @@ class Version_Checker {
 			} else {
 				return FALSE; 
 			}
-				/*
-				 * 
-				 * 
-	public function add($caller, $title, $message, $level){
-		return ($this->db->insert('logs', array('caller' => $caller,
-												'title' => $title, 
-												'level' => $level,
-												'hash' => $this->general->unique_hash('logs','hash'),
-												'message' => $message)) == TRUE
-				) ? TRUE : FALSE;
-			
-	
-			if($branch !== FALSE && count($branch) > 0){
-				
-				$commit = $this->call_curl($branches[0]->commit->url);
-				$commit = json_decode($commit);
-				var_dump($commit);echo '<br />';
-				if(isset($commit[0]) !== FALSE && count($commit[0]) > 0){
-					$timestamp = strtotime($commit[0]->author->date);
-					if($timestamp > $pluggable_timestamp)
-						echo 'Need an upgrade<br />';
-				}
-			}*/
 		} else {
 			return FALSE;
 		}
