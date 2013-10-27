@@ -5,31 +5,49 @@
 		  <div class='alert<?php if($success == TRUE) echo ' alert-success'; ?>'><?php echo $returnMessage; ?></div>
 		  <?php } ?>
 		  
-		  <div class="row-fluid">
-		    <div class="span2">Last Update</div>
-		    <div class="span5"><?php echo $dispute['last_update_f']; ?></div>
-		  </div>
+		  <?php echo form_open('admin/disputes/'.$current_order['id'], array('class' => 'form-horizontal')); ?> 
 		  
-		  <div class="row-fluid">
-	  	    <div class="span2">Items</div>
-		    <div class="span9"><ul><?php foreach($current_order['items'] as $item) { ?>
-			  <li><?php echo $item['quantity']." x ".$item['name']; ?></li>
+		    <div class="row-fluid">
+		      <div class="span2">Last Update</div>
+		      <div class="span5"><?php echo $dispute['last_update_f']; ?></div>
+		    </div>
+		  
+			<div class="row-fluid">
+	  	      <div class="span2">Items</div>
+		      <div class="span9"><ul><?php foreach($current_order['items'] as $item) { ?>
+			    <li><?php echo $item['quantity']." x ".$item['name']; ?></li>
 		  <?php } ?></ul></div>
-          </div>
+            </div>
 		  
-		  <div class="row-fluid">
-			<div class="span2">Price</div>
-			<div class="span5"><?php </div>
-		  </div>
+		    <div class="row-fluid">
+			  <div class="span2">Price</div>
+			  <div class="span5"><?php echo $current_order['currency']['symbol'] . " " . $current_order['price']; ?></div>
+		    </div>
 		  
-		  <div class="row-fluid">
-		    <div class="span2">Message</div>
-		    <div class="span5"><?php echo $dispute['dispute_message']; ?></div>
-		  </div>
+			<div class="row-fluid">
+			  <div class="span2">Vendor</div>	
+			  <div class="span7"><?php echo anchor('user/'.$current_order['vendor']['user_hash'], $current_order['vendor']['user_name']); ?></div>
+			</div>
+			
+			<div class="row-fluid">
+			  <div class="span2">Disputing User</div>	
+			  <div class="span7"><?php echo anchor('user/'.$disputing_user['user_hash'], $disputing_user['user_name']); ?></div>
+			</div>
+			
+		    <div class="row-fluid">
+		      <div class="span2">Reason for Dispute</div>
+		      <div class="span5"><?php echo nl2br($dispute['dispute_message']); ?></div>
+		    </div>
 		  
-		  <div class="row-fluid">
-			<div class="span2">Response</div>
-			<div class="span5"><textarea name='dispute_message' rows="5" class='span15'></textarea></div>
-		  </div>
+		    <div class="row-fluid">
+			  <div class="span2">Response</div>
+			  <div class="span5"><textarea name='dispute_message' rows="5" class='span15'><?php echo $dispute['admin_message']; ?></textarea></div>
+		    </div>
 		  
+		    <div class="form-actions">
+			  <input type='submit' value='Update' class='btn btn-primary' />
+			  <?php echo anchor('account','Cancel', array('class'=>'returnLink btn'));?>
+ 		    </div>
+ 
+		  </form>
 		</div>

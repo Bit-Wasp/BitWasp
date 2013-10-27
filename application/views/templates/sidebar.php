@@ -14,8 +14,10 @@
 $order_str = 'My Orders'; if($count_new_orders > 0)	$order_str .= " ($count_new_orders new!)"; ?>
 			  <li><?php echo anchor('listings','My Listings'); ?></li>
 			  <li><?php echo anchor('orders',$order_str); ?></li>
-<?php } else if(strtolower($current_user['user_role']) == 'buyer') { ?>
+<?php } else if($current_user['user_role'] == 'Buyer') { ?>
 			  <li><?php echo anchor('order/list', 'My Purchases'); ?></li>
+<?php } else if($current_user['user_role'] == 'Admin') { ?>
+			  <li><?php echo anchor('admin/disputes', 'Disputes'); ?></li>
 <?php } ?>
 			</ul>
 			
