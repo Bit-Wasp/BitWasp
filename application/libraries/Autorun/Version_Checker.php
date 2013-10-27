@@ -34,7 +34,6 @@ class Version_Checker {
 	 */
 	public function __construct() {
 		$this->CI = &get_instance();
-		$this->CI->load->model('logs_model');
 	}
 
 	/**
@@ -53,12 +52,25 @@ class Version_Checker {
 			if(is_object($commit)){
 				$timestamp = strtotime($commit->commit->author->date);
 				if($timestamp > $pluggable_timestamp){
-					echo 'Due an upgrade';
+					$this->CI->load->model('logs_model');
+					if($this->CI->logs_model->add('Version Checker', 'New BitWasp code available', 'There is a new version of BitWasp available on GitHub. It is recommended that you download this new version', 'Info') == TRUE)
+						return TRUE;
 				}
 			} else {
 				return FALSE; 
 			}
 				/*
+				 * 
+				 * 
+	public function add($caller, $title, $message, $level){
+		return ($this->db->insert('logs', array('caller' => $caller,
+												'title' => $title, 
+												'level' => $level,
+												'hash' => $this->general->unique_hash('logs','hash'),
+												'message' => $message)) == TRUE
+				) ? TRUE : FALSE;
+			
+	
 			if($branch !== FALSE && count($branch) > 0){
 				
 				$commit = $this->call_curl($branches[0]->commit->url);
@@ -94,14 +106,5 @@ class Version_Checker {
 		return $result;
 	}
 	
-	public function add($caller, $title, $message, $level){
-		return ($this->db->insert('logs', array('caller' => $caller,
-												'title' => $title, 
-												'level' => $level,
-												'hash' => $this->general->unique_hash('logs','hash'),
-												'message' => $message)) == TRUE
-				) ? TRUE : FALSE;
-			
-	}
 	
 };
