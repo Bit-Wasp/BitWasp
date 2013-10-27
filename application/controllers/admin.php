@@ -757,18 +757,14 @@ class Admin extends CI_Controller {
 			$data['page'] = 'admin/dispute';
 			$data['title'] = "Disputed Order #{$order_id}";
 			$data['current_order'] = $this->order_model->get($order_id);
-			if($data['dispute']['disputing_user_id'] == $data['current_order']['buyer']['id']){
-				$data['disputing_user'] = $data['current_order']['buyer'];
-				$data['other_user'] = $data['current_order']['vendor'];
-			} else {
-				$data['disputing_user'] = $data['current_order']['vendor'];
-				$data['other_user'] = $data['current_order']['buyer'];
-			}
-			
-			if($this->input->post('update_message') == 'Update'){
-				if($this->form_validation->run('admin_dispute_message') == TRUE){
-					if($this->escrow_model->update_dispute($order_id, array('admin_message' => $this->input->post('dispute_message')) == TRUE))
-						redirect('admin/dispute/'.$order_id);
+			$data['disputing_user'] = ($data['dispute']['disputing_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
+			$data['other_user'] = ($data['dispute']['other_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
+			 
+			if($this->input->post('update_message') == 'Update') {
+				if($this->form_validation->run('admin_dispute_message') == TRUE) {
+					$update['admin_message'] = $this->input->post('admin_message');
+					if($this->escrow_model->update_dispute($order_id, $update) == TRUE)
+						$data['dispute'] = $this->escrow_model->get_dispute($order_id);					
 				}
 			}
 		}

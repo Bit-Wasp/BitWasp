@@ -51,5 +51,10 @@
 		    <div class="span2">Message</div>
 		    <div class="span5"><?php echo $dispute['dispute_message']; ?></div>
 		  </div>
+		  
+		  <div class="row-fluid">
+		    <div class="span2">Admin Message</div>
+		    <div class="span5"><?php echo $dispute['admin_message']; ?></div>
+		  </div>
 <?php } ?>
         </div>

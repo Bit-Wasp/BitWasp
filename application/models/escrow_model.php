@@ -231,6 +231,7 @@ class Escrow_model extends CI_Model {
 	 * @return	bool
 	 */					
 	public function dispute($order_id, $info) {
+		$info['admin_message'] = 'Awaiting Response';
 		return ($this->db->insert('disputes', $info) == TRUE) ? TRUE : FALSE;
 	}
 
@@ -241,7 +242,7 @@ class Escrow_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	int	$order_id
-	 * @return	array / bool
+	 * @return	array/FALSE
 	 */					
 	public function get_dispute($order_id) {
 		$this->db->where('order_id', $order_id);
@@ -264,7 +265,7 @@ class Escrow_model extends CI_Model {
 	 * @return	array/FALSE
 	 */
 	public function disputes_list() {
-		$this->db->order_by('last_update ASC');
+		$this->db->order_by('last_update DESC');
 		$query = $this->db->get('disputes');
 		if($query->num_rows() > 0){
 			$result = $query->result_array();
@@ -290,7 +291,7 @@ class Escrow_model extends CI_Model {
 	 */					
 	public function update_dispute($order_id, $info) {
 		$this->db->where('order_id', $order_id);
-		return ($this->db->update('disputes', $info)) ? TRUE : FALSE;
+		return ($this->db->update('disputes', $info) == TRUE) ? TRUE : FALSE;
 	}
 };
 

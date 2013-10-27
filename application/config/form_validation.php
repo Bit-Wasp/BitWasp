@@ -394,6 +394,12 @@ $config = array('register_form'=>array(
 											  'rules' => 'required'
 										)
 							),
+				'admin_dispute_message' => array(
+										array('field' => 'admin_message',
+											  'label' => 'dispute response',
+											  'rules' => 'required|htmlentities'
+										)
+							),
 				'order_dispute' => array(
 										array('field' => 'dispute_message',
 											  'label' => 'Dispute reason',

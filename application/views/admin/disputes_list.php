@@ -4,17 +4,16 @@
 		  <?php if(isset($returnMessage)) { ?>
 		  <div class='alert<?php if($success == TRUE) echo ' alert-success'; ?>'><?php echo $returnMessage; ?></div>
 		  <?php } ?>
-		  <div class="container-fluid">
 			  
 <?php if($disputes !== FALSE) { ?>
 		  <table class='table' cellspacing='0'>
 			<thead>
 			  <tr>
-				<th>Order</th>
-			    <th>Disputing User</th>
-			    <th>Issue</th>
-			    <th>Other User</th>
-			    <th>Last Update</th>
+				<th class='span1'>Order</th>
+			    <th class='span2'>Disputing User</th>
+			    <th class='span5'>Issue</th>
+			    <th class='span2'>Other User</th>
+			    <th class='span2'>Last Update</th>
 			  </tr>
 			</thead>
 			<tbody>

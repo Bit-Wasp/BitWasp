@@ -475,8 +475,11 @@ class Orders extends CI_Controller {
 				
 			if($this->form_validation->run('order_dispute') == TRUE) {
 					
+				$other_user = ($this->current->user->user_id == $data['current_order']['buyer']['id']) ? $data['current_order']['vendor']['vendor_id'] : $this->current_user->user_id;
+					
 				$dispute = array('disputing_user_id' => $this->current_user->user_id,
 								 'dispute_message' => $this->input->post('dispute_message'),
+								 'other_user_id' => $other_user,
 								 'last_update' => time(),
 								 'order_id' => $id);
 					
