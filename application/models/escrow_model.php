@@ -290,6 +290,7 @@ class Escrow_model extends CI_Model {
 	 * @return	bool
 	 */					
 	public function update_dispute($order_id, $info) {
+		$info['last_update'] = time();
 		$this->db->where('order_id', $order_id);
 		return ($this->db->update('disputes', $info) == TRUE) ? TRUE : FALSE;
 	}
