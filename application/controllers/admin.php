@@ -881,12 +881,12 @@ class Admin extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_bitcoin_account_exists($param) {
+		
 		if($param == '')
 			return FALSE;
-		$account = str_replace('__spc__', ' ', $param); 
-		
+
 		$accounts = $this->bw_bitcoin->listaccounts(0);
-		return (isset($accounts[$account])) ? TRUE : FALSE;
+		return (isset($accounts[$param])) ? TRUE : FALSE;
 	}
 	
 	/**

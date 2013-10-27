@@ -208,7 +208,14 @@ class Bw_bitcoin {
 	 * @return		array
 	 */			
 	public function listaccounts() {
-		return (array)$this->CI->jsonrpcclient->listaccounts(0);
+		$tmp = (array)$this->CI->jsonrpcclient->listaccounts(0);
+		$res = array();
+		foreach($tmp as $acc => $bal){
+			if(!preg_match('/\s+/', $acc)){
+				$res[$acc] = $bal;
+			}
+		}
+		return $res;
 	}
 
 	/**
