@@ -83,7 +83,7 @@ class Bw_bitcoin {
 			return FALSE;
 			
 		$array =  json_decode($json_result);
-		if($array !== FALSE){
+		if($array !== FALSE && $array !== NULL){
 			$array->price_index = $source_name;
 			return $array;
 		} else {

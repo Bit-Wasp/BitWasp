@@ -15,10 +15,9 @@
 			    <div class="span4">
 				  <select name="from" autocomplete="off">
 					<option value=""></option>
-					<?php foreach($accounts as $acc => $bal) { 
-					if($acc !== '') { ?>
-					<option value="<?php echo $acc; ?>"><?php echo $acc; ?> (<?php echo $bal; ?>)</option>
-				    <?php } } ?>
+<?php foreach($accounts as $acc => $bal) { 
+if($acc !== '') { ?>					<option value="<?php echo $acc; ?>"><?php echo $acc; ?> (<?php echo $bal; ?>)</option>
+<?php } } ?>
 				  </select>
 			    </div>
 				<span class="help-inline"><?php echo form_error('from'); ?></span>				
@@ -29,10 +28,9 @@
 			    <div class="span4">
 				  <select name='to' autocomplete="off">
 					<option value=""></option>
-					<?php foreach($accounts as $acc => $bal) { 
-					if($acc !== '') { ?>
-					<option value='<?php echo $acc; ?>'><?php echo $acc; ?></option>
-				    <?php } } ?>
+<?php foreach($accounts as $acc => $bal) { 
+if($acc !== '') { ?>					<option value='<?php echo $acc; ?>'><?php echo $acc; ?></option>
+<?php } } ?>
 				  </select>
 			    </div>
    			    <span class="help-inline"><?php echo form_error('from'); ?></span>
@@ -63,11 +61,9 @@
 			    <div class="span4">
 				  <select name="topup_account" autocomplete="off">
 					<option value=""></option>
-					<?php foreach($accounts as $acc => $bal) { 
-					if($acc !== '') { ?>
-					<option value="<?php echo $acc; ?>"><?php echo $acc; ?> (<?php echo $bal; ?>)</option>
-				    <?php } } ?>
-				  </select>
+<?php foreach($accounts as $acc => $bal) { 
+if($acc !== '') { ?>					<option value="<?php echo $acc; ?>"><?php echo $acc; ?> (<?php echo $bal; ?>)</option>
+				  <?php } } ?></select>
 			    </div>
 				<span class="help-inline"><?php echo form_error('topup_account'); ?></span>
 	          </div>				  
@@ -113,13 +109,11 @@
 				</div>
 			  </div>
 			  <span class="help-inline offset2"><?php echo form_error('price_index'); ?></span>
-
 			  <?php 
 			  foreach($accounts as $account => $balance) { 
 			  if($account !== '' && $account !== 'topup') { 
-				$var = 'max_'.$account.'_balance'; ?>
-			  <div class="row-fluid">
-				<span class="span3">Backup <?php echo ucfirst($account); ?> After </span>
+				$var = 'max_'.$account.'_balance'; ?>  <div class="row-fluid">
+				<span class="span3">Backup <?php echo ucfirst($account); ?> After</span>
 				<span class="span4">
 				  <div class="input-prepend">
 				    <span class="add-on"><i>BTC</i></span>
@@ -127,11 +121,13 @@
 				  </div>
 				</span>
 			  </div>
+			  
 			  <div class="row-fluid">
 				<span class="span3"></span>
 				<span class="span7"><input type='checkbox' name='backup_disabled[<?php echo $account; ?>]' value='1' <?php if(!isset($config[$var]) || $config[$var] == '0.00000000') echo 'checked '; ?>/> Disabled</span>
 			  </div>
 			  <span class="help-inline offset2"><?php echo form_error('delete_transactions_after'); ?></span>
+			  
 			<?php } } ?>
 
 		      <div class="form-actions">

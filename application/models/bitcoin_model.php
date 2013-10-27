@@ -187,7 +187,7 @@ class Bitcoin_model extends CI_Model {
 	 * @return	bool
 	 */			
 	public function log_user_address($user_hash, $address) {
-		return ($this->db->insert('addresses', array('user_hash' => $user_hash, 'bitcoin_address' => $address))) ? TRUE : FALSE;
+		return ($this->db->insert('addresses', array('user_hash' => "$user_hash", 'bitcoin_address' => "$address"))) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -206,12 +206,12 @@ class Bitcoin_model extends CI_Model {
 			return FALSE;
 			
 		$this->db->where('user_hash', $user_hash);
-		if($this->db->update('users', array('bitcoin_topup_address' => $address))) {
+		if($this->db->update('users', array('bitcoin_topup_address' => "$address"))) {
 			$this->log_user_address($user_hash, $address);
 			return TRUE;
 		}
 		
-		return FALSE;	
+		return FALSE;
 	}
 	
 	/**
