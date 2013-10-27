@@ -56,14 +56,10 @@ class Version_Checker {
 					if($this->CI->logs_model->add('Version Checker', 'New BitWasp code available', 'There is a new version of BitWasp available on GitHub. It is recommended that you download this new version', 'Info') == TRUE)
 						return TRUE;
 				}
-			} else {
-				return FALSE; 
-			}
-		} else {
-			return FALSE;
-		}
-		
-		return TRUE;
+			} 
+		} 
+				
+		return FALSE;
 	}
 	
 	public function call_curl($url, $proxy_arr = array()){

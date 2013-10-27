@@ -117,14 +117,14 @@ if($acc !== '') { ?>					<option value="<?php echo $acc; ?>"><?php echo $acc; ?>
 				<span class="span4">
 				  <div class="input-prepend">
 				    <span class="add-on"><i>BTC</i></span>
-					<input type='text' class='span10' name='account[<?php echo preg_replace('/\s+/', '__spc__', $account); ?>]' value='<?php echo (isset($config[$var])) ? $config[$var] : '0.00000000'; ?>' /> 
+					<input type='text' class='span10' name='account[<?php echo $account; ?>]' value='<?php echo (isset($config[$var])) ? $config[$var] : '0.00000000'; ?>' /> 
 				  </div>
 				</span>
 			  </div>
 			  
 			  <div class="row-fluid">
 				<span class="span3"></span>
-				<span class="span7"><input type='checkbox' name='backup_disabled[<?php echo preg_replace('/\s+/', '__spc__', $account); ?>]' value='1' <?php if(!isset($config[$var]) || $config[$var] == '0.00000000') echo 'checked '; ?>/> Disabled</span>
+				<span class="span7"><input type='checkbox' name='backup_disabled[<?php echo $account; ?>]' value='1' <?php if(!isset($config[$var]) || $config[$var] == '0.00000000') echo 'checked '; ?>/> Disabled</span>
 			  </div>
 			  <span class="help-inline offset2"><?php echo form_error('delete_transactions_after'); ?></span>
 			  
