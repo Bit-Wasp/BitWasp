@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
 $CI = &get_instance();
 $CI->load->library('bw_bitcoin');
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
-$byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
+$byte = ($bitcoin_info['testnet'] == FALSE) ? "6F" : "00";
 define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
 
 /**
@@ -20,8 +20,9 @@ define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
 */
 class Bitcoin_crypto {
 
-	public $pair;
+	public $CI;
 	public function __construct(){
+		$this->CI = &get_instance();
 	//	$this->pair = $this->getNewKeySet();
 	}
   /*
@@ -158,7 +159,7 @@ class Bitcoin_crypto {
     return $return;
   }
 
-  /**
+/**
 * Convert a 160-bit Bitcoin hash to a Bitcoin address
 *
 * @author theymos
@@ -290,21 +291,29 @@ class Bitcoin_crypto {
 * @access public
 */
   public static function getNewPrivKey() {
-
+/*
     $g = SECcurve::generator_secp256k1();
-    $n = $g->getOrder();
-	
-    do {
+    $n = $g->getOrder();*/
+    /*do {
       if (extension_loaded('gmp') && USE_EXT == 'GMP') {
-        $privKey = gmp_Utils::gmp_random($n);
-      } else if (extension_loaded('bcmath') && USE_EXT == 'BCMATH') {
-        $privKey = bcmath_Utils::bcrand(1, $n);
+		$privKey = gmp_Utils::gmp_random($n);
+	  } else if($extension_loaded('bc_math') && USE_EXT == 'BCMATH') {
+		$privKey = bcmath_Utils::bcrand(1, $n);
 	  }
-      $privKeyHex = self::encodeHex($privKey);
+
+	} while (($privKey < 2E+11) || strlen($privKeyHex) > 64);*/
 	
-	} while (($privKey < 2E+11) || strlen($privKeyHex) > 64);
+	/*$privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
 	
+	var_dump($privKey);
+    $privKeyHex = self::encodeHex($privKey);
 	return str_pad($privKeyHex, 64, '0', STR_PAD_LEFT);
+	* */
+	
+    $privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
+    $privKeyHex = self::encodeHex($privKey);
+    return str_pad($privKeyHex, 64, '0', STR_PAD_LEFT);
+
   }
   
   /**

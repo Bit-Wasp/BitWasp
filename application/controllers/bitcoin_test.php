@@ -13,8 +13,15 @@ class Bitcoin_Test extends CI_Controller {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
 	}
+
+	public function test(){
+		$this->load->library('bitcoyn_crypto');
+		$key = $this->bitcoyn_crypto->generate();
+	}
 	
 	public function keypair() {
+
+		
 		$this->load->library('bitcoin_crypto');
 		$key = $this->bitcoin_crypto->getNewKeySet();
 		echo '<pre>';print_r($key);echo '</pre>';
