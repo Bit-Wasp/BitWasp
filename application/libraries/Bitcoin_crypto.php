@@ -275,7 +275,7 @@ class Bitcoin_crypto {
 * @return string
 * @access public
 */
-  public static function getNewPrivKey() {
+  public static function getNewPrivKey() { 
 	
     $privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
     while($privKey > 115792089237316195423570985008687907852837564279074904382605163141518161494337){
