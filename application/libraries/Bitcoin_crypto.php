@@ -278,6 +278,9 @@ class Bitcoin_crypto {
   public static function getNewPrivKey() {
 	
     $privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
+    while($privKey > 115792089237316195423570985008687907852837564279074904382605163141518161494337){
+		$privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
+	}
     $privKeyHex = self::encodeHex($privKey);
     return str_pad($privKeyHex, 64, '0', STR_PAD_LEFT);
 
