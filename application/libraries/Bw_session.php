@@ -11,9 +11,9 @@
  * @category	Session
  * @author		BitWasp
  */
-class Bw_session {
+class Bw_session extends Current_User {
 
-	protected $CI;
+	public $CI;
 
 	public $URI;
 	public $session_id;

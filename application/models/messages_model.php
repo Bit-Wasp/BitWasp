@@ -22,7 +22,6 @@ class Messages_model extends CI_Model {
 	 * @see		Libraries/Bw_Messages
 	 */		
 	public function __construct() {	
-		$this->load->library('current_user');
 		$this->load->library('bw_messages');
 		parent::__construct();
 	}

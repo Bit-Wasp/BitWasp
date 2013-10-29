@@ -12,7 +12,7 @@
                 <th></th>
               </tr>
             </thead>
-	        <?php foreach ($messages as $message): ?>
+	        <?php foreach ($messages as $message){ ?>
             <tr<?php if(!$message['viewed']){?> class="info"<?}?>>
 		          <td><?php echo anchor('user/'.$message['from']['user_hash'], $message['from']['user_name']);?></td>
 		          <td><?php if(!$message['viewed']) echo '<strong>'; ?>
@@ -26,7 +26,7 @@
                   <?php echo ($message['viewed'] == '1') ? anchor('message/send/'.$message['hash'], 'Reply', 'class="btn btn-mini"') : NULL;?>
 				  <?php echo anchor('message/delete/'.$message['hash'], 'Delete', 'class="btn btn-danger btn-mini"');?>				  </td>
 		    </tr>
-	        <?php endforeach; ?>
+	        <?php } ?>
 		  </table>
 		<?php } else { ?>
 		<p>No messages in your inbox.</p>

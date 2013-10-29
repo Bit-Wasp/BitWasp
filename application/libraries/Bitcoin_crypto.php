@@ -2,7 +2,7 @@
 require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
 // Determine bitcoin address version
 $CI = &get_instance();
-$CI->load->library('bw_bitcoin');
+//$CI->load->library('bw_bitcoin');
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
 $byte = ($bitcoin_info['testnet'] == FALSE) ? "6F" : "00";
 define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
@@ -46,21 +46,6 @@ class Bitcoin_crypto {
     return $string;
   }
   
-  /**
-* Generate a random string from base58 alphabet
-*
-* @param integer $length
-* @return string
-* @access public
-*/
-  public static function randomString($length=16) {
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-       $randomString .= self::$base58chars[mt_rand(0, strlen(self::$base58chars)-1)];
-    }
-    return $randomString;
-  }
-
   /**
 * Convert a hex string into a (big) integer
 *
@@ -291,24 +276,6 @@ class Bitcoin_crypto {
 * @access public
 */
   public static function getNewPrivKey() {
-/*
-    $g = SECcurve::generator_secp256k1();
-    $n = $g->getOrder();*/
-    /*do {
-      if (extension_loaded('gmp') && USE_EXT == 'GMP') {
-		$privKey = gmp_Utils::gmp_random($n);
-	  } else if($extension_loaded('bc_math') && USE_EXT == 'BCMATH') {
-		$privKey = bcmath_Utils::bcrand(1, $n);
-	  }
-
-	} while (($privKey < 2E+11) || strlen($privKeyHex) > 64);*/
-	
-	/*$privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
-	
-	var_dump($privKey);
-    $privKeyHex = self::encodeHex($privKey);
-	return str_pad($privKeyHex, 64, '0', STR_PAD_LEFT);
-	* */
 	
     $privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
     $privKeyHex = self::encodeHex($privKey);
@@ -381,73 +348,6 @@ class Bitcoin_crypto {
   public static function WIFtoPrivKey($WIF) {
     return self::addressToHash160($WIF);
   }
-  
-  /**
-* Checks for typos in the mini key
-*
-* @author Jacob Bruce
-* @param string $miniKey
-* @return boolean
-* @access public
-*/
-  public static function checkMiniKey($miniKey) {
-    if (strlen($miniKey) != 22) { return false; }
-	$miniHash = hash('sha256', $miniKey.'?');
-  	if ($miniHash[0] == 0x00) {
-	  return true;
-	} else {
-	  return false;
-	}
-  }
-
-  /**
-* Generate a new mini private key
-*
-* @author Jacob Bruce
-* @return string
-* @access public
-*/
-  public static function getNewMiniKey() {
-    $miniKey = 'S';
-	do {
-	  $cand = $miniKey.self::randomString(21);
-	  if (self::checkMiniKey($cand)) {
-	    $miniKey = $cand;
-	  }
-	} while ($miniKey == 'S');
-    return $miniKey;
-  }
-  
-  /**
-* Convert mini key to Wallet Import Format (WIF)
-*
-* @author Jacob Bruce
-* @param string $miniKey
-* @return string
-* @access public
-*/
-  public static function miniKeyToWIF($miniKey) {
-    return self::privKeyToWIF(hash('sha256', $miniKey));
-  }
-  
-  /**
-* Get bitcoin address from a mini private key
-*
-* @author Jacob Bruce
-* @param string $miniKey
-* @return string
-* @access public
-*/
-  public static function miniKeyToAddress($miniKey) {
-  
-    if (!self::checkMiniKey($miniKey)) {
-	  return 'invalid mini key';
-	}
-	  
-	$privKey = hash('sha256', $miniKey);
-    return self::privKeyToAddress($privKey);
-  }
-  
-}
+};
 
 ?>

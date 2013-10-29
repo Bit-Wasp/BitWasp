@@ -213,6 +213,7 @@ class CI_Loader {
 			$params = NULL;
 		}
 
+		log_message('debug', "Load Library: $library");
 		$this->_ci_load_class($library, $params, $object_name);
 	}
 

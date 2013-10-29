@@ -96,7 +96,6 @@ class Bw_messages {
 			// encrypt the message with the recipients public key.
 			if( ($this->CI->input->post('pgp_encrypt') == '1') ||
 			    ($to['force_pgp_messages'] == '1') ){
-					$this->CI->load->library('gpg');
 					$this->CI->load->model('accounts_model');
 					$pgp = $this->CI->accounts_model->get_pgp_key($to['id']);
 					$content['message'] = $this->CI->gpg->encrypt($pgp['fingerprint'], $content['message']);

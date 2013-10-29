@@ -20,8 +20,6 @@ class Bitcoin_Test extends CI_Controller {
 	}
 	
 	public function keypair() {
-
-		
 		$this->load->library('bitcoin_crypto');
 		$key = $this->bitcoin_crypto->getNewKeySet();
 		echo '<pre>';print_r($key);echo '</pre>';
