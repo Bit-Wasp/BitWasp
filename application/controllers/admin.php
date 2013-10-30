@@ -148,29 +148,38 @@ class Admin extends CI_Controller {
 		$data['title'] = $this->nav['autorun']['heading'];
 		$data['jobs'] = $this->autorun_model->load_all();
 		
+		
 		if($this->form_validation->run('admin_edit_autorun') == TRUE){
+			
+			// Load the array of jobs, and the specified intervals.
 			$jobs = $this->input->post('jobs');
 			$update = FALSE;
+			// Load the array of disabled jobs.
 			$disabled_jobs = $this->input->post('disabled_jobs');
 			foreach($jobs as $index => $interval){
+				// Intervals should always be numeric. 
 				if(!is_numeric($interval))
 					redirect('admin/autorun');
 					
+				// Set the interval to zero if a job is disabled.
 				if($data['jobs'][$index] !== '0' && $disabled_jobs[$index] == '1'){
 					if($this->autorun_model->set_interval($index, '0') == TRUE)
 						$update = TRUE;
 				} else {
 				
+					// If the job exists, and the interval has changed..
 					if(isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval){
+						// Update the interval.
 						if($this->autorun_model->set_interval($index, $interval) == TRUE)
 							$update = TRUE;
-							
-						if($interval !== '0'){
+
+						// If the interval has changed, rerun the job??
+						if($interval !== '0')
 							$this->autorun->jobs[$index]->job();
-						}
 					}
 				}
 			}
+			// If the update happened successfully, redirect!
 			if($update)
 				redirect('admin/autorun');
 		}
@@ -207,6 +216,7 @@ class Admin extends CI_Controller {
 		// If there is any information about a recent transaction, display it.
 		$info = (array)json_decode($this->session->flashdata('info'));
 		if(count($info) !== 0){
+			// If the information is to do with topping up a WIF key:
 			if($info['action'] == 'topup'){
 				$topup_amount = $data['accounts'][$info['account']]-$info['old_amount'];
 				$action = ($info['category'] == 'send') ? 'sent to' : 'received on';
@@ -248,16 +258,23 @@ class Admin extends CI_Controller {
 		$this->load->model('autorun_model');
 		
 		$data['config'] = $this->bw_config->load_admin('bitcoin');
+		// Load the current selection for the bitcoin price index.
 		$data['price_index'] = $this->bw_config->price_index;
+		// Load the list of accounts in the bitcoin daemon.
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		
+		// If the WIF Import form was submitted:
 		if($this->input->post('submit_wallet_topup') == 'Topup') {
 			if($this->form_validation->run('admin_wallet_topup') == TRUE) {
+				// Attempt to import the private key
 				$import = $this->bw_bitcoin->importprivkey($this->input->post('wif'), $this->input->post('topup_account'));
 				if(isset($import['code'])){
+					// If there is an error, display it. 
 					$data['import_wallet_error'] = $import['message'];
 				} else if($import == NULL) {
-					$info = json_encode(array('old_amount' => $data['accounts'][$this->input->post('topup_accounts')],
+					// Successful import, record the data to be displayed.
+					$info = json_encode(array('action' => 'topup',
+											  'old_amount' => $data['accounts'][$this->input->po st('topup_accounts')],
 											  'account' => $this->input->post('topup_accounts')));
 					$this->session->set_flashdata("info",$info);
 					redirect('admin/bitcoin');
@@ -265,6 +282,7 @@ class Admin extends CI_Controller {
 			}
 		}
 		
+		// If the Settings form was submitted:
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
 			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
 			
@@ -285,36 +303,34 @@ class Admin extends CI_Controller {
 				// Check if electrum_mpk is being updated with text.
 				if($this->bw_config->balance_backup_method == 'Electrum') {
 					$electrum_mpk = htmlentities($this->input->post('electrum_mpk'));
-					var_dump($electrum_mpk);
 					if(strlen($electrum_mpk) > 0)
 						$changes['electrum_mpk'] = ($electrum_mpk !== $data['config']['electrum_mpk']) ? $electrum_mpk : NULL ;
 				}
 				// See later for how we set electrum_mpk to ''.
 
+				// Load the array of accounts, and the balance to back up.
 				$backup_balances = $this->input->post('account');
+				// Load the array of disabled accounts (value will = 1)
+				$disabled_backups = $this->input->post('backup_disabled');
 				if(is_array($backup_balances)) {
 					foreach($backup_balances as $account => $balance) {
+						// Disable access to '' and topup.
 						if($this->general->matches_any($account, array('','topup')) == TRUE)
 							continue;
 						
+						// If the account exists in bitcoind, but not
+						// in the database, try create the entry. 
+						// Skip update if unsuccessful.
 						$var = "max_".$account."_balance";
 						if(!isset($data['config'][$var]) && isset($data['accounts'][$account])) {
 							if(!$this->config_model->create($var, '0.00000000'))
 								continue;
 						}
-
+						
 						$changes[$var] = ($balance !== $data['config'][$var]) ? $balance: NULL;						
-					}
-				}
-				
-				$disabled_backups = $this->input->post('backup_disabled');
-				if(is_array($disabled_backups)) {
-					foreach($disabled_backups as $account => $value) {
-						if($this->general->matches_any($account, array('','topup')) == TRUE)
-							continue;
-
-						$var = "max_".$account."_balance";
-						$changes[$var] = ($balance !== $data['config'][$var]) ? 0.00000000 : NULL;					
+						
+						if($disabled_backups[$account] == '1')
+							$changes[$var] = ($balance !== '0') ? 0.00000000 : $changes[$var];	
 					}
 				}
 				
