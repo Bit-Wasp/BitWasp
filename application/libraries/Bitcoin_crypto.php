@@ -4,7 +4,7 @@ require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
 $CI = &get_instance();
 //$CI->load->library('bw_bitcoin');
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
-$byte = ($bitcoin_info['testnet'] == FALSE) ? "6F" : "00";
+$byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
 define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
 
 /**
@@ -20,12 +20,7 @@ define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
 */
 class Bitcoin_crypto {
 
-	public $CI;
-	public function __construct(){
-		$this->CI = &get_instance();
-	//	$this->pair = $this->getNewKeySet();
-	}
-  /*
+/**
 * Bitcoin utility functions by theymos
 * hex input must be in uppercase, with no leading 0x
 */
@@ -33,7 +28,7 @@ class Bitcoin_crypto {
   private static $base58chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
   
   /**
-* Remove leading "0x" from a hex value if present.
+	* Remove leading "0x" from a hex value if present.
 *
 * @param string $string
 * @return string
@@ -276,9 +271,12 @@ class Bitcoin_crypto {
 * @access public
 */
   public static function getNewPrivKey() { 
-	
+
+	$g = SECcurve::generator_secp256k1();
+	$n = $g->getOrder();
+
     $privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
-    while($privKey > 115792089237316195423570985008687907852837564279074904382605163141518161494337){
+    while($privKey > $n){
 		$privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
 	}
     $privKeyHex = self::encodeHex($privKey);

@@ -15,6 +15,7 @@ class Bitcoin_Test extends CI_Controller {
 	}
 
 	public function test(){
+
 		$this->load->library('bitcoyn_crypto');
 		$key = $this->bitcoyn_crypto->generate();
 	}
