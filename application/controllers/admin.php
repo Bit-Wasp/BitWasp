@@ -219,7 +219,6 @@ class Admin extends CI_Controller {
 			// If the information is to do with topping up a WIF key:
 			if($info['action'] == 'topup'){
 				$topup_amount = $data['accounts'][$info['account']]-$info['old_amount'];
-				$action = ($info['category'] == 'send') ? 'sent to' : 'received on';
 				$data['returnMessage'] = "BTC {$topup_amount} was added to the '{$info['account']}' account.";
 			}
 		}
@@ -274,8 +273,8 @@ class Admin extends CI_Controller {
 				} else if($import == NULL) {
 					// Successful import, record the data to be displayed.
 					$info = json_encode(array('action' => 'topup',
-											  'old_amount' => $data['accounts'][$this->input->post('topup_accounts')],
-											  'account' => $this->input->post('topup_accounts')));
+											  'old_amount' => $data['accounts'][$this->input->post('topup_account')],
+											  'account' => $this->input->post('topup_account')));
 					$this->session->set_flashdata("info",$info);
 					redirect('admin/bitcoin');
 				}
