@@ -11,7 +11,7 @@ SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_REScoULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
@@ -96,7 +96,8 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (20, 'delete_logs_after', '14'),
 (21, 'entry_payment_vendor', '0.00000000'),
 (22, 'entry_payment_buyer', '0.00000000'),
-(23, 'auto_finalize_threshold', '0');
+(23, 'auto_finalize_threshold', '0'),
+(24, 'balance_backup_method', 'Disabled');
 
 CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,

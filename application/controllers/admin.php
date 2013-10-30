@@ -819,7 +819,7 @@ class Admin extends CI_Controller {
 	public function generate_nav() { 
 		$nav = '';
 		if( $this->bw_config->balance_backup_method == 'Electrum' && $this->bw_config->electrum_mpk == '')
-			$nav.= '<div class="alert alert-warning">You have not configured an electrum master public key. Please do so now.</div>';
+			$nav.= '<div class="alert">You have not configured an electrum master public key. Please do so now '.anchor('admin/edit/bitcoin','here').'.</div>';
 		
 		$links = '';
 		foreach($this->nav as $entry) { 
