@@ -4,7 +4,11 @@
  * 
  * Used to securely transfer excessive funds from the live wallet to 
  * an offline wallet.
-
+ * Will check if the ECDSA or electrum option is chosen. ECDSA will generate
+ * a new keypair, send the bitcoins to that bitcoin address. Electrum will
+ * generate a deterministic public key and address, send coins to there,
+ * and increase the iteration index on record by one.
+ * 
  * @package		BitWasp
  * @subpackage	Autorun
  * @category	User Inactivity
@@ -47,10 +51,14 @@ class Backup_Wallet {
 	 */	
 	public function job() {
 		
+		// If the backups are disabled, then abort.
+		if($this->CI->bw_config->balance_backup_method == 'Disabled')
+			return FALSE;
+		
 		// Check if there are any accounts/bitcoind is offline.
-		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
+		$accounts = $this->CI->bw_bitcoin->listaccounts();
 		if(count($accounts) == 0) 
-			return TRUE;
+			return FALSE;
 
 		$bitcoin_info = $this->CI->bw_bitcoin->getinfo();
 		//if($bitcoin_info['testnet'] == TRUE)
@@ -60,7 +68,6 @@ class Backup_Wallet {
 		$this->CI->load->model('accounts_model');
 		$this->CI->load->model('messages_model');
 		$this->CI->load->library('bw_messages');
-		$this->CI->load->library('bitcoin_crypto');		
 
 		$admin = $this->CI->accounts_model->get(array('user_name' => 'admin'));
 		// Loop through each account
@@ -71,42 +78,92 @@ class Backup_Wallet {
 			// accounts whos balance is not above the backup threshold.
 			if(!isset($this->CI->bw_config->$var) || $account == 'topup' || $balance <= 0 || $balance < $this->CI->bw_config->$var) 
 				continue;
-			
-			//if($this->CI->general->matches_any($account, array("", "topup")) == TRUE || $balance <= 0 || (float)$balance < (float)$this->CI->bw_config->$var )
-				//continue;		
-						
-			// Generate a new keypair.
-			$key = $this->CI->bitcoin_crypto->getNewKeySet();
-			
+
 			// Send the excess amount to the newly generated public address.
 			$send_amount = ($balance-$this->CI->bw_config->$var);
-			$send = $this->CI->bw_bitcoin->sendfrom($account, $key['pubAdd'], (float)$send_amount);
-			if(!isset($send['code'])){
-				// Send the wallet to the admin user.
-				$data['from'] = $admin['id'];
-				$details = array('username' => $admin['user_name'],
-								 'subject' => ucfirst($account)." Wallet Backup");
-			
-				$time = date("j F Y ga", time());
-				$details['message'] = ucfirst($account)." Wallet Backup\n ------ $time\n\n";
-				$details['message'] = "Private Key: ".$key['privKey']." \n";
-				$details['message'].= "WIF Format: ".$key['privWIF']." \n\n";
-				$details['message'].= "Amount: BTC ".$send_amount." \n";
-				$details['message'].= "Bitcoin Address: ".$key['pubAdd']." \n";
-				$details['message'].= "Transaction ID: ".$send." \n";
+
+			// Send coins to newly generated ECDSA keypair's address
+			if($this->CI->bw_config->balance_backup_method == 'ECDSA'){
 				
-				// If the user has GPG, encrypt the message.
-				if( isset($admin['pgp']) ) {
-					$this->CI->load->library('gpg');			
-					$details['message'] = $this->CI->gpg->encrypt($admin['pgp']['fingerprint'], $details['message']);
+				// Load the ECDSA library.
+				$this->CI->load->library('bitcoin_crypto');
+				
+				// Generate a new keypair.
+				$key = $this->CI->bitcoin_crypto->getNewKeySet();
+				
+				// Send to the derived bitcoin address
+				$send = $this->CI->bw_bitcoin->sendfrom($account, $key['pubAdd'], (float)$send_amount);
+				if(!isset($send['code'])){
+					
+					// Send the wallet to the admin user.
+					$data['from'] = $admin['id'];
+					$details = array('username' => $admin['user_name'],
+									 'subject' => ucfirst($account)." Wallet Backup");
+					$time = date("j F Y ga", time());
+					$details['message'] = ucfirst($account)." Wallet Backup\n ------ $time\n\nPrivate Key: ".$key['privKey']." \nWIF Format: ".$key['privWIF']." \n\nAmount: BTC ".$send_amount." \nBitcoin Address: ".$key['pubAdd']." \nTransaction ID: ".$send." \n";
+					// If the user has GPG, encrypt the message.
+					if( isset($admin['pgp']) ) {
+						$this->CI->load->library('gpg');			
+						$details['message'] = $this->CI->gpg->encrypt($admin['pgp']['fingerprint'], $details['message']);
+					}
+					// Prepare the input.
+					$message = $this->CI->bw_messages->prepare_input($data, $details);
+					if($this->CI->messages_model->send($message) !== TRUE){
+						$success = FALSE; 
+					}
+					
+				} else {
+					$success = FALSE;
 				}
-				// Prepare the input.
-				$message = $this->CI->bw_messages->prepare_input($data, $details);
-				if($this->CI->messages_model->send($message) !== TRUE)
-					$success = FALSE; 
-				
-			} else {
-				$success = FALSE;
+			} else if($this->CI->bw_config->balance_backup_method == 'Electrum') {
+				$this->CI->load->library('Mpkgen');
+				if(!isset($this->CI->bw_config->electrum_mpk))
+					return FALSE;
+
+				// Load the MPK
+				$mpk = trim($this->CI->bw_config->electrum_mpk);
+
+				// If the iteration record doesn't exist, create one at 0.
+				if(!isset($this->CI->bw_config->electrum_iteration)){
+					$iteration = 0;
+					if(!$this->CI->config_model->create('electrum_iteration', '0')){
+						// Exit if we can't create the record.
+						continue;
+					}
+				} else {
+					// Record exists, use that.
+					$iteration = $this->CI->bw_config->electrum_iteration;
+				}
+				// Generate the address from the MPK and iteration.
+				$address = $this->CI->mpkgen->address($mpk, $iteration);
+				if(!is_string($address))
+					return FALSE;
+
+				// All checks are done. Send the coins.
+				$send = $this->CI->bw_bitcoin->sendfrom($account, $address, (float)$send_amount);
+				if(!isset($send['code'])){
+					$this->CI->config_model->update(array('electrum_iteration' => $iteration+1));
+					
+					// Send the wallet to the admin user.
+					$data['from'] = $admin['id'];
+					$details = array('username' => $admin['user_name'],
+									 'subject' => ucfirst($account)." Wallet Backup");
+					$time = date("j F Y ga", time());
+					$details['message'] = ucfirst($account)." Wallet Backup\n ------ $time\nAmount: BTC ".$send_amount." \nBitcoin Address: ".$address." \nElectrum Index: ".$iteration." \nTransaction ID: ".$send." \n";
+					
+					// If the user has GPG, encrypt the message.
+					if( isset($admin['pgp']) ) {
+						$this->CI->load->library('gpg');			
+						$details['message'] = $this->CI->gpg->encrypt($admin['pgp']['fingerprint'], $details['message']);
+					}
+					// Prepare the input.
+					$message = $this->CI->bw_messages->prepare_input($data, $details);
+					if($this->CI->messages_model->send($message) !== TRUE){
+						$success = FALSE; 
+					}
+				} else {
+					$success = FALSE;
+				}
 			}
 		}
 		return $success;

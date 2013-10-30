@@ -204,6 +204,16 @@ class Admin extends CI_Controller {
 		$data['bitcoin_index'] = $this->bw_config->price_index;
 		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
 		
+		// If there is any information about a recent transaction, display it.
+		$info = (array)json_decode($this->session->flashdata('info'));
+		if(count($info) !== 0){
+			if($info['action'] == 'topup'){
+				$topup_amount = $data['accounts'][$info['account']]-$info['old_amount'];
+				$action = ($info['category'] == 'send') ? 'sent to' : 'received on';
+				$data['returnMessage'] = "BTC {$topup_amount} was added to the '{$info['account']}' account.";
+			}
+		}
+		
 		$data['page'] = 'admin/bitcoin';
 		$data['title'] = $this->nav['bitcoin']['heading'];
 		$data['nav'] = $this->generate_nav();
@@ -247,18 +257,39 @@ class Admin extends CI_Controller {
 				if(isset($import['code'])){
 					$data['import_wallet_error'] = $import['message'];
 				} else if($import == NULL) {
+					$info = json_encode(array('old_amount' => $data['accounts'][$this->input->post('topup_accounts')],
+											  'account' => $this->input->post('topup_accounts')));
+					$this->session->set_flashdata("info",$info);
 					redirect('admin/bitcoin');
 				}
 			}
 		}
 		
-		
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
 			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
 			
-				$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_transactions_after') : NULL ;						
+				// Alter the transaction purging period.
+				$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_transactions_after']) ? $this->input->post('delete_transactions_after') : NULL ;
 				// If we're disabling auto-deleting transactions, set that.
 				if($this->input->post('delete_transactions_after_disabled') == '1') $changes['delete_transactions_after'] = "0";
+
+				// Alter the balance backup method
+				$changes['balance_backup_method'] = ($this->input->post('balance_backup_method') !== $data['config']['balance_backup_method']) ? $this->input->post('balance_backup_method') : NULL;
+				if($this->input->post('balance_backup_method_disabled') == '1') $changes['balance_backup_method'] = 'Disabled';
+
+				// Disable wallet backups if the MPK isn't set up.
+				if($changes['balance_backup_method'] == 'Electrum' && $this->bw_config->electrum_mpk == ''){
+					$this->autorun_model->set_interval('backup_wallet', '0');
+				}
+
+				// Check if electrum_mpk is being updated with text.
+				if($this->bw_config->balance_backup_method == 'Electrum') {
+					$electrum_mpk = htmlentities($this->input->post('electrum_mpk'));
+					var_dump($electrum_mpk);
+					if(strlen($electrum_mpk) > 0)
+						$changes['electrum_mpk'] = ($electrum_mpk !== $data['config']['electrum_mpk']) ? $electrum_mpk : NULL ;
+				}
+				// See later for how we set electrum_mpk to ''.
 
 				$backup_balances = $this->input->post('account');
 				if(is_array($backup_balances)) {
@@ -297,7 +328,7 @@ class Admin extends CI_Controller {
 						if($this->input->post('price_index') !== 'Disabled'){		
 							// If the price index was previously disabled, set the auto-run script interval back up..
 							if($data['price_index'] == 'Disabled') 
-								$this->config_model->set_autorun_interval('price_index', '0.166666');
+								$this->config_model->set_autorun_interval('price_index','15');
 								
 							// And request new exchange rates.
 							$this->bw_bitcoin->ratenotify();
@@ -311,6 +342,13 @@ class Admin extends CI_Controller {
 				}
 				
 				$changes = array_filter($changes, 'strlen');
+		
+				// Check if electrum_mpk is being blanked.
+				if($this->bw_config->balance_backup_method == 'Electrum') {
+					$electrum_mpk = htmlentities($this->input->post('electrum_mpk'));
+					if(strlen($electrum_mpk) == 0)
+						$changes['electrum_mpk'] = '';
+				}
 		
 				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
 					redirect('admin/bitcoin');	
@@ -337,6 +375,7 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/edit_bitcoin';
 		$data['title'] = $this->nav['bitcoin']['heading'];
 		$data['nav'] = $this->generate_nav();
+		$data['use_electrum'] = ($this->bw_config->balance_backup_method == "Electrum") ? TRUE : FALSE;
 		$this->load->library('Layout', $data);
 	}
 	
@@ -778,8 +817,11 @@ class Admin extends CI_Controller {
 	 * @return 	string
 	 */
 	public function generate_nav() { 
-		$links = '';
+		$nav = '';
+		if( $this->bw_config->balance_backup_method == 'Electrum' && $this->bw_config->electrum_mpk == '')
+			$nav.= '<div class="alert alert-warning">You have not configured an electrum master public key. Please do so now.</div>';
 		
+		$links = '';
 		foreach($this->nav as $entry) { 
 			$links .= '<li';
 			if(uri_string() == 'admin'.$entry['panel'] || uri_string() == 'admin/edit'.$entry['panel']) {
@@ -791,8 +833,7 @@ class Admin extends CI_Controller {
 			$links .= '>'.anchor('admin'.$entry['panel'], $entry['title']).'</li>';
 		}
 
-		$nav = '
-		  <div class="tabbable">
+		$nav.= '<div class="tabbable">
 			<label class="span3"><h2>'.$self['heading'].'</h2></label>
 			<label class="span1">'.anchor('admin/edit'.$panel_url, 'Edit', 'class="btn"').'</label>
 			<label class="span7">
@@ -956,6 +997,20 @@ class Admin extends CI_Controller {
 	 */
 	public function check_session_timeout($param) {
 		 return (is_numeric($param) && $param >= 5) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Bitcoin Balance Method
+	 * 
+	 * Checks if the bitcoin balance method is an allowed value:
+	 * '' for disabled, 'ecdsa' to generate private keys, and 'electrum'
+	 * for the deterministic addresses.
+	 * 
+	 * @param	string	$param
+	 * return	boolean
+	 */
+	public function check_bitcoin_balance_method($param) {
+		return ($this->general->matches_any($param, array('Disabled','ECDSA','Electrum')) == TRUE) ? TRUE : FALSE;
 	}
 };
 

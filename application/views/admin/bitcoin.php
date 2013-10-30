@@ -2,6 +2,9 @@
 		  
 		  <?php echo $nav; ?>
 			
+          <?php if(isset($returnMessage)) { ?>
+          <div class='alert alert-success'><?php echo $returnMessage; ?></div><?php } ?>
+			
 		  <div class="container-fluid">
 <?php 
 if($bitcoin_info == NULL) { ?>
@@ -40,6 +43,11 @@ if($bitcoin_info == NULL) { ?>
 			  <span class="span3">Use A Bitcoin Price Index?</span>
 			  <span class="span4"><?php if($bitcoin_index == '') { echo 'Disabled'; }
 			  else { echo $bitcoin_index; } ?></span>
+			</div>
+			
+			<div class="row-fluid">
+			  <span class="span3">Wallet Backup Method</span>
+			  <span class="span4"><?php echo $config['balance_backup_method']; ?></span>
 			</div>
 			  
 			<?php 

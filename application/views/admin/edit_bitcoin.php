@@ -109,6 +109,34 @@ if($acc !== '') { ?>					<option value="<?php echo $acc; ?>"><?php echo $acc; ?>
 				</div>
 			  </div>
 			  <span class="help-inline offset2"><?php echo form_error('price_index'); ?></span>
+			  
+			  <?php
+			  $methods = array('Disabled', 'ECDSA', 'Electrum');?>
+			  <div class="row-fluid">
+				<div class="span3">Balance Backup Method</div>
+				<div class="span4">
+				  <select name='balance_backup_method' autocomplete="off">
+				    <?php foreach($methods as $method){ ?>
+					<option value='<?php echo $method; ?>'<?php if($method == $config['balance_backup_method']) echo ' selected="selected"'; ?>><?php echo $method; ?></option>
+					<?php } ?>
+				  </select>
+				</div>
+			  </div>
+			  <div class="row-fluid">
+				<span class="span3"></span>
+				<span class="span7"><input type='checkbox' name='balance_backup_method_disabled' value='1' <?php if($config['balance_backup_method'] == 'Disabled') echo 'checked'; ?>/> Disabled</span>
+			  </div>
+			  <span class="help-inline offset2"><?php echo form_error('balance_backup_method'); ?></span>			  
+			  
+			  <?php
+			  if($use_electrum == TRUE){ ?>
+			  <div class="row-fluid">
+				<div class="span3">Electrum MPK</div>
+				<div class="span4"><input type='text' name='electrum_mpk' value='<?php echo $config['electrum_mpk']; ?>' /></div>
+			  </div>
+			  <span class="help-inline offset2"></span>
+			  <?php } ?>
+			 
 			  <?php 
 			  foreach($accounts as $account => $balance) { 
 			  if($account !== '' && $account !== 'topup') { 
