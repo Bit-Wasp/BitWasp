@@ -52,8 +52,16 @@ class GPG {
 	 */
 	public function __construct() {
 		if(class_exists('gnupg')) {
+
+			if (!file_exists('/tmp/gnupg')) {
+				mkdir("/tmp/gnupg",0777);			
+			}
 			
+			putenv("GNUPGHOME=/tmp/gnupg");
+
 			$this->gpg = new gnupg();
+			$this->gpg->seterrormode(gnupg::ERROR_EXCEPTION); // throw an exception in case of an error
+
 			$this->style = 'oop';
 			$this->version = phpversion('gnupg');
 		} if(function_exists('gnupg_init')) {
