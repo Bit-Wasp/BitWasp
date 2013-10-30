@@ -274,7 +274,7 @@ class Admin extends CI_Controller {
 				} else if($import == NULL) {
 					// Successful import, record the data to be displayed.
 					$info = json_encode(array('action' => 'topup',
-											  'old_amount' => $data['accounts'][$this->input->po st('topup_accounts')],
+											  'old_amount' => $data['accounts'][$this->input->post('topup_accounts')],
 											  'account' => $this->input->post('topup_accounts')));
 					$this->session->set_flashdata("info",$info);
 					redirect('admin/bitcoin');
