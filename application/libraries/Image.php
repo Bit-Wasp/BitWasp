@@ -164,7 +164,7 @@ class Image {
 	 * @return		string / FALSE
 	 */
 	public function encode($filename){
-		return ($file = file_get_contents('./assets/images/'.$filename)) ? base64_encode($file) : FALSE;	
+		return ($file = file_get_contents('/tmp/'.$filename)) ? base64_encode($file) : FALSE;	
 	}
 		
 	/**
@@ -181,4 +181,3 @@ class Image {
 	
 
 };
-
