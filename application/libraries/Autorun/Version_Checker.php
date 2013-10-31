@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(__FILE__).'/../../../version.php');
+define('BITWASP_CREATED_TIME', $bitwasp_created_time);
 /**
  * Version Checker
  *
@@ -42,8 +44,6 @@ class Version_Checker {
 	 * This function is called by the Autorun script. 
 	 */
 	public function job() {
-	
-		$pluggable_timestamp = '0';
 
 		$branch = json_decode($this->call_curl('https://api.github.com/repos/Bit-Wasp/BitWasp/branches'));
 		if(is_array($branch)) {
@@ -51,9 +51,9 @@ class Version_Checker {
 			$commit = json_decode($this->call_curl($branch[0]->commit->url));
 			if(is_object($commit)) {
 				$timestamp = strtotime($commit->commit->author->date);
-				if($timestamp > $pluggable_timestamp) {
+				if($timestamp > BITWASP_CREATED_TIME) {
 					$this->CI->load->model('logs_model');
-					if($this->CI->logs_model->add('Version Checker', 'New BitWasp code available', 'There is a new version of BitWasp available on GitHub. It is recommended that you download this new version', 'Info') == TRUE)
+					if($this->CI->logs_model->add('Version Checker', 'New BitWasp code available', 'There is a new version of BitWasp available on GitHub. It is recommended that you download this new version (using '.BITWASP_CREATED_TIME.')', 'Info') == TRUE)
 						return TRUE;
 				}
 			} 
