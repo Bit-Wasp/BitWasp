@@ -94,7 +94,7 @@ $config = array('register_form'=>array(
 				'send_message' =>	array(
 										array(	'field' => 'recipient',
 												'label' => 'recipient.',
-												'rules' => 'trim|required|callback_user_exists'		// check user exists.
+												'rules' => 'trim|required|callback_check_user_exists'		// check user exists.
 										),
 										array(	'field' => 'subject',
 												'label' => 'subject',
@@ -233,7 +233,7 @@ $config = array('register_form'=>array(
 				'cashout_form' => array(
 										array('field' => 'amount',
 											  'label' => 'Amount',
-											  'rules' => 'callback_has_sufficient_balance'
+											  'rules' => 'callback_check_has_sufficient_balance'
 										)
 							),
 				'admin_edit_' => array(
@@ -304,6 +304,10 @@ $config = array('register_form'=>array(
 										array('field' => 'price_index',
 											  'label' => 'Price Index',
 											  'rules' => 'callback_check_price_index'
+										),
+										array('field' => 'balance_backup_method',
+											  'label' => 'balance backup method',
+											  'rules' => 'callback_check_balance_backup_method'
 										)
 							),
 				'admin_add_category' => array(
@@ -382,6 +386,22 @@ $config = array('register_form'=>array(
 										array('field' => 'jobs[]',
 											  'label' => 'Intervals',
 											  'rules' => 'is_numeric|callback_check_is_positive'
+										)
+							),
+				'admin_wallet_topup' => array(
+										array('field' => 'topup_account',
+											  'label' => 'account',
+											  'rules' => 'required|callback_check_bitcoin_account_exists'
+										),
+										array('field' => 'wif',
+											  'label' => 'private WIF',
+											  'rules' => 'required'
+										)
+							),
+				'admin_dispute_message' => array(
+										array('field' => 'admin_message',
+											  'label' => 'dispute response',
+											  'rules' => 'required|htmlentities'
 										)
 							),
 				'order_dispute' => array(

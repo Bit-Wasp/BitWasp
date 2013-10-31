@@ -324,7 +324,7 @@ class Messages extends CI_Controller {
 	 * @param	string	$param
 	 * @return	boolean
 	 */
-	public function user_exists($param) {
+	public function check_user_exists($param) {
 		$this->load->model('users_model');
 		return ($this->users_model->get(array('user_name' => $param)) !== FALSE) ? TRUE : FALSE;
 	}

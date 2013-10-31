@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-604739523"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1145825928"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-604739523" class="accordion-body collapse in">
+            <div id="namespace-1145825928" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -177,8 +177,6 @@
                                                     <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
                                                     <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
                                                     <li class="class"><a href="../classes/Mpkgen.html">Mpkgen</a></li>
-                                                    <li class="class"><a href="../classes/CurveFp.html">CurveFp</a></li>
-                                                    <li class="class"><a href="../classes/Point.html">Point</a></li>
                                                     <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
                                                     <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
                                                     <li class="class"><a href="../classes/Image.html">Image</a></li>
@@ -204,6 +202,7 @@
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
                                                     <li class="class"><a href="../classes/Refund_Inactive_Users.html">Refund_Inactive_Users</a></li>
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/Version_Checker.html">Version_Checker</a></li>
                                                     <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
                                                     <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
@@ -377,9 +376,11 @@ easy access throughout the application.</p>
                                                                     <a href="../classes/Bw_config.html#property_max_fees_balance" class="">$max_fees_balance</a><br />
                                                                     <a href="../classes/Bw_config.html#property_base_url" class="">$base_url</a><br />
                                                                     <a href="../classes/Bw_config.html#property_index_page" class="">$index_page</a><br />
+                                                                    <a href="../classes/Bw_config.html#property_electrum_mpk" class="">$electrum_mpk</a><br />
                                                                     <a href="../classes/Bw_config.html#property_entry_payment_vendor" class="">$entry_payment_vendor</a><br />
                                                                     <a href="../classes/Bw_config.html#property_entry_payment_buyer" class="">$entry_payment_buyer</a><br />
                                                                     <a href="../classes/Bw_config.html#property_auto_finalize_threshold" class="">$auto_finalize_threshold</a><br />
+                                                                    <a href="../classes/Bw_config.html#property_balance_backup_method" class="">$balance_backup_method</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No constants found</em>
@@ -906,6 +907,30 @@ The default is to support mod_rewrite.</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="property_electrum_mpk" name="property_electrum_mpk" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$electrum_mpk</h3>
+                <pre class="signature">$electrum_mpk</pre>
+                <p><em>Electrum MPK</em></p>
+                <p>This setting is for the electrum master key, from which bitcoin
+addresses are derived for backups</p>
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="property_entry_payment_vendor" name="property_entry_payment_vendor" class="anchor"></a>
             <article class="property">
                 <h3 class="public ">$entry_payment_vendor</h3>
@@ -966,6 +991,32 @@ disabled</p>
 (2) the progress=4 and finalized=0 but the buyer hasn't logged in for X days.
 In 1, the buyer will receive a refund, and in 2, the vendor will
 receive the funds for the item.</p>
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_balance_backup_method" name="property_balance_backup_method" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$balance_backup_method</h3>
+                <pre class="signature">$balance_backup_method</pre>
+                <p><em>Balance Backup Method</em></p>
+                <p>This setting determines which way it should back up balances.
+At this moment, it is possible to generate a new private key
+which is securely stored for the admin, or to generate deterministic
+addresses via electrum. Be default, this is disabled.</p>
 
 
                             </article>
@@ -1180,7 +1231,7 @@ model, and the bitcoin index configuration.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 23rd, 2013 at 11:50.
+                    on October 31st, 2013 at 13:38.
                 </section>
             </section>
         </section>

@@ -83,7 +83,7 @@ class Bw_bitcoin {
 			return FALSE;
 			
 		$array =  json_decode($json_result);
-		if($array !== FALSE){
+		if($array !== FALSE && $array !== NULL){
 			$array->price_index = $source_name;
 			return $array;
 		} else {
@@ -184,7 +184,20 @@ class Bw_bitcoin {
 	public function gettransaction($tx_hash) {
 		return $this->CI->jsonrpcclient->gettransaction($tx_hash);
 	}
-	
+
+	/**
+	 * Import Private Key
+	 * 
+	 * Function to ask bitcoind to import the wallet import format private
+	 * key.
+	 *
+	 * @param		string	$wif
+	 * @param		string	$account
+	 * @return		????
+	 */
+	public function importprivkey($wif, $account) {
+		return $this->CI->jsonrpcclient->importprivkey("$wif", "$account", TRUE);
+	}
 	/**
 	 * List Accounts
 	 * 
@@ -195,7 +208,14 @@ class Bw_bitcoin {
 	 * @return		array
 	 */			
 	public function listaccounts() {
-		return (array)$this->CI->jsonrpcclient->listaccounts(0);
+		$tmp = (array)$this->CI->jsonrpcclient->listaccounts(0);
+		$res = array();
+		foreach($tmp as $acc => $bal){
+			if(!preg_match('/\s+/', $acc)){
+				$res[$acc] = $bal;
+			}
+		}
+		return $res;
 	}
 
 	/**
@@ -335,7 +355,7 @@ class Bw_bitcoin {
 
 		$transaction = $this->gettransaction($txn_hash);
 		// Abort if there's an error obtaining the transaction (not for our wallet)
-		if(isset($transaction['code']) && $transaction == NULL)
+		if(isset($transaction['code']) || $transaction == NULL)
 			return FALSE;
 
 		// Extract details for send/receive from inputs and oupputs.
@@ -447,6 +467,7 @@ class Bw_bitcoin {
 	 */		
 	public function blocknotify($block_hash){
 		$this->CI->load->model('users_model');
+		$this->CI->load->model('logs_model');
 					
 		// First task, maintain a record of the processed blocks.
 		if($this->CI->bitcoin_model->have_block($block_hash) == FALSE) {
@@ -507,7 +528,7 @@ class Bw_bitcoin {
 					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
 					if(isset($send['code'])) {
 						$accounts = $this->listaccounts();
-//						$this->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+						$this->CI->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
 					}	
 				}
 				

@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1318700406"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1269933083"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1318700406" class="accordion-body collapse in">
+            <div id="namespace-1269933083" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -177,8 +177,6 @@
                                                     <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
                                                     <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
                                                     <li class="class"><a href="../classes/Mpkgen.html">Mpkgen</a></li>
-                                                    <li class="class"><a href="../classes/CurveFp.html">CurveFp</a></li>
-                                                    <li class="class"><a href="../classes/Point.html">Point</a></li>
                                                     <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
                                                     <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
                                                     <li class="class"><a href="../classes/Image.html">Image</a></li>
@@ -204,6 +202,7 @@
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
                                                     <li class="class"><a href="../classes/Refund_Inactive_Users.html">Refund_Inactive_Users</a></li>
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/Version_Checker.html">Version_Checker</a></li>
                                                     <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
                                                     <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
@@ -361,6 +360,7 @@
                                                                     <a href="../classes/Escrow_model.html#method_pay" class="">pay()</a><br />
                                                                     <a href="../classes/Escrow_model.html#method_dispute" class="">dispute()</a><br />
                                                                     <a href="../classes/Escrow_model.html#method_get_dispute" class="">get_dispute()</a><br />
+                                                                    <a href="../classes/Escrow_model.html#method_disputes_list" class="">disputes_list()</a><br />
                                                                     <a href="../classes/Escrow_model.html#method_update_dispute" class="">update_dispute()</a><br />
                                                                     <a href="../classes/CI_Model.html#method___get" class="">__get()</a><br />
                                                             </section>
@@ -713,13 +713,19 @@ funds to the escrow account.</p>
             <article class="method">
                 <h3 class="public ">dispute()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">dispute(array <span class="argument">$info</span>) : bool</pre>
+                <pre class="signature" style="margin-right: 54px;">dispute( <span class="argument">$order_id</span>, array <span class="argument">$info</span>) : bool</pre>
                 <p><em>Dispute</em></p>
                 <p>Insert a dispute record into the database.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$order_id</td>
+                                <td>
+</td>
+                            </tr>
                                                     <tr>
                                 <td>array</td>
                                 <td>$info</td>
@@ -750,7 +756,7 @@ funds to the escrow account.</p>
             <article class="method">
                 <h3 class="public ">get_dispute()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">get_dispute(int <span class="argument">$order_id</span>) : array</pre>
+                <pre class="signature" style="margin-right: 54px;">get_dispute(int <span class="argument">$order_id</span>) : \array/FALSE</pre>
                 <p><em>Get Dispute</em></p>
                 <p>Load a dispute record as specified by the $order_id.</p>
 
@@ -767,9 +773,35 @@ funds to the escrow account.</p>
                 
                 
                                     <h4>Returns</h4>
-                    array
-                                            &mdash; <p>/ bool</p>
+                    \array/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
 
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_disputes_list" name="method_disputes_list" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">disputes_list()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">disputes_list() : \array/FALSE</pre>
+                <p><em>Disputes List</em></p>
+                <p>Used in the admin panel to display a list of outstanding disputes</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    \array/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -913,7 +945,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 23rd, 2013 at 11:50.
+                    on October 31st, 2013 at 13:38.
                 </section>
             </section>
         </section>

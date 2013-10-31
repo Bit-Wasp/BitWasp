@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-364901854"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1509902924"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-364901854" class="accordion-body collapse in">
+            <div id="namespace-1509902924" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -177,8 +177,6 @@
                                                     <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
                                                     <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
                                                     <li class="class"><a href="../classes/Mpkgen.html">Mpkgen</a></li>
-                                                    <li class="class"><a href="../classes/CurveFp.html">CurveFp</a></li>
-                                                    <li class="class"><a href="../classes/Point.html">Point</a></li>
                                                     <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
                                                     <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
                                                     <li class="class"><a href="../classes/Image.html">Image</a></li>
@@ -204,6 +202,7 @@
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
                                                     <li class="class"><a href="../classes/Refund_Inactive_Users.html">Refund_Inactive_Users</a></li>
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/Version_Checker.html">Version_Checker</a></li>
                                                     <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
                                                     <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
@@ -333,10 +332,8 @@
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
                     <h1><small>\</small>Mpkgen</h1>
-                    <p><em>Mpkgen Library</em></p>
-                    <p>This library is used to generate bitcoin addresses in order to back up
-a wallet balance. Based on the electrum master public key and an
-iteration index, we can generate a new address for each backup.</p>
+                    <p><em></em></p>
+                    
 
 
                     <section id="summary">
@@ -354,7 +351,7 @@ iteration index, we can generate a new address for each backup.</p>
                         </section>
                         <section class="row-fluid public">
                             <section class="span4">
-                                                                    <a href="../classes/Mpkgen.html#method_generate" class="">generate()</a><br />
+                                                                    <a href="../classes/Mpkgen.html#method_address" class="">address()</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No public properties found</em>
@@ -394,7 +391,7 @@ iteration index, we can generate a new address for each backup.</p>
                         <dt>File</dt>
                             <dd><a href="../files/application.libraries.Mpkgen.php.html"><div class="path-wrapper">application/libraries/Mpkgen.php</div></a></dd>
                                                 <dt>Package</dt>
-                            <dd><div class="namespace-wrapper">\BitWasp\Libraries\Libraries</div></dd>
+                            <dd><div class="namespace-wrapper">\Default</div></dd>
                                                 <dt>Class hierarchy</dt>
                             <dd class="hierarchy">
                                                                                                                                                                     <div class="namespace-wrapper">\Mpkgen</div>
@@ -406,33 +403,7 @@ iteration index, we can generate a new address for each backup.</p>
                                                                         </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
-                                            <tr>
-                            <th>
-                                category
-                            </th>
-                            <td>
-                                                                    <p>Autorun
-Copyright (c) 2012 Matyas Danter
-Copyright (c) 2012 Chris Savery
-Copyright (c) 2013 Pavol Rusnak
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
-OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.</p>
-
-                                                            </td>
-                        </tr>
+                                            <tr><td colspan="2"><em>None found</em></td></tr>
                                         </table>
                 </aside>
             </div>
@@ -447,27 +418,25 @@ OTHER DEALINGS IN THE SOFTWARE.</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_generate" name="method_generate" class="anchor"></a>
+            <a id="method_address" name="method_address" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">generate()</h3>
+                <h3 class="public ">address()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">generate(string <span class="argument">$mpk</span>, int <span class="argument">$iteration</span>) : string</pre>
-                <p><em>Generate</em></p>
-                <p>Generate a deterministic bitcoin address to receive coins on. Derived
-from the master public key $mpk and an iteration index $iteration (both
-are stored in the config table).</p>
+                <pre class="signature" style="margin-right: 54px;">address( <span class="argument">$mpk</span>,  <span class="argument">$iteration</span>)</pre>
+                <p><em></em></p>
+                
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td>string</td>
+                                <td></td>
                                 <td>$mpk</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td>int</td>
+                                <td></td>
                                 <td>$iteration</td>
                                 <td>
 </td>
@@ -475,9 +444,7 @@ are stored in the config table).</p>
                                             </table>
                 
                 
-                                    <h4>Returns</h4>
-                    string
-                                                </article>
+                            </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -539,7 +506,7 @@ are stored in the config table).</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 23rd, 2013 at 11:50.
+                    on October 31st, 2013 at 13:38.
                 </section>
             </section>
         </section>

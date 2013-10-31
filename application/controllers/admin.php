@@ -39,7 +39,10 @@ class Admin extends CI_Controller {
 													'heading' => 'User Panel'),
 							'autorun' => 	array(	'panel' => '/autorun',
 													'title' => 'Autorun',
-													'heading' => 'Autorun Panel')
+													'heading' => 'Autorun Panel'),
+							'logs' =>		array(	'panel' => '/logs',
+													'title' => 'Logs',
+													'heading' => 'Logs Panel')
 						);
 	}
 	
@@ -565,6 +568,30 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	public function logs($record = NULL) {
+
+		$this->load->model('logs_model');
+		
+		if($record == NULL){
+			$data['nav'] = $this->generate_nav();
+			$data['page'] = 'admin/logs_list';
+			$data['title'] = 'Logs';
+			$data['logs'] = $this->logs_model->fetch();
+			
+		} else {
+			$data['log'] = $this->logs_model->fetch($record);
+			if($data['log'] == FALSE)
+				redirect('admin/logs');
+
+			$data['page'] = 'admin/log';
+			$data['title'] = "Log Record: {$data['log']['id']}";
+
+		}
+		$this->load->library('Layout', $data);		
+		
+	}
+
+
 	/**
 	 * Fix orphan categories/items.
 	 * URI: /admin/category/orphans/$hash
@@ -840,7 +867,7 @@ class Admin extends CI_Controller {
 		foreach($this->nav as $entry) { 
 			$links .= '<li';
 			if(uri_string() == 'admin'.$entry['panel'] || uri_string() == 'admin/edit'.$entry['panel']) {
-				$links .= ' class="active" ';
+						$links .= ' class="active" ';
 				$self = $entry;
 				$heading = $entry['heading'];
 				$panel_url = $self['panel'];
@@ -850,7 +877,9 @@ class Admin extends CI_Controller {
 
 		$nav.= '<div class="tabbable">
 			<label class="span3"><h2>'.$self['heading'].'</h2></label>
-			<label class="span1">'.anchor('admin/edit'.$panel_url, 'Edit', 'class="btn"').'</label>
+			<label class="span1">';
+		if($panel_url !== '/logs') $nav.= anchor('admin/edit'.$panel_url, 'Edit', 'class="btn"');
+		$nav.= '</label>
 			<label class="span7">
 			  <ul class="nav nav-tabs">
 			  '.$links.'

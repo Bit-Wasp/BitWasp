@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Bitcoin Internal Callbacks Controllers
  *
@@ -13,7 +12,6 @@
  * @author		BitWasp
  * 
  */
-
 class Btc_internal extends CI_Controller {
 
 

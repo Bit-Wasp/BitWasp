@@ -173,6 +173,14 @@ class Bw_config {
 	public $index_page;
 	  
 	/**
+	 * Electrum MPK
+	 * 
+	 * This setting is for the electrum master key, from which bitcoin
+	 * addresses are derived for backups
+	 */
+	public $electrum_mpk			= "";
+	  
+	/**
 	 * Entry Payment Vendor
 	 * 
 	 * This setting determines how much the vendor must pay in order to 
@@ -200,6 +208,16 @@ class Bw_config {
 	 * receive the funds for the item.
 	 */
 	public $auto_finalize_threshold	= 0;
+	
+	/**
+	 * Balance Backup Method
+	 * 
+	 * This setting determines which way it should back up balances.
+	 * At this moment, it is possible to generate a new private key
+	 * which is securely stored for the admin, or to generate deterministic
+	 * addresses via electrum. Be default, this is disabled.
+	 */
+	public $balance_backup_method 	= '';
 	
 	/**
 	 * Constructor
@@ -256,10 +274,12 @@ class Bw_config {
 							'index_page' => $this->index_page,
 							'allow_guests' => $this->allow_guests);
 		} else if($panel == 'bitcoin') {
-			$this->CI->load->library('bw_bitcoin');
+			//$this->CI->load->library('bw_bitcoin');
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,
-							'delete_transactions_after' => $this->delete_transactions_after);
+							'electrum_mpk' => $this->electrum_mpk,
+							'delete_transactions_after' => $this->delete_transactions_after,
+							'balance_backup_method' => $this->balance_backup_method);
 			$accounts = $this->CI->bw_bitcoin->listaccounts();
 			foreach($accounts as $account => $balance) {
 				$var = 'max_'.$account.'_balance';

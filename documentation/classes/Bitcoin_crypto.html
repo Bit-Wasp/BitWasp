@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-214506880"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1982184856"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-214506880" class="accordion-body collapse in">
+            <div id="namespace-1982184856" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -177,8 +177,6 @@
                                                     <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
                                                     <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
                                                     <li class="class"><a href="../classes/Mpkgen.html">Mpkgen</a></li>
-                                                    <li class="class"><a href="../classes/CurveFp.html">CurveFp</a></li>
-                                                    <li class="class"><a href="../classes/Point.html">Point</a></li>
                                                     <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
                                                     <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
                                                     <li class="class"><a href="../classes/Image.html">Image</a></li>
@@ -204,6 +202,7 @@
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
                                                     <li class="class"><a href="../classes/Refund_Inactive_Users.html">Refund_Inactive_Users</a></li>
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
+                                                    <li class="class"><a href="../classes/Version_Checker.html">Version_Checker</a></li>
                                                     <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
                                                     <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
@@ -354,7 +353,6 @@ to detect whether BitWasp is running in the testnet.</p>
                         <section class="row-fluid public">
                             <section class="span4">
                                                                     <a href="../classes/Bitcoin_crypto.html#method_remove0x" class="">remove0x()</a><br />
-                                                                    <a href="../classes/Bitcoin_crypto.html#method_randomString" class="">randomString()</a><br />
                                                                     <a href="../classes/Bitcoin_crypto.html#method_decodeBase58" class="">decodeBase58()</a><br />
                                                                     <a href="../classes/Bitcoin_crypto.html#method_encodeBase58" class="">encodeBase58()</a><br />
                                                                     <a href="../classes/Bitcoin_crypto.html#method_hash160ToAddress" class="">hash160ToAddress()</a><br />
@@ -369,10 +367,6 @@ to detect whether BitWasp is running in the testnet.</p>
                                                                     <a href="../classes/Bitcoin_crypto.html#method_getNewKeySet" class="">getNewKeySet()</a><br />
                                                                     <a href="../classes/Bitcoin_crypto.html#method_privKeyToWIF" class="">privKeyToWIF()</a><br />
                                                                     <a href="../classes/Bitcoin_crypto.html#method_WIFtoPrivKey" class="">WIFtoPrivKey()</a><br />
-                                                                    <a href="../classes/Bitcoin_crypto.html#method_checkMiniKey" class="">checkMiniKey()</a><br />
-                                                                    <a href="../classes/Bitcoin_crypto.html#method_getNewMiniKey" class="">getNewMiniKey()</a><br />
-                                                                    <a href="../classes/Bitcoin_crypto.html#method_miniKeyToWIF" class="">miniKeyToWIF()</a><br />
-                                                                    <a href="../classes/Bitcoin_crypto.html#method_miniKeyToAddress" class="">miniKeyToAddress()</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <em>No public properties found</em>
@@ -460,7 +454,8 @@ to detect whether BitWasp is running in the testnet.</p>
             <article class="property">
                 <h3 class="private ">$hexchars</h3>
                 <pre class="signature">$hexchars</pre>
-                <p><em></em></p>
+                <p><em>Bitcoin utility functions by theymos
+hex input must be in uppercase, with no leading 0x</em></p>
                 
 
 
@@ -523,44 +518,6 @@ to detect whether BitWasp is running in the testnet.</p>
                                                     <tr>
                                 <td>string</td>
                                 <td>$string</td>
-                                <td>
-</td>
-                            </tr>
-                                            </table>
-                
-                
-                                    <h4>Returns</h4>
-                    string
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                            <span class="label label-info">static</span>
-                                                            <dl>
-                                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr><td colspan="2"><em>None found</em></td></tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_randomString" name="method_randomString" class="anchor"></a>
-            <article class="method">
-                <h3 class="public ">randomString()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">randomString(integer <span class="argument">$length</span>) : string</pre>
-                <p><em>Generate a random string from base58 alphabet</em></p>
-                
-
-
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td>integer</td>
-                                <td>$length</td>
                                 <td>
 </td>
                             </tr>
@@ -1069,20 +1026,11 @@ to detect whether BitWasp is running in the testnet.</p>
             <article class="method">
                 <h3 class="public ">getNewKeySet()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getNewKeySet( <span class="argument">$magicbyte</span>) : \associative</pre>
+                <pre class="signature" style="margin-right: 54px;">getNewKeySet() : \associative</pre>
                 <p><em>Generate a new set of bitcoin keys</em></p>
                 
 
 
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td></td>
-                                <td>$magicbyte</td>
-                                <td>
-</td>
-                            </tr>
-                                            </table>
                 
                 
                                     <h4>Returns</h4>
@@ -1117,7 +1065,7 @@ to detect whether BitWasp is running in the testnet.</p>
             <article class="method">
                 <h3 class="public ">privKeyToWIF()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">privKeyToWIF(string <span class="argument">$privKey</span>,  <span class="argument">$magicbyte</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">privKeyToWIF(string <span class="argument">$privKey</span>) : string</pre>
                 <p><em>Convert private key to Wallet Import Format (WIF)</em></p>
                 
 
@@ -1127,12 +1075,6 @@ to detect whether BitWasp is running in the testnet.</p>
                                                     <tr>
                                 <td>string</td>
                                 <td>$privKey</td>
-                                <td>
-</td>
-                            </tr>
-                                                    <tr>
-                                <td></td>
-                                <td>$magicbyte</td>
                                 <td>
 </td>
                             </tr>
@@ -1179,181 +1121,6 @@ to detect whether BitWasp is running in the testnet.</p>
                                                     <tr>
                                 <td>string</td>
                                 <td>$WIF</td>
-                                <td>
-</td>
-                            </tr>
-                                            </table>
-                
-                
-                                    <h4>Returns</h4>
-                    string
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                            <span class="label label-info">static</span>
-                                                            <dl>
-                                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            author
-                        </th>
-                        <td>
-                                                            <p>Jacob Bruce</p>
-
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_checkMiniKey" name="method_checkMiniKey" class="anchor"></a>
-            <article class="method">
-                <h3 class="public ">checkMiniKey()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">checkMiniKey(string <span class="argument">$miniKey</span>) : boolean</pre>
-                <p><em>Checks for typos in the mini key</em></p>
-                
-
-
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td>string</td>
-                                <td>$miniKey</td>
-                                <td>
-</td>
-                            </tr>
-                                            </table>
-                
-                
-                                    <h4>Returns</h4>
-                    boolean
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                            <span class="label label-info">static</span>
-                                                            <dl>
-                                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            author
-                        </th>
-                        <td>
-                                                            <p>Jacob Bruce</p>
-
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_getNewMiniKey" name="method_getNewMiniKey" class="anchor"></a>
-            <article class="method">
-                <h3 class="public ">getNewMiniKey()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">getNewMiniKey() : string</pre>
-                <p><em>Generate a new mini private key</em></p>
-                
-
-
-                
-                
-                                    <h4>Returns</h4>
-                    string
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                            <span class="label label-info">static</span>
-                                                            <dl>
-                                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            author
-                        </th>
-                        <td>
-                                                            <p>Jacob Bruce</p>
-
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_miniKeyToWIF" name="method_miniKeyToWIF" class="anchor"></a>
-            <article class="method">
-                <h3 class="public ">miniKeyToWIF()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">miniKeyToWIF(string <span class="argument">$miniKey</span>) : string</pre>
-                <p><em>Convert mini key to Wallet Import Format (WIF)</em></p>
-                
-
-
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td>string</td>
-                                <td>$miniKey</td>
-                                <td>
-</td>
-                            </tr>
-                                            </table>
-                
-                
-                                    <h4>Returns</h4>
-                    string
-                                                </article>
-        </div>
-        <aside class="span4 detailsbar">
-            <h1><i class="icon-arrow-down"></i></h1>
-                            <span class="label label-info">static</span>
-                                                            <dl>
-                                                                            </dl>
-            <h2>Tags</h2>
-            <table class="table table-condensed">
-                                    <tr>
-                        <th>
-                            author
-                        </th>
-                        <td>
-                                                            <p>Jacob Bruce</p>
-
-                                                    </td>
-                    </tr>
-                            </table>
-        </aside>
-    </div>
-
-                                    <div class="row-fluid">
-        <div class="span8 content class">
-            <a id="method_miniKeyToAddress" name="method_miniKeyToAddress" class="anchor"></a>
-            <article class="method">
-                <h3 class="public ">miniKeyToAddress()</h3>
-                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">miniKeyToAddress(string <span class="argument">$miniKey</span>) : string</pre>
-                <p><em>Get bitcoin address from a mini private key</em></p>
-                
-
-
-                                    <h4>Parameters</h4>
-                    <table class="table table-condensed table-hover">
-                                                    <tr>
-                                <td>string</td>
-                                <td>$miniKey</td>
                                 <td>
 </td>
                             </tr>
@@ -1509,7 +1276,7 @@ to detect whether BitWasp is running in the testnet.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on October 23rd, 2013 at 11:50.
+                    on October 31st, 2013 at 13:39.
                 </section>
             </section>
         </section>

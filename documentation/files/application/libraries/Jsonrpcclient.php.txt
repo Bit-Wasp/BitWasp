@@ -102,12 +102,12 @@ class Jsonrpcclient {
 	 */
 	public function __call($method,$params) {
 		
-		// check
+		// check the method/function
 		if (!is_scalar($method)) {
 			throw new Exception('Method name has no scalar value');
 		}
 		
-		// check
+		// check the params are entered as an array
 		if (is_array($params)) {
 			// no keys
 			$params = array_values($params);
@@ -116,11 +116,7 @@ class Jsonrpcclient {
 		}
 		
 		// sets notification or request task
-		if ($this->notification) {
-			$currentId = NULL;
-		} else {
-			$currentId = $this->id;
-		}
+		$currentId = ($this->notification) ? NULL : $this->id;
 		
 		// prepares the request
 		$request = array(
@@ -152,6 +148,7 @@ class Jsonrpcclient {
 			}
 			if (!is_null($response['error'])) {
 				//throw new Exception('Request error: '.$response['error']);
+				// return the error array.
 				return $response['error'];
 			}
 			

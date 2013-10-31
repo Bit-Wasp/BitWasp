@@ -26,7 +26,6 @@ class Authorize extends CI_Controller {
 	 */
 	public function __construct() {
 		parent::__construct();
-		$this->load->library('bw_auth');
 		$this->load->library('bw_captcha');
 		$this->load->model('auth_model');
 	}

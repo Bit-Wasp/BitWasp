@@ -2,21 +2,24 @@
 		  
 		  <?php echo $nav; ?>
 			
+          <?php if(isset($returnMessage)) { ?>
+          <div class='alert alert-success'><?php echo $returnMessage; ?></div><?php } ?>
+			
 		  <div class="container-fluid">
 <?php 
 if($bitcoin_info == NULL) { ?>
 		    <div class="row-fluid">
-			  <span class="span3">Bitcoind Status</span>
+			  <span class="span3">Bitcoin Status</span>
 			  <span class="span7">The bitcoin daemon is currently disabled.</span>
 		    </div>
 <?php } else { ?>
 		    <div class="row-fluid">
-		  	  <span class="span3">Bitcoind Status</span>
+		  	  <span class="span3">Bitcoin Status</span>
 			  <span class="span7">Bitcoind is currently running<?php if($bitcoin_info['testnet'] == TRUE) echo ' <b>in the testnet</b>'; ?>.</span>
 		    </div>
 		  
 		    <div class="row-fluid">
-			  <span class="span3">Bitcoind Version</span>
+			  <span class="span3">Bitcoin Version</span>
 			  <span class="span7"><?php echo $bitcoin_info['version']; ?></span>
 		    </div>
 <?php } ?>
@@ -40,6 +43,11 @@ if($bitcoin_info == NULL) { ?>
 			  <span class="span3">Use A Bitcoin Price Index?</span>
 			  <span class="span4"><?php if($bitcoin_index == '') { echo 'Disabled'; }
 			  else { echo $bitcoin_index; } ?></span>
+			</div>
+			
+			<div class="row-fluid">
+			  <span class="span3">Wallet Backup Method</span>
+			  <span class="span4"><?php echo $config['balance_backup_method']; ?></span>
 			</div>
 			  
 			<?php 

@@ -60,7 +60,7 @@ class General {
 	/**
 	 * Generate Salt
 	 * 
-	 * Generates a 128bit hash from random data.
+	 * Generates a hash from random data.
 	 * 
 	 * @return		string
 	 */

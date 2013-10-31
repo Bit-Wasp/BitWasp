@@ -57,9 +57,9 @@ class Bw_auth {
 	 */
 	public function __construct() {		
 		$this->CI = &get_instance();
-	
-		$this->URI = $this->CI->current_user->URI;
-		$this->auth_reqs = $this->CI->current_user->auth_reqs;
+
+		$this->URI = explode("/", uri_string());	
+		$this->auth_reqs = (array)json_decode($this->CI->session->userdata('auth_reqs'));
 	}
 	
 	/**
@@ -169,7 +169,7 @@ class Bw_auth {
 	 * @return		string
 	 */
 	public function successful_auth() {
-		$this->CI->load->model('auth_model');
+	//	$this->CI->load->model('auth_model');
 		$attempted_uri = $this->CI->current_user->current_auth_req;
 		$URI = explode('/', $attempted_uri);
 		

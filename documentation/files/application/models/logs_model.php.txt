@@ -34,7 +34,7 @@ class Logs_Model extends CI_Model {
 	 */
 	public function fetch($hash = NULL) {
 		// Load the whole list, or just one.
-		$query = ($hash == NULL) ? $this->db->get('logs') : $this->db->get_where('logs', array('hash', $hash));
+		$query = ($hash == NULL) ? $this->db->get('logs') : $this->db->get_where('logs', array('hash' => $hash));
 
 		if($query->num_rows() > 0) {
 			// If any records exist, process them and return.
@@ -42,7 +42,7 @@ class Logs_Model extends CI_Model {
 			foreach($results as &$result) {
 				$result['time_f'] = $this->general->format_time($result['time']);
 			}
-			return ($hash == NULL) ? $results[0] : $results;
+			return ($hash == NULL) ? $results : $results[0];
 		}
 		return FALSE;
 	}
@@ -63,8 +63,9 @@ class Logs_Model extends CI_Model {
 	public function add($caller, $title, $message, $level){
 		return ($this->db->insert('logs', array('caller' => $caller,
 												'title' => $title, 
-												'level' => $level,
+												'info_level' => $level,
 												'hash' => $this->general->unique_hash('logs','hash'),
+												'time' => time(),
 												'message' => $message)) == TRUE
 				) ? TRUE : FALSE;
 	}

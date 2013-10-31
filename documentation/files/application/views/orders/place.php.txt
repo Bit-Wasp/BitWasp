@@ -21,8 +21,7 @@
 
 			  <div class="row-fluid">
 				<div class="span1 offset1">Price</div>
-				<div class="span5">BTC <?php echo $order['price_b']; ?> 
-<?php if($local_currency['id'] !== '0') echo '<br />' . $local_currency['symbol'] . ' ' . $order['price_l']; ?></div>
+				<div class="span5"><?php echo $local_currency['symbol'] . ' ' . $order['price_l']; ?></div>
 			  </div>
 
 			  <div class="row-fluid">

@@ -1,10 +1,8 @@
 <?php
 require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
-
- 
 // Determine bitcoin address version
 $CI = &get_instance();
-$CI->load->library('bw_bitcoin');
+//$CI->load->library('bw_bitcoin');
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
 $byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
 define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
@@ -22,7 +20,7 @@ define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
 */
 class Bitcoin_crypto {
 
-  /*
+/**
 * Bitcoin utility functions by theymos
 * hex input must be in uppercase, with no leading 0x
 */
@@ -30,7 +28,7 @@ class Bitcoin_crypto {
   private static $base58chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
   
   /**
-* Remove leading "0x" from a hex value if present.
+	* Remove leading "0x" from a hex value if present.
 *
 * @param string $string
 * @return string
@@ -43,21 +41,6 @@ class Bitcoin_crypto {
     return $string;
   }
   
-  /**
-* Generate a random string from base58 alphabet
-*
-* @param integer $length
-* @return string
-* @access public
-*/
-  public static function randomString($length=16) {
-    $randomString = '';
-    for ($i = 0; $i < $length; $i++) {
-       $randomString .= self::$base58chars[mt_rand(0, strlen(self::$base58chars)-1)];
-    }
-    return $randomString;
-  }
-
   /**
 * Convert a hex string into a (big) integer
 *
@@ -156,7 +139,7 @@ class Bitcoin_crypto {
     return $return;
   }
 
-  /**
+/**
 * Convert a 160-bit Bitcoin hash to a Bitcoin address
 *
 * @author theymos
@@ -233,7 +216,7 @@ class Bitcoin_crypto {
 * @access public
 */
   public static function pubKeyToAddress($pubkey, $addressversion = BITCOIN_ADDRESS_VERSION) {
-    return self::hash160ToAddress(self::hash160($pubkey), $addressversion);
+    return self::hash160ToAddress(self::hash160($pubkey));
   }
   
   /**
@@ -271,7 +254,7 @@ class Bitcoin_crypto {
   public static function privKeyToAddress($privKey) {
 
 	$pubKey = self::privKeyToPubKey($privKey);
-	$pubAdd = self::pubKeyToAddress($pubKey, BITCOIN_ADDRESS_VERSION);
+	$pubAdd = self::pubKeyToAddress($pubKey);
 	  
 	if (self::checkAddress($pubAdd)) { 
 	  return $pubAdd; 
@@ -287,22 +270,18 @@ class Bitcoin_crypto {
 * @return string
 * @access public
 */
-  public static function getNewPrivKey() {
+  public static function getNewPrivKey() { 
 
-    $g = SECcurve::generator_secp256k1();
-    $n = $g->getOrder();
-	
-    do {
-      if (extension_loaded('gmp') && USE_EXT == 'GMP') {
-        $privKey = gmp_Utils::gmp_random($n);
-      } else if (extension_loaded('bcmath') && USE_EXT == 'BCMATH') {
-        $privKey = bcmath_Utils::bcrand(1, $n);
-	  }
-      $privKeyHex = self::encodeHex($privKey);
-	
-	} while (($privKey < 2E+11) || strlen($privKeyHex) > 64);
-	
-	return str_pad($privKeyHex, 64, '0', STR_PAD_LEFT);
+	$g = SECcurve::generator_secp256k1();
+	$n = $g->getOrder();
+
+    $privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
+    while($privKey > $n){
+		$privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
+	}
+    $privKeyHex = self::encodeHex($privKey);
+    return str_pad($privKeyHex, 64, '0', STR_PAD_LEFT);
+
   }
   
   /**
@@ -330,11 +309,11 @@ class Bitcoin_crypto {
 * @return associative array ('privKey', 'pubKey', 'privWIF', 'pubAdd') 
 * @access public
 */
-  public static function getNewKeySet($magicbyte = '00') {
+  public static function getNewKeySet() {
     do {
       $keyPair = self::getNewKeyPair();	
-	  $privWIF = self::privKeyToWIF($keyPair['privKey'], $magicbyte);
-	  $pubAdd = self::pubKeyToAddress($keyPair['pubKey'], $magicbyte);
+	  $privWIF = self::privKeyToWIF($keyPair['privKey']);
+	  $pubAdd = self::pubKeyToAddress($keyPair['pubKey']);
 	
 	} while (!self::checkAddress($pubAdd));
 	
@@ -354,8 +333,9 @@ class Bitcoin_crypto {
 * @return string
 * @access public
 */
-  public static function privKeyToWIF($privKey, $magicbyte = '00') {
-    return self::hash160ToAddress($privKey, $magicbyte);
+  public static function privKeyToWIF($privKey) {
+	  $byte = (BITCOIN_ADDRESS_VERSION == '6F') ? 'EF' : '80';
+    return self::hash160ToAddress($privKey, $byte);
   }
   
   /**
@@ -369,75 +349,7 @@ class Bitcoin_crypto {
   public static function WIFtoPrivKey($WIF) {
     return self::addressToHash160($WIF);
   }
-  
-  /**
-* Checks for typos in the mini key
-*
-* @author Jacob Bruce
-* @param string $miniKey
-* @return boolean
-* @access public
-*/
-  public static function checkMiniKey($miniKey) {
-    if (strlen($miniKey) != 22) { return false; }
-	$miniHash = hash('sha256', $miniKey.'?');
-  	if ($miniHash[0] == 0x00) {
-	  return true;
-	} else {
-	  return false;
-	}
-  }
-
-  /**
-* Generate a new mini private key
-*
-* @author Jacob Bruce
-* @return string
-* @access public
-*/
-  public static function getNewMiniKey() {
-    $miniKey = 'S';
-	do {
-	  $cand = $miniKey.self::randomString(21);
-	  if (self::checkMiniKey($cand)) {
-	    $miniKey = $cand;
-	  }
-	} while ($miniKey == 'S');
-    return $miniKey;
-  }
-  
-  /**
-* Convert mini key to Wallet Import Format (WIF)
-*
-* @author Jacob Bruce
-* @param string $miniKey
-* @return string
-* @access public
-*/
-  public static function miniKeyToWIF($miniKey) {
-    return self::privKeyToWIF(hash('sha256', $miniKey));
-  }
-  
-  /**
-* Get bitcoin address from a mini private key
-*
-* @author Jacob Bruce
-* @param string $miniKey
-* @return string
-* @access public
-*/
-  public static function miniKeyToAddress($miniKey) {
-  
-    if (!self::checkMiniKey($miniKey)) {
-	  return 'invalid mini key';
-	}
-	  
-	$privKey = hash('sha256', $miniKey);
-    return self::privKeyToAddress($privKey, BITCOIN_ADDRESS_VERSION);
-  }
-  
-}
-
+};
 
 ?>
 

@@ -56,7 +56,10 @@ class Autorun_model extends CI_Model {
 			$results[$result['index']] = $result;
 			
 			switch($result['interval_type']) {
-					case 'minutes':
+				case 'seconds':
+					$results[$result['index']]['interval_s'] = $result['interval'];
+					break;
+				case 'minutes':
 					$results[$result['index']]['interval_s'] = $result['interval']*60;
 					break;
 				case 'hours':

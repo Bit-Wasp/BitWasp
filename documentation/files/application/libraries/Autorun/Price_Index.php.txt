@@ -23,7 +23,7 @@ class Price_Index {
 	public $config = array(	'name' => 'Bitcoin Price Index',
 							'description' => 'An autorun job to update the Bitcoin exchange rates.',
 							'index' => 'price_index',
-							'interval' => '10',
+							'interval' => '15',
 							'interval_type' => 'minutes');
 	public $CI;
 	
