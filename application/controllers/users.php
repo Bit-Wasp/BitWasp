@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Users extends CI_Controller {
 
 	/**
@@ -22,8 +21,7 @@ class Users extends CI_Controller {
 	 * @access	public
 	 * @see		Libraries/Bw_Captcha
 	 * @see		Models/Users_Model
-	 */
-	 
+	 */ 
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('users_model');
@@ -229,7 +227,6 @@ class Users extends CI_Controller {
 				$entry_fee = $this->bw_config->$entry_fee;
 				
 				if(isset($data['token_info']) && $data['token_info'] !== FALSE){
-					var_dump($data['token_info']);
 					if($data['token_info']['entry_payment'] > 0) {
 						$address = $this->bw_bitcoin->new_fees_address();
 						$entry_fee = $data['token_info']['entry_payment'];
@@ -266,7 +263,8 @@ class Users extends CI_Controller {
 						$data['returnMessage'] = 'Your account has been created, please login below.';
 				}
 				
-				$this->bw_bitcoin->new_address($user_hash);
+				if($this->bw_bitcoin->new_address($user_hash) == FALSE)
+					$this->logs_model->add('User Registration', 'Unable to create bitcoin topup address', 'It was not possible to create a bitcoin address when creating an account.', 'Warning');
 
 				// REMOVE BEFORE PRODUCTION
 				$this->load->model('bitcoin_model');
@@ -394,9 +392,13 @@ class Users extends CI_Controller {
 					$data['entry_payment']['received'] = $this->bw_bitcoin->getreceivedbyaddress($payment_address);
 					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh one you have made the payment to check for receipt."; 
 				} else {
-					// Otherwise tell them bitcoind is still now.
-					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. Unfortunately, the bitcoin processing system is unavailable at this time. Please try again later to check for the payment address.";
+					// Otherwise tell them bitcoind is still down.
+					$this->logs_model->add('User Registration', 'Error adding fee payment adress', 'It was not possible to record a fee payment address at registration.');
+					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. Unfortunately, it was not possible to create a fee's address at this time. Please try again later to check for the payment address.";
 				}
+			} else {
+				$this->logs_model->add('User Registration', 'Bitcoind down at registration', 'User signed in to view payment details, bitcoind was unable to create a payment address for the fees', 'Warning');
+				$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. Unfortunately, the bitcoin processing system is unavailable at this time. Please try again later to check for the payment address.";
 			}
 		} else if($data['entry_payment'] !== FALSE) {
 			$data['entry_payment']['received'] = $this->bw_bitcoin->getreceivedbyaddress($data['entry_payment']['bitcoin_address']);
@@ -459,6 +461,8 @@ class Users extends CI_Controller {
 		// Generate a new challenge for new requests, or if a user 
 		// has failed one.
 		$data['challenge'] = $this->bw_auth->generate_two_factor_token();
+		if($data['challenge'] == FALSE)
+			$this->logs_model->add('Two Factor Auth','Unable to generate two factor challenge','Unable to generate two factor authentication token.','Error');
 		
 		$this->load->library('Layout', $data);
 	}

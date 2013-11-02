@@ -58,7 +58,7 @@ class Bw_bitcoin {
 	 * 
 	 * Load exchange rates from the defined BPI. Called by bw_bitcoin/ratenotify().
 	 * 
-	 * @return		array / FALSE
+	 * @return		array/FALSE
 	 */
 	public function get_exchange_rates(){
 		
@@ -502,7 +502,6 @@ class Bw_bitcoin {
 							   'category' => $txn['category'],
 							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.
 				
-				
 				// If the transaction is to do with fee's, then check if the number of transactions exceeds one.
 				// If the entry_payment still exists, and the confirmed balance >= the amount, then delete the 
 				// record and activate the account.
@@ -559,13 +558,15 @@ class Bw_bitcoin {
 		$this->CI->load->model('currencies_model');
 		// Abort if price indexing is disabled.
 		if($this->CI->bw_config->price_index == 'Disabled')
-			return FALSE;
+			return TRUE;
 	
 		// Function to get the exchange rates via an API.
 		$rates = $this->get_exchange_rates();
 
-		if($rates == FALSE)
-			return FALSE;
+		if($rates == FALSE){
+			$this->CI->logs_model->add('Price Index', 'Unable to fetch exchange rates', 'An attempt to update the Bitcoin Exchange rates failed. Please review your ./application/config/bitcoin_index.php file for any errors, or that the proxy is correctly configured','Error');
+			return TRUE;
+		}
 
 		// Parse results depending on where they're from.
 		if($this->CI->bw_config->price_index == 'CoinDesk') {

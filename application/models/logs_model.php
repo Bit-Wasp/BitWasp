@@ -48,6 +48,8 @@ class Logs_Model extends CI_Model {
 			foreach($results as &$result) {
 				$result['time_f'] = $this->general->format_time($result['time']);
 			}
+			// Depending on whether $hash was unset, results will be an array
+			// or jst a single entry. 
 			return ($hash == NULL) ? $results : $results[0];
 		}
 		return FALSE;

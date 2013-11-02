@@ -134,6 +134,8 @@ class Admin extends CI_Controller {
 	}
 	
 	/**
+	 * Edit Autorun
+	 * 
 	 * Edit the settings regarding how long different information is kept.
 	 * URI: /admin/edit/autorun
 	 * 
