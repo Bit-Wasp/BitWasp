@@ -855,9 +855,35 @@ class Admin extends CI_Controller {
 	}
 
 	/**
+	 * Topup Addresses
+	 * 
+	 * This function gathers a list of accounts from the bitcoin daemon
+	 * and finds topup addresses for them. These addresses will not change
+	 * until they finally receive funds.
+	 */
+	public function topup_addresses(){
+		$this->load->library('bw_bitcoin');
+		
+		// Load accounts, and get the topup addresses.
+		$accounts = $this->bw_bitcoin->listaccounts();
+		$data['accounts'] = FALSE;
+		if($accounts !== FALSE){
+			foreach($accounts as $account => $balance) {
+				$data['accounts'][$account] = array('address' => $this->bw_bitcoin->getaccountaddress($account),
+												'balance' => $balance);
+			}
+		}
+		
+		$data['page'] = 'admin/topup_addresses';
+		$data['title'] = 'Topup Addresses';
+		$this->load->library('Layout', $data);
+	}
+
+	/**
 	 * Generate Nav
 	 * 
 	 * Generates the navigation bar for the admin panel. 
+	 * 
 	 * @return 	string
 	 */
 	public function generate_nav() { 

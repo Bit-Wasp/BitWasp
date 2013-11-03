@@ -53,9 +53,9 @@ if($acc !== '') { ?>					<option value='<?php echo $acc; ?>'><?php echo $acc; ?>
 
 			<?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>  	
 			  <div class="row-fluid">
-				<div class="span5 offset2"><strong>Topup Wallet Balance</strong></div>
+				<div class="span5 offset2"><strong>Topup Wallet Balance</strong> (<?php echo anchor('admin/bitcoin/topup', 'Address list'); ?>)</div>
 			  </div>				
-<?php echo validation_errors(); ?>
+
 		      <div class="row-fluid">
 		        <div class="span2 offset1">Account</div>
 			    <div class="span4">

@@ -102,9 +102,27 @@ class Bw_bitcoin {
 	 * @return		string / array
 	 */
 	public function getaccount($address) {
-		return $this->CI->jsonrpcclient->getaccount($address);
+		$account = $this->CI->jsonrpcclient->getaccount($address);
+		return ($account !== NULL) ? $account : FALSE;
 	}
 
+	/**
+	 * Get Account Address
+	 * 
+	 * This function asks bitcoind for an address for the specified 
+	 * account. It will return the same address each time, until funds
+	 * are received at that address. This is used only to display 
+	 * addresses for the admin to top up, all other requests for addresses
+	 * will provide brand new addresses. 
+	 * 
+	 * @param	string	$account_name
+	 * @return	string/FALSE
+	 */
+	public function getaccountaddress($account_name) {
+		$address = $this->CI->jsonrpcclient->getaccountaddress($account_name);
+		return ($address !== NULL) ? $address : FALSE;
+	}
+	
 	/**
 	 * Get Balance
 	 * 
@@ -211,9 +229,9 @@ class Bw_bitcoin {
 		$tmp = (array)$this->CI->jsonrpcclient->listaccounts(0);
 		$res = array();
 		foreach($tmp as $acc => $bal){
-			if(!preg_match('/\s+/', $acc)){
+			if(!preg_match('/\s+/', $acc) && $acc !== '')
 				$res[$acc] = $bal;
-			}
+			
 		}
 		return $res;
 	}
