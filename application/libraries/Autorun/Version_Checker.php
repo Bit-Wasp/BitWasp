@@ -1,7 +1,7 @@
 <?php
 
-require_once(dirname(__FILE__).'/../../../version.php');
-define('BITWASP_CREATED_TIME', $bitwasp_created_time);
+$ini = parse_ini_file(require_once(dirname(__FILE__).'/../../../version.php'));
+define('BITWASP_CREATED_TIME', $ini['bitwasp_created_time']);
 /**
  * Version Checker
  *
@@ -45,20 +45,14 @@ class Version_Checker {
 	 */
 	public function job() {
 
-		$branch = json_decode($this->call_curl('https://api.github.com/repos/Bit-Wasp/BitWasp/branches'));
-		if(is_array($branch)) {
-			
-			$commit = json_decode($this->call_curl($branch[0]->commit->url));
-			if(is_object($commit)) {
-				$timestamp = strtotime($commit->commit->author->date);
-				if($timestamp > BITWASP_CREATED_TIME) {
-					$this->CI->load->model('logs_model');
-					if($this->CI->logs_model->add('Version Checker', 'New BitWasp code available', 'There is a new version of BitWasp available on GitHub. It is recommended that you download this new version (using '.BITWASP_CREATED_TIME.')', 'Info') == TRUE)
-						return TRUE;
-				}
-			} 
-		} 
-				
+		$latest_version = parse_ini_string($this->call_curl('https://raw.github.com/Bit-Wasp/BitWasp/master/version.php'));
+		if($latest_version !== FALSE && BITWASP_CREATED_TIME !== FALSE){
+			if($latest_version['bitwasp_created_time'] > BITWASP_CREATED_TIME) {
+				$this->CI->load->model('logs_model');
+				if($this->CI->logs_model->add('Version Checker', 'New BitWasp code available', 'There is a new version of BitWasp available on GitHub. It is recommended that you download this new version (using '.BITWASP_CREATED_TIME.')', 'Info') == TRUE)
+					return TRUE;
+			}
+		}
 		return FALSE;
 	}
 	

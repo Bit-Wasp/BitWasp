@@ -1,1 +1,1 @@
-<?php $bitwasp_created_time="1383389977"; ?>
+bitwasp_created_time=1383493022

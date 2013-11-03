@@ -88,9 +88,6 @@ $route['bitcoin/reset'] = 'btc_internal/reset';
 $route['bitcoin'] = 'bitcoin/panel';
 $route['cashout'] = 'bitcoin/cashout';
 
-$route['callback/rates'] = 'btc_internal/ratenotify';
-$route['callback/wallet/(:any)'] = 'btc_internal/walletnotify/$1';
-$route['callback/block/(:any)'] = 'btc_internal/blocknotify/$1';
 $route['callback/install_config'] = 'btc_internal/install_config';
 
 $route['admin'] = 'admin';
