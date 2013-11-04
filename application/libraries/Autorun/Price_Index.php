@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Price Index Job.
@@ -11,7 +11,6 @@
  * @category	Price Index
  * @author		BitWasp
  */
-
 class Price_Index {
 
 	/**

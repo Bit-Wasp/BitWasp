@@ -1,4 +1,5 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 /**
  * Backup Wallet Job
  * 
@@ -38,7 +39,6 @@ class Backup_Wallet {
 	 */	
 	public function __construct() {
 		$this->CI = &get_instance();
-		$this->CI->load->library('bw_bitcoin');		
 	}
 	
 	/**
@@ -50,6 +50,7 @@ class Backup_Wallet {
 	 * 
 	 */	
 	public function job() {
+		$this->CI->load->library('bw_bitcoin');		
 		
 		// If the backups are disabled, then abort.
 		if($this->CI->bw_config->balance_backup_method == 'Disabled')
@@ -116,6 +117,7 @@ class Backup_Wallet {
 					$success = FALSE;
 				}
 			} else if($this->CI->bw_config->balance_backup_method == 'Electrum') {
+				// Use electrum backup method. 
 				$this->CI->load->library('Mpkgen');
 				if(!isset($this->CI->bw_config->electrum_mpk))
 					return FALSE;

@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Delete Transaction History Job
@@ -12,7 +12,6 @@
  * @category	Delete Transaction History
  * @author		BitWasp
  */
-
 class Delete_Transaction_History {
 
 	/**

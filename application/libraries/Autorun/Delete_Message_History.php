@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Delete Message History Job
@@ -12,7 +12,6 @@
  * @category	User Inactivity
  * @author		BitWasp
  */
-
 class Delete_Message_History {
 
 	/**

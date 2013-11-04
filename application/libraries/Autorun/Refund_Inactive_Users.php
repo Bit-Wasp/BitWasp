@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Refund Inactive Users
@@ -14,7 +14,6 @@
  * @category	User Inactivity
  * @author		BitWasp
  */
-
 class Refund_Inactive_Users {
 
 	/**

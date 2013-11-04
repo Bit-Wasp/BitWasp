@@ -1,6 +1,7 @@
-<?php
+<?php 
 
-$ini = parse_ini_file(require_once(dirname(__FILE__).'/../../../version.php'));
+$ini = parse_ini_file(require_once(dirname(__FILE__).'/../../../version.ini'));
+echo dirname(__FILE__).'/../../../version.ini';
 define('BITWASP_CREATED_TIME', $ini['bitwasp_created_time']);
 /**
  * Version Checker
@@ -73,5 +74,6 @@ class Version_Checker {
 		return $result;
 	}
 	
-	
 };
+
+/* End of File: Version_Checker.php */
