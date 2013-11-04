@@ -1225,7 +1225,7 @@ class Admin extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_user_search_list($param) {
-		return ($this->general->matches_any($param, array('random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
+		return ($this->general->matches_any($param, array(NULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
 	}
 
 };
