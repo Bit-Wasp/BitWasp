@@ -25,7 +25,7 @@ class Refund_Inactive_Users {
 	public $config = array(	'name' => 'Refund Inactive Users',
 							'description' => 'An autorun job to refund inactive users balances.',
 							'index' => 'refund_inactive_users',
-							'interval' => '24',
+							'interval' => '0',
 							'interval_type' => 'hours');
 	public $CI;
 	

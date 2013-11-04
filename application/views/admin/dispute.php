@@ -24,7 +24,7 @@
 			  <div class="span5"><?php echo $current_order['currency']['symbol'] . " " . $current_order['price']; ?></div>
 		    </div>
 <?php 
-if($dispute['disputing_user_id'] == 'buyer') { ?>		  
+if($disputing_user['user_role'] == 'Buyer') { ?>		  
 			<div class="row-fluid">
 			  <div class="span2">Vendor</div>	
 			  <div class="span7"><?php echo anchor('user/'.$current_order['vendor']['user_hash'], $current_order['vendor']['user_name']); ?></div>

@@ -25,7 +25,7 @@ class Auto_Finalize_Orders {
 	public $config = array(	'name' => 'Auto Finalize Orders',
 							'description' => 'An autorun job to automatically finalize, or refund, orders where the buyer or vendor has not logged in for a set period of time.',
 							'index' => 'auto_finalize_orders',
-							'interval' => '24',
+							'interval' => '0',
 							'interval_type' => 'hours');
 	public $CI;
 	

@@ -26,7 +26,7 @@ class Version_Checker {
 							'description' => 'An autorun job to check for updates to the BitWasp source code.',
 							'index' => 'version_checker',
 							'interval' => '7',
-							'interval_type' => 'minutes');
+							'interval_type' => 'days');
 	public $CI;
 	
 	/**

@@ -696,7 +696,7 @@ class Admin extends CI_Controller {
 				if($this->users_model->add_registration_token($update) == TRUE){
 					// If token is successfully added, display error message.
 					$data['success'] = TRUE;
-					$data['returnMessage'] = 'Your token has been created';
+					$data['returnMessage'] = 'Your token has been created.';
 					
 				} 
 			}
@@ -830,6 +830,7 @@ class Admin extends CI_Controller {
 
 	public function dispute($order_id = NULL){
 		$this->load->library('form_validation');
+		$this->load->model('order_model');
 		$this->load->model('escrow_model');
 		
 		if($order_id == NULL){
@@ -1225,7 +1226,7 @@ class Admin extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_user_search_list($param) {
-		return ($this->general->matches_any($param, array(NULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
+		return ($this->general->matches_any($param, array(yNULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
 	}
 
 };
