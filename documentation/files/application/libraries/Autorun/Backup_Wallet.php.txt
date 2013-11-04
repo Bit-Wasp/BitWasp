@@ -57,7 +57,7 @@ class Backup_Wallet {
 		
 		// Check if there are any accounts/bitcoind is offline.
 		$accounts = $this->CI->bw_bitcoin->listaccounts();
-		if(count($accounts) == 0) 
+		if(count($accounts) == 0 || $this->CI->general->matches_any($accounts, array(NULL, FALSE)) 
 			return FALSE;
 
 		$bitcoin_info = $this->CI->bw_bitcoin->getinfo();

@@ -1,5 +1,5 @@
 	    <div class="span9 mainContent" id="admin-disputes-list">
-		  <h2><?php echo anchor('admin', 'Back', 'class="btn"'); ?> Topup Addresses</h2>
+		  <h2><?php echo anchor('admin/edit/bitcoin', 'Back', 'class="btn"'); ?> Topup Addresses</h2>
 			
 		  <?php if(isset($returnMessage)) { ?>
 		  <div class='alert<?php if($success == TRUE) echo ' alert-success'; ?>'><?php echo $returnMessage; ?></div>

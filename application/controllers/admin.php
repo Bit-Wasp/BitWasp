@@ -97,6 +97,8 @@ class Admin extends CI_Controller {
 			$changes['allow_guests'] = ($this->input->post('allow_guests') !== $data['config']['allow_guests']) ? $this->input->post('allow_guests') : NULL;
 			$changes = array_filter($changes, 'strlen');
 	
+			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated.','Info');
+	
 			if($this->config_model->update($changes) == TRUE)
 				redirect('admin');			
 		}
@@ -222,10 +224,8 @@ class Admin extends CI_Controller {
 		$info = (array)json_decode($this->session->flashdata('info'));
 		if(count($info) !== 0){
 			// If the information is to do with topping up a WIF key:
-			if($info['action'] == 'topup'){
-				$topup_amount = $data['accounts'][$info['account']]-$info['old_amount'];
-				$data['returnMessage'] = "BTC {$topup_amount} was added to the '{$info['account']}' account.";
-			}
+			if($info['action'] == 'topup')
+				$data['returnMessage'] = "BTC {$info['topup_amount']} was added to the '{$info['account']}' account.";
 		}
 		
 		$data['page'] = 'admin/bitcoin';
@@ -276,10 +276,15 @@ class Admin extends CI_Controller {
 					// If there is an error, display it. 
 					$data['import_wallet_error'] = $import['message'];
 				} else if($import == NULL) {
+					$new_accounts = $this->bw_bitcoin->listaccounts();
+					$topup_amount = ($new_accounts[$this->input->post('topup_account')]-$data['accounts'][$this->input->post('topup_account')]);
+					
 					// Successful import, record the data to be displayed.
 					$info = json_encode(array('action' => 'topup',
-											  'old_amount' => $data['accounts'][$this->input->post('topup_account')],
+											  'topup_amount' => $topup_amount,
 											  'account' => $this->input->post('topup_account')));
+					$this->logs_model->add('Admin: Bitcoin Panel','Bitcoin Wallet Topup',"'".$this->input->post('topup_account')."' has been credited by BTC ".$topup_amount.".",'Info');
+	
 					$this->session->set_flashdata("info",$info);
 					redirect('admin/bitcoin');
 				}
@@ -879,10 +884,94 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	public function user_list($opt = NULL) {
+		$this->load->library('form_validation');
+		$this->load->model('users_model');
+		
+		$params = array();
+		$data['users'] = $this->users_model->user_list();
+		
+		if($this->input->post('search_username') == 'Search') {
+			if($this->form_validation->run('admin_search_username') == TRUE){
+				
+				$user_name = $this->input->post('user_name');
+				$data['users'] = $this->users_model->search_user($user_name);
+
+				if($data['users'] == FALSE) 
+					$data['search_fail'] = TRUE;
+			}
+
+		} else if($this->input->post('list_options') == 'Search') {
+
+			if($this->form_validation->run('admin_search_user_list') == TRUE) {
+			
+				$search_for = $this->input->post('search_for');
+				$with_property = $this->input->post('with_property');
+				$order_by = $this->input->post('order_by');
+				$list = $this->input->post('list');
+				
+				if($search_for !== '') {
+					
+					switch($search_for) {
+						case 'all_users':
+							break;
+						case 'buyers':
+							$params['user_role'] = 'Buyer';
+							break;
+						case 'vendors':
+							$params['user_role'] = 'Vendor';
+							break;
+						case 'admins':
+							$params['user_role'] = 'Admin';
+							break;
+						default:
+							break;
+					}
+					
+					if($with_property !== '') {
+						switch($with_property) {
+							case 'activated':
+								$params['entry_paid'] = '1';
+								break;
+							case 'not_activated':
+								$params['entry_paid'] = '0';
+								break;
+							case 'banned':
+								$params['banned'] = '1';
+								break;
+							case 'not_banned':
+								$params['entry_paid'] = '0';
+								break;
+							default:
+								break;
+						}
+					}
+					
+					$params['order_by'] = ($order_by !== '') ? $order_by : 'id';
+					$params['list'] = ($list !== '') ? $list : 'ASC';
+				}
+				
+				if($order_by !== '')
+					$params['order_by'] = $order_by;
+
+				$data['users'] = $this->users_model->user_list($params);
+				if($data['users'] == FALSE)
+					$data['search_fail'] = TRUE;
+			}
+		}
+		
+		$data['page'] = 'admin/user_list';
+		$data['title'] = 'User List';
+		$this->load->library('Layout', $data);
+		
+	}
+
 	/**
 	 * Generate Nav
 	 * 
-	 * Generates the navigation bar for the admin panel. 
+	 * Generates the navigation bar for the admin panel. Will display
+	 * an alert if the electrum backup option is set but no MPK supplied.
+	 * This will pave the way for further alerts to be shown to admins.
 	 * 
 	 * @return 	string
 	 */
@@ -1084,6 +1173,61 @@ class Admin extends CI_Controller {
 	public function check_bitcoin_balance_method($param) {
 		return ($this->general->matches_any($param, array('Disabled','ECDSA','Electrum')) == TRUE) ? TRUE : FALSE;
 	}
+	
+	/**
+	 * Check User Search For
+	 * 
+	 * This checks if the search_for parameter is an allowed class of 
+	 * users. Returns TRUE on success, FALSE on failure.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_user_search_for($param) {
+		return ($this->general->matches_any($param, array('','all_users','buyers','vendors','admins')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check User Search With Property
+	 * 
+	 * Checks if the with_property specifier for a search is an allowed
+	 * value. This narrows down the search to specific types of users.
+	 * Returns TRUE on success, FALSE on failure. 
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_user_search_with_property($param) {
+		return ($this->general->matches_any($param, array('','activated','not_activated','banned','not_banned')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check User Search Order By
+	 * 
+	 * This checks if the order_by parameter is allowed. Returns TRUE on 
+	 * valid input, FALSE on failure.
+	 * 
+	 * @param	string $param
+	 * @return	boolean
+	 */
+	public function check_user_search_order_by($param) {
+		return ($this->general->matches_any($param, array('','id','user_name','register_time','login_time','banned')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check User Search List
+	 * 
+	 * This function checks if the order of the list (in order_by)
+	 * is allowed. It can be ascending, descending, or in random order.
+	 * Returns TRUE on valid input, FALSE on failure.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_user_search_list($param) {
+		return ($this->general->matches_any($param, array('random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
+	}
+
 };
 
 /* End of file: Admin.php */

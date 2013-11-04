@@ -404,6 +404,30 @@ $config = array('register_form'=>array(
 											  'rules' => 'required|htmlentities'
 										)
 							),
+				'admin_search_username' => array(
+										array('field' => 'user_name',
+											  'label' => 'user name',
+											  'rules' => 'required'
+										)
+							),
+				'admin_search_user_list' => array(
+										array('field' => 'search_for',
+											  'label' => '',
+											  'rules' => 'callback_check_user_search_for'
+										),
+										array('field' => 'with_property',
+											  'label' => '',
+											  'rules' => 'callback_check_user_search_with_property'
+										),
+										array('field' => 'order_by',
+											  'label' => '',
+											  'rules' => 'callback_check_user_search_order_by'
+										),
+										array('field' => 'list',
+											  'label' => '',
+											  'rules' => 'callback_check_user_search_list'
+										)
+							),
 				'order_dispute' => array(
 										array('field' => 'dispute_message',
 											  'label' => 'Dispute reason',

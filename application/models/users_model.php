@@ -321,10 +321,70 @@ class Users_model extends CI_Model {
 	  * @param	string	$user_hash
 	  * @return	boolean
 	  */
-	 public function delete_entry_payment($user_hash){
+	public function delete_entry_payment($user_hash){
 		 $this->db->where('user_hash', $user_hash);
 		 return ($this->db->delete('entry_payment') == TRUE) ? TRUE : FALSE;
 	} 
+	
+	/**
+	 * List Users
+	 * 
+	 * Display a list of users. Can supply a list of parameters, 
+	 * 
+	 * @param	array	(opt)$params
+	 * @return	array/FALSE
+	 */
+	public function user_list($params = array()){
+		if(isset($params['order_by'])){
+			$this->db->order_by("{$params['order_by']}", "{$params['list']}");
+			unset($params['order_by']);
+			unset($params['list']);
+		}	
+		
+		foreach($params as $column => $value){
+			$this->db->where("{$column}", "{$value}");
+		}
+		
+		$query = $this->db->get('users');
+		if($query->num_rows() > 0){
+			$results = array();
+			foreach($query->result_array() as $result){
+				$tmp = $result;
+				$tmp['register_time_f'] = $this->general->format_time($tmp['register_time']);
+				$tmp['login_time_f'] = $this->general->format_time($tmp['login_time']);
+				array_push($results, $tmp);
+			}
+			return $results;
+		}
+		return FALSE;
+	}
+	
+	/**
+	 * Search User
+	 * 
+	 * Search for a user specified by $user_name. Returns an array with information
+	 * if the search is successful, otherwise returns FALSE. On failure,
+	 * FALSE will make the admin user list appear again, and declare the
+	 * user was not found.
+	 * 
+	 * @param	string $user_name
+	 * @return	array/FALSE
+	 */
+	public function search_user($user_name) {
+		$this->db->like('user_name',$user_name);
+		$query = $this->db->get('users');
+		if($query->num_rows() > 0) {
+			$users = array();
+			foreach($query->result_array() as $result){
+				$user = $result;
+				$user['register_time_f'] = $this->general->format_time($user['register_time']);
+				$user['login_time_f'] = $this->general->format_time($user['login_time']);
+				array_push($users, $user);
+			}
+			return $users;
+		}
+		return FALSE;
+	}
 };
 
 /* End of File: Users_Model.php */

@@ -96,43 +96,45 @@ class Auto_Finalize_Orders {
 				
 				$vendor = $this->CI->accounts_model->get(array('user_hash' => $order['vendor_hash']));
 				
-				if($vendor !== FALSE && $vendor['login_activity'] < (time()-$this->threshold*24*60*60)) {
+				if($vendor !== FALSE) {
+					if( $vendor['login_activity'] < (time()-$this->threshold*24*60*60)) {
 					
-					$payment_message = "Autorefund #{$order['id']}";
-					// Debit vendor account manually.
-					// As escrow record does not exist, update transactions manually.
-					$debit = array('user_hash' => $vendor['user_hash'],
-									'value' => (float)$order['amount']);
-					$credit = array('user_hash' => $buyer['user_hash'],
-									'value' => (float)$order['amount']);
-					$transactions = array($debit, $credit);
-					
-					// Update balances and set progress to 7.
-					if($this->CI->bitcoin_model->update_credits($transactions) == TRUE
-					  && $this->CI->order_model->admin_set_progress($order['id'], '7') == TRUE ) {
+						$payment_message = "Autorefund #{$order['id']}";
+						// Debit vendor account manually.
+						// As escrow record does not exist, update transactions manually.
+						$debit = array('user_hash' => $vendor['user_hash'],
+										'value' => (float)$order['amount']);
+						$credit = array('user_hash' => $buyer['user_hash'],
+										'value' => (float)$order['amount']);
+						$transactions = array($debit, $credit);
 						
-						// Send message to vendor
-						$data['from'] = $admin['id'];
-						$details = array('username' => $vendor['user_name'],
-										 'subject' => "Order #{$order['id']} has been auto-refunded.");
-						$details['message'] = "Today the balance for order #{$order['id']} has been refunded to {$buyer['user_name']}, as you have not logged in to confirm dispatch in {$this->threshold} days. BTC {$order['amount']} has been debited from your account and credited back to the user. Please note that failure to confirm dispatch, even if you have done so, within the allowed period of time, will result in this happening again, and will give users a reasonable opportunity to rate you negatively. If you wish to discuss this further, click reply to send a message to admin.";
-						$message = $this->CI->bw_messages->prepare_input($data, $details);
-						$message['order_id'] = $order['id'];
-						$this->CI->messages_model->send($message);
-					
-						// Send message to buyer
-						$data['from'] = $admin['id'];
-						$details = array('username' => $buyer['user_name'],
-										 'subject' => "Order #{$order['id']} has been auto-finalized.");
-						$details['message'] = "Today the balance for order #{$order['id']} has automatically refunded to you, as {$vendor['user_name']} has not logged in for the last {$this->threshold} days. If you have any concerns after the order has been made, you can always raise a dispute regarding an order, and bring it to the attention of the site administrator, but in cases where the vendor does not log in, you will receive an automatic update. Please note the threshold of time for this may change as the administrator sees fit. If you wish to discuss this further, click reply to send a message to admin.";
-						$message = $this->CI->bw_messages->prepare_input($data, $details);
-						$message['order_id'] = $order['id'];
-						$this->CI->messages_model->send($message);
+						// Update balances and set progress to 7.
+						if($this->CI->bitcoin_model->update_credits($transactions) == TRUE
+						  && $this->CI->order_model->admin_set_progress($order['id'], '7') == TRUE ) {
+							
+							// Send message to vendor
+							$data['from'] = $admin['id'];
+							$details = array('username' => $vendor['user_name'],
+											 'subject' => "Order #{$order['id']} has been auto-refunded.");
+							$details['message'] = "Today the balance for order #{$order['id']} has been refunded to {$buyer['user_name']}, as you have not logged in to confirm dispatch in {$this->threshold} days. BTC {$order['amount']} has been debited from your account and credited back to the user. Please note that failure to confirm dispatch, even if you have done so, within the allowed period of time, will result in this happening again, and will give users a reasonable opportunity to rate you negatively. If you wish to discuss this further, click reply to send a message to admin.";
+							$message = $this->CI->bw_messages->prepare_input($data, $details);
+							$message['order_id'] = $order['id'];
+							$this->CI->messages_model->send($message);
 						
-						@$this->logs_model->add("Auto Finalize Job", "Auto-Refunded #{$order['id']}", "The early-finalized balance of BTC {$order['amount']} has been refunded to the buyer as the vendor has not logged in for {$this->timeout} days.", "Info");
-						
-					} else {
-						$result = FALSE;
+							// Send message to buyer
+							$data['from'] = $admin['id'];
+							$details = array('username' => $buyer['user_name'],
+											 'subject' => "Order #{$order['id']} has been auto-finalized.");
+							$details['message'] = "Today the balance for order #{$order['id']} has automatically refunded to you, as {$vendor['user_name']} has not logged in for the last {$this->threshold} days. If you have any concerns after the order has been made, you can always raise a dispute regarding an order, and bring it to the attention of the site administrator, but in cases where the vendor does not log in, you will receive an automatic update. Please note the threshold of time for this may change as the administrator sees fit. If you wish to discuss this further, click reply to send a message to admin.";
+							$message = $this->CI->bw_messages->prepare_input($data, $details);
+							$message['order_id'] = $order['id'];
+							$this->CI->messages_model->send($message);
+							
+							@$this->logs_model->add("Auto Finalize Job", "Auto-Refunded #{$order['id']}", "The early-finalized balance of BTC {$order['amount']} has been refunded to the buyer as the vendor has not logged in for {$this->timeout} days.", "Info");
+							
+						} else {
+							$result = FALSE;
+						}
 					}
 				}
 			}

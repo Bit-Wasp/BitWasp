@@ -20,6 +20,7 @@ class Logs_Model extends CI_Model {
 	 * @access	public
 	 */	
 	public function __construct() {
+		parent::__construct();
 	}
 	
 	/**
@@ -34,7 +35,12 @@ class Logs_Model extends CI_Model {
 	 */
 	public function fetch($hash = NULL) {
 		// Load the whole list, or just one.
-		$query = ($hash == NULL) ? $this->db->get('logs') : $this->db->get_where('logs', array('hash' => $hash));
+		if($hash == NULL) {
+			$this->db->order_by('time desc');
+			$query = $this->db->get('logs');
+		} else {
+			$query = $this->db->get_where('logs', array('hash' => $hash));
+		}
 
 		if($query->num_rows() > 0) {
 			// If any records exist, process them and return.
@@ -42,6 +48,8 @@ class Logs_Model extends CI_Model {
 			foreach($results as &$result) {
 				$result['time_f'] = $this->general->format_time($result['time']);
 			}
+			// Depending on whether $hash was unset, results will be an array
+			// or jst a single entry. 
 			return ($hash == NULL) ? $results : $results[0];
 		}
 		return FALSE;

@@ -1,4 +1,4 @@
-	    <div class="span9 mainContent" id="admin-disputes-list">
+	    <div class="span9 mainContent" id="admin-logs-list">
 		  <?php echo $nav; ?>
 			  
 		  <?php if(isset($returnMessage)) { ?>

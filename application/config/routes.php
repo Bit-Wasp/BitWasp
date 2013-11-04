@@ -93,6 +93,7 @@ $route['callback/install_config'] = 'btc_internal/install_config';
 $route['admin'] = 'admin';
 $route['admin/bitcoin'] = 'admin/bitcoin';
 $route['admin/category/orphans/(:any)'] = 'admin/category_orphans/$1';
+$route['admin/users/list'] = 'admin/user_list';
 $route['admin/edit'] = 'admin/edit_general';
 $route['admin/edit/users'] = 'admin/edit_users';
 $route['admin/edit/items'] = 'admin/edit_items';

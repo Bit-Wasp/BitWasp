@@ -58,7 +58,7 @@ class Bw_bitcoin {
 	 * 
 	 * Load exchange rates from the defined BPI. Called by bw_bitcoin/ratenotify().
 	 * 
-	 * @return		array / FALSE
+	 * @return		array/FALSE
 	 */
 	public function get_exchange_rates(){
 		
@@ -102,9 +102,27 @@ class Bw_bitcoin {
 	 * @return		string / array
 	 */
 	public function getaccount($address) {
-		return $this->CI->jsonrpcclient->getaccount($address);
+		$account = $this->CI->jsonrpcclient->getaccount($address);
+		return ($account !== NULL) ? $account : FALSE;
 	}
 
+	/**
+	 * Get Account Address
+	 * 
+	 * This function asks bitcoind for an address for the specified 
+	 * account. It will return the same address each time, until funds
+	 * are received at that address. This is used only to display 
+	 * addresses for the admin to top up, all other requests for addresses
+	 * will provide brand new addresses. 
+	 * 
+	 * @param	string	$account_name
+	 * @return	string/FALSE
+	 */
+	public function getaccountaddress($account_name) {
+		$address = $this->CI->jsonrpcclient->getaccountaddress($account_name);
+		return ($address !== NULL) ? $address : FALSE;
+	}
+	
 	/**
 	 * Get Balance
 	 * 
@@ -211,9 +229,9 @@ class Bw_bitcoin {
 		$tmp = (array)$this->CI->jsonrpcclient->listaccounts(0);
 		$res = array();
 		foreach($tmp as $acc => $bal){
-			if(!preg_match('/\s+/', $acc)){
+			if(!preg_match('/\s+/', $acc) && $acc !== '')
 				$res[$acc] = $bal;
-			}
+			
 		}
 		return $res;
 	}
@@ -502,7 +520,6 @@ class Bw_bitcoin {
 							   'category' => $txn['category'],
 							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.
 				
-				
 				// If the transaction is to do with fee's, then check if the number of transactions exceeds one.
 				// If the entry_payment still exists, and the confirmed balance >= the amount, then delete the 
 				// record and activate the account.
@@ -559,13 +576,15 @@ class Bw_bitcoin {
 		$this->CI->load->model('currencies_model');
 		// Abort if price indexing is disabled.
 		if($this->CI->bw_config->price_index == 'Disabled')
-			return FALSE;
+			return TRUE;
 	
 		// Function to get the exchange rates via an API.
 		$rates = $this->get_exchange_rates();
 
-		if($rates == FALSE)
-			return FALSE;
+		if($rates == FALSE){
+			$this->CI->logs_model->add('Price Index', 'Unable to fetch exchange rates', 'An attempt to update the Bitcoin Exchange rates failed. Please review your ./application/config/bitcoin_index.php file for any errors, or that the proxy is correctly configured','Error');
+			return TRUE;
+		}
 
 		// Parse results depending on where they're from.
 		if($this->CI->bw_config->price_index == 'CoinDesk') {
