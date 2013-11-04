@@ -1,6 +1,6 @@
 <?php 
 
-$ini = parse_ini_file(require_once(dirname(__FILE__).'/../../../version.ini'));
+$ini = parse_ini_file(dirname(__FILE__).'/../../../version.ini');
 echo dirname(__FILE__).'/../../../version.ini';
 define('BITWASP_CREATED_TIME', $ini['bitwasp_created_time']);
 /**
