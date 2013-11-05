@@ -157,6 +157,7 @@ class Admin extends CI_Controller {
 		
 		
 		if($this->form_validation->run('admin_edit_autorun') == TRUE){
+			$this->load->library('autorun',FALSE);
 			
 			// Load the array of jobs, and the specified intervals.
 			$jobs = $this->input->post('jobs');
