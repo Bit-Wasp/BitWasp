@@ -829,11 +829,18 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}	
 
+	/**
+	 * Dispute
+	 * 
+	 * This controller shows either the disputes list (if $order_id is unset)
+	 * or a specified disputed order (set by $order_id). 
+	 */
 	public function dispute($order_id = NULL){
 		$this->load->library('form_validation');
 		$this->load->model('order_model');
 		$this->load->model('escrow_model');
 		
+		// If no order is specified, load the list of disputes.
 		if($order_id == NULL){
 			$data['page'] = 'admin/disputes_list';
 			$data['title'] = 'Active Disputes';
@@ -841,24 +848,45 @@ class Admin extends CI_Controller {
 			
 		} else {
 			$data['dispute'] = $this->escrow_model->get_dispute($order_id);
+			// If the dispute cannot be found, redirect to the dispute list.
 			if($data['dispute'] == FALSE)
 				redirect('admin/disputes');
 				
 			$data['page'] = 'admin/dispute';
 			$data['title'] = "Disputed Order #{$order_id}";
+			// Load the order information.
 			$data['current_order'] = $this->order_model->get($order_id);
+			// Work out whether the vendor or buyer is disputing.
 			$data['disputing_user'] = ($data['dispute']['disputing_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
 			$data['other_user'] = ($data['dispute']['other_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
 			 
+			// If the message is updated: 
 			if($this->input->post('update_message') == 'Update') {
 				if($this->form_validation->run('admin_dispute_message') == TRUE) {
+					// Update the dispute record.
 					$update['admin_message'] = $this->input->post('admin_message');
 					if($this->escrow_model->update_dispute($order_id, $update) == TRUE)
-						$data['dispute'] = $this->escrow_model->get_dispute($order_id);					
+						$data['dispute'] = $this->escrow_model->get_dispute($order_id); 	// Reload the dispute instead of redirecting.					
 				}
 			}
 		}
 		$this->load->library('Layout', $data);
+	}
+
+	/** 
+	 * Fee's 
+	 * 
+	 * This controller allows the administrator to view or edit the
+	 * fee's charged for an order price within a specified price range. 
+	 */
+	public function fees() {
+		$this->load->library('form_validation');
+		$this->load->model('items_model');
+		$data['fees'] = $this->items_model->fees_list();
+		
+		
+		print_r($data['fees']);
+		
 	}
 
 	/**
@@ -886,34 +914,51 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	public function user_list($opt = NULL) {
+	/**
+	 * User List
+	 * 
+	 * Used to display a user list for administrator. Includes a search
+	 * option where an administrator can search for a user by name, or
+	 * instead they can ask for a list of : all users, buyers only, 
+	 * vendors only, admins only.. additional parameters can be supplied,
+	 * such as whether or not the user is banned, or has their account
+	 * activated/paid for. Lists can be ordered by particular values,
+	 * such as the user id, last login time, registration time, etc.
+	 * The order can be randomized, or just ordered ascending or descending.
+	 */
+	public function user_list() {
 		$this->load->library('form_validation');
 		$this->load->model('users_model');
 		
 		$params = array();
 		$data['users'] = $this->users_model->user_list();
 		
+		// If the user is searching for by username.
 		if($this->input->post('search_username') == 'Search') {
 			if($this->form_validation->run('admin_search_username') == TRUE){
 				
+				// Search for the user.
 				$user_name = $this->input->post('user_name');
 				$data['users'] = $this->users_model->search_user($user_name);
 
+				// If the search fails, indicate the failed search error. 
 				if($data['users'] == FALSE) 
 					$data['search_fail'] = TRUE;
 			}
 
 		} else if($this->input->post('list_options') == 'Search') {
+			// If the user is listing users
 
 			if($this->form_validation->run('admin_search_user_list') == TRUE) {
 			
+				// Gather the search terms.
 				$search_for = $this->input->post('search_for');
 				$with_property = $this->input->post('with_property');
 				$order_by = $this->input->post('order_by');
 				$list = $this->input->post('list');
 				
 				if($search_for !== '') {
-					
+					// set which role to look for in the search.
 					switch($search_for) {
 						case 'all_users':
 							break;
@@ -930,6 +975,7 @@ class Admin extends CI_Controller {
 							break;
 					}
 					
+					// If this property is set, the search is narrowed down.
 					if($with_property !== '') {
 						switch($with_property) {
 							case 'activated':
@@ -945,18 +991,24 @@ class Admin extends CI_Controller {
 								$params['entry_paid'] = '0';
 								break;
 							default:
-								break;
+								break; 
 						}
 					}
 					
+					// The column to order by is set, or uses a default.
 					$params['order_by'] = ($order_by !== '') ? $order_by : 'id';
+					// The list order is set, or usees a default.
 					$params['list'] = ($list !== '') ? $list : 'ASC';
 				}
 				
-				if($order_by !== '')
-					$params['order_by'] = $order_by;
-
+				// If the order by term isn't set, check if we need to set it.
+				if(!isset($params['order_by']) && $order_by !== '')
+					$params['order_by'] = ($order_by !== '') ? $order_by : 'id';
+					
+				// Load the user list based on the generated parameters.
 				$data['users'] = $this->users_model->user_list($params);
+				
+				// If the search fails, show the failed search error.
 				if($data['users'] == FALSE)
 					$data['search_fail'] = TRUE;
 			}

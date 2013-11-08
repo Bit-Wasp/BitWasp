@@ -27,7 +27,7 @@
                 <div class="control-group">
                   <label class="control-label" for="password0">Password</label>
                   <div class="controls">
-                    <input type='password' name='password0' value='' size='12' />
+                    <input type='password' name='password0' value='' size='12' autocomplete="off" />
                     <span class="help-inline"><?php echo form_error('password0'); ?></span>
                   </div>
                 </div>
@@ -35,7 +35,7 @@
                 <div class="control-group">
                   <label class="control-label" for="password1">Password (confirm)</label>
                   <div class="controls">
-                    <input type='password' name='password1' value='' size='12' />
+                    <input type='password' name='password1' value='' size='12' autocomplete="off" />
                     <span class="help-inline"><?php echo form_error('password1'); ?></span>
                   </div>
                 </div>
@@ -43,7 +43,7 @@
                 <div class="control-group">
                   <label class="control-label" for="message_pin0">Message PIN</label>
                   <div class="controls">
-                    <input type='password' name='message_pin0' value='' size='12' />
+                    <input type='password' name='message_pin0' value='' size='12' autocomplete="off" />
                     <br />
                     <span class="help-inline"><?php echo form_error('message_pin0')."<br />"; ?>Do not forget this PIN.</span>
                   </div>
@@ -53,7 +53,7 @@
                 <div class="control-group">
                   <label class="control-label" for="message_pin1">Message PIN (confirm)</label>
                   <div class="controls">
-                    <input type='password' name='message_pin1' value='' size='12' />
+                    <input type='password' name='message_pin1' value='' size='12' autocomplete="off" />
                     <span class="help-inline"><?php echo form_error('message_pin1'); ?></span>
                   </div>
                 </div>

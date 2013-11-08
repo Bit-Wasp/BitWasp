@@ -18,7 +18,7 @@
               <div class="control-group">
                 <label class="control-label" for="password">Password</label>
                 <div class="controls">
-                  <input type='password' name='password' value='' />
+                  <input type='password' name='password' value='' autocomplete="off" />
                   <span class="help-inline"><?php echo form_error('password'); ?></span>
                 </div>
               </div>

@@ -178,6 +178,23 @@ class Items_model extends CI_Model {
 	}
 	
 	/**
+	 * Fees List
+	 * 
+	 * This function loads an array containing information about the 
+	 * fee's. fee[low] < order_price <= fee[high] will have rate fee[rate]
+	 * Returns an array on success, and FALSE on failure.
+	 * 
+	 * @return	array/FALSE
+	 */
+	public function fees_list() {
+		$query = $this->db->get('fees');
+		if($query->num_rows > 0) {
+			return $query->result_array();
+		}
+		return FALSE;
+	}
+	
+	/**
 	 * Get List Count
 	 * 
 	 * Will be used when implementing pagination.
@@ -185,7 +202,7 @@ class Items_model extends CI_Model {
 	 * @access	public
 	 * @return	int
 	 */					
-	public function get_list_count(){ 
+	public function get_list_count() { 
 		$this->db->select('id')
 				 ->where('hidden !=', '1')
 				 ->order_by('add_time ASC')
