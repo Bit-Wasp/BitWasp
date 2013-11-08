@@ -7,6 +7,11 @@
 		  
 		  <?php echo form_open('admin/dispute/'.$current_order['id'], array('class' => 'form-horizontal')); ?> 
 		  
+            <div class="row-fluid">
+			  <div class="span2">Order Date</div>
+			  <div class="span9"><?php echo $current_order['created_time_f']; ?></div>
+            </div>
+		  
 		    <div class="row-fluid">
 		      <div class="span2">Last Update</div>
 		      <div class="span5"><?php echo $dispute['last_update_f']; ?></div>

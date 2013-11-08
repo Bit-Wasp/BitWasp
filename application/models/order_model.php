@@ -35,6 +35,8 @@ class Order_model extends CI_Model {
 	 * @return	bool
 	 */
 	public function add($order) {
+		$order['time'] = time();
+		$order['created_time'] = time();
 		return ($this->db->insert('orders', $order) == TRUE) ? TRUE : FALSE;
 	}
 	
@@ -457,6 +459,7 @@ class Order_model extends CI_Model {
 									'currency' => $currency,
 									'time' => $order['time'],
 									'time_f' => $this->general->format_time($order['time']),
+									'created_time_f' => $this->general->format_time($order['created_time']),
 									'items' => $item_array,
 									'finalized' => $order['finalized'],
 									'progress' => $order['progress'],

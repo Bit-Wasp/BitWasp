@@ -468,6 +468,7 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
 
 CREATE TABLE IF NOT EXISTS `bw_orders` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
+  `created_time` varchar(20) NOT NULL,
   `currency` int(2) NOT NULL,
   `items` text NOT NULL,
   `price` decimal(20,8) NOT NULL,
@@ -481,10 +482,10 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
 
 CREATE TABLE IF NOT EXISTS `bw_page_authorization` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `URI` varchar(30) NOT NULL,
   `auth_level` varchar(15) NOT NULL,
-  `timeout` int(3) NOT NULL,
   `system` enum('0','1') NOT NULL,
+  `timeout` int(3) NOT NULL,
+  `URI` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 

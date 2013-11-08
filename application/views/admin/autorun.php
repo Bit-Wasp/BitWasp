@@ -2,11 +2,17 @@
 		  
 		  <?php echo $nav; ?>
 			
-		  <div class="container-fluid">
-			
-<?php foreach($jobs as $index => $job) { 
-	if($index == 'price_index' && $config['price_index'] == 'Disabled')
-		continue;
+<?php if($jobs == FALSE) { ?>
+There are no autorun jobs. These are stored in ./application/libraries/Autorun. Either
+this folder is empty or you have not configured your cron daemon to trigger
+the jobs. Add this following line to your users crontab to activate the jobs:
+<pre>*/1 * * * * curl <?php echo base_url('callback/autorun'); ?></pre>
+<br />
+<?php } else { 
+
+	foreach($jobs as $index => $job) { 
+		if($index == 'price_index' && $config['price_index'] == 'Disabled')
+			continue;
 ?>
 			<div class="row-fluid">
 			  <div class="span3"><?php echo $job['name']; ?></div>
@@ -19,6 +25,5 @@
 			  }?></div>
 			  <div class="span4">Last Run: <?php echo $job['time_f']; ?>.</div>
 			</div>
-<?php } ?>
-		  </div>
+<?php } } ?>
 		</div>

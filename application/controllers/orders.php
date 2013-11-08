@@ -329,8 +329,7 @@ class Orders extends CI_Controller {
 								'vendor_hash' => $item_info['vendor_hash'],
 								'items' => $item_info['hash']."-1",
 								'price' => $item_info['price_b'],
-								'currency' => '0',
-								'time' => time() );
+								'currency' => '0');
 			if($this->order_model->add($new_order) == TRUE) {
 				$data['returnMessage'] = 'Your order has been created.';
 				$data['success'] = true;
@@ -472,10 +471,10 @@ class Orders extends CI_Controller {
 			// Display form to allow user to raise a dispute.
 			$data['role'] = strtolower($this->current_user->user_role);
 			$data['other_role'] = ($data['role'] == 'vendor') ? 'buyer' : 'vendor';
-				
+			
 			if($this->form_validation->run('order_dispute') == TRUE) {
 					
-				$other_user = ($this->current->user->user_id == $data['current_order']['buyer']['id']) ? $data['current_order']['vendor']['vendor_id'] : $this->current_user->user_id;
+				$other_user = ($this->current_user->user_id == $data['current_order']['buyer']['id']) ? $data['current_order']['vendor']['vendor_id'] : $this->current_user->user_id;
 					
 				$dispute = array('disputing_user_id' => $this->current_user->user_id,
 								 'dispute_message' => $this->input->post('dispute_message'),
