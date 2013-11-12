@@ -28,7 +28,6 @@ $lang['check_user_search_with_property'] = 'You must select a valid specifier';
 $lang['check_user_search_list'] = 'You must select a valid order for the list';
 $lang['check_user_search_order_by'] = 'You must select a valid column to order the list by.';
 	
-
 // CodeIgniter
 $lang['alpha_dash'] = "The %s field must only contain letters, numbers, and dashes (-).";
 $lang['required'] = "You must enter the %s.";

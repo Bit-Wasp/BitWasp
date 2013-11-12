@@ -21,54 +21,54 @@
     <script src="../js/jquery.smooth-scroll.js"></script>
     <script src="../js/prism.min.js"></script>
     <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
-        <script type="text/javascript">
-        function loadExternalCodeSnippets() {
-            Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
-                var src = pre.getAttribute('data-src');
-                var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
-                var language = 'php';
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
 
-                var code = document.createElement('code');
-                code.className = 'language-' + language;
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
 
-                pre.textContent = '';
+            pre.textContent = '';
 
-                code.textContent = 'Loading…';
+            code.textContent = 'Loading…';
 
-                pre.appendChild(code);
+            pre.appendChild(code);
 
-                var xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpRequest();
 
-                xhr.open('GET', src, true);
+            xhr.open('GET', src, true);
 
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 4) {
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
 
-                        if (xhr.status < 400 && xhr.responseText) {
-                            code.textContent = xhr.responseText;
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
 
-                            Prism.highlightElement(code);
-                        }
-                        else if (xhr.status >= 400) {
-                            code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
-                        }
-                        else {
-                            code.textContent = '✖ Error: File does not exist or is empty';
-                        }
+                        Prism.highlightElement(code);
                     }
-                };
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
 
-                xhr.send(null);
-            });
-        }
-
-        $(document).ready(function(){
-            loadExternalCodeSnippets();
+            xhr.send(null);
         });
-        $('#source-view').on('shown', function () {
-            loadExternalCodeSnippets();
-        })
-    </script>
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
 
     <link rel="shortcut icon" href="../images/favicon.ico"/>
     <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-124601681"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1384193778"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-124601681" class="accordion-body collapse in">
+            <div id="namespace-1384193778" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -196,6 +196,7 @@
                                                     <li class="class"><a href="../classes/NISTcurve.html">NISTcurve</a></li>
                                                     <li class="class"><a href="../classes/Signature.html">Signature</a></li>
                                                     <li class="class"><a href="../classes/PrivateKey.html">PrivateKey</a></li>
+                                                    <li class="class"><a href="../classes/Backup_Wallet.html">Backup_Wallet</a></li>
                                                     <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
                                                     <li class="class"><a href="../classes/Auto_Finalize_Orders.html">Auto_Finalize_Orders</a></li>
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
@@ -207,7 +208,6 @@
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
                                                     <li class="class"><a href="../classes/Listings.html">Listings</a></li>
                                                     <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
-                                                    <li class="class"><a href="../classes/Btc_internal.html">Btc_internal</a></li>
                                                     <li class="class"><a href="../classes/Users.html">Users</a></li>
                                                     <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
                                                     <li class="class"><a href="../classes/Orders.html">Orders</a></li>
@@ -325,54 +325,240 @@
     <section class="row-fluid">
         <div class="span10 offset2">
             <div class="row-fluid">
-                <div class="span8 content file">
+                <div class="span8 content class">
                     <nav>
-                                                                    </nav>
-
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
-                    <h1><small>application/controllers</small>btc_internal.php</h1>
-                    <p><em></em></p>
-                    
+
+                    <h1><small>\</small>Backup_Wallet</h1>
+                    <p><em>Backup Wallet Job</em></p>
+                    <p>Used to securely transfer excessive funds from the live wallet to
+an offline wallet.
+Will check if the ECDSA or electrum option is chosen. ECDSA will generate
+a new keypair, send the bitcoins to that bitcoin address. Electrum will
+generate a deterministic public key and address, send coins to there,
+and increase the iteration index on record by one.</p>
 
 
-                    
-                    
-                                        <h2>Classes</h2>
-                    <table class="table table-hover">
-                                            <tr>
-                            <td><a href="../classes/Btc_internal.html">Btc_internal</a></td>
-                            <td><em>Bitcoin Internal Callbacks Controllers</em></td>
-                        </tr>
-                                        </table>
-                                    </div>
-
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/Backup_Wallet.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/Backup_Wallet.html#method_job" class="">job()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Backup_Wallet.html#property_config" class="">$config</a><br />
+                                                                    <a href="../classes/Backup_Wallet.html#property_CI" class="">$CI</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
                 <aside class="span4 detailsbar">
+                                        
+                    
                     <dl>
-                                                    <dt>Package</dt>
-                            <dd><div class="namespace-wrapper">Default</div></dd>
+                        <dt>File</dt>
+                            <dd><a href="../files/application.libraries.Autorun.Backup_Wallet.php.html"><div class="path-wrapper">application/libraries/Autorun/Backup_Wallet.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\BitWasp\Autorun\Autorun</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\Backup_Wallet</div>
+                            </dd>
+
                         
                         
-                    </dl>
+                        
+                                                                        </dl>
                     <h2>Tags</h2>
                     <table class="table table-condensed">
-                                                    <tr><td colspan="2"><em>None found</em></td></tr>
-                                            </table>
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>User Inactivity</p>
 
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>BitWasp</p>
+
+                                                            </td>
+                        </tr>
+                                        </table>
                 </aside>
             </div>
 
-            
-            
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_config" name="property_config" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$config</h3>
+                <pre class="signature">$config</pre>
+                <p><em>Config</em></p>
+                <p>This stores predefined information about the job, such as the name,
+description, and the frequency at which it should be run.</p>
+
+
+                            </article>
         </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_CI" name="property_CI" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$CI</h3>
+                <pre class="signature">$CI</pre>
+                <p><em></em></p>
+                
+
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct()</pre>
+                <p><em>Constructor</em></p>
+                <p>Loads the CodeIgniter framework</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_job" name="method_job" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">job()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">job()</pre>
+                <p><em>Job</em></p>
+                <p>This function is called by the Autorun script.
+We load the oldest age of messages from the config library. If
+set to zero, we don't need to run the job and execution terminates.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
     </section>
 
     <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="source-view-label"></h3>
+            <h3 id="source-view-label">Backup_Wallet.php</h3>
         </div>
         <div class="modal-body">
-            <pre data-src="../files/application/controllers/btc_internal.php.txt" class="language-php line-numbers"></pre>
+            <pre data-src="../files/application/libraries/Autorun/Backup_Wallet.php.txt" class="language-php line-numbers"></pre>
         </div>
     </div>
 
@@ -412,7 +598,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 4th, 2013 at 13:59.
+                    on November 12th, 2013 at 19:55.
                 </section>
             </section>
         </section>

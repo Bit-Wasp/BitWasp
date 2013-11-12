@@ -404,6 +404,30 @@ $config = array('register_form'=>array(
 											  'rules' => 'required|htmlentities'
 										)
 							),
+				'admin_update_fee_config' => array(
+										array('field' => 'default_rate',
+											  'label' => 'Default fee rate',
+											  'rules' => 'callback_check_is_positve'
+										),
+										array('field' => 'minimum_fee',
+											  'label' => 'Minimum fee',
+											  'rules' => 'callback_check_is_positive'
+										)	  
+							),
+				'admin_add_fee' => array(
+										array('field' => 'lower_limit',
+											  'label' => 'Lower limit',
+											  'rules' => 'callback_check_is_positve'
+										),
+										array('field' => 'upper_limit',
+											  'label' => 'Upper limit',
+											  'rules' => 'callback_check_is_positive'
+										),
+										array('field' => 'percentage_fee',
+											  'label' => 'Percentage fee',
+											  'rules' => 'callback_check_is_positive'
+										)	  
+							),
 				'admin_search_username' => array(
 										array('field' => 'user_name',
 											  'label' => 'user name',

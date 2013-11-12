@@ -882,14 +882,61 @@ class Admin extends CI_Controller {
 	public function fees() {
 		$this->load->library('form_validation');
 		$this->load->model('items_model');
+		
+		if($this->input->post('update_config') == 'Update') {
+			$data['config'] = $this->bw_config->load_admin('fees');
+			if($this->form_validation->run('admin_update_fee_config') == TRUE) {
+				$changes['minimum_fee'] = ($data['config']['minimum_fee'] !== $this->input->post('minimum_fee')) ? $this->input->post('minimum_fee') : NULL;
+				$changes['default_rate'] = ($data['config']['default_rate'] !== $this->input->post('default_rate')) ? $this->input->post('default_rate') : NULL;
+				$changes = array_filter($changes, 'strlen');
+				if(count($changes) > 0) 
+					if($this->config_model->update($changes) == TRUE){
+						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
+						redirect('admin/items/fees');
+					}
+			}
+		}
+		
+		$delete_rate = $this->input->post('delete_rate');
+		if(is_array($delete_rate)){
+			$key = array_keys($delete_rate); 
+			$key = $key[0];
+			if(is_numeric($key)) {
+				$id = array_keys($delete_rate); $id = $id[0];
+				if($this->items_model->delete_fee($id) == TRUE){
+					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'The selected fee has been deleted.')));
+					redirect('admin/items/fees');
+				}
+			} else {
+				$data['returnMessage'] = 'You must select a valid fee to delete.';
+			}
+		}
+		
+		if($this->input->post('create_fee') == 'Add') {
+			if($this->form_validation->run('admin_add_fee') == TRUE) {
+				$rate = array('low' => $this->input->post('lower_limit'),
+							  'high' => $this->input->post('higher_limit'),
+							  'rate' => $this->input->post('percentage_fee'));
+				if($this->items_model->add_fee($rate) == TRUE) {
+					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
+					redirect('admin/items/fees');
+				}
+			}
+		}
+		
+		$returnMessage = json_decode($this->session->flashdata('returnMessage'));
+		if($returnMessage !== NULL)
+			$data['returnMessage'] = $returnMessage->message;
+
+		$data['config'] = $this->bw_config->load_admin('fees', TRUE);
 		$data['fees'] = $this->items_model->fees_list();
 		
-		
-		print_r($data['fees']);
-		
+		$data['page'] = 'admin/fees';
+		$data['title'] = 'Order Fees';
+		$this->load->library('Layout', $data);
 	}
 
-	/**
+	/**f
 	 * Topup Addresses
 	 * 
 	 * This function gathers a list of accounts from the bitcoin daemon
@@ -997,7 +1044,7 @@ class Admin extends CI_Controller {
 					
 					// The column to order by is set, or uses a default.
 					$params['order_by'] = ($order_by !== '') ? $order_by : 'id';
-					// The list order is set, or usees a default.
+					// The list order is set, or uses a default.
 					$params['list'] = ($list !== '') ? $list : 'ASC';
 				}
 				
@@ -1099,7 +1146,6 @@ class Admin extends CI_Controller {
 			
 		if($param == "0")	// Allows the category to be a root category.
 			return TRUE;
-			echo "Param !== '0'<br />";
 			
 		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
 	}
@@ -1142,7 +1188,6 @@ class Admin extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_bitcoin_account_exists($param) {
-		
 		if($param == '')
 			return FALSE;
 
@@ -1279,7 +1324,7 @@ class Admin extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_user_search_list($param) {
-		return ($this->general->matches_any($param, array(yNULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
+		return ($this->general->matches_any($param, array(NULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
 	}
 
 };

@@ -1,8 +1,8 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
 // Determine bitcoin address version
 $CI = &get_instance();
-//$CI->load->library('bw_bitcoin');
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
 $byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
 define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte

@@ -208,6 +208,26 @@ class Bw_config {
 	 * receive the funds for the item.
 	 */
 	public $auto_finalize_threshold	= 0;
+
+	/**
+	 * Default Rate (Fees)
+	 * 
+	 * This is the default rate at which orders are charged. This is used
+	 * when the order_price does not fall within a range specified in the 
+	 * database. An admin might just set a flat rate for all transactions.
+	 * Default is 1%
+	 */
+	public $default_rate 			= 1;
+	
+	/**
+	 * Minimum fee
+	 * 
+	 * This is the minimum fee which an order can have. Usually this 
+	 * could be set to a figure which ensures that bitcoins sent within
+	 * the system can be covered re transaction fee's. Default is 0.0004 
+	 * BTC.
+	 */
+	public $minimum_fee				= 0.0003;
 	
 	/**
 	 * Balance Backup Method
@@ -232,18 +252,19 @@ class Bw_config {
 		$this->CI->load->model('currencies_model');
 		$this->CI->config->load('bitcoin_index', TRUE);
 		
+		$this->reload();
+	}
+
+	public function reload() {
 		// Pull from the DB. See phpmyadmin. 
 		$config = $this->CI->config_model->get();
-		
 		if($config == FALSE)
 			die('Error, BitWasp configuration not found.');
 		
-		// If any fields are missing, set them to NULL.
-		$config = $this->CI->general->expect_keys('site_description, entry_payment_vendor, entry_payment_buyer, max_fees_balance, max_main_balance, delete_messages_after, refund_after_inactivity, price_index, site_title, openssl_keysize, allow_guests, vendor_registration_allowed, login_timeout, encrypt_private_messages, registration_allowed, base_url, captcha_length, index_page, force_vendor_pgp', $config);
 		foreach($config as $key => $value) {
 			$this->$key = $value;
 		}
-		
+
 		// Convert ENUM's to boolean values.
 		$this->registration_allowed = ($this->registration_allowed == '1') ? TRUE : FALSE;
 		$this->vendor_registration_allowed = ($this->vendor_registration_allowed == '1') ? TRUE : FALSE;
@@ -265,7 +286,11 @@ class Bw_config {
 	 * @param		string
 	 * @return		array
 	 */
-	public function load_admin($panel){
+	public function load_admin($panel, $reload = FALSE){
+		if($reload == TRUE){
+			$this->reload();
+		}
+		
 		if($panel == '') {
 			$result = array('site_description' => $this->site_description,
 							'site_title' => $this->site_title,
@@ -300,6 +325,9 @@ class Bw_config {
 							'entry_payment_buyer' => $this->entry_payment_buyer);
 		} else if($panel == 'items') {
 			$result = array('auto_finalize_threshold' => $this->auto_finalize_threshold);
+		} else if($panel == 'fees') {
+			$result = array('default_rate' => $this->default_rate,
+							'minimum_fee' => $this->minimum_fee);
 		} else if($panel == 'autorun') {
 			$result = array('refund_after_inactivity' => $this->refund_after_inactivity,
 							'delete_messages_after' => $this->delete_messages_after,

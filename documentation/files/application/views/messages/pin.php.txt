@@ -10,7 +10,7 @@
               <div class="control-group">
                 <label class="control-label" for="pin">PIN</label>
                 <div class="controls">
-                  <input type='password' name='pin' value="" />
+                  <input type='password' name='pin' value="" autocomplete="off"/>
                   <span class="help-inline"><?php echo form_error('pin'); ?></span>
                 </div>
               </div>

@@ -63,7 +63,7 @@ class Config_model extends CI_Model {
 	public function update($records) {
 		$success = TRUE;
 		foreach($records as $key => $update){
-			$this->db->where('parameter', $key);
+			$this->db->where('parameter', "$key");
 			if($this->db->update('config', array('value' => $update)) !== TRUE)
 				$success = FALSE;
 		}

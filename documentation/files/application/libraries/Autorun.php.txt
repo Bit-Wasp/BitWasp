@@ -53,7 +53,7 @@ class Autorun {
 	 * the rest of the application (if any changes are being updated, we
 	 * should re-run the job).
 	 */	
-	public function __construct() { 
+	public function __construct($run_jobs = TRUE) { 
 		$this->CI = &get_instance();
 		$this->CI->load->model('autorun_model');
 	
@@ -68,22 +68,24 @@ class Autorun {
 			$class = new $class_name;
 			
 			// If the job isn't in the job's list, add it.
-			if(!isset($jobs[$class->config['index']])){
-				$config = $class->config;
-				$config = array_map('htmlentities', $config);
-				$this->CI->autorun_model->add($class->config);
-				
-				// Run the job & record that it's been updated.
-				if($class->job() == TRUE)
-					$this->CI->autorun_model->set_updated($class->config['index']);
+			if($run_jobs == TRUE){
+				if(!isset($jobs[$class->config['index']])){
+					$config = $class->config;
+					$config = array_map('htmlentities', $config);
+					$this->CI->autorun_model->add($class->config);
 					
-			} else {
-				$job = $jobs[$class->config['index']];
-				
-				// If the interval has passed. Run again!
-				if( $job['interval'] !== '0' && $job['last_update'] < (time()-$job['interval_s'])){
+					// Run the job & record that it's been updated.
 					if($class->job() == TRUE)
-						$this->CI->autorun_model->set_updated($class->config['index']);					
+						$this->CI->autorun_model->set_updated($class->config['index']);
+						
+				} else {
+					$job = $jobs[$class->config['index']];
+					
+					// If the interval has passed. Run again!
+					if( $job['interval'] !== '0' && $job['last_update'] < (time()-$job['interval_s'])){
+						if($class->job() == TRUE)
+							$this->CI->autorun_model->set_updated($class->config['index']);					
+					}
 				}
 			}
 			

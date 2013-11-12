@@ -92,18 +92,19 @@ $route['callback/install_config'] = 'btc_internal/install_config';
 
 $route['admin'] = 'admin';
 $route['admin/bitcoin'] = 'admin/bitcoin';
-$route['admin/category/orphans/(:any)'] = 'admin/category_orphans/$1';
-$route['admin/users/list'] = 'admin/user_list';
+$route['admin/bitcoin/topup'] = 'admin/topup_addresses';
 $route['admin/edit'] = 'admin/edit_general';
 $route['admin/edit/users'] = 'admin/edit_users';
 $route['admin/edit/items'] = 'admin/edit_items';
 $route['admin/edit/bitcoin'] = 'admin/edit_bitcoin';
 $route['admin/edit/autorun'] = 'admin/edit_autorun';
+$route['admin/category/orphans/(:any)'] = 'admin/category_orphans/$1';
+$route['admin/items/fees'] = 'admin/fees';
+$route['admin/users/list'] = 'admin/user_list';
 $route['admin/delete_item/(:any)'] = 'admin/delete_item/$1';
 $route['admin/tokens'] = 'admin/user_tokens';
 $route['admin/tokens/delete/(:any)'] = 'admin/delete_token/$1';
 $route['admin/disputes'] = 'admin/dispute';
-$route['admin/bitcoin/topup'] = 'admin/topup_addresses';
 
 $route['order/dispute/(:num)'] = 'orders/dispute/$1';
 $route['orders/dispute/(:num)'] = 'orders/dispute/$1';

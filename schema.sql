@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `bw_addresses` (
   `bitcoin_address` varchar(35) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=146 ;
-
+co
 CREATE TABLE IF NOT EXISTS `bw_autorun` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(40) NOT NULL,
@@ -97,7 +97,9 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (21, 'entry_payment_vendor', '0.00000000'),
 (22, 'entry_payment_buyer', '0.00000000'),
 (23, 'auto_finalize_threshold', '0'),
-(24, 'balance_backup_method', 'Disabled');
+(24, 'balance_backup_method', 'Disabled'),
+(25, 'minimum_fee', '0.0003'),
+(26, 'default_rate', '0.25'));
 
 CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
@@ -403,6 +405,14 @@ CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
 
 INSERT INTO `bw_exchange_rates` (`id`, `time`, `usd`, `eur`, `gbp`, `btc`, `price_index`) VALUES
 (1, '1380761400', 101.7737, 74.9879, 62.8264, 1, 'CoinDesk');
+
+CREATE TABLE IF NOT EXISTS `bw_fees` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `low` decimal(20,8) NOT NULL COMMENT 'Orders exceeding this value apply to this range',
+  `high` decimal(20,8) NOT NULL COMMENT 'Orders less than this value apply to this range',
+  `rate` decimal(4,3) NOT NULL COMMENT 'Percentage fee to be charged for this range',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_logs` (
   `id` int(9) NOT NULL AUTO_INCREMENT,

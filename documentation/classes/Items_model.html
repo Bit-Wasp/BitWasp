@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1612498010"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1080827870"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1612498010" class="accordion-body collapse in">
+            <div id="namespace-1080827870" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -196,6 +196,7 @@
                                                     <li class="class"><a href="../classes/NISTcurve.html">NISTcurve</a></li>
                                                     <li class="class"><a href="../classes/Signature.html">Signature</a></li>
                                                     <li class="class"><a href="../classes/PrivateKey.html">PrivateKey</a></li>
+                                                    <li class="class"><a href="../classes/Backup_Wallet.html">Backup_Wallet</a></li>
                                                     <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
                                                     <li class="class"><a href="../classes/Auto_Finalize_Orders.html">Auto_Finalize_Orders</a></li>
                                                     <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
@@ -207,7 +208,6 @@
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
                                                     <li class="class"><a href="../classes/Listings.html">Listings</a></li>
                                                     <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
-                                                    <li class="class"><a href="../classes/Btc_internal.html">Btc_internal</a></li>
                                                     <li class="class"><a href="../classes/Users.html">Users</a></li>
                                                     <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
                                                     <li class="class"><a href="../classes/Orders.html">Orders</a></li>
@@ -356,6 +356,9 @@
                                                                     <a href="../classes/Items_model.html#method_get_list" class="">get_list()</a><br />
                                                                     <a href="../classes/Items_model.html#method_get" class="">get()</a><br />
                                                                     <a href="../classes/Items_model.html#method_by_user" class="">by_user()</a><br />
+                                                                    <a href="../classes/Items_model.html#method_fees_list" class="">fees_list()</a><br />
+                                                                    <a href="../classes/Items_model.html#method_delete_fee" class="">delete_fee()</a><br />
+                                                                    <a href="../classes/Items_model.html#method_add_fee" class="">add_fee()</a><br />
                                                                     <a href="../classes/Items_model.html#method_get_list_count" class="">get_list_count()</a><br />
                                                                     <a href="../classes/CI_Model.html#method___get" class="">__get()</a><br />
                                                             </section>
@@ -619,6 +622,112 @@
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_fees_list" name="method_fees_list" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">fees_list()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">fees_list() : \array/FALSE</pre>
+                <p><em>Fees List</em></p>
+                <p>This function loads an array containing information about the
+fee's. fee[low] &lt; order_price &lt;= fee[high] will have rate fee[rate]
+Returns an array on success, and FALSE on failure.</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    \array/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_delete_fee" name="method_delete_fee" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">delete_fee()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">delete_fee(int <span class="argument">$id</span>) : boolean</pre>
+                <p><em>Delete Fee</em></p>
+                <p>This function deletes an entry in the fee's table, based on the $id.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$id</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_add_fee" name="method_add_fee" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">add_fee()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">add_fee( <span class="argument">$fee</span>) : boolean</pre>
+                <p><em>Add Fee</em></p>
+                <p>This function adds an entry to the fee's table. $fee is an array
+which contains keys for 'low', the lower limit of the range,
+'high', the upper limit of the range, and 'rate', the range.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$fee</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_get_list_count" name="method_get_list_count" class="anchor"></a>
             <article class="method">
                 <h3 class="public ">get_list_count()</h3>
@@ -732,7 +841,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 4th, 2013 at 13:58.
+                    on November 12th, 2013 at 19:55.
                 </section>
             </section>
         </section>

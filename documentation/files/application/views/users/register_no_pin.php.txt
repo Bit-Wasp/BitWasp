@@ -29,7 +29,7 @@ echo form_open($registerPage, array('class' => 'form-horizontal'));
                 <div class="control-group">
                   <label class="control-label" for="password0">Password</label>
                   <div class="controls">
-                    <input type='password' name='password0' value='' size='12' />
+                    <input type='password' name='password0' value='' size='12' autocomplete="off" />
                     <span class="help-inline"><?php echo form_error('password0'); ?></span>
                   </div>
                 </div>
@@ -37,7 +37,7 @@ echo form_open($registerPage, array('class' => 'form-horizontal'));
                 <div class="control-group">
                   <label class="control-label" for="password1">Password (confirm)</label>
                   <div class="controls">
-                    <input type='password' name='password1' value='' size='12' />
+                    <input type='password' name='password1' value='' size='12' autocomplete="off" />
                     <span class="help-inline"><?php echo form_error('password1'); ?></span>
                   </div>
                 </div>

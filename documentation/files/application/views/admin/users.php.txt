@@ -5,7 +5,7 @@
 		  <div class="container-fluid">
 			<div class="row-fluid">
 			  <span class="span3">User Count</span>
-			  <span class="span7"><?php echo $user_count; ?></span>
+			  <span class="span7"><?php echo $user_count; ?> (<?php echo anchor('admin/users/list','User List'); ?>)</span>
 			</div>
 			
 			<div class="row-fluid">
