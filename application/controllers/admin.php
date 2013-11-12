@@ -915,7 +915,7 @@ class Admin extends CI_Controller {
 		if($this->input->post('create_fee') == 'Add') {
 			if($this->form_validation->run('admin_add_fee') == TRUE) {
 				$rate = array('low' => $this->input->post('lower_limit'),
-							  'high' => $this->input->post('higher_limit'),
+							  'high' => $this->input->post('upper_limit'),
 							  'rate' => $this->input->post('percentage_fee'));
 				if($this->items_model->add_fee($rate) == TRUE) {
 					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
