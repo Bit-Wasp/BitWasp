@@ -928,7 +928,7 @@ class Admin extends CI_Controller {
 		if($returnMessage !== NULL)
 			$data['returnMessage'] = $returnMessage->message;
 
-		$data['config'] = $this->bw_config->load_admin('fees', TRUE);
+		$data['config'] = $this->bw_config->load_admin('fees');
 		$data['fees'] = $this->items_model->fees_list();
 		
 		$data['page'] = 'admin/fees';

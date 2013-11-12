@@ -286,10 +286,7 @@ class Bw_config {
 	 * @param		string
 	 * @return		array
 	 */
-	public function load_admin($panel, $reload = FALSE){
-		if($reload == TRUE){
-			$this->reload();
-		}
+	public function load_admin($panel){
 		
 		if($panel == '') {
 			$result = array('site_description' => $this->site_description,
