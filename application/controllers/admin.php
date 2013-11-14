@@ -8,7 +8,6 @@
  * @category	Admin
  * @author		BitWasp
  */
-
 class Admin extends CI_Controller {
 
 	public $nav;
@@ -17,12 +16,9 @@ class Admin extends CI_Controller {
 	 * Constructor
 	 *
 	 * @access	public
-	 * @see		Models/Categories_model
 	 */
-
 	public function __construct() {
 		parent::__construct();
-		$this->load->model('categories_model');
 		
 		// Define information for the navigation panel.
 		$this->nav = array(	'' => 			array(	'panel' => '',
@@ -496,6 +492,7 @@ class Admin extends CI_Controller {
 	 * @return	void
 	 */
 	public function items() {
+		$this->load->model('categories_model');		
 		$data['nav'] = $this->generate_nav();
 		$data['item_count'] = $this->general_model->count_entries('items');
 		$data['config'] = $this->bw_config->load_admin('items');
@@ -518,6 +515,7 @@ class Admin extends CI_Controller {
 	 */
 	public function edit_items() {
 		$this->load->library('form_validation');
+		$this->load->model('categories_model');		
 		$data['nav'] = $this->generate_nav();
 		$data['categories'] = $this->categories_model->list_all();
 		$data['config'] = $this->bw_config->load_admin('items');
@@ -599,7 +597,6 @@ class Admin extends CI_Controller {
 		
 	}
 
-
 	/**
 	 * Fix orphan categories/items.
 	 * URI: /admin/category/orphans/$hash
@@ -619,6 +616,8 @@ class Admin extends CI_Controller {
 	 * @return	void
 	 */	
 	public function category_orphans($hash) {
+		$this->load->model('categories_model');
+		
 		// Abort if the category does not exist.
 		$data['category'] = $this->categories_model->get(array('hash' => $hash));
 		if($data['category'] == FALSE)
@@ -653,6 +652,7 @@ class Admin extends CI_Controller {
 				$this->categories_model->update_items_category($data['category']['id'], $this->input->post('category_id'));
 				$this->categories_model->update_parent_category($data['category']['id'], $this->input->post('category_id'));
 			}
+			
 			// Finally, delete the category and redirect.
 			if($this->categories_model->delete($data['category']['id']) == TRUE)
 				redirect('admin/edit/items');
