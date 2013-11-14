@@ -39,20 +39,20 @@ class Fees_model extends CI_Model {
 	}
 	
 	/**
-	 * Delete Fee
+	 * Delete
 	 * 
 	 * This function deletes an entry in the fee's table, based on the $id.
 	 * 
 	 * @param	int	$id
 	 * @return	boolean
 	 */
-	public function delete_fee($id) {
+	public function delete($id) {
 		$this->db->where('id', $id);
 		return ($this->db->delete('fees') == TRUE) ? TRUE : FALSE;
 	}
 
 	/**
-	 * Add Fee
+	 * Add
 	 * 
 	 * This function adds an entry to the fee's table. $fee is an array
 	 * which contains keys for 'low', the lower limit of the range, 
@@ -61,11 +61,44 @@ class Fees_model extends CI_Model {
 	 * @param	array
 	 * @return	boolean
 	 */
-	public function add_fee($fee) {
+	public function add($fee) {
 		return ($this->db->insert('fees', $fee) == TRUE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * Calculate
+	 * 
+	 * Calculates the fee to be applied to an order of $order_price.
+	 * 
+	 * @param	string	$
+	 */
+	public function calculate($order_price) {
+		$fees_list = $this->fees_list();
+		$default_rate = $this->bw_config->default_rate;
+		$minimum_fee = $this->bw_config->minimum_fee;		
+		$order_price = round($order_price, 8, PHP_ROUND_HALF_UP);
 
+		// Loop through fee list, checking if: fee['low'] < order_price <= fee[high]
+		foreach($fees_list as $fee) {
+			
+			if($fee['low'] < $order_price && $order_price <= $fee['high']) {
+				$rate = $fee['rate'];
+				$cost = $fee['rate']/100*$order_price;
+				$cost = ($cost < $minimum_fee) ? $minimum_fee : $cost;
+				break;
+			}
+		}	
+
+		if(!isset($cost)){
+			// Load the default rate as we haven't found an applicable fee range yet.
+			$rate = $default_rate;
+			$cost = $order_price*$default_rate/100;
+			$cost = ($cost < $minimum_fee) ? $minimum_fee : $cost;	// comment this line so free items have free fee's
+		}
+		$cost = round($cost, 8, PHP_ROUND_HALF_UP);
+
+		return $cost;
+	}
 };
 
 /* End of File: fees_model.php */

@@ -929,7 +929,7 @@ class Admin extends CI_Controller {
 			$data['returnMessage'] = $returnMessage->message;
 
 		$data['config'] = $this->bw_config->load_admin('fees');
-		$data['fees'] = $this->items_model->fees_list();
+		$data['fees'] = $this->fees_model->fees_list();
 		
 		$data['page'] = 'admin/fees';
 		$data['title'] = 'Order Fees';

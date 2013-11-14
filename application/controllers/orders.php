@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Orders extends CI_Controller {
 
 	/**
@@ -376,17 +375,19 @@ class Orders extends CI_Controller {
 	public function place($id) {
 		$this->load->library('form_validation');
 		$this->load->model('bitcoin_model');
-	
+		$this->load->model('fees_model');
+		
 		$data['order'] = $this->order_model->load_order($id, array('0'));
 		if($data['order'] == FALSE)
 			redirect('order/list');
 		
-		$balance = $this->bitcoin_model->current_balance();
+		$balance = $this->bitcoin_model->current_balance(); 
 		
 		$data['title'] = 'Place Order #'.$data['order']['id'];
 		$data['page'] = 'orders/place';
 		$data['header_meta'] = $this->load->view('orders/encryption_header', NULL, true);
-		
+		$data['fee'] = $this->fees_model->calculate($data['order']['price']);
+
 		if($this->form_validation->run('order_place') == TRUE) {
 
 			if($balance <= 0 || $balance < $data['order']['price_b']) {
