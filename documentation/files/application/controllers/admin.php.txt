@@ -8,7 +8,6 @@
  * @category	Admin
  * @author		BitWasp
  */
-
 class Admin extends CI_Controller {
 
 	public $nav;
@@ -17,12 +16,9 @@ class Admin extends CI_Controller {
 	 * Constructor
 	 *
 	 * @access	public
-	 * @see		Models/Categories_model
 	 */
-
 	public function __construct() {
 		parent::__construct();
-		$this->load->model('categories_model');
 		
 		// Define information for the navigation panel.
 		$this->nav = array(	'' => 			array(	'panel' => '',
@@ -496,6 +492,7 @@ class Admin extends CI_Controller {
 	 * @return	void
 	 */
 	public function items() {
+		$this->load->model('categories_model');		
 		$data['nav'] = $this->generate_nav();
 		$data['item_count'] = $this->general_model->count_entries('items');
 		$data['config'] = $this->bw_config->load_admin('items');
@@ -518,6 +515,7 @@ class Admin extends CI_Controller {
 	 */
 	public function edit_items() {
 		$this->load->library('form_validation');
+		$this->load->model('categories_model');		
 		$data['nav'] = $this->generate_nav();
 		$data['categories'] = $this->categories_model->list_all();
 		$data['config'] = $this->bw_config->load_admin('items');
@@ -599,7 +597,6 @@ class Admin extends CI_Controller {
 		
 	}
 
-
 	/**
 	 * Fix orphan categories/items.
 	 * URI: /admin/category/orphans/$hash
@@ -619,6 +616,8 @@ class Admin extends CI_Controller {
 	 * @return	void
 	 */	
 	public function category_orphans($hash) {
+		$this->load->model('categories_model');
+		
 		// Abort if the category does not exist.
 		$data['category'] = $this->categories_model->get(array('hash' => $hash));
 		if($data['category'] == FALSE)
@@ -653,6 +652,7 @@ class Admin extends CI_Controller {
 				$this->categories_model->update_items_category($data['category']['id'], $this->input->post('category_id'));
 				$this->categories_model->update_parent_category($data['category']['id'], $this->input->post('category_id'));
 			}
+			
 			// Finally, delete the category and redirect.
 			if($this->categories_model->delete($data['category']['id']) == TRUE)
 				redirect('admin/edit/items');
@@ -881,7 +881,7 @@ class Admin extends CI_Controller {
 	 */
 	public function fees() {
 		$this->load->library('form_validation');
-		$this->load->model('items_model');
+		$this->load->model('fees_model');
 		
 		if($this->input->post('update_config') == 'Update') {
 			$data['config'] = $this->bw_config->load_admin('fees');
@@ -903,7 +903,7 @@ class Admin extends CI_Controller {
 			$key = $key[0];
 			if(is_numeric($key)) {
 				$id = array_keys($delete_rate); $id = $id[0];
-				if($this->items_model->delete_fee($id) == TRUE){
+				if($this->fees_model->delete($id) == TRUE){
 					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'The selected fee has been deleted.')));
 					redirect('admin/items/fees');
 				}
@@ -915,9 +915,9 @@ class Admin extends CI_Controller {
 		if($this->input->post('create_fee') == 'Add') {
 			if($this->form_validation->run('admin_add_fee') == TRUE) {
 				$rate = array('low' => $this->input->post('lower_limit'),
-							  'high' => $this->input->post('higher_limit'),
+							  'high' => $this->input->post('upper_limit'),
 							  'rate' => $this->input->post('percentage_fee'));
-				if($this->items_model->add_fee($rate) == TRUE) {
+				if($this->fees_model->add($rate) == TRUE) {
 					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
 					redirect('admin/items/fees');
 				}
@@ -928,8 +928,8 @@ class Admin extends CI_Controller {
 		if($returnMessage !== NULL)
 			$data['returnMessage'] = $returnMessage->message;
 
-		$data['config'] = $this->bw_config->load_admin('fees', TRUE);
-		$data['fees'] = $this->items_model->fees_list();
+		$data['config'] = $this->bw_config->load_admin('fees');
+		$data['fees'] = $this->fees_model->fees_list();
 		
 		$data['page'] = 'admin/fees';
 		$data['title'] = 'Order Fees';

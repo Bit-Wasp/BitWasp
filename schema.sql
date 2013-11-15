@@ -104,7 +104,7 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `country` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`)bw
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 INSERT INTO `bw_country_codes` (`id`, `country`) VALUES
@@ -379,6 +379,7 @@ CREATE TABLE IF NOT EXISTS `bw_escrow` (
   `vendor_id` int(9) NOT NULL,
   `order_id` int(9) NOT NULL,
   `amount` decimal(20,8) NOT NULL,
+  `fee` decimal(20,8) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 

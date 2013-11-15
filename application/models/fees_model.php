@@ -79,15 +79,17 @@ class Fees_model extends CI_Model {
 		$order_price = round($order_price, 8, PHP_ROUND_HALF_UP);
 
 		// Loop through fee list, checking if: fee['low'] < order_price <= fee[high]
-		foreach($fees_list as $fee) {
+		if($fees_list !== FALSE) {
+			foreach($fees_list as $fee) {
 			
-			if($fee['low'] < $order_price && $order_price <= $fee['high']) {
-				$rate = $fee['rate'];
-				$cost = $fee['rate']/100*$order_price;
-				$cost = ($cost < $minimum_fee) ? $minimum_fee : $cost;
-				break;
-			}
-		}	
+				if($fee['low'] < $order_price && $order_price <= $fee['high']) {
+					$rate = $fee['rate'];
+					$cost = $fee['rate']/100*$order_price;
+					$cost = ($cost < $minimum_fee) ? $minimum_fee : $cost;
+					break;
+				}
+			}	
+		}
 
 		if(!isset($cost)){
 			// Load the default rate as we haven't found an applicable fee range yet.

@@ -45,7 +45,7 @@ class Escrow_model extends CI_Model {
 	 */	
 	public function add($info) {
 		$update = array('user_hash' => $info['buyer_hash'],
-						'value' => (0-$info['amount']));
+						'value' => (0-$info['amount']-$info['fee']));
 		unset($info['buyer_hash']);
 		
 		// Debit buyers account. 
@@ -124,11 +124,13 @@ class Escrow_model extends CI_Model {
 	 */					
 	public function balance() {
 
-		switch(strtolower($this->current_user->user_role)) {
-			case 'buyer':
+		switch($this->current_user->user_role) {
+			case 'Buyer':
+				$this->db->select('amount, fee');
 				$this->db->where('buyer_id', $this->current_user->user_id);
 				break;
-			case 'vendor':
+			case 'Vendor':
+				$this->db->select('amount');
 				$this->db->where('vendor_id', $this->current_user->user_id);
 				break;
 			default:
@@ -136,14 +138,13 @@ class Escrow_model extends CI_Model {
 				break;
 		}
 		
-		$this->db->select('amount');
 		$query = $this->db->get('escrow');
 		if($query->num_rows() == 0)
 			return 0.00000000;
 			
 		$balance = 0.00000000;
 		foreach($query->result_array() as $row) {
-			$balance += (float)$row['amount'];
+			$balance += (float)($this->current_user->user_role == 'Buyer') ? (float)($row['amount']+$row['fee']) : (float)($row['amount']);
 		}
 		return $balance;		
 	}
@@ -164,29 +165,46 @@ class Escrow_model extends CI_Model {
 		if($escrow == FALSE)
 			return FALSE;
 
+		$amount = $escrow['amount'];
+
+		$fee_recipient = 'admin';
+
 		// Determine who is the sender/recipient.
 		switch($user){
+			// Escrow - return to buyer minus fee.
 			case 'buyer':
 				$recipient = $escrow['buyer_id'];
 				$sender = $escrow['vendor_id']; // Need to add this for disputes later.
 				break;
+			// Escrow - pay vendor sale cost.
 			case 'vendor': 
 				$recipient = $escrow['vendor_id'];// explicitly set a current_user flag here
 				$sender = $escrow['buyer_id'];
+				break;
+			// Buyer wishes to back out of an order. 
+			case 'buyer_cancel':
+				$recipient = $escrow['buyer_id'];
+				$sender = $escrow['vendor_id'];
+				$amount = $escrow['amount']+$escrow['fee'];
+				$fee_recipient = 'buyer';
 				break;
 			default:
 				return FALSE;
 				break;
 		}
-		
+
 		$recipient = $this->accounts_model->get(array('id' => $recipient));
 		$sender = $this->accounts_model->get(array('id' => $sender));
 		
 		$credits = array('user_hash' => $recipient['user_hash'],
-						 'value' => (float)$escrow['amount']);
+						 'value' => (float)$amount);
 		if( $this->bitcoin_model->update_credits(array($credits)) == TRUE) {
 			
-			if($user == 'vendor'){
+			if($fee_recipient == 'admin' && $escrow['fee'] > 0) 
+				if($this->bw_bitcoin->move('main','fees',$escrow['fee']) == TRUE)
+					$this->logs_model->add('Pay Function','Unable to move fee to account','An error was encountered moving a fee of BTC '.$escrow['fee'].' from "main" to "fees". Please ensure that the balance in main is kept topped up.','Error');
+			
+			if($user == 'vendor') {
 				$this->order_model->set_finalized($order_id); 
 							
 				$message = ($message == NULL) ? "Order #$order_id" : $message;
@@ -203,7 +221,7 @@ class Escrow_model extends CI_Model {
 				$this->bitcoin_model->add_pending_txn($debit_txn);						
 			
 				// Record the transaction in the recipients account.
-				$credit_txn = array( 'txn_id' => $message,
+				$credit_txn = array('txn_id' => $message,
 									'user_hash' => $recipient['user_hash'],
 									'value' => (float)$escrow['amount'],
 									'confirmations' => '>50',

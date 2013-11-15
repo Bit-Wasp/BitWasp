@@ -94,25 +94,27 @@ class Orders extends CI_Controller {
 			if($current_order == FALSE) 	redirect('order/list');
 			
 			// If the refund goes through, and cancelling it works:
-			if(	$this->escrow_model->pay($current_order['id'], 'buyer') == TRUE &&
-				$this->order_model->cancel($current_order['id']) == TRUE ){
+			if(	$this->escrow_model->pay($current_order['id'], 'buyer_cancel') == TRUE){
+				
+				if($this->order_model->cancel($current_order['id']) == TRUE ){
+						
+					// Send message to vendor
+					$data['from'] = $this->current_user->user_id;
+					$details = array('username' => $current_order['vendor']['user_name'],
+									 'subject' => "Order #{$current_order['id']} has been cancelled.");
+					$details['message'] = "{$this->current_user->user_name} has cancelled their order with you for the following items:<br /><br />\n";
+					for($i = 0; $i < count($current_order['items']); $i++){
+						$details['message'] .= "{$current_order['items'][$i]['quantity']} x {$current_order['items'][$i]['name']}<br />\n";
+					}
+					$details['message'] .= "<br />Total price: {$current_order['currency']['symbol']} {$current_order['price']}";
 					
-				// Send message to vendor
-				$data['from'] = $this->current_user->user_id;
-				$details = array('username' => $get['vendor']['user_name'],
-								 'subject' => "Order #{$get['id']} has been cancelled.");
-				$details['message'] = "{$this->current_user->user_name} has cancelled their order with you for the following items:<br /><br />\n";
-				for($i = 0; $i < count($get['items']); $i++){
-					$details['message'] .= "{$get['items'][$i]['quantity']} x {$get['items'][$i]['name']}<br />\n";
+					// Prepare the input.
+					$message = $this->bw_messages->prepare_input($data, $details);
+					$message['order_id'] = $current_order['id'];
+					$this->messages_model->send($message);
+					
+					redirect('order/list');
 				}
-				$details['message'] .= "<br />Total price: {$get['currency']['symbol']}{$get['price']}";
-				
-				// Prepare the input.
-				$message = $this->bw_messages->prepare_input($data, $details);
-				$message['order_id'] = $get['id'];
-				$this->messages_model->send($message);
-				
-				redirect('order/list');
 			}
 		}
 
@@ -390,13 +392,14 @@ class Orders extends CI_Controller {
 
 		if($this->form_validation->run('order_place') == TRUE) {
 
-			if($balance <= 0 || $balance < $data['order']['price_b']) {
+			if($balance <= 0 || $balance < ($data['order']['price']+$data['fee'])) {
 				$data['returnMessage'] = 'You have insufficient funds to place this order. Please top up and try again';
 			} else {
 				$escrow = array('order_id' => $data['order']['id'],
 								'buyer_id' => $this->current_user->user_id,
 								'vendor_id' => $data['order']['vendor']['id'],
 								'buyer_hash' => $this->current_user->user_hash,
+								'fee' => $data['fee'],
 								'amount' => $data['order']['price']);			
 				
 				if($this->escrow_model->add($escrow) == FALSE) {

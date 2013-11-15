@@ -903,7 +903,7 @@ class Admin extends CI_Controller {
 			$key = $key[0];
 			if(is_numeric($key)) {
 				$id = array_keys($delete_rate); $id = $id[0];
-				if($this->fees_model->delete_fee($id) == TRUE){
+				if($this->fees_model->delete($id) == TRUE){
 					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'The selected fee has been deleted.')));
 					redirect('admin/items/fees');
 				}
@@ -917,7 +917,7 @@ class Admin extends CI_Controller {
 				$rate = array('low' => $this->input->post('lower_limit'),
 							  'high' => $this->input->post('upper_limit'),
 							  'rate' => $this->input->post('percentage_fee'));
-				if($this->fees_model->add_fee($rate) == TRUE) {
+				if($this->fees_model->add($rate) == TRUE) {
 					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
 					redirect('admin/items/fees');
 				}

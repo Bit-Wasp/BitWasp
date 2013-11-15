@@ -263,7 +263,7 @@ class Bw_bitcoin {
 	 * @param		string	$from
 	 * @param		string	$to
 	 * @param		float	$amount
-	 * @return		bool
+	 * @return		boolean
 	 */			
 	public function move($from, $to, $amount) {
 		return $this->CI->jsonrpcclient->move($from, $to, (float)$amount);
@@ -570,7 +570,7 @@ class Bw_bitcoin {
 	 * Function to query the selected bitcoin price index provider
 	 * for the latest exchange rates between USD/GBP/EUR.
 	 * 
-	 * @return		bool
+	 * @return		boolean
 	 */		
 	public function ratenotify() {
 		$this->CI->load->model('currencies_model');

@@ -48,7 +48,7 @@
 				<td><?php echo $fee['low']; ?></td>
 				<td><?php echo $fee['high']; ?></td>
 				<td><?php echo $fee['rate']; ?></td>
-				<td><input type='submit' name='delete_rate[<?php echo $fee['id']; ?>]' value='Delete' class="btn btn-mini"'); ?></td>
+				<td><input type='submit' name='delete_rate[<?php echo $fee['id']; ?>]' value='Delete' class="btn btn-mini" /></td>
 			  </tr>
 			</form>
 <?php } ?>

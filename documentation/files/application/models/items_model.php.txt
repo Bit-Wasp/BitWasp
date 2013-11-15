@@ -176,48 +176,7 @@ class Items_model extends CI_Model {
 			
 		return FALSE;
 	}
-	
-	/**
-	 * Fees List
-	 * 
-	 * This function loads an array containing information about the 
-	 * fee's. fee[low] < order_price <= fee[high] will have rate fee[rate]
-	 * Returns an array on success, and FALSE on failure.
-	 * 
-	 * @return	array/FALSE
-	 */
-	public function fees_list() {
-		$this->db->order_by('low','ASC');
-		$query = $this->db->get('fees');
-		return ($query->num_rows > 0) ? $query->result_array() : FALSE;
-	}
-	
-	/**
-	 * Delete Fee
-	 * 
-	 * This function deletes an entry in the fee's table, based on the $id.
-	 * 
-	 * @param	int	$id
-	 * @return	boolean
-	 */
-	public function delete_fee($id) {
-		$this->db->where('id', $id);
-		return ($this->db->delete('fees') == TRUE) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Add Fee
-	 * 
-	 * This function adds an entry to the fee's table. $fee is an array
-	 * which contains keys for 'low', the lower limit of the range, 
-	 * 'high', the upper limit of the range, and 'rate', the range. 
-	 * 
-	 * @param	array
-	 * @return	boolean
-	 */
-	public function add_fee($fee) {
-		return ($this->db->insert('fees', $fee) == TRUE) ? TRUE : FALSE;
-	}
+		
 	/**
 	 * Get List Count
 	 * 
