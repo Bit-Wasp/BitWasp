@@ -35,5 +35,11 @@
 			  <span class="span3">OpenSSL Keysize</span>
 			  <span class="span7"><?php echo $config['openssl_keysize']; ?></span>
 			</div>
+			
+			<div class="row-fluid">
+			  <div class="span3">Global Proxy</div>
+			  <div class="span5"><?php echo ($config['global_proxy_type'] == 'Disabled') ? 'Disabled' : '('.$config['global_proxy_type'].') '.$config['global_proxy_url'];?></div>
+			</div>
+			  			
 		  </div>
 		</div>

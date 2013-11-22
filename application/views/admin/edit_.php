@@ -43,9 +43,26 @@
 					<?php }	?>
 				  </select>
 				</div>
-			    <span class="help-inline"><?php echo form_error('openssl_keysize'); ?></span>			    
+     	        <span class="help-inline"><?php echo form_error('openssl_keysize'); ?></span>			    
     	      </div>
     	      
+			  <div class="row-fluid">
+				<div class="span3">Global Proxy</div>
+				<div class="span7">
+				  <select name="global_proxy_type" class="span3" autocomplete="off">
+					<option value='HTTP' <?php echo ($config['global_proxy_type'] == 'HTTP') ? 'selected="selected"' : NULL ; ?>>HTTP</option>
+					<option value='SOCKS5' <?php echo ($config['global_proxy_type'] == 'SOCKS5') ? 'selected="selected"' : NULL ; ?>>SOCKS5</option>
+				  </select>
+				  <input type='text' name='global_proxy_url' value='<?php echo $config['global_proxy_url']; ?>' />
+				</div>
+			  </div>
+			  <div class="row-fluid">
+				<div class="span7 offset3">Disabled <input type='checkbox' name='global_proxy_disabled' value='1' <?php echo ($config['global_proxy_type'] == 'Disabled') ? 'checked' : NULL; ?> /></div>
+  			  </div>
+  			  <div class="row-fluid">
+				<span class="help-inline offset3"><?php if(isset($proxy_error)) echo $proxy_error; ?> <?php echo form_error('global_proxy_type'); ?> <?php echo form_error('global_proxy_url'); ?></span>			    
+  			  </div>
+			  
               <div class="form-actions">
 		        <input type='submit' value='Update' class='btn btn-primary' />
                 <?php echo anchor('account','Cancel', array('class'=>'returnLink btn'));?>

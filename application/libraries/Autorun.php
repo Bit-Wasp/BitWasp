@@ -1,4 +1,5 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+
 /**
  * Autorun Library
  *
@@ -11,7 +12,6 @@
  * @category	Autorun
  * @author		BitWasp
  */
-
 class Autorun {
 
 	public $CI; 
@@ -61,15 +61,15 @@ class Autorun {
 		
 		$jobs = $this->CI->autorun_model->load_all();
 		
-		foreach(glob($this->path."*.php") as $filename){
+		foreach(glob($this->path."*.php") as $filename) {
 			$class_name = pathinfo($filename, PATHINFO_FILENAME);
 			
 			require_once($filename);
 			$class = new $class_name;
 			
 			// If the job isn't in the job's list, add it.
-			if($run_jobs == TRUE){
-				if(!isset($jobs[$class->config['index']])){
+			if($run_jobs == TRUE) {
+				if(!isset($jobs[$class->config['index']])) {
 					$config = $class->config;
 					$config = array_map('htmlentities', $config);
 					$this->CI->autorun_model->add($class->config);
@@ -82,7 +82,7 @@ class Autorun {
 					$job = $jobs[$class->config['index']];
 					
 					// If the interval has passed. Run again!
-					if( $job['interval'] !== '0' && $job['last_update'] < (time()-$job['interval_s'])){
+					if( $job['interval'] !== '0' && $job['last_update'] < (time()-$job['interval_s'])) {
 						if($class->job() == TRUE)
 							$this->CI->autorun_model->set_updated($class->config['index']);					
 					}
@@ -96,4 +96,4 @@ class Autorun {
 	}
 };
 
-
+/* End of File: Autorun.php */

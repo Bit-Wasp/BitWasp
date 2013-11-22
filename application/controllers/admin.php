@@ -87,15 +87,38 @@ class Admin extends CI_Controller {
 		
 		if($this->form_validation->run('admin_edit_') == TRUE) {
 			// Determine which settings have changed. Filter unchanged.
+			$changes['global_proxy_type'] = ($this->input->post('global_proxy_type') !== $data['config']['global_proxy_type']) ? $this->input->post('global_proxy_type') : NULL ;
+			$changes['global_proxy_url'] = ($this->input->post('global_proxy_url') !== $data['config']['global_proxy_url']) ? $this->input->post('global_proxy_url') : NULL ;
 			$changes['site_description'] = ($this->input->post('site_descrpition') !== $data['config']['site_description']) ? $this->input->post('site_description') : NULL;
 			$changes['site_title'] = ($this->input->post('site_title') !== $data['config']['site_title']) ? $this->input->post('site_title') : NULL;
 			$changes['openssl_keysize'] = ($this->input->post('openssl_keysize') !== $data['config']['openssl_keysize']) ? $this->input->post('openssl_keysize') : NULL;
 			$changes['allow_guests'] = ($this->input->post('allow_guests') !== $data['config']['allow_guests']) ? $this->input->post('allow_guests') : NULL;
 			$changes = array_filter($changes, 'strlen');
 	
-			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated.','Info');
+			// If the global proxy is disabled, unset the type and url.
+			if($this->input->post('global_proxy_disabled') == '1'){
+				$changes['global_proxy_type'] = 'Disabled';
+				$changes['global_proxy_url'] = '';
+			} else {
+				// Otherwise, if either the proxy type or url is changing,
+				// then issue an override to the curl library and make
+				// a test request. If this fails, prevent the update and
+				// display an error.
+				if(isset($changes['global_proxy_type']) || isset($changes['global_proxy_url'])) {				
+					$override['proxy_type'] = (isset($changes['global_proxy_type'])) ? $changes['global_proxy_type'] : $data['config']['global_proxy_type'];
+					$override['proxy_url'] = (isset($changes['global_proxy_url'])) ? $changes['global_proxy_url'] : $data['config']['global_proxy_url'];
+					$this->load->library('bw_curl', $override);
+					$test = $this->bw_curl->get_request('https://duckduckgo.com');
+					if($test == FALSE) {
+						unset($changes);
+						$data['proxy_error'] = 'Your proxy settings are incorrect, please check your entries.';
+					}
+				}
+			}
 	
-			if($this->config_model->update($changes) == TRUE)
+			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated.','Info');
+
+			if(isset($changes) && $this->config_model->update($changes) == TRUE)
 				redirect('admin');			
 		}
 		$data['page'] = 'admin/edit_';
@@ -151,22 +174,23 @@ class Admin extends CI_Controller {
 		$data['title'] = $this->nav['autorun']['heading'];
 		$data['jobs'] = $this->autorun_model->load_all();
 		
-		
 		if($this->form_validation->run('admin_edit_autorun') == TRUE){
 			$this->load->library('autorun',FALSE);
 			
-			// Load the array of jobs, and the specified intervals.
+			// Load the POST array of jobs, and the specified intervals.
 			$jobs = $this->input->post('jobs');
 			$update = FALSE;
+			
 			// Load the array of disabled jobs.
 			$disabled_jobs = $this->input->post('disabled_jobs');
+			
 			foreach($jobs as $index => $interval){
 				// Intervals should always be numeric. 
 				if(!is_numeric($interval))
 					redirect('admin/autorun');
 					
 				// Set the interval to zero if a job is disabled.
-				if($data['jobs'][$index] !== '0' && $disabled_jobs[$index] == '1'){
+				if($data['jobs'][$index] !== '0' && (isset($disabled_jobs[$index]) && $disabled_jobs[$index] == '1')) {
 					if($this->autorun_model->set_interval($index, '0') == TRUE)
 						$update = TRUE;
 				} else {
@@ -183,9 +207,11 @@ class Admin extends CI_Controller {
 					}
 				}
 			}
+			
 			// If the update happened successfully, redirect!
 			if($update)
-				redirect('admin/autorun');
+				echo 'asdf';
+				//redirect('admin/autorun');
 		}
 
 		$data['config'] = $this->bw_config->load_admin('autorun');
@@ -290,7 +316,7 @@ class Admin extends CI_Controller {
 		
 		// If the Settings form was submitted:
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
-			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
+			if($ethis->form_validation->run('admin_edit_bitcoin') == TRUE) {
 			
 				// Alter the transaction purging period.
 				$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_transactions_after']) ? $this->input->post('delete_transactions_after') : NULL ;
@@ -1239,13 +1265,43 @@ class Admin extends CI_Controller {
 	 * @param	string	$param
 	 * @return	boolean
 	 */
-	public function check_price_index($param){
+	public function check_price_index($param) {
 		$config = $this->bw_config->price_index_config;
 		return (is_array($config[$param]) || $param == 'Disabled') ? TRUE : FALSE;
 	}
 	
 	/**
-	 * Check session timeout.
+	 * Check Proxy Type
+	 * 
+	 * Check the supplied parameter is an acceptable proxy type.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_proxy_type($param) {
+		return ($this->general->matches_any($param, array('HTTP','SOCKS5')) == TRUE ) ? TRUE : FALSE ;
+	}
+	
+	/**
+	 * Check Proxy URL
+	 * 
+	 * Checks the supplied ip:port against a regex. $param may be an 
+	 * empty string if the proxy is disabled, otherwise it uses 
+	 * preg_match to verify the regex. Returns TRUE if $param is valid,
+	 * and FALSE on invalid input.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_proxy_url($param) {
+		if($param == '')
+			return TRUE;
+		preg_match('/^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}):([0-9]{1,5})$/', $param, $match);
+		return (count($match) > 0) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Session Timeout.
 	 * 
 	 * Session timeouts can be a minimum of 5 minutes inactivity before
 	 * logging a user out, to an admin defined interval. The default value
@@ -1263,8 +1319,8 @@ class Admin extends CI_Controller {
 	 * Check Bitcoin Balance Method
 	 * 
 	 * Checks if the bitcoin balance method is an allowed value:
-	 * '' for disabled, 'ecdsa' to generate private keys, and 'electrum'
-	 * for the deterministic addresses.
+	 * 'Disabled' for disabled, 'ECDSA' to generate private keys, and 
+	 * 'Electrum' for the deterministic addresses.
 	 * 
 	 * @param	string	$param
 	 * return	boolean

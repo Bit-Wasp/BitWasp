@@ -46,7 +46,7 @@
               <div class="control-group">
                 <label class="control-label" for="currency">Currency</label>
                 <div class="controls">
-				  <select name='currency' class='span5'>
+				  <select name='currency' class='span5' autocomplete="off">
 <?php foreach ($currencies as $currency): ?>
 		            <option value="<?php echo $currency['id'];?>" <?php echo ($item['currency']['id'] == $currency['id']) ? 'selected="selected"' : '';?>><?php echo $currency['name'];?> (<?php echo $currency['symbol'];?>)</option>
 <?php endforeach; ?>
@@ -54,7 +54,21 @@
                   <span class="help-inline"><?php echo form_error('currency'); ?></span>
                 </div>
               </div>
-            
+
+			  <div class="control-group">
+				<label class="control-label" for="ship_from">Ship From</label>
+				<div class="controls">
+				  <select name="ship_from" autocomplete="off">
+<?php foreach($locations as $location) { 
+	if($location['id'] == '1') continue; 
+?>
+					<option value='<?php echo $location['id']; ?>' <?php echo ($location['id'] == $item['ship_from']) ? 'selected="selected"' : ''; ?>><?php echo $location['country']; ?></option>
+<?php } ?>
+				  </select>
+                  <span class="help-inline"><?php echo form_error('ship_from'); ?></span>
+				</div>
+			  </div>
+
               <div class="form-actions">
 		        <input type='submit' value='Update' class='btn btn-primary' />
                 <?php echo anchor('listings','Cancel', array('class'=>'returnLink btn'));?>

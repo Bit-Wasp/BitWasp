@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Autorun_model extends CI_Model {
 
 	/**
@@ -74,7 +73,6 @@ class Autorun_model extends CI_Model {
 			}
 			
 			$results[$result['index']]['time_f'] = $this->general->format_time($result['last_update']);
-			unset($results[$result['index']]['index']);
 		}
 		return $results;
 	}

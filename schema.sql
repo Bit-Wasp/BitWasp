@@ -99,12 +99,14 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (23, 'auto_finalize_threshold', '0'),
 (24, 'balance_backup_method', 'Disabled'),
 (25, 'minimum_fee', '0.0003'),
-(26, 'default_rate', '0.25');
+(26, 'default_rate', '0.25'),
+(27, 'global_proxy_url', ''),
+(28, 'global_proxy_type', 'Disabled');
 
 CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `country` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)bw
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 INSERT INTO `bw_country_codes` (`id`, `country`) VALUES
@@ -452,6 +454,7 @@ CREATE TABLE IF NOT EXISTS `bw_items` (
   `main_image` varchar(20) NOT NULL,
   `add_time` int(20) NOT NULL,
   `hidden` enum('0','1') NOT NULL,
+  `ship_from` int(5) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
@@ -546,6 +549,14 @@ CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+
+CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `item_id` int(9) NOT NULL,
+  `destination_id` varchar(10) NOT NULL,
+  `cost` decimal(20,8) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
   `id` int(9) NOT NULL AUTO_INCREMENT,

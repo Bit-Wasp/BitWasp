@@ -63,6 +63,59 @@ class Items extends CI_Controller {
 		$data['items'] = $this->items_model->get_list( array('category' => $data['category']['id']) );
 		$this->load->library('Layout', $data);
 	}
+
+	/**
+	 * Location
+	 * 
+	 * Load all items that are shipped to a specific location ID.
+	 * URI: /location/$hash
+	 * 
+	 * @access	public
+	 * @see		Models/Items_Model
+	 * @see		Models/Categories_Model
+	 * 
+	 * @param	string
+	 * @return	void
+	 */
+	public function location($location = NULL) {
+		$this->load->model('shipping_costs_model');
+	
+		// Load any posted location information.
+		if($this->input->post('location_submit') == 'Go') {
+			$post_location = $this->input->post('location');
+			$to = ($this->general_model->location_by_id($post_location) !== FALSE) ? "location/$post_location" : "items";
+			redirect($to);
+		}
+		
+		// If the user requests an undeclared location, redirect to main page.
+		if($location == '1')
+			redirect('items');	
+
+		// If they request a domestic location, roll with that. 
+		if($location == 'domestic') {
+			$this->load->model('accounts_model');
+			$user = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
+			$opt['ship_from'] = $user['location'];
+			$data['location'] = $this->general_model->location_by_id($user['location']);
+
+			$data['items'] = $this->items_model->get_list($opt);
+		} else {
+
+			// Load the location.
+			$data['location'] = $this->general_model->location_by_id($location);
+			if($data['location'] == FALSE)
+				redirect('items');
+				
+			// Generate a list of items using a list
+			$opt['item_id_list'] = $this->shipping_costs_model->list_by_location($location);
+			$data['items'] = $this->items_model->get_list($opt);
+		}
+		$data['title'] = 'Items shipped to '.$data['location'];
+		$data['page'] = 'items/index';
+		$this->load->library('Layout', $data);
+	}
+
+
 	
 	/**
 	 * Load a specific item

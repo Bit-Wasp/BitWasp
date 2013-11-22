@@ -15,8 +15,6 @@
  * @category	User Inactivity
  * @author		BitWasp
  */
-
-
 class Backup_Wallet {
 
 	/**
@@ -57,10 +55,10 @@ class Backup_Wallet {
 			return FALSE;
 		
 		// Check if there are any accounts/bitcoind is offline.
-		$accounts = $this->CI->bw_bitcoin->listaccounts();
+		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
 		if(count($accounts) == 0 || $this->CI->general->matches_any($accounts, array(NULL, FALSE)) ) 
 			return FALSE;
-
+			
 		$bitcoin_info = $this->CI->bw_bitcoin->getinfo();
 		//if($bitcoin_info['testnet'] == TRUE)
 			//return FALSE;
@@ -77,15 +75,17 @@ class Backup_Wallet {
 			$var = "max_".$account."_balance";
 			// Do not touch the accounts "", "topup", ones with a zero balance, or 
 			// accounts whos balance is not above the backup threshold.
-			if(!isset($this->CI->bw_config->$var) || $account == 'topup' || $balance <= 0 || $balance < $this->CI->bw_config->$var) 
+			echo $account . " "; var_dump($this->CI->bw_config->$var);echo '<br />';
+			if(!isset($this->CI->bw_config->$var) || $account == 'topup' || $balance <= 0 || isset($this->CI->bw_config->$var) && $balance < $this->CI->bw_config->$var) 
 				continue;
 
 			// Send the excess amount to the newly generated public address.
 			$send_amount = ($balance-$this->CI->bw_config->$var);
-
+	
+			echo '<br />actual run:<br />';
 			// Send coins to newly generated ECDSA keypair's address
 			if($this->CI->bw_config->balance_backup_method == 'ECDSA'){
-				
+				echo $account."<br />";
 				// Load the ECDSA library.
 				$this->CI->load->library('bitcoin_crypto');
 				
