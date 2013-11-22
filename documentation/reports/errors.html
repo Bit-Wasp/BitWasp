@@ -109,6 +109,7 @@
                                                                                                     <li><a href="#application/models/items_model.php"><i class="icon-file"></i> application/models/items_model.php</a></li>
                                                                                                     <li><a href="#application/models/order_model.php"><i class="icon-file"></i> application/models/order_model.php</a></li>
                                                                                                     <li><a href="#application/models/auth_model.php"><i class="icon-file"></i> application/models/auth_model.php</a></li>
+                                                                                                    <li><a href="#application/models/shipping_costs_model.php"><i class="icon-file"></i> application/models/shipping_costs_model.php</a></li>
                                                                                                     <li><a href="#application/language/english/form_validation_lang.php"><i class="icon-file"></i> application/language/english/form_validation_lang.php</a></li>
                                                                                                     <li><a href="#application/errors/error_general.php"><i class="icon-file"></i> application/errors/error_general.php</a></li>
                                                                                                     <li><a href="#application/errors/error_db.php"><i class="icon-file"></i> application/errors/error_db.php</a></li>
@@ -155,6 +156,7 @@
                                                                                                     <li><a href="#application/libraries/Autorun/Delete_Transaction_History.php"><i class="icon-file"></i> application/libraries/Autorun/Delete_Transaction_History.php</a></li>
                                                                                                     <li><a href="#application/libraries/Autorun/Version_Checker.php"><i class="icon-file"></i> application/libraries/Autorun/Version_Checker.php</a></li>
                                                                                                     <li><a href="#application/libraries/Bw_bitcoin.php"><i class="icon-file"></i> application/libraries/Bw_bitcoin.php</a></li>
+                                                                                                    <li><a href="#application/libraries/Bw_curl.php"><i class="icon-file"></i> application/libraries/Bw_curl.php</a></li>
                                                                                                     <li><a href="#application/libraries/Bw_session.php"><i class="icon-file"></i> application/libraries/Bw_session.php</a></li>
                                                                                                     <li><a href="#application/views/admin/topup_addresses.php"><i class="icon-file"></i> application/views/admin/topup_addresses.php</a></li>
                                                                                                     <li><a href="#application/views/admin/autorun.php"><i class="icon-file"></i> application/views/admin/autorun.php</a></li>
@@ -235,7 +237,6 @@
                                                                                                     <li><a href="#application/config/profiler.php"><i class="icon-file"></i> application/config/profiler.php</a></li>
                                                                                                     <li><a href="#application/config/doctypes.php"><i class="icon-file"></i> application/config/doctypes.php</a></li>
                                                                                                     <li><a href="#application/config/database.php"><i class="icon-file"></i> application/config/database.php</a></li>
-                                                                                                    <li><a href="#application/logs/log-2013-10-30.php"><i class="icon-file"></i> application/logs/log-2013-10-30.php</a></li>
                                                                                                     <li><a href="#application/controllers/accounts.php"><i class="icon-file"></i> application/controllers/accounts.php</a></li>
                                                                                                     <li><a href="#application/controllers/listings.php"><i class="icon-file"></i> application/controllers/listings.php</a></li>
                                                                                                     <li><a href="#application/controllers/bitcoin.php"><i class="icon-file"></i> application/controllers/bitcoin.php</a></li>
@@ -887,6 +888,37 @@
                         </div>
                                     </div>
                             <div class="package-contents">
+                                            <a name="application/models/shipping_costs_model.php" id="application/models/shipping_costs_model.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/models/shipping_costs_model.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>25</td>
+                                        <td>No summary for method for_item()</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
                                             <a name="application/language/english/form_validation_lang.php" id="application/language/english/form_validation_lang.php"></a>
                         <h3>
                             <i class="icon-file"></i>
@@ -1164,7 +1196,7 @@
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>258</td>
+                                        <td>276</td>
                                         <td>No summary for method reload()</td>
                                     </tr>
                                                             </tbody>
@@ -3068,7 +3100,7 @@
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>33</td>
+                                        <td>31</td>
                                         <td>No summary for property $CI</td>
                                     </tr>
                                                             </tbody>
@@ -3235,7 +3267,7 @@
                         <h3>
                             <i class="icon-file"></i>
                             application/libraries/Autorun/Version_Checker.php
-                            <small style="float: right;padding-right: 10px;">3</small>
+                            <small style="float: right;padding-right: 10px;">2</small>
                         </h3>
                         <div>
                             <table class="table markers table-bordered">
@@ -3256,11 +3288,6 @@
                                         <td>error</td>
                                         <td>30</td>
                                         <td>No summary for property $CI</td>
-                                    </tr>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>59</td>
-                                        <td>No summary for method call_curl()</td>
                                     </tr>
                                                             </tbody>
                             </table>
@@ -3290,7 +3317,38 @@
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>21</td>
+                                        <td>20</td>
+                                        <td>No summary for property $CI</td>
+                                    </tr>
+                                                            </tbody>
+                            </table>
+                        </div>
+                                    </div>
+                            <div class="package-contents">
+                                            <a name="application/libraries/Bw_curl.php" id="application/libraries/Bw_curl.php"></a>
+                        <h3>
+                            <i class="icon-file"></i>
+                            application/libraries/Bw_curl.php
+                            <small style="float: right;padding-right: 10px;">2</small>
+                        </h3>
+                        <div>
+                            <table class="table markers table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                    <th>Description</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>0</td>
+                                        <td>No summary was found for this file</td>
+                                    </tr>
+                                                                    <tr>
+                                        <td>error</td>
+                                        <td>15</td>
                                         <td>No summary for property $CI</td>
                                     </tr>
                                                             </tbody>
@@ -5408,32 +5466,6 @@
                         </div>
                                     </div>
                             <div class="package-contents">
-                                            <a name="application/logs/log-2013-10-30.php" id="application/logs/log-2013-10-30.php"></a>
-                        <h3>
-                            <i class="icon-file"></i>
-                            application/logs/log-2013-10-30.php
-                            <small style="float: right;padding-right: 10px;">1</small>
-                        </h3>
-                        <div>
-                            <table class="table markers table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Line</th>
-                                    <th>Description</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                                                    <tr>
-                                        <td>error</td>
-                                        <td>0</td>
-                                        <td>No summary was found for this file</td>
-                                    </tr>
-                                                            </tbody>
-                            </table>
-                        </div>
-                                    </div>
-                            <div class="package-contents">
                                             <a name="application/controllers/accounts.php" id="application/controllers/accounts.php"></a>
                         <h3>
                             <i class="icon-file"></i>
@@ -5618,12 +5650,12 @@
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>577</td>
+                                        <td>603</td>
                                         <td>No summary for method logs()</td>
                                     </tr>
                                                                     <tr>
                                         <td>error</td>
-                                        <td>946</td>
+                                        <td>972</td>
                                         <td>No summary for method topup_addresses()</td>
                                     </tr>
                                                             </tbody>
@@ -12628,7 +12660,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 15th, 2013 at 20:59.
+                    on November 22nd, 2013 at 11:55.
                 </section>
             </section>
         </section>

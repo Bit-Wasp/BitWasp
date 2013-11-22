@@ -470,35 +470,37 @@ class Users extends CI_Controller {
 	// Callback functions for for validation.
 	
 	/**
-	 * Check the supplied role ID is correct.
+	 * Check Captcha
+	 * 
+	 * Check the supplied captcha solution ($param) is correct.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */	
 	public function check_captcha($param) {
 		return $this->bw_captcha->check($param);
 	}
 	
 	/**
-	 * Check the supplied role ID is allowed.
+	 * Check Role
+	 * 
+	 * Check the supplied role ID ($param) is allowed.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */	
 	public function check_role($param) {
-		$allowed_values = ($this->bw_config->vendor_registration_allowed) ? array('1','2') : array('1');
-	
-		if($this->general->matches_any($param, $allowed_values))
-			return TRUE;
-			
-		return FALSE;
+		$allowed_values = ($this->bw_config->vendor_registration_allowed) ? array('1','2') : array('1');	
+		return ($this->general->matches_any($param, $allowed_values)) ? TRUE : FALSE;
 	}
 	
 	/**
-	 * Check if the supplied currency ID exists.
+	 * Check Valid Currency
+	 * 
+	 * Check if the supplied currency ID ($param) exists.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_valid_currency($param){
 		$this->load->model('currencies_model');
@@ -506,16 +508,15 @@ class Users extends CI_Controller {
 	}
 	
 	/**
-	 * Check the supplied location ID exists.
+	 * Check Location
+	 * 
+	 * Check the supplied location ID ($param) exists.
 	 *
-	 * @param	id
-	 * @return	bool
+	 * @param	id	$param
+	 * @return	boolean
 	 */
 	public function check_location($param) {
-		if($this->general_model->location_by_id($param) == TRUE)
-			return TRUE;
-			
-		return FALSE;
+		return ($this->general_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
 	}
 };
 

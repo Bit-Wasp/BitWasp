@@ -240,12 +240,30 @@ class Bw_config {
 	public $balance_backup_method 	= '';
 	
 	/**
+	 * Global Proxy Type
+	 * 
+	 * This setting determines the type of the proxy which is to be used
+	 * when making CURL requests. The default setting is 'Disabled'.
+	 */
+	public $global_proxy_type		= 'Disabled';
+	
+	/**
+	 * Global Proxy URL
+	 * 
+	 * This setting is for the host:port which is to be used when setting
+	 * a proxy. This will be used by the version checking job, and also
+	 * the exchange rates job. The default is unset, as the $global_proxy_type
+	 * parameter is disabled.
+	 */
+	public $global_proxy_url		= '';
+
+	/**
 	 * Constructor
 	 * 
 	 * Load the CodeIgniter framework, along with the config/currencies 
 	 * model, and the bitcoin index configuration.
 	 */
-	public function __construct(){
+	public function __construct() {
 		$this->CI = &get_instance();
 		
 		$this->CI->load->model('config_model');
@@ -294,9 +312,10 @@ class Bw_config {
 							'openssl_keysize' => $this->openssl_keysize,
 							'base_url' => $this->base_url,
 							'index_page' => $this->index_page,
-							'allow_guests' => $this->allow_guests);
+							'allow_guests' => $this->allow_guests,
+							'global_proxy_url' => $this->global_proxy_url,
+							'global_proxy_type' => $this->global_proxy_type);
 		} else if($panel == 'bitcoin') {
-			//$this->CI->load->library('bw_bitcoin');
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,
 							'electrum_mpk' => $this->electrum_mpk,
@@ -308,7 +327,7 @@ class Bw_config {
 				if(isset($this->CI->bw_config->$var))
 					$result[$var] = $this->CI->bw_config->$var;
 			}
-							
+			
 		} else if($panel == 'users') {
 			$result = array('registration_allowed' => $this->registration_allowed,
 							'vendor_registration_allowed' => $this->vendor_registration_allowed,

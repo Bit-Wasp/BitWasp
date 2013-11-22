@@ -14,8 +14,7 @@
  * @subpackage	Libraries
  * @category	Bitcoin
  * @author		BitWasp
- */  
-
+ */
 class Bw_bitcoin {
 	
 	public $CI;
@@ -61,23 +60,12 @@ class Bw_bitcoin {
 	 * @return		array/FALSE
 	 */
 	public function get_exchange_rates(){
+		$this->CI->load->library('bw_curl');
 		
 		$source = $this->CI->bw_config->bitcoin_rate_config();
 		$source_name = $this->CI->bw_config->price_index;
 		
-		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_URL, $source['url']);
-		curl_setopt($curl, CURLOPT_REFERER, "");
-		curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36");
-		curl_setopt($curl, CURLOPT_HEADER, 0);
-		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-		if(isset($source['proxy']) && is_array($source['proxy'])){
-			curl_setopt($curl, CURLOPT_PROXYTYPE, $source['proxy']['type']);
-			curl_setopt($curl, CURLOPT_PROXY, $source['proxy']['url']);
-		}
-		$json_result = curl_exec($curl);
-		curl_close($curl);
+		$json_result = $this->CI->bw_curl->get_request($source['url']);
 		
 		if($json_result == NULL)
 			return FALSE;
@@ -225,13 +213,12 @@ class Bw_bitcoin {
 	 * @param		string
 	 * @return		array
 	 */			
-	public function listaccounts() {
-		$tmp = (array)$this->CI->jsonrpcclient->listaccounts(0);
+	public function listaccounts($confirmations = 6) {
+		$tmp = (array)$this->CI->jsonrpcclient->listaccounts($confirmations);
 		$res = array();
 		foreach($tmp as $acc => $bal){
 			if(!preg_match('/\s+/', $acc) && $acc !== '')
-				$res[$acc] = $bal;
-			
+				$res[$acc] = (float)$bal;			
 		}
 		return $res;
 	}

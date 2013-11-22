@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Listings extends CI_Controller {
 
 	/**
@@ -62,6 +61,8 @@ class Listings extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('categories_model');
 		
+		$data['locations'] = $this->general_model->locations_list();
+		
 		// If the listing doesn't exist, or belong to this user, abort.
 		$data['item'] = $this->listings_model->get($item_hash);
 		if($data['item'] == FALSE)
@@ -70,7 +71,7 @@ class Listings extends CI_Controller {
 		if($this->form_validation->run('edit_listing') === TRUE) {
 			// Compare post values to the original, remove any NULL entries.
 			if($data['item']['price'] !== $this->input->post('price') ||
-			   $data['item']['currency']['id'] !== $this->input->post('currency')){
+			  $data['item']['currency']['id'] !== $this->input->post('currency')){
 				$changes['currency'] = $this->input->post('currency');
 				$changes['price'] = $this->input->post('price');
 			}
@@ -78,6 +79,7 @@ class Listings extends CI_Controller {
 			$changes['name'] = ($data['item']['name'] == $this->input->post('name')) ? NULL : $this->input->post('name');
 			$changes['description'] = ($data['item']['description'] == $this->input->post('description')) ? NULL : $this->input->post('description');
 			$changes['category'] = ($data['item']['category'] == $this->input->post('category')) ? NULL : $this->input->post('category');
+			$changes['ship_from'] = ($data['item']['ship_from'] == $this->input->post('ship_from')) ? NULL : $this->input->post('ship_from');
 			$changes = array_filter($changes, 'strlen');
 			
 			if(count($changes) > 0){
@@ -88,7 +90,6 @@ class Listings extends CI_Controller {
 				
 			// Refresh any changes.
 			$data['item'] = $this->listings_model->get($item_hash);
-				
 		}
 		
 		$data['page'] = 'listings/edit';
@@ -119,6 +120,8 @@ class Listings extends CI_Controller {
 		$data['page'] = 'listings/add';
 		$data['title'] = 'Add a Listing';
 		$data['local_currency'] = (array)$this->current_user->currency;
+		$data['locations'] = $this->general_model->locations_list();
+		
 		if($this->form_validation->run('add_listing') == TRUE){
 			
 			$properties = array('add_time' => time(),
@@ -130,7 +133,8 @@ class Listings extends CI_Controller {
 								'main_image' => 'default',
 								'name' => $this->input->post('name'),
 								'price' => $this->input->post('price'),
-								'vendor_hash' => $this->current_user->user_hash		
+								'vendor_hash' => $this->current_user->user_hash,
+								'ship_from' => $this->input->post('ship_from')
 						);
 			// Add the listing
 			if($this->listings_model->add($properties) == TRUE) {
@@ -299,8 +303,8 @@ class Listings extends CI_Controller {
 	/**
 	 * Check the supplied category ID exists.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_category_exists($param) {
 		$this->load->model('categories_model');
@@ -313,10 +317,12 @@ class Listings extends CI_Controller {
 	}
 	
 	/**
-	 * Check the supplied currency ID exists.
+	 * Check Currency Exists
+	 * 
+	 * Check the supplied currency ID ($param) exists.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
 	public function check_currency_exists($param) {
 		$currencies = $this->currencies_model->get();
@@ -328,13 +334,27 @@ class Listings extends CI_Controller {
 	}
 	
 	/**
+	 * Check Is Positive
+	 * 
 	 * Check the supplied parameter is a positive number.
 	 *
-	 * @param	int
-	 * @return	bool
+	 * @param	int	$param
+	 * @return	boolean
 	 */
-	public function check_price_positive($param) {
-		return ($param > 0) ? TRUE : FALSE;
+	public function check_is_positive($param) {
+		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
+	}
+	
+	/**
+	 * Check Location
+	 * 
+	 * Check the supplied location ID ($param) exists.
+	 *
+	 * @param	id	$param
+	 * @return	boolean
+	 */
+	public function check_location($param) {
+		return ($param !== '1' && $this->general_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
 	}
 };
 

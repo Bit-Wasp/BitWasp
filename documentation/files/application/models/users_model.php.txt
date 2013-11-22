@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Users_model extends CI_Model {
 	
 	/**
@@ -55,7 +54,6 @@ class Users_model extends CI_Model {
 	 */				
 	public function remove($user_hash) {}
 	
-	// Load a users information, by hash/name/id.
 	/**
 	 * Get
 	 * 

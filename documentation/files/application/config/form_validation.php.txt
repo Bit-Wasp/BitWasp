@@ -24,21 +24,21 @@ $config = array('register_form'=>array(
 												'label' => 'message PIN',
 												'rules' => 'trim|required'
 										),
-										array(	'field' => 'message_pin1',
-												'label' => 'message PIN confirmation',
-												'rules' => 'trim|required|matches[message_pin0]'
+										array('field' => 'message_pin1',
+											  'label' => 'message PIN confirmation',
+											  'rules' => 'trim|required|matches[message_pin0]'
 										),
-										array(	'field' => 'location',
-												'label' => 'location',
-												'rules' => 'required|numeric'
+										array('field' => 'location',
+											  'label' => 'location',
+											  'rules' => 'callback_check_location'
 										),
-										array(	'field' => 'local_currency',
-												'label' => 'Local currency',
-												'rules' => 'callback_check_valid_currency'
+										array('field' => 'local_currency',
+											  'label' => 'Local currency',
+											  'rules' => 'callback_check_valid_currency'
 										),
-										array( 'field' => 'captcha',
-                                                'label' => 'captcha',
-                                                'rules' => 'trim|required|callback_check_captcha'
+										array('field' => 'captcha',
+                                              'label' => 'captcha',
+                                              'rules' => 'trim|required|callback_check_captcha'
                                         )
 							),
 				'register_no_pin_form'=>array(
@@ -60,7 +60,7 @@ $config = array('register_form'=>array(
 										),
 										array(	'field' => 'location',
 												'label' => 'location',
-												'rules' => 'required|numeric'
+												'rules' => 'callback_check_location'
 										),
 										array(	'field' => 'local_currency',
 												'label' => 'Local currency',
@@ -170,20 +170,24 @@ $config = array('register_form'=>array(
 							),
 				'add_listing' => array(
 										array('field' => 'name',
-											  'label' => 'item name',
+											  'label' => 'Item name',
 											  'rules' => 'required|htmlspecialchars',
 										),
 										array('field' => 'description',
-											  'label' => 'description',
+											  'label' => 'Description',
 											  'rules' => 'required|htmlspecialchars',
 										),
 										array('field' => 'category',
-											  'label' => 'category',
+											  'label' => 'Category',
 											  'rules' => 'required|callback_check_category_exists',
 										),
+										array('field' => 'ship_from',
+											  'label' => 'Ship from',
+											  'rules' => 'callback_check_location'
+										),
 										array('field' => 'price',
-											  'label' => 'price',
-											  'rules' => 'numeric|callback_check_price_positive',
+											  'label' => 'Price',
+											  'rules' => 'callback_check_is_positive',
 										)
 							),
 				'edit_listing' => array(
@@ -196,16 +200,20 @@ $config = array('register_form'=>array(
 											  'rules' => 'required|htmlspecialchars|nl2br',
 										),
 										array('field' => 'category',
-											  'label' => 'category',
+											  'label' => 'Category',
 											  'rules' => 'required|callback_check_category_exists',
 										),
 										array('field' => 'price',
-											  'label' => 'price',
-											  'rules' => 'numeric',
+											  'label' => 'Price',
+											  'rules' => 'callback_is_positive',
 										),
 										array('field' => 'currency',
-											  'label' => 'currency',
-											  'rules' => 'required|callback_check_currency_exists',
+											  'label' => 'Currency',
+											  'rules' => 'callback_check_currency_exists',
+										),
+										array('field' => 'ship_from',
+											  'label' => 'Ship from',
+											  'rules' => 'callback_check_location'
 										)
 							),
 				'authorize' => array(
@@ -252,6 +260,14 @@ $config = array('register_form'=>array(
 										array('field' => 'allow_guests',
 											  'label' => '',
 											  'rules' => 'callback_check_bool'
+										),
+										array('field' => 'global_proxy_type',
+											  'label' => '',
+											  'rules' => 'callback_check_proxy_type'
+										),
+										array('field' => 'global_proxy_url',
+											  'label' => '',
+											  'rules' => 'callback_check_proxy_url'
 										)
 							),
 				'admin_edit_users' => array(

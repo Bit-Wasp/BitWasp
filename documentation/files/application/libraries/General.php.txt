@@ -82,10 +82,25 @@ class General {
 		$sha_limit_loop = 10;
 		
 		$hash = '';
-		for($i = 0; $i < $sha_limit_loop; $i++){
+		for($i = 0; $i < $sha_limit_loop; $i++) {
+			
 			$hash = hash('sha512', $hash.$salt.$password);
 		}
 		return $hash;	
+	}
+	
+	/**
+	 * Password
+	 * 
+	 */
+	public function password($password, $salt = NULL) {
+		$sha_limit_loop = 10;
+		
+		$hash = hash('sha512', $password);
+		for($i = 0; $i < $sha_limit_loop; $i++) {
+			$hash = hash('sha512', $hash.$salt);
+		}
+		return $hash;
 	}
 	
 	/**

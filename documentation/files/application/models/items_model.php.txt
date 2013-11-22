@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Items_model extends CI_Model {
 
 	/**
@@ -24,6 +23,7 @@ class Items_model extends CI_Model {
 	 * @see		Models/Users_Model
 	 */		
 	public function __construct() {
+		parent::__construct();
 		$this->load->model('currencies_model');
 		$this->load->model('accounts_model');
 		$this->load->model('images_model');
@@ -45,7 +45,7 @@ class Items_model extends CI_Model {
 	}
 	
 	/**
-	 * Get list of pages. (need to build in pagination).
+	 * Get list of items. (need to build in pagination).
 	 * 
 	 * Display all items which are not hidden, or for a banned user.
 	 *
@@ -62,16 +62,37 @@ class Items_model extends CI_Model {
 				 
 		// Add on extra options.
 		if(count($opt) > 0) {
+			
+			// If there is a list of item ID's to load..
+			if(isset($opt['item_id_list'])){
+				$use_id_list = TRUE;
+				$use_id_count = 0;
+				if($opt['item_id_list'] !== FALSE) {
+					foreach($opt['item_id_list'] as $item_id) {
+						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
+						$use_id_count++;
+					}
+				}
+				
+				// Remove this option to avoid issues with the next step.
+				unset($opt['item_id_list']);
+			}
+			
 			foreach($opt as $key => $val) {
 				$this->db->where("$key", "$val");
 			}
 		}
 				 
 		// Get the list of items.
-		$query = $this->db->get('bw_items');
+		$query = $this->db->get('items');
+
+		// Check that if we were meant to load a list that it was successful.
+		if(isset($use_id_list) && $use_id_count == 0)
+			return FALSE;
 		
 		if($query->num_rows() > 0){
 			foreach($query->result_array() as $row){
+
 				// Load vendor information. Skip item if the user is banned.
 				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
 				if($row['vendor']['banned'] == '1')
@@ -94,7 +115,7 @@ class Items_model extends CI_Model {
 				
 			}
 		} else {
-			$results = array();
+			$results = FALSE;
 		}	
 		
 		return $results;

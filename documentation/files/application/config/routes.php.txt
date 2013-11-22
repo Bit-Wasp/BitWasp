@@ -75,7 +75,9 @@ $route['listings/delete_image/(:any)'] = 'listings/delete_image/$1';
 
 $route['item/(:any)'] = 'items/get/$1';
 $route['items'] = 'items/index';
-
+$route['location/(:any)'] = 'items/location/$1';
+$route['location'] = 'items/location';
+$route['category/(:any)'] = 'items/category/$1';
 
 // Bitcoin testing functions. Remove before production!!
 $route['bitcoin/i'] = 'bitcoin_test/index';
@@ -120,7 +122,6 @@ $route['order/received/(:any)'] = 'orders/received_order/$1';
 $route['order/(:any)'] = 'orders/purchase_item/$1';
 // Both
 
-$route['category/(:any)'] = 'items/category/$1';
 
 $route['404_override'] = '';
 $route['default_controller'] = 'welcome';

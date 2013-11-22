@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1814697914"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-2004300527"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1814697914" class="accordion-body collapse in">
+            <div id="namespace-2004300527" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -171,6 +171,7 @@
                                                     <li class="class"><a href="../classes/Items_model.html">Items_model</a></li>
                                                     <li class="class"><a href="../classes/Order_model.html">Order_model</a></li>
                                                     <li class="class"><a href="../classes/Auth_model.html">Auth_model</a></li>
+                                                    <li class="class"><a href="../classes/Shipping_costs_model.html">Shipping_costs_model</a></li>
                                                     <li class="class"><a href="../classes/General.html">General</a></li>
                                                     <li class="class"><a href="../classes/Bw_captcha.html">Bw_captcha</a></li>
                                                     <li class="class"><a href="../classes/Layout.html">Layout</a></li>
@@ -205,6 +206,7 @@
                                                     <li class="class"><a href="../classes/Delete_Transaction_History.html">Delete_Transaction_History</a></li>
                                                     <li class="class"><a href="../classes/Version_Checker.html">Version_Checker</a></li>
                                                     <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Bw_curl.html">Bw_curl</a></li>
                                                     <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
                                                     <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
                                                     <li class="class"><a href="../classes/Listings.html">Listings</a></li>
@@ -482,9 +484,10 @@
             <article class="method">
                 <h3 class="public ">check_unique_entry()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">check_unique_entry(string <span class="argument">$table</span>, string <span class="argument">$column</span>, string <span class="argument">$hash</span>) : bool</pre>
-                <p><em>Test to see if the entry is unique in that table/column</em></p>
-                
+                <pre class="signature" style="margin-right: 54px;">check_unique_entry(string <span class="argument">$table</span>, string <span class="argument">$column</span>,  <span class="argument">$entry</span>) : bool</pre>
+                <p><em>Check Unique Entry</em></p>
+                <p>This function will check that the supplied $entry is unique in
+the $table $column. Returns a boolean indicating Success/Failure.</p>
 
 
                                     <h4>Parameters</h4>
@@ -502,8 +505,8 @@
 </td>
                             </tr>
                                                     <tr>
-                                <td>string</td>
-                                <td>$hash</td>
+                                <td></td>
+                                <td>$entry</td>
                                 <td>
 </td>
                             </tr>
@@ -532,8 +535,10 @@
                 <h3 class="public ">get_stale_users()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">get_stale_users(int <span class="argument">$threshold</span>) : \array/FALSE</pre>
-                <p><em>Load any stale users.</em></p>
-                
+                <p><em>Get Stale Users</em></p>
+                <p>Stale users are any user who has not logged in for a defined
+period of time. If the login time is less than $threshold then
+the user is included in the list. Does not include banned members.</p>
 
 
                                     <h4>Parameters</h4>
@@ -569,8 +574,8 @@
                 <h3 class="public ">rows_before_time()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">rows_before_time(string <span class="argument">$table</span>, int <span class="argument">$time</span>) : bool</pre>
-                <p><em>Return rows in $table with a timestamp before $time</em></p>
-                
+                <p><em>Rows Before Time</em></p>
+                <p>Return rows in $table with a timestamp before $time.</p>
 
 
                                     <h4>Parameters</h4>
@@ -612,8 +617,8 @@
                 <h3 class="public ">drop_id()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">drop_id(string <span class="argument">$table</span>, int <span class="argument">$id</span>) : bool</pre>
-                <p><em>Drop a row by the specified $table and $id.</em></p>
-                
+                <p><em>Drop ID</em></p>
+                <p>Drop a row by the specified $table and $id.</p>
 
 
                                     <h4>Parameters</h4>
@@ -654,9 +659,9 @@
             <article class="method">
                 <h3 class="public ">count_entries()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">count_entries(string <span class="argument">$table</span>) : int</pre>
-                <p><em>Count the number of entries in a table.</em></p>
-                
+                <pre class="signature" style="margin-right: 54px;">count_entries(string <span class="argument">$table</span>) : \int/FALSE</pre>
+                <p><em>Count Entries</em></p>
+                <p>Count the total number of entries in a table, specified by $table.</p>
 
 
                                     <h4>Parameters</h4>
@@ -671,7 +676,7 @@
                 
                 
                                     <h4>Returns</h4>
-                    int
+                    \int/FALSE
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -692,8 +697,8 @@
                 <h3 class="public ">count_transactions()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">count_transactions() : int</pre>
-                <p><em>Count all bitcoin transactions.</em></p>
-                
+                <p><em>Count Transactions</em></p>
+                <p>Count the total number of bitcoin transactions.</p>
 
 
                 
@@ -720,8 +725,8 @@
                 <h3 class="public ">count_orders()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">count_orders() : int</pre>
-                <p><em>Count the number of orders.</em></p>
-                
+                <p><em>Count Orders</em></p>
+                <p>Count the total number of orders on record.</p>
 
 
                 
@@ -748,8 +753,8 @@
                 <h3 class="public ">count_unread_messages()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">count_unread_messages() : int</pre>
-                <p><em>Count the number of unread messages.</em></p>
-                
+                <p><em>Count Unread Messages</em></p>
+                <p>Count the number of unread messages for the current user.</p>
 
 
                 
@@ -776,8 +781,8 @@
                 <h3 class="public ">count_new_orders()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">count_new_orders() : int</pre>
-                <p><em>Count new orders for Current_User-&gt;user_hash</em></p>
-                
+                <p><em>Count New Orders</em></p>
+                <p>Count orders at progress=1 for the currently logged in user.</p>
 
 
                 
@@ -804,8 +809,9 @@
                 <h3 class="public ">locations_list()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">locations_list() : array</pre>
-                <p><em>List all locations</em></p>
-                
+                <p><em>Locations List</em></p>
+                <p>List all the locations stored in the table. Return an array whether
+true or false.</p>
 
 
                 
@@ -832,8 +838,9 @@
                 <h3 class="public ">location_by_id()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">location_by_id(int <span class="argument">$id</span>) : \string/FALSE</pre>
-                <p><em>Load location name by $id.</em></p>
-                
+                <p><em>Location by ID</em></p>
+                <p>Load the name of the location specified by $id. Returns a string
+if successful or FALSE on failure.</p>
 
 
                                     <h4>Parameters</h4>
@@ -949,7 +956,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 15th, 2013 at 20:58.
+                    on November 22nd, 2013 at 11:54.
                 </section>
             </section>
         </section>

@@ -28,6 +28,21 @@ $order_str = 'My Orders'; if($count_new_orders > 0)	$order_str .= " ($count_new_
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Categories</li>
+			  <?php if($role !== 'guest' && $role !== 'half') { ?>
+			  
+			  <?php echo form_open('location'); ?>
+			  <li>Ship To:
+			    <select name='location' class='span6' autocomplete="off">
+				  <option value='worldwide'>Worldwide</option>
+<?php foreach($locations as $location) { 
+	if($location['id'] == 1)
+		continue; ?>
+				  <option value='<?php echo $location['id']; ?>'><?php echo $location['country']; ?></option>
+<?php } ?>
+			    </select><input type='submit' name='location_submit' class='btn' value='Go' /></form>
+			  </li>
+			  <li><?php echo anchor('location/domestic','Domestic'); ?></li>
+<?php } ?>
               <?php echo $cats; ?>
             </ul>
           </div>

@@ -9,9 +9,7 @@
  * @subpackage	Models
  * @category	General
  * @author		BitWasp
- * 
  */
-
 class General_model extends CI_Model {
 
 	/**
@@ -23,29 +21,30 @@ class General_model extends CI_Model {
 	public function __construct() {}
 
 	/**
-	 * Test to see if the entry is unique in that table/column
+	 * Check Unique Entry
+	 * 
+	 * This function will check that the supplied $entry is unique in
+	 * the $table $column. Returns a boolean indicating Success/Failure.
 	 *
 	 * @param	string	$table
 	 * @param	string	$column
 	 * @param	string	$hash
 	 * @return	bool
 	 */
-	public function check_unique_entry($table, $column, $hash){
-		$this->db->where($column, $hash);
+	public function check_unique_entry($table, $column, $entry){
+		$this->db->where($column, $entry);
 		$query = $this->db->get($table);
-		if($query->num_rows() < 1){
-			// Success; hash is unique.
-			return TRUE;
-		} else {
-			// Failure; hash is not unique.
-			return FALSE;
-		}
+		return ($query->num_rows() < 1) ? TRUE : FALSE;
 	}
 
 	/**
-	 * Load any stale users.
+	 * Get Stale Users
+	 * 
+	 * Stale users are any user who has not logged in for a defined 
+	 * period of time. If the login time is less than $threshold then
+	 * the user is included in the list. Does not include banned members.
 	 *
-	 * @param	int $threshold
+	 * @param	int	$threshold
 	 * @return	array/FALSE
 	 */
 	public function get_stale_users($threshold) {
@@ -69,7 +68,9 @@ class General_model extends CI_Model {
 	}
 
 	/**
-	 * Return rows in $table with a timestamp before $time
+	 * Rows Before Time
+	 * 
+	 * Return rows in $table with a timestamp before $time.
 	 *
 	 * @param	string	$table
 	 * @param	int	$time
@@ -82,6 +83,8 @@ class General_model extends CI_Model {
 	}
 	
 	/**
+	 * Drop ID
+	 * 
 	 * Drop a row by the specified $table and $id.
 	 *
 	 * @param 	string	$table
@@ -94,17 +97,21 @@ class General_model extends CI_Model {
 	}
 	
 	/**
-	 * Count the number of entries in a table.
+	 * Count Entries
+	 * 
+	 * Count the total number of entries in a table, specified by $table.
 	 *
 	 * @param	string	$table
-	 * @return	int
+	 * @return	int/FALSE
 	 */
 	public function count_entries($table) {
 		return $this->db->count_all($table);
 	}
 
 	/**
-	 * Count all bitcoin transactions.
+	 * Count Transactions 
+	 * 
+	 * Count the total number of bitcoin transactions.
 	 *
 	 * @return	int
 	 */	
@@ -116,7 +123,9 @@ class General_model extends CI_Model {
 	}
 	
 	/**
-	 * Count the number of orders.
+	 * Count Orders
+	 * 
+	 * Count the total number of orders on record.
 	 *
 	 * @return	int
 	 */
@@ -128,7 +137,9 @@ class General_model extends CI_Model {
 	}
 
 	/**
-	 * Count the number of unread messages.
+	 * Count Unread Messages
+	 * 
+	 * Count the number of unread messages for the current user.
 	 *
 	 * @return	int
 	 */
@@ -141,7 +152,9 @@ class General_model extends CI_Model {
 	}
 	
 	/**
-	 * Count new orders for Current_User->user_hash
+	 * Count New Orders
+	 * 
+	 * Count orders at progress=1 for the currently logged in user.
 	 *
 	 * @return	int
 	 */	
@@ -154,7 +167,10 @@ class General_model extends CI_Model {
 	}
 		
 	/**
-	 * List all locations
+	 * Locations List
+	 * 
+	 * List all the locations stored in the table. Return an array whether
+	 * true or false.
 	 *
 	 * @return	array
 	 */
@@ -164,7 +180,10 @@ class General_model extends CI_Model {
 	}
 	
 	/**
-	 * Load location name by $id.
+	 * Location by ID
+	 * 
+	 * Load the name of the location specified by $id. Returns a string
+	 * if successful or FALSE on failure.
 	 *
 	 * @param	int	$id
 	 * @return	string/FALSE

@@ -1,12 +1,7 @@
           <div class="span6 mainContent">
             <h2>Register</h2>
-            <div class='alert'>
-                <?php if(isset($returnMessage)) { 
-					echo $returnMessage."<br />";
-				} else { ?>
-				Complete the following form to register an account.
-				<?php } ?>
-            </div>
+            <div class='alert'><?php echo (isset($returnMessage)) ? $returnMessage.'<br />' : 'Complete the following form to register an account.'; ?></div>
+            
             <?php 
 			$registerPage = 'register';
 			if(isset($token) && $token !== NULL)
@@ -47,7 +42,6 @@
                     <br />
                     <span class="help-inline"><?php echo form_error('message_pin0')."<br />"; ?>Do not forget this PIN.</span>
                   </div>
-                  
                 </div>
 
                 <div class="control-group">
@@ -58,17 +52,16 @@
                   </div>
                 </div>
 
-		<?php
-		if(isset($token_info) && $token_info !== FALSE){?>
+<?php
+if(isset($token_info) && $token_info !== FALSE){?>
 			    <div class="control-group">
                   <label class="control-label" for="user_type">Role</label>
 	              <div class="controls">
-					  <label class='control-label'><?php echo $token_info['user_type']['txt'];?></label>
-					  <input type='hidden' name='user_type' value='<?php echo $token_info['user_type']['int']; ?>' />
+					<label class='control-label'><?php echo $token_info['user_type']['txt'];?></label>
+					<input type='hidden' name='user_type' value='<?php echo $token_info['user_type']['int']; ?>' />
 	              </div>
 	            </div>
-	    <?php } else { ?>
-
+<?php } else { ?>
 				<div class="control-group">
 				  <label class="control-label" for="user_type">Role</label>
 				  <div class="controls">
@@ -76,35 +69,35 @@
 					  <option value='1'>Buyer</option>
 					  <option value='2'>Vendor</option>
 					</select><br />
-					<div class="span8">
-<?php echo form_error('user_type')."<br />";
-if($force_vendor_pgp == 'Enabled'){
+					<div class="span8"><?php 
+echo form_error('user_type')."<br />";
+if($force_vendor_pgp == 'Enabled')
 	echo "If you are registering as a vendor, it is required you upload a PGP public key. Please have one ready on your first login.";
-} ?></div>
+?></div>
 				  </div>
 				</div>
-		<?php } ?>
+<?php } ?>
 				<span class="help-inline"><?php
-	        if($force_vendor_pgp == 'Enabled' && $token_info['user_type']['txt'] == 'Vendor'){ 
+	        if($force_vendor_pgp == 'Enabled' && isset($token_info) && $token_info['user_type']['txt'] == 'Vendor'){ 
 				echo "If you are registering as a vendor, it is required you upload a PGP public key. Please have one ready on your first login.";
 	        } ?></span><br />
 
-               <div class="control-group">
+				<div class="control-group">
                   <label class="control-label" for="location">Location</label>
                   <div class="controls">
 				    <select name='location' value='1'>
-			<?php foreach($locations as $location): ?>
+<?php foreach($locations as $location) { ?>
 					  <option value='<?php echo $location['id']; ?>'><?php echo $location['country']; ?></option>
-			<?php endforeach; ?>
+<?php } ?>
 				    </select>
                     <span class="help-inline"><?php echo form_error('location'); ?></span>
                   </div>
                 </div> 
 
-                <div class="control-group">
+				<div class="control-group">
 				  <label class="control-label" for="local_currency">Local Currency</label>
 				  <div class="controls">
-					<select name='local_currency'>
+				    <select name='local_currency'>
 <?php foreach($currencies as $currency) : ?>
 					  <option value='<?php echo $currency['id']; ?>'<?php echo ($currency['id'] == '0') ? ' selected="selected"' : NULL; ?>><?php echo $currency['name']; ?></option>
 <?php endforeach; ?>
