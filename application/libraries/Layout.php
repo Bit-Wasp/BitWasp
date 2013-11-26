@@ -16,7 +16,6 @@
  * @category	Layout
  * @author		BitWasp
  */
-
 class Layout {
 
 	protected $bw_config;
@@ -70,7 +69,6 @@ class Layout {
 				
 			$categories = $CI->categories_model->menu();		
 			$category_data['cats'] = (empty($categories)) ? 'No Categories' : $this->menu($categories , 0, $data['currentCat']); 
-			
 		} else {
 			// If a numeric user_id is set and two_factor or force_pgp flags are set, choose the required bar.
 			if(isset($CI->current_user->user_id) && is_numeric($CI->current_user->user_id) &&
@@ -106,9 +104,7 @@ class Layout {
 	 * Uses each categories parent ID to determine where it should be placed.
 	 */	
 	public function menu($categories, $level, $params){
-		if(!isset($content)) 
-			$content = ''; 
-			
+		$content = ''; 
 		$level++; 
 		
 		if($level !== 1) 
