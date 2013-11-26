@@ -89,7 +89,7 @@ class Bw_captcha {
 	 * 
 	 * @return		string
 	 */
-	public function generate() {
+	public function generate($img_width = 250) {
 		// Check if there is a challenge set for this user. Delete old and create a new one.
 		// Either way, the timed removal of old captchas will fix this sort of thing.
 		$old_challenge = $this->CI->session->userdata('captcha_key');
@@ -109,12 +109,14 @@ class Bw_captcha {
 			$i++;
 		}
 		
+		if (!file_exists('/tmp/captcha')) mkdir("/tmp/captcha",0777);
+
 		// Array to pass to CI captcha helper.
 		$config = array(	'word' => $characters,
-							'img_path' => 'assets/images/captcha/',
-							'img_url' => base_url().'assets/images/captcha/',
+							'img_path' => '/tmp/captcha/',
+							'img_url' => '/tmp/captcha/',
 							'font_path' => 'assets/font.ttf',
-							'img_width' => '218'
+							'img_width' => $img_width
 					);
 					
 		// Create captcha from the config data.
@@ -122,7 +124,7 @@ class Bw_captcha {
 		
 		// Load the base64 image into memory and then erase the file.
 		$image = $this->CI->image->temp("captcha/{$captcha['time']}.jpg");
-		unlink("assets/images/captcha/{$captcha['time']}.jpg");
+		unlink("/tmp/captcha/{$captcha['time']}.jpg");
 		
 		// Create a unique key for the captcha and set it in the session.
 		$key = $this->CI->general->unique_hash('captchas','key');
