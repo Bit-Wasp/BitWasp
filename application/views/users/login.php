@@ -5,7 +5,7 @@
 				Enter your user name and password to login.
 <?php } ?>
 			</div>
-            <?php echo form_open('login', array('class' => 'form-horizontal')); ?>
+            <?php echo form_open('login', array('class' => 'form-horizontal', 'name' => 'loginForm')); ?>
             <fieldset>
               <div class="control-group">
                 <label class="control-label" for="user_name">Username</label>
@@ -38,8 +38,10 @@
               </div>
               <!-- /Captcha -->
 
+			  <noscript><div style="display:none"><input type='hidden' name='js_disabled' value='1' /></div></noscript>
+
               <div class="form-actions">
-                <button type='submit' class="btn btn-primary">Login</button>
+                <input type='submit' class="btn btn-primary" value="Login" onclick='make_hash()' />
                 <?php echo anchor('register', 'Register?', 'title="Register" class="btn"');?>
               </div>
             </fieldset>

@@ -72,21 +72,21 @@ class General {
 	 * Hash
 	 * 
 	 * Generate the sha512 hash of a supplied string, along with
-	 * an optional salt. Performs this several times. 
+	 * an optional salt. Performs this several times. This is done
+	 * on passwords if javascript was disabled.
 	 * 
 	 * @param		string
 	 * @param		string
 	 * @return		string
 	 */
-	public function hash($password, $salt = NULL){ 
+	public function hash($password){ 
 		$sha_limit_loop = 10;
 		
-		$hash = '';
+		$hash = $password;
 		for($i = 0; $i < $sha_limit_loop; $i++) {
-			
-			$hash = hash('sha512', $hash.$salt.$password);
+			$hash = hash('sha512', $hash);
 		}
-		return $hash;	
+		return $hash;
 	}
 	
 	/**
@@ -96,7 +96,7 @@ class General {
 	public function password($password, $salt = NULL) {
 		$sha_limit_loop = 10;
 		
-		$hash = hash('sha512', $password);
+		$hash = $password;
 		for($i = 0; $i < $sha_limit_loop; $i++) {
 			$hash = hash('sha512', $hash.$salt);
 		}

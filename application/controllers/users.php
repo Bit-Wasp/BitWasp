@@ -58,6 +58,8 @@ class Users extends CI_Controller {
 	 */
 	public function login() {
 
+		$data['header_meta'] = $this->load->view('users/login_hash', NULL, true);
+		
 		$this->load->helper(array('form'));
 		$this->load->library('form_validation');
 	
@@ -70,13 +72,17 @@ class Users extends CI_Controller {
 			$this->load->model('accounts_model');
 			
 			$user_name = $this->input->post('user_name');
-			$password = $this->input->post('password');
+			
 			$user_info = $this->users_model->get(array('user_name' => $user_name));
 			
 			$data['returnMessage'] = "Your details were incorrect, try again.";
 			
 			if($user_info !== FALSE){
-				$check_login = $this->users_model->check_password($user_name, $user_info['salt'], $password);
+				
+				$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
+				$password = $this->general->password($password, $user_info['salt']);
+				
+				$check_login = $this->users_model->check_password($user_name, $password);
 
 				// Check the login went through OK.
 				if( ($check_login !== FALSE) && ($check_login['id'] == $user_info['id']) ) {
@@ -137,6 +143,8 @@ class Users extends CI_Controller {
 	 */
 	public function register($token = NULL) {
 
+		$data['header_meta'] = $this->load->view('users/register_hash', NULL, true);
+
 		// If registration is disabled, and no token is set, direct to the login page.
 		if($this->bw_config->registration_allowed == FALSE && $token == NULL)
 			redirect('login');
@@ -178,13 +186,15 @@ class Users extends CI_Controller {
 		} else {
 			// Work out if the role was supplied via a token, take that.
 			
-			// Generate the users salt and encrypted password.
+			$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password0')) : $this->input->post('password0');
+			// Generate the users salt and hashed password.
 			$salt = $this->general->generate_salt();
-			$password = $this->general->hash($this->input->post('password0'), $salt);
+			$password = $this->general->password($password, $salt);
+			
 			$user_name = $this->input->post('user_name');
 			
 			// Generate OpenSSL keys for the users private messages.	
-			if($data['encrypt_private_messages'] == TRUE){
+			if($data['encrypt_private_messages'] == TRUE) {
 				$pin = $this->input->post('message_pin0');
 				$message_password = $this->general->hash($this->input->post('message_pin0'), $salt);
 				
