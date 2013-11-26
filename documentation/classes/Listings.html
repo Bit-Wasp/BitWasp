@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-650554291"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-73282431"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-650554291" class="accordion-body collapse in">
+            <div id="namespace-73282431" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -360,12 +360,15 @@
                                                                     <a href="../classes/Listings.html#method_add" class="">add()</a><br />
                                                                     <a href="../classes/Listings.html#method_delete" class="">delete()</a><br />
                                                                     <a href="../classes/Listings.html#method_images" class="">images()</a><br />
+                                                                    <a href="../classes/Listings.html#method_shipping" class="">shipping()</a><br />
                                                                     <a href="../classes/Listings.html#method_delete_image" class="">delete_image()</a><br />
                                                                     <a href="../classes/Listings.html#method_main_image" class="">main_image()</a><br />
                                                                     <a href="../classes/Listings.html#method_check_category_exists" class="">check_category_exists()</a><br />
                                                                     <a href="../classes/Listings.html#method_check_currency_exists" class="">check_currency_exists()</a><br />
                                                                     <a href="../classes/Listings.html#method_check_is_positive" class="">check_is_positive()</a><br />
                                                                     <a href="../classes/Listings.html#method_check_location" class="">check_location()</a><br />
+                                                                    <a href="../classes/Listings.html#method_check_shipping_location" class="">check_shipping_location()</a><br />
+                                                                    <a href="../classes/Listings.html#method_check_bool" class="">check_bool()</a><br />
                                                                     <a href="../classes/CI_Controller.html#method_get_instance" class="">get_instance()</a><br />
                                                             </section>
                             <section class="span4">
@@ -691,6 +694,43 @@ URI: /listings/edit/$hash</em></p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_shipping" name="method_shipping" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">shipping()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">shipping( <span class="argument">$item_hash</span>)</pre>
+                <p><em>Shipping</em></p>
+                <p>This function is used to configure the shipping charges for a
+listing. Redirects to listings page if the requested item is invalid.
+URI: /listings/shipping/$hash</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$item_hash</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_delete_image" name="method_delete_image" class="anchor"></a>
             <article class="method">
                 <h3 class="public ">delete_image()</h3>
@@ -916,6 +956,80 @@ URI: /listings/edit/$hash</em></p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_check_shipping_location" name="method_check_shipping_location" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_shipping_location()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_shipping_location(string <span class="argument">$param</span>) : boolean</pre>
+                <p><em>Check Shipping Location</em></p>
+                <p>Check the supplied location ID for the shipping destination exists.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bool" name="method_check_bool" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bool()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bool(int <span class="argument">$param</span>) : boolean</pre>
+                <p><em>Check Bool</em></p>
+                <p>Check the supplied parameter is for a boolean..</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$param</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_get_instance" name="method_get_instance" class="anchor"></a>
             <article class="method">
                 <h3 class="public ">get_instance()</h3>
@@ -992,7 +1106,7 @@ URI: /listings/edit/$hash</em></p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 22nd, 2013 at 11:54.
+                    on November 26th, 2013 at 09:39.
                 </section>
             </section>
         </section>

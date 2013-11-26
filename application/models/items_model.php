@@ -154,6 +154,7 @@ class Items_model extends CI_Model {
 			$row['price_f'] = $local_currency['symbol'].''.$row['price_l'];
 							
 			$row['main_image'] = $this->images_model->get($row['main_image']);
+			$row['ship_from_f'] = $this->general_model->location_by_id($row['ship_from']);
 			$row['images'] = $this->images_model->by_item($hash);
 			return $row;
 		}

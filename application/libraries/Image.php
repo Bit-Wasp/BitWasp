@@ -111,18 +111,24 @@ class Image {
 	
 		$results['file_name'] = "{$new_name}.{$this->output_format}";
 		$results['file_ext'] = $this->output_format;
+		$results['encoded_string'] = '';
 		$results['file_path'] = $this->import['file_path'];
 		$results['full_path'] = $this->import['file_path'].$results['file_name'];
 		$results['raw_name'] = "{$new_name}";
 					
 		if($this->use_library == "magickwand") {
 			$copy = $this->imagick_import;
+
 			// Strip EXIF data.
 			$copy->stripImage();
 			$copy->setImageFormat( $this->output_format );
 			$copy->setImageOpacity(1.0);
 	     	$copy->resizeImage($width, $height, imagick::FILTER_CATROM, 0.9, true);
-			$copy->writeImage($results['full_path']);			
+			$copy->writeImage($results['full_path']);		
+
+			// Generate the encoded string without writing the file.
+			$results['encoded_string'] = $this->capture_image($copy);
+			
 		} else if($this->use_library == "gd") {
 			
 			$our_ratio = $width/$height;
@@ -145,11 +151,41 @@ class Image {
 
    			$new_image = imagecreatetruecolor($new_width, $new_height);
    			imagecopyresampled($new_image, $this->gd_import, 0, 0, 0, 0, $new_width, $new_height, $curr_width, $curr_height);
-			imagepng($new_image, $results['full_path']);
+   			
+   			// Generate the encoded string without writing the file.
+			$results['encoded_string'] = $this->capture_image($new_image);
 			
 		}
 			
 		return $results;
+	}
+
+	/** 
+	 * Capture Image
+	 * 
+	 * Take a supplied image, and whether its an imagick or gd image, 
+	 * will capture the contents, instead of writing to a file. Converts 
+	 * to base64. Parameter $image_png can be either an Imagick object, 
+	 * or a GD image resource.
+	 * 
+	 * @param	Imagick/GD object $image_png
+	 * @return	string/FALSE
+	 */
+	public function capture_image($image_png) {
+		if($this->use_library == 'magickwand') {
+			$image_data = $image_png->getimageblob();
+			ob_start();
+			echo $image_data;
+			$image_data = ob_get_contents();
+			ob_end_clean();
+		} else if($this->use_library == 'gd') {
+			ob_start();
+			imagepng($image_png);
+			$image_data = ob_get_contents();
+			ob_end_clean();
+		}
+		
+		return (isset($image_data)) ? base64_encode($image_data) : FALSE;
 	}
 
 	/**
@@ -161,10 +197,11 @@ class Image {
 	 * the file cannot be found.
 	 * 
 	 * @param		string	$filename
-	 * @return		string / FALSE
+	 * @return		string/FALSE
 	 */
 	public function encode($filename){
-		return ($file = file_get_contents('./assets/images/'.$filename)) ? base64_encode($file) : FALSE;	
+		$filename = '/tmp/'.$filename;
+		return ($file = file_get_contents($filename)) ? base64_encode($file) : FALSE;	
 	}
 		
 	/**

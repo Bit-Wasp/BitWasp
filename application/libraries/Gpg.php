@@ -51,6 +51,11 @@ class GPG {
 	 * Loads the current version of the GPG extension if it's available.
 	 */
 	public function __construct() {
+		if(!file_exists('/tmp/.gnupg')) 
+			mkdir("/tmp/.gnupg", 0700);
+			
+		putenv("GNUPGHOME=/tmp/.gnupg");
+			
 		if(class_exists('gnupg')) {
 			
 			$this->gpg = new gnupg();

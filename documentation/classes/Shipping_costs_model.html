@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-569771946"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-175323016"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-569771946" class="accordion-body collapse in">
+            <div id="namespace-175323016" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -356,7 +356,9 @@
                             <section class="span4">
                                                                     <a href="../classes/CI_Model.html#method___construct" class="">__construct()</a><br />
                                                                     <a href="../classes/Shipping_costs_model.html#method_for_item" class="">for_item()</a><br />
+                                                                    <a href="../classes/Shipping_costs_model.html#method_check_cost_location" class="">check_cost_location()</a><br />
                                                                     <a href="../classes/Shipping_costs_model.html#method_list_by_location" class="">list_by_location()</a><br />
+                                                                    <a href="../classes/Shipping_costs_model.html#method_update" class="">update()</a><br />
                                                                     <a href="../classes/CI_Model.html#method___get" class="">__get()</a><br />
                                                             </section>
                             <section class="span4">
@@ -475,7 +477,45 @@
             <article class="method">
                 <h3 class="public ">for_item()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">for_item( <span class="argument">$item_id</span>)</pre>
+                <pre class="signature" style="margin-right: 54px;">for_item(int <span class="argument">$item_id</span>) : \array/FALSE</pre>
+                <p><em>For Item</em></p>
+                <p>Loads the array of shipping costs for a specified item. Returns
+the array if successful, or FALSE if no entries exist.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$item_id</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \array/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_cost_location" name="method_check_cost_location" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_cost_location()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_cost_location( <span class="argument">$item_id</span>,  <span class="argument">$location_id</span>)</pre>
                 <p><em></em></p>
                 
 
@@ -485,6 +525,12 @@
                                                     <tr>
                                 <td></td>
                                 <td>$item_id</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$location_id</td>
                                 <td>
 </td>
                             </tr>
@@ -529,6 +575,51 @@ location.</p>
                 
                                     <h4>Returns</h4>
                     \array/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_update" name="method_update" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">update()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">update(int <span class="argument">$item_id</span>, array <span class="argument">$costs_array</span>) : boolean</pre>
+                <p><em>Update Shipping Costs</em></p>
+                <p>Supply an array containing information about the costs for the
+item. This function will delete any costs currenty held, and
+replace them with the current information.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$item_id</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$costs_array</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
                                                 </article>
         </div>
         <aside class="span4 detailsbar">
@@ -629,7 +720,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 22nd, 2013 at 11:54.
+                    on November 26th, 2013 at 09:39.
                 </section>
             </section>
         </section>

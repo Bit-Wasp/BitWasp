@@ -15,10 +15,10 @@
 			  <span class="rating">(0)</span>
 			</p>
 			
-			<div class="price">
+			<div class="price">	
 			  Price: <span class="priceValue"><?php echo $item['price_f'];?></span>
 			</div>
-
+			Ship's From: <?php echo $item['ship_from_f']; ?>
 			<div id="main">
 			  <?php echo $item['description_f']; ?>
 			</div>

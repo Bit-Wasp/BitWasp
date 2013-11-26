@@ -205,7 +205,7 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'price',
 											  'label' => 'Price',
-											  'rules' => 'callback_is_positive',
+											  'rules' => 'callback_check_is_positive',
 										),
 										array('field' => 'currency',
 											  'label' => 'Currency',
@@ -215,6 +215,20 @@ $config = array('register_form'=>array(
 											  'label' => 'Ship from',
 											  'rules' => 'callback_check_location'
 										)
+							),
+				'shipping_costs_update' => array(
+										array('field' => 'country[]',
+											  'label' => 'Location',
+											  'rules' => 'callback_check_shipping_location'
+										),
+										array('field' => 'price[]',
+											  'label' => 'Price',
+											  'rules' => 'callback_check_is_positive'
+										),
+										array('field' => 'enabled[]',
+											  'label' => 'Enabled toggle',
+											  'rules' => 'callback_check_bool'
+										)										
 							),
 				'authorize' => array(
 										array('field' => 'password',

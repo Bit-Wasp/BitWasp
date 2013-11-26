@@ -69,6 +69,13 @@
 				</div>
 			  </div>
 
+			  <div class="control-group">
+				<label class="control-label" for="shipping_charges">Shipping Costs</label>
+				<div class="controls">
+				  <label class='help-inline'><?php echo anchor('listings/shipping/'.$item['hash'], 'Configure'); ?></label>
+				</div>
+			  </div>
+
               <div class="form-actions">
 		        <input type='submit' value='Update' class='btn btn-primary' />
                 <?php echo anchor('listings','Cancel', array('class'=>'returnLink btn'));?>

@@ -189,6 +189,9 @@ class General_model extends CI_Model {
 	 * @return	string/FALSE
 	 */
 	public function location_by_id($id){
+		if($id == 'worldwide')
+			return 'Worldwide';
+			
 		$this->db->select('country')
 		         ->where('id', $id);
 		$query = $this->db->get('country_codes');

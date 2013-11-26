@@ -87,10 +87,10 @@ class Images_model extends CI_Model {
 	 * @param	string	$image_hash
 	 * @param	string	$file_name
 	 * @return	boolean
-	 */					
-	public function add($image_hash, $file_name) {
+	 */	
+	public function add($image_hash, $encoded_string) {
 		$insert = array('hash' => $image_hash,
-						'encoded' => $this->image->encode($file_name));							
+						'encoded' => $encoded_string);
 		return ($this->db->insert('images', $insert) == TRUE) ? TRUE : FALSE;
 	}
 	
@@ -109,8 +109,8 @@ class Images_model extends CI_Model {
 	 * @param	boolean	$mail_image
 	 * @return	boolean
 	 */					
-	public function add_to_item($image_hash, $file_name, $item_hash, $main_image = FALSE) {
-		$insert = $this->add($image_hash, $file_name);
+	public function add_to_item($image_hash, $encoded_string, $item_hash, $main_image = FALSE) {
+		$insert = $this->add($image_hash, $encoded_string);
 			
 		if($insert == TRUE) {
 			$link = array('image_hash' => $image_hash,

@@ -21,6 +21,7 @@ $lang['check_pgp_is_required'] = "The recipient user has blocked messages which 
 $lang['check_price_positive'] = 'You must enter a positive number for the price.';
 $lang['check_role'] = "The %s field must be for a buyer, or vendor.";
 $lang['check_session_timeout'] = 'Session timeout must be a number, and at least 5 minutes.';
+$lang['check_shipping_location'] = 'Enter a valid shipping location.';
 $lang['check_valid_currency'] = 'You must select a valid currency.';
 $lang['check_parentID_exists'] = "Please select a valid parent category.";
 $lang['check_proxy_type'] = 'Proxy must be disabled, HTTP, or SOCKS5.';

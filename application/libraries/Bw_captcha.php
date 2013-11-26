@@ -111,8 +111,8 @@ class Bw_captcha {
 		
 		// Array to pass to CI captcha helper.
 		$config = array(	'word' => $characters,
-							'img_path' => 'assets/images/captcha/',
-							'img_url' => base_url().'assets/images/captcha/',
+							'img_path' => '/tmp/',
+							'img_url' => base_url().'',
 							'font_path' => 'assets/font.ttf',
 							'img_width' => '218'
 					);
@@ -121,8 +121,8 @@ class Bw_captcha {
 		$captcha = create_captcha($config);
 		
 		// Load the base64 image into memory and then erase the file.
-		$image = $this->CI->image->temp("captcha/{$captcha['time']}.jpg");
-		unlink("assets/images/captcha/{$captcha['time']}.jpg");
+		$image = $this->CI->image->temp("{$captcha['time']}.jpg");
+		unlink("/tmp/{$captcha['time']}.jpg");
 		
 		// Create a unique key for the captcha and set it in the session.
 		$key = $this->CI->general->unique_hash('captchas','key');

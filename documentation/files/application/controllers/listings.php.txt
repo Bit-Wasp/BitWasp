@@ -225,11 +225,14 @@ class Listings extends CI_Controller {
 				
 				$upload_data = $this->upload->data();
 				$upload_data['upload_path'] = $config['upload_path'];
-				
+
 				$this->image->import($upload_data);			// Should be error checking here
-										
+
+				// Prepare the normal image's encoded string
+				$normal_encoded_string = $this->image->encode($upload_data['file_name']);
+				// Resize the image to smaller sizes. Image is base64 encoded in output array.
 				$small = $this->image->resize('200','150',$upload_data['raw_name']."_s");
-				$thumb = $this->image->resize('100','75', $upload_data['raw_name']."_thumb");
+				//$thumb = $this->image->resize('100','75', $upload_data['raw_name']."_thumb");
 				
 				$main_image = FALSE;
 				if($data['item']['main_image'] == 'default' || $this->input->post('main_image') == 'true')
@@ -238,19 +241,71 @@ class Listings extends CI_Controller {
 				$hash = $this->general->unique_hash('images','hash'); 
 				
 				// If resizing fails, use the normal image.
-				$add_small = ($small !== FALSE) ? $this->images_model->add_to_item($hash, $small['file_name'], $item_hash, $main_image) : $this->images_model->add_to_item($hash, $upload_data['file_name'], $item_hash, $main_image);
-				$add_normal = $this->images_model->add($hash."_l", $upload_data['file_name']);
+				$add_small = ($small !== FALSE) ? $this->images_model->add_to_item($hash, $small['encoded_string'], $item_hash, $main_image) : $this->images_model->add_to_item($hash, $normal_encoded_string, $item_hash, $main_image);
+				$add_normal = $this->images_model->add($hash."_l", $normal_encoded_string);
 				//$add_thumb = $this->images_model->add_to_item($thumb['file_name'], $item_hash);
 					
-				// Remove files, images are now all stored in the database.
+				// Remove the uploaded file.
 				unlink($upload_data['full_path']);
-				unlink($small['full_path']);
-				unlink($thumb['full_path']);
 			}
 		}
 		// Reload images after adding new ones.
 		$data['images'] = $this->images_model->by_item($item_hash);
 		
+		$this->load->library('Layout', $data);
+	}
+	
+	/**
+	 * Shipping
+	 * 
+	 * This function is used to configure the shipping charges for a
+	 * listing. Redirects to listings page if the requested item is invalid.
+	 * URI: /listings/shipping/$hash
+	 */
+	public function shipping($item_hash) {
+		$data['item'] = $this->listings_model->get($item_hash);
+		if($data['item'] == FALSE)
+			redirect('listings');
+		
+		$this->load->library('form_validation');
+		$this->load->model('accounts_model');
+		$this->load->model('shipping_costs_model');
+		
+		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
+		
+		if($this->input->post('shipping_costs_update') == 'Update') {
+			//if($this->form_validation->run('shipping_costs') == TRUE) {
+				$prices = $this->input->post('price');
+				$country = $this->input->post('country');
+				$enabled = $this->input->post('enabled');
+				$delete = $this->input->post('delete');
+				print_r($enabled);
+				$array = array();
+				$i = 0; 
+				foreach($prices as $key => $price) {
+					$new_key = ($key !== 'worldwide') ? $country[$i] : $key;
+					
+					if($country[$i] !== '' && $delete[$new_key] !== '1')
+						$array[] = array('cost' => $price,
+										'destination_id' => $new_key,
+										'enabled' => (isset($enabled[$new_key]) && $enabled[$new_key] == '1') ? '1' : '0');
+					
+					if($key !== 'worldwide')
+						$i++;
+				}
+
+				if($this->shipping_costs_model->update($data['item']['id'], $array))
+					redirect('listings/shipping/'.$data['item']['hash']);
+				
+			//}
+		}
+		
+		$data['locations'] = $this->general_model->locations_list();
+		$data['current_user'] = $this->current_user->status();
+		$data['account'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
+		
+		$data['title'] = 'Shipping Costs';
+		$data['page'] = 'listings/shipping_costs';
 		$this->load->library('Layout', $data);
 	}
 	
@@ -356,6 +411,31 @@ class Listings extends CI_Controller {
 	public function check_location($param) {
 		return ($param !== '1' && $this->general_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
 	}
+
+	/**
+	 * Check Shipping Location
+	 * 
+	 * Check the supplied location ID for the shipping destination exists.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_shipping_location($param) {
+		return ($param == 'worldwide' || ($param !== "1" && $this->general_modle->location_by_id($param) == TRUE)) ? TRUE : FALSE;
+	}
+
+	/**
+	 * Check Bool
+	 * 
+	 * Check the supplied parameter is for a boolean..
+	 *
+	 * @param	int	$param
+	 * @return	boolean
+	 */
+	public function check_bool($param) {
+		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
+	}
+
 };
 
 /* End of file Listings.php */
