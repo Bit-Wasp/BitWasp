@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-192199234"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1965824015"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-192199234" class="accordion-body collapse in">
+            <div id="namespace-1965824015" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -618,23 +618,18 @@ the array. Will set unpresent entries = NULL.</p>
             <article class="method">
                 <h3 class="public ">hash()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">hash( <span class="argument">$password</span>,  <span class="argument">$salt</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">hash(string <span class="argument">$password</span>) : string</pre>
                 <p><em>Hash</em></p>
                 <p>Generate the sha512 hash of a supplied string, along with
-an optional salt. Performs this several times.</p>
+an optional salt. Performs this several times. This is done
+on passwords if javascript was disabled.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$password</td>
-                                <td>
-</td>
-                            </tr>
-                                                    <tr>
-                                <td></td>
-                                <td>$salt</td>
                                 <td>
 </td>
                             </tr>
@@ -662,21 +657,23 @@ an optional salt. Performs this several times.</p>
             <article class="method">
                 <h3 class="public ">password()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">password( <span class="argument">$password</span>,  <span class="argument">$salt</span>)</pre>
+                <pre class="signature" style="margin-right: 54px;">password(string <span class="argument">$password</span>, string <span class="argument">$salt</span>) : string</pre>
                 <p><em>Password</em></p>
-                
+                <p>This function is used to create a hash based on a password and
+a salt. This is used in the second step of generating the password
+hash and is only done server side as it uses the salt.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$password</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$salt</td>
                                 <td>
 </td>
@@ -684,7 +681,9 @@ an optional salt. Performs this several times.</p>
                                             </table>
                 
                 
-                            </article>
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -918,7 +917,7 @@ and checking if it's unique. Will loop until entry is unique.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 26th, 2013 at 09:39.
+                    on November 27th, 2013 at 10:38.
                 </section>
             </section>
         </section>

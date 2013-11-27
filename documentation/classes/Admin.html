@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-15052390"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-307348259"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-15052390" class="accordion-body collapse in">
+            <div id="namespace-307348259" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -375,6 +375,7 @@ CodeIgniter will be assigned to.</p>
                                                                     <a href="../classes/Admin.html#method_dispute" class="">dispute()</a><br />
                                                                     <a href="../classes/Admin.html#method_fees" class="">fees()</a><br />
                                                                     <a href="../classes/Admin.html#method_topup_addresses" class="">topup_addresses()</a><br />
+                                                                    <a href="../classes/Admin.html#method_maintenance" class="">maintenance()</a><br />
                                                                     <a href="../classes/Admin.html#method_user_list" class="">user_list()</a><br />
                                                                     <a href="../classes/Admin.html#method_generate_nav" class="">generate_nav()</a><br />
                                                                     <a href="../classes/Admin.html#method_check_captcha_length" class="">check_captcha_length()</a><br />
@@ -1223,6 +1224,38 @@ fee's charged for an order price within a specified price range.</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_maintenance" name="method_maintenance" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">maintenance()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">maintenance()</pre>
+                <p><em>Maintenance</em></p>
+                <p>This controller is used to put the site into maintenance mode.
+When this happens, the sites configuration is backed up in an
+entry in the bw_config table, and replaces them with safer defaults.
+Maintenance mode prevents anyone but an admin from logging in, and
+will disable any bitcoin related functionality.
+This can be triggered by bitcoind alerts, or issues reported via
+github.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method_user_list" name="method_user_list" class="anchor"></a>
             <article class="method">
                 <h3 class="public ">user_list()</h3>
@@ -2040,7 +2073,7 @@ Returns TRUE on valid input, FALSE on failure.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 26th, 2013 at 09:39.
+                    on November 27th, 2013 at 10:38.
                 </section>
             </section>
         </section>

@@ -19,7 +19,9 @@ class Users_model extends CI_Model {
 	 * @access	public
 	 * @return	void
 	 */	
-	public function __construct(){	}
+	public function __construct(){
+		parent::__construct();
+	}
 
 	/**
 	 * Add User.
@@ -129,10 +131,11 @@ class Users_model extends CI_Model {
 	 * @param	string	$password
 	 * @return	array/FALSE
 	 */					
-	public function check_password($user_name, $salt, $password){
+	public function check_password($user_name, $password){
 		$this->db->select('id')
 				 ->where('user_name',$user_name)
-				 ->where('password', $this->general->hash($password, $salt));
+				 ->where('password', $password);
+				 
 		$query = $this->db->get('users');
 		
 		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;

@@ -245,7 +245,7 @@ class Orders extends CI_Controller {
 						$data['from'] = $this->current_user->user_id;
 						$details = array('username' => $get['buyer']['user_name'],
 										 'subject' => "Must finalize early for Order #{$get['id']}");
-						$details['message'] = "{$this->current_user->user_name} has requested that you finalize this transaction early before they dispatch the item. Please authorize payment to the vendor to continue with this purchase. You may cancel the transaction at this point to receive a refund.<br /><br />\n";
+						$details['message'] = "{$this->current_user->user_name} has requested that you finalize this transaction early before they dispatch the item. Please authorize payment to the vendor to continue with this purchase. You may cancel the transaction at this point to receive a refund.<br /><br />";
 						for($i = 0; $i < count($get['items']); $i++){
 							$details['message'] .= "{$get['items'][$i]['quantity']} x {$get['items'][$i]['name']}<br />\n";
 						}

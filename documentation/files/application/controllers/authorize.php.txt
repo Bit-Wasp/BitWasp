@@ -46,19 +46,24 @@ class Authorize extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('users_model');
 		
+		$data['header_meta'] = $this->load->view('authorize/authorize_hash_header', NULL, true);
 		$data['title'] = 'Authorize Request';
 		$data['page'] = 'authorize/password';
 		
 		$data['returnMessage'] = 'To access this page, you must enter your password.';
 	
-		if ($this->form_validation->run('authorize') == TRUE) {		
-			$password = $this->input->post('password');
-			$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
-
+		if ($this->form_validation->run('authorize') == TRUE) {	
+			$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));	
+			
 			// Check the user info exists.
-			if($user_info !== FALSE){
+			if($user_info !== FALSE) {
+				
+				// Work out if submitted password has been hashed by javascript already
+				$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
+				$password = $this->general->password($password, $user_info['salt']);
+				
 				// Check the password is valid.
-				$check_login = $this->users_model->check_password($this->current_user->user_name, $user_info['salt'], $password);
+				$check_login = $this->users_model->check_password($this->current_user->user_name, $password);
 				
 				if( ($check_login !== FALSE) && ($check_login['id'] == $user_info['id']) ) {
 					// Load the requested URI and redirect (after clearing up session data)

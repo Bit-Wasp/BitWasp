@@ -121,8 +121,7 @@ class Bw_captcha {
 		$captcha = create_captcha($config);
 		
 		// Load the base64 image into memory and then erase the file.
-		$image = $this->CI->image->temp("{$captcha['time']}.jpg");
-		unlink("/tmp/{$captcha['time']}.jpg");
+		$image = $captcha['image'];
 		
 		// Create a unique key for the captcha and set it in the session.
 		$key = $this->CI->general->unique_hash('captchas','key');

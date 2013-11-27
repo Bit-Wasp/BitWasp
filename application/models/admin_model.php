@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Admin_model extends CI_Model {
 
 	/**
@@ -24,7 +23,106 @@ class Admin_model extends CI_Model {
 	public function __construct(){
 		parent::__construct();
 	}	
+
+	/**
+	 * Disable Autorun
+	 * 
+	 * Pass an array indexed by the job's ID into the autorun table, and
+	 * will set the interval for each of those ID's to 0. This will disable
+	 * the job. Returns TRUE on success, and FALSE on failure.
+	 * 
+	 * @param	array	$array
+	 * @return	boolean
+	 */
+	public function disable_autorun($array) {
+		$success = TRUE;
+		$keys = array_keys($array);
+		foreach($array as $job_id) {
+			if($this->autorun_model->set_interval($job_id, '0') == FALSE)
+				$success = FALSE;
+		}
+		return $success;
+		
+	}
 	
+	/**
+	 * Restore Autorun
+	 * 
+	 * Pass an array indexed by the job's ID in the autorun table, and 
+	 * the corresponding interval from the backup. This will restore
+	 * the settings which were present before the site went into 
+	 * maintenance mode. 
+	 * 
+	 * @param	array	$array
+	 * @result	boolean
+	 */
+	public function restore_autorun($array) {
+		$success = TRUE;
+		foreach($array as $job_id => $interval) {
+			if($this->autorun_model->set_interval($job_id, $interval) == FALSE)
+				$sucess = FALSE;
+		}
+		return $success;
+	}
+
+	/**
+	 * Set Mode
+	 * 
+	 * This function is used to toggle maintenance mode for the site. 
+	 * If turning maintenance mode on, it will make a copy of the sites
+	 * current configuration, and back this up. Then it will make the 
+	 * following changes to the config table: allow_registration is set
+	 * to '0'; allow_guests is set to '0'; refund_after_inactivity='0'; delete_messages_after='0';
+	 * delete_transactions_after='0';
+	 * It will also affect the autorun table, probably by disabling 
+	 * everything. 
+	 * 
+	 * $setting can be 'maintenance' or 'normal'
+	 * 
+	 * @param	string	$setting
+	 * @return	boolean
+	 */
+	public function set_mode($setting) {
+		$this->load->model('autorun_model');
+		
+		if($setting == 'maintenance') {
+			$this->load->model('autorun_model');
+			
+			// Back up autorun settings.
+			$autorun = $this->autorun_model->load_all();
+			$autorun_array = array();
+			foreach($autorun as $job) {
+				$autorun_array[$job['id']] = $job['interval'];
+			}
+			$autorun_array = json_encode($autorun_array);
+			if($this->disable_autorun($autorun_array) == TRUE)
+				$changes['autorun_preserve'] = $autorun_array;
+			
+			// Back up config.
+			$backup_settings = json_encode($this->bw_config->status());
+			$changes['settings_preserve'] = $backup_settings;
+			$changes['allow_registration'] = '0';
+			$changes['allow_guests'] = '0';
+			$changes['maintenance_mode'] = '1';
+			
+			if($this->config_model->update($changes) == FALSE)
+				return FALSE;
+				
+		} else if($setting == "online") {
+			// 
+			$autorun_backup = (array)json_decode($this->bw_config->autorun_preserve);
+			if($this->restore_autorun($autorun_backup) == TRUE)
+				$changes['autorun_preserve'] = '';
+				
+			$settings_backup = (array)json_decode($this->bw_config->settings_preserve);
+			if($this->config_model->update($settings_backup) == TRUE)
+				$changes['setting_preserve'] = '';
+				
+			if($this->config_model->update($changes) == FALSE)
+				return TRUE;
+		}
+		return TRUE;
+	}
 	
 }
 

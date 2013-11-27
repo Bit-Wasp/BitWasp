@@ -79,7 +79,7 @@
                       <input type='text' class='span2' name='price[]' value="<?php echo ($item['currency']['id'] == '0') ? '0.1' : '10'; ?>" />
                     </div>
 				  </td>
-				  <td class='span3'><input type='checkbox' name='enabled[]' value='1' /></td>
+				  <td class='span3'></td>
 				  <td class="span3"></td>				  
 			    </tr>
 			  			

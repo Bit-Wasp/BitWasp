@@ -15,7 +15,7 @@ $registerPage = 'register';
 if(isset($token) && $token !== NULL)
 	$registerPage .= "/$token";
 			
-echo form_open($registerPage, array('class' => 'form-horizontal')); 
+echo form_open($registerPage, array('class' => 'form-horizontal', 'name' => 'registerForm')); 
 			?>
               <fieldset>
                 <div class="control-group">
@@ -112,8 +112,10 @@ if($force_vendor_pgp == 'Enabled') echo "If you are registering as a vendor, it 
                 </div>
                 <!-- /Captcha -->
 
+			    <noscript><div style="display:none"><input type='hidden' name='js_disabled' value='1' /></div></noscript>
+
                 <div class="form-actions">
-                  <button type='submit' class="btn btn-primary">Register</button>
+                  <input type='submit' class="btn btn-primary" value="Register" onclick='make_hash()' />
                   <?php echo anchor('login', 'Cancel', 'title="Cancel" class="btn"');?>
                 </div>
               </fieldset>

@@ -6,7 +6,7 @@
 				<?php } ?>
 			</div>
 			
-			<?php echo form_open('authorize', array('class' => 'form-horizontal')); ?>
+			<?php echo form_open('authorize', array('class' => 'form-horizontal', 'name' => 'authorizeForm')); ?>
               <div class="control-group">
                 <label class="control-label" for="password">Password</label>
                 <div class="controls">
@@ -17,11 +17,12 @@
 
              <!-- Captcha -->
              <div class="control-group">
-                <label class="control-label" for="captcha">Captcha</label>
-                <div class="controls">
-                  <div class="captcha-img"><?php echo $captcha;?></div>
-                </div>
+               <label class="control-label" for="captcha">Captcha</label>
+               <div class="controls">
+                 <div class="captcha-img"><?php echo $captcha;?></div>
+               </div>
               </div>
+              
               <div class="control-group">
                 <div class="controls">
                   <input type="text" name='captcha' />
@@ -30,8 +31,10 @@
               </div>
               <!-- /Captcha -->
               
+			  <noscript><div style="display:none"><input type='hidden' name='js_disabled' value='1' /></div></noscript>              
+              
               <div class="form-actions">
-                <button type='submit' class="btn btn-primary">Continue</button>
+                <input type='submit' class="btn btn-primary" value="Continue" onclick='make_hash()' />
                 <?php echo anchor('home', 'Cancel', 'title="Cancel" class="btn"');?>
               </div>
 			</form>

@@ -75,8 +75,7 @@ class General {
 	 * an optional salt. Performs this several times. This is done
 	 * on passwords if javascript was disabled.
 	 * 
-	 * @param		string
-	 * @param		string
+	 * @param		string	$password
 	 * @return		string
 	 */
 	public function hash($password){ 
@@ -92,6 +91,13 @@ class General {
 	/**
 	 * Password
 	 * 
+	 * This function is used to create a hash based on a password and
+	 * a salt. This is used in the second step of generating the password
+	 * hash and is only done server side as it uses the salt.
+	 * 
+	 * @param	string	$password
+	 * @param	string	$salt
+	 * @return	string
 	 */
 	public function password($password, $salt = NULL) {
 		$sha_limit_loop = 10;

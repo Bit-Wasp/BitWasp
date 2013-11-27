@@ -10,7 +10,7 @@
 	echo 'It is recommended that you update your location.<Br />';
 ?>
 
-<?php if($items !== FALSE) { ?>
+<?php if($items !== FALSE && count($items) > 0) { ?>
 		  <div class='row-fluid'>
 <?php foreach ($items as $item): ?>
             <div class="span3 well well-small" id="prod_<?php echo $item['hash']; ?>" >

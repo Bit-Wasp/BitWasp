@@ -228,12 +228,15 @@ if ( ! function_exists('create_captcha'))
 		//  Generate the image
 		// -----------------------------------
 
-		$img_name = $now.'.jpg';
+		// Output and capture the captcha image. Convert to base64.
+		ob_start();
+		imagepng($im);
+		$image_data = ob_get_contents();
+		ob_end_clean();
+		$image_data = base64_encode($image_data);
 
-		ImageJPEG($im, $img_path.$img_name);
-
-		$img = "<img src=\"$img_url$img_name\" width=\"$img_width\" height=\"$img_height\" style=\"border:0;\" alt=\" \" />";
-
+		// Generate the image string.
+		$img = "<img src=\"data:image/png;base64,$image_data\" width=\"$img_width\" height=\"$img_height\" style=\"border:0;\" alt=\" \" />";
 		ImageDestroy($im);
 
 		return array('word' => $word, 'time' => $now, 'image' => $img);
@@ -244,3 +247,4 @@ if ( ! function_exists('create_captcha'))
 
 /* End of file captcha_helper.php */
 /* Location: ./system/heleprs/captcha_helper.php */
+

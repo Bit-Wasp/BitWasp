@@ -258,6 +258,25 @@ class Bw_config {
 	public $global_proxy_url		= '';
 
 	/**
+	 * Settings Preserve
+	 * 
+	 * This entry is a place to store a backup of the sites configuration
+	 * as it enters maintenance mode. This could be up to the admin,
+	 * or can be triggered by a bitcoind alert or by the source code
+	 * checker. Default is this is empty.
+	 */
+	public $settings_preserve		= '';
+
+	/**
+	 * Maintenance Mode
+	 * 
+	 * This settings is configured by the admin to put the site into 
+	 * offline mode. This can also be triggered by bitcoind alerts,
+	 * and source code checking. The default setting is disabled.
+	 */
+	public $maintenance_mode 		= 0;
+
+	/**
 	 * Constructor
 	 * 
 	 * Load the CodeIgniter framework, along with the config/currencies 
@@ -314,7 +333,8 @@ class Bw_config {
 							'index_page' => $this->index_page,
 							'allow_guests' => $this->allow_guests,
 							'global_proxy_url' => $this->global_proxy_url,
-							'global_proxy_type' => $this->global_proxy_type);
+							'global_proxy_type' => $this->global_proxy_type,
+							'maintenance_mode' => $this->maintenance_mode);
 		} else if($panel == 'bitcoin') {
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,
@@ -379,6 +399,5 @@ class Bw_config {
 	}
 
 };
-
 
  /* End of file Bw_config.php */

@@ -988,6 +988,43 @@ class Admin extends CI_Controller {
 	}
 
 	/**
+	 * Maintenance
+	 * 
+	 * This controller is used to put the site into maintenance mode.
+	 * When this happens, the sites configuration is backed up in an
+	 * entry in the bw_config table, and replaces them with safer defaults.
+	 * Maintenance mode prevents anyone but an admin from logging in, and 
+	 * will disable any bitcoin related functionality. 
+	 * This can be triggered by bitcoind alerts, or issues reported via
+	 * github.
+	 */
+	public function maintenance() {
+		$this->load->library('form_validation');
+		$this->load->model('admin_model');
+		
+		$data['config'] = $this->bw_config->status();
+
+		// Check if form was submitted.
+		if($this->input->post('set_maintenance_mode') == 'Update') {
+			if($this->form_validation->run('admin_maintenance_mode') == TRUE) {
+				// Load the submitted value
+				$maintenance_mode = $this->input->post('maintenance_mode');
+				
+				// If different to the stored value, change the site mode.
+				if($data['config']['maintenance_mode'] !== $maintenance_mode) {
+					$result = ($maintenance_mode == 0) ? $this->admin_model->set_mode('online') : $this->admin_model->set_mode('maintenance');
+					if($result == TRUE) 
+						redirect('admin/maintenance');
+				}
+			}
+		}
+		
+		$data['title'] = 'Maintenance Settings';
+		$data['page'] = 'admin/maintenance';
+		$this->load->library('Layout', $data);
+	}
+
+	/**
 	 * User List
 	 * 
 	 * Used to display a user list for administrator. Includes a search

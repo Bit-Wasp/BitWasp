@@ -58,7 +58,7 @@ class Users extends CI_Controller {
 	 */
 	public function login() {
 
-		$data['header_meta'] = $this->load->view('users/login_hash', NULL, true);
+		$data['header_meta'] = $this->load->view('users/login_hash_header', NULL, true);
 		
 		$this->load->helper(array('form'));
 		$this->load->library('form_validation');
@@ -91,6 +91,9 @@ class Users extends CI_Controller {
 					// Check if the user is banned.
 					if($user_info['banned'] == '1') {
 						$data['returnMessage'] = "You have been banned from this site.";
+						
+					} else if($user_info['user_role'] !== 'Admin' && $this->bw_config->maintenance_mode == TRUE) {
+						$data['returnMessage'] = "The site is in maintenance mode, please try again later.";
 						
 					} else if($user_info['entry_paid'] == '0') {
 						// Redirect to payment details.
@@ -143,7 +146,7 @@ class Users extends CI_Controller {
 	 */
 	public function register($token = NULL) {
 
-		$data['header_meta'] = $this->load->view('users/register_hash', NULL, true);
+		$data['header_meta'] = $this->load->view('users/register_hash_header', NULL, true);
 
 		// If registration is disabled, and no token is set, direct to the login page.
 		if($this->bw_config->registration_allowed == FALSE && $token == NULL)

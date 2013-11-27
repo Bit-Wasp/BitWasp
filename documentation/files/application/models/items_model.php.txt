@@ -115,7 +115,7 @@ class Items_model extends CI_Model {
 				
 			}
 		} else {
-			$results = FALSE;
+			$results = array();
 		}	
 		
 		return $results;

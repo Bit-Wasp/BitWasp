@@ -202,7 +202,6 @@ class Categories_model extends CI_Model {
 		foreach($query->result() as $result){
 			$items = $this->items_model->get_list(array('category' => $result->id));
 			
-			
 			$menu[$result->id] = array(	'id' => $result->id,
 										'name' => $result->name,
 										'description' => $result->description,
