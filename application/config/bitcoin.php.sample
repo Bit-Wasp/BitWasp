@@ -1,18 +1,26 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Bitcoin Config Sample
+ * 
+ * This file contains sample entries which are used to configure the 
+ * bitcoin.php config file. That file contains settings to connect
+ * to the bitcoin daemon
+ */
+
+// Set whether you have SSL enabled.
 $config['ssl'] = false;
+// Configure the user, password, host and port for the bitcoin daemon.
 $config['user'] = '';
 $config['password'] = '';
 $config['host'] = 'localhost';
 $config['port'] = '';
 
-
 //$config['ssl'] = false;
-//$config['user'] = 'test';
-//$config['password'] = '123';
+//$config['user'] = 'testuser';
+//$config['password'] = '123really_long_password';
 //$config['host'] = 'localhost';
 //$config['port'] = '19001';
-
 
 // Leave these lines intact.
 $config['ssl'] = ($config['ssl'] == TRUE) ? 'https://' : 'http://';

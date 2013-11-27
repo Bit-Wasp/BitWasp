@@ -149,7 +149,7 @@ class Users extends CI_Controller {
 		$data['header_meta'] = $this->load->view('users/register_hash_header', NULL, true);
 
 		// If registration is disabled, and no token is set, direct to the login page.
-		if($this->bw_config->registration_allowed == FALSE && $token == NULL)
+		if($this->bw_config->maintenance_mode == TRUE || $this->bw_config->registration_allowed == FALSE && $token == NULL)
 			redirect('login');
 			
 		// If a token is invalid, redirect to the register page.

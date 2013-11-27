@@ -203,4 +203,4 @@ $(document).ready(function () {
             <span class="icon-bar"></span>
           </a>
           
-          <a class="brand" href="<?php echo site_url(); ?>"><?php echo $site_title; ?></a>
+          <a class="brand" href="<?php echo site_url(); ?>"><?php echo $site_title; ?><?php echo ($maintenance_mode == TRUE) ? ' (maintenance mode)' : ''; ?></a>

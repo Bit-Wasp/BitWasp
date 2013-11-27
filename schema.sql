@@ -5,10 +5,8 @@
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u4
 
-
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -101,7 +99,10 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (25, 'minimum_fee', '0.0003'),
 (26, 'default_rate', '0.25'),
 (27, 'global_proxy_url', ''),
-(28, 'global_proxy_type', 'Disabled');
+(28, 'global_proxy_type', 'Disabled'),
+(29, 'maintenance_mode', '0'),
+(30, 'settings_preserve', ''),
+(31, 'autorun_preserve', '');
 
 CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,

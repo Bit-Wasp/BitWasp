@@ -37,12 +37,11 @@ class Admin_model extends CI_Model {
 	public function disable_autorun($array) {
 		$success = TRUE;
 		$keys = array_keys($array);
-		foreach($array as $job_id) {
-			if($this->autorun_model->set_interval($job_id, '0') == FALSE)
+		foreach($keys as $index) {
+			if($this->autorun_model->set_interval($index, '0') == FALSE)
 				$success = FALSE;
 		}
 		return $success;
-		
 	}
 	
 	/**
@@ -58,8 +57,8 @@ class Admin_model extends CI_Model {
 	 */
 	public function restore_autorun($array) {
 		$success = TRUE;
-		foreach($array as $job_id => $interval) {
-			if($this->autorun_model->set_interval($job_id, $interval) == FALSE)
+		foreach($array as $index => $interval) {
+			if($this->autorun_model->set_interval($index, $interval) == FALSE)
 				$sucess = FALSE;
 		}
 		return $success;
@@ -85,39 +84,46 @@ class Admin_model extends CI_Model {
 	public function set_mode($setting) {
 		$this->load->model('autorun_model');
 		
-		if($setting == 'maintenance') {
-			$this->load->model('autorun_model');
-			
-			// Back up autorun settings.
+		if($setting == 'maintenance') {			
+			// Disable autorun & Back up autorun settings.
 			$autorun = $this->autorun_model->load_all();
 			$autorun_array = array();
-			foreach($autorun as $job) {
-				$autorun_array[$job['id']] = $job['interval'];
+			foreach($autorun as $index => $job) {
+				$autorun_array[$index] = $job['interval'];
 			}
-			$autorun_array = json_encode($autorun_array);
 			if($this->disable_autorun($autorun_array) == TRUE)
-				$changes['autorun_preserve'] = $autorun_array;
+				$changes['autorun_preserve'] = json_encode($autorun_array);
 			
-			// Back up config.
-			$backup_settings = json_encode($this->bw_config->status());
-			$changes['settings_preserve'] = $backup_settings;
-			$changes['allow_registration'] = '0';
+			// Back up the settings we are about to change.
+			$backup_settings = array('registration_allowed' => ($this->bw_config->registration_allowed == TRUE) ? '1' : '0',
+									 'allow_guests' => ($this->bw_config->allow_guests == TRUE) ? '1' : '0');
+			$changes['settings_preserve'] = json_encode($backup_settings);
+			
+			// Change some settings to lock down the site.
+			$changes['registration_allowed'] = '0';
 			$changes['allow_guests'] = '0';
 			$changes['maintenance_mode'] = '1';
 			
+			// Commit backups and changes.
 			if($this->config_model->update($changes) == FALSE)
 				return FALSE;
 				
 		} else if($setting == "online") {
-			// 
+			
+			// Load the autorun backup and restore it.
 			$autorun_backup = (array)json_decode($this->bw_config->autorun_preserve);
 			if($this->restore_autorun($autorun_backup) == TRUE)
 				$changes['autorun_preserve'] = '';
 				
+			// Load the settings backup and restore it.
 			$settings_backup = (array)json_decode($this->bw_config->settings_preserve);
-			if($this->config_model->update($settings_backup) == TRUE)
-				$changes['setting_preserve'] = '';
+			$this->config_model->update($settings_backup);
+			$changes['setting_preserve'] = '';
 				
+			// Turn off maintenance mode
+			$changes['maintenance_mode'] = '0';
+				
+			// Commit changes
 			if($this->config_model->update($changes) == FALSE)
 				return TRUE;
 		}

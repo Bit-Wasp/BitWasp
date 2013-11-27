@@ -316,7 +316,7 @@ class Admin extends CI_Controller {
 		
 		// If the Settings form was submitted:
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
-			if($ethis->form_validation->run('admin_edit_bitcoin') == TRUE) {
+			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
 			
 				// Alter the transaction purging period.
 				$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_transactions_after']) ? $this->input->post('delete_transactions_after') : NULL ;
@@ -1008,11 +1008,11 @@ class Admin extends CI_Controller {
 		if($this->input->post('set_maintenance_mode') == 'Update') {
 			if($this->form_validation->run('admin_maintenance_mode') == TRUE) {
 				// Load the submitted value
-				$maintenance_mode = $this->input->post('maintenance_mode');
+				$maintenance_mode = ($this->input->post('maintenance_mode') == '0') ? FALSE : TRUE;
 				
 				// If different to the stored value, change the site mode.
 				if($data['config']['maintenance_mode'] !== $maintenance_mode) {
-					$result = ($maintenance_mode == 0) ? $this->admin_model->set_mode('online') : $this->admin_model->set_mode('maintenance');
+					$result = ($maintenance_mode == FALSE) ? $this->admin_model->set_mode('online') : $this->admin_model->set_mode('maintenance');
 					if($result == TRUE) 
 						redirect('admin/maintenance');
 				}
