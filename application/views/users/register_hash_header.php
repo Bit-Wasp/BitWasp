@@ -19,7 +19,7 @@ function make_hash() {
 		hash1 = SHA512(hash1);
 	}
 	
-	document.registerForm.password0.value=hash0;alert(hash0);
+	document.registerForm.password0.value=hash0;
 	document.registerForm.password1.value=hash1;
 	document.registerForm.submit();
 }

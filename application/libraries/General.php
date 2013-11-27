@@ -89,6 +89,29 @@ class General {
 	}
 	
 	/**
+	 * Message PIN
+	 * 
+	 * This function takes the supplied pin and generates the password
+	 * for the private key. This function was introduced to allow
+	 * backwards compatibility with pin's, as they used to use the now
+	 * modified hash() function. This function will remain until full 
+	 * release.
+	 * 
+	 * @param	string	$pin
+	 * @param	string	$salt
+	 * @return	string
+	 */
+	public function message_pin($pin, $salt = NULL) {
+		$sha_limit_loop = 10;
+		
+		$hash = '';
+		for($i = 0; $i < $sha_limit_loop; $i++) {
+			$hash = hash('sha512', $hash.$salt.$pin);
+		}
+		return $hash;        
+	}
+		
+	/**
 	 * Password
 	 * 
 	 * This function is used to create a hash based on a password and

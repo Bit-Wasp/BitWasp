@@ -280,7 +280,7 @@ class Messages extends CI_Controller {
 		if ($this->form_validation->run('message_pin_form') == TRUE){
 			// Load the users salt, public key, and private key.
 			$user = $this->users_model->message_data(array('user_hash' => $this->current_user->user_hash));
-			$message_password = $this->general->hash($this->input->post('pin'),$user['salt']);
+			$message_password = $this->general->password($this->input->post('pin'), $user['salt']);
 		
 			// Encrypt with public key, attempt to decrypt with private key & password.
 			$solution = $this->general->generate_salt();

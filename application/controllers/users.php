@@ -199,7 +199,7 @@ class Users extends CI_Controller {
 			// Generate OpenSSL keys for the users private messages.	
 			if($data['encrypt_private_messages'] == TRUE) {
 				$pin = $this->input->post('message_pin0');
-				$message_password = $this->general->hash($this->input->post('message_pin0'), $salt);
+				$message_password = $this->general->password($this->input->post('message_pin0'), $salt);
 				
 				$message_keys = $this->openssl->keypair($message_password);
 				unset($message_password);
