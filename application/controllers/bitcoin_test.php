@@ -13,14 +13,14 @@ class Bitcoin_Test extends CI_Controller {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
 	}
-	
+
 	public function alert() {
-		$alert = $this->bw_bitcoin->check_alert();
-		if($alert !== FALSE) {
-			$this->load->model('admin_model');
-			$this->logs_model->add('Bitcoin Alert', 'Bitcoin Alert', $alert, 'Alert');
-			$this->admin_model->set_mode('maintenance');
-		}
+		$this->load->library('bw_curl');
+		$latest_version = parse_ini_string($this->bw_curl->get_request('https://raw.github.com/Bit-Wasp/BitWasp/master/version.ini'));
+		$info = $this->bw_curl->get_request("https://api.github.com/orgs/Bit-Wasp/repos");
+		
+		$info = $this->bw_curl->get_request("https://api.github.com/repos/Bit-Wasp/BitWasp/commits");
+		echo '<pre>';print_r($info);echo '</pre>';
 	}
 	
 	public function keypair() {
