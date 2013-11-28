@@ -42,7 +42,7 @@ class Bw_config {
 	/**
 	 * Site Title
 	 * 
-	 * The title of the marketplace.
+	 * The title of the marketplace. Default is to be empty.
 	 */
 	public $site_title				= "";
 	
@@ -307,6 +307,7 @@ class Bw_config {
 		$this->vendor_registration_allowed = ($this->vendor_registration_allowed == '1') ? TRUE : FALSE;
 		$this->encrypt_private_messages = ($this->encrypt_private_messages == '1') ? TRUE : FALSE;
 		$this->force_vendor_pgp = ($this->force_vendor_pgp == '1') ? TRUE : FALSE;
+		$this->maintenance_mode = ($this->maintenance_mode == '1') ? TRUE : FALSE;
 		
 		$this->currencies = $this->CI->currencies_model->get_exchange_rates();
 		$this->price_index_config = $this->CI->config->item('bitcoin_index');	
@@ -385,7 +386,7 @@ class Bw_config {
 		unset($vars['CI']);
 		return $vars;
 	}
-
+	
 	/**
 	 * Bitcoin Rate Config
 	 * 

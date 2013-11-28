@@ -13,11 +13,14 @@ class Bitcoin_Test extends CI_Controller {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
 	}
-
-	public function test(){
-
-		$this->load->library('bitcoyn_crypto');
-		$key = $this->bitcoyn_crypto->generate();
+	
+	public function alert() {
+		$alert = $this->bw_bitcoin->check_alert();
+		if($alert !== FALSE) {
+			$this->load->model('admin_model');
+			$this->logs_model->add('Bitcoin Alert', 'Bitcoin Alert', $alert, 'Alert');
+			$this->admin_model->set_mode('maintenance');
+		}
 	}
 	
 	public function keypair() {

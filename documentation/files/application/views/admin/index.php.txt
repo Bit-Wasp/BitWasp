@@ -4,6 +4,11 @@
 			
 		  <div class="container-fluid">
 			  
+			<div class="row-fluid">
+			  <span class="span3">Site Status</span>
+			  <span class="span7"><strong><?php echo ($config['maintenance_mode'] == TRUE) ? 'maintenance mode' : 'online'; ?></strong></span>
+			</div>			  
+			  
 			<div class='row-fluid'>
 			  <span class='span3'>Site Title</span>
 			  <span class='span7'><?php echo $site_title; ?></span>

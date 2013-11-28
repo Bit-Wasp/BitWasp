@@ -6,6 +6,11 @@
   		    <fieldset>
 			
 			  <div class="row-fluid">
+				<div class="span3">Site Status</div>
+				<div class="span8"><?php echo ($config['maintenance_mode'] == TRUE) ? 'maintenance mode' : 'online'; ?> - <?php echo anchor('admin/maintenance', 'Configure'); ?></div>
+			  </div>
+			
+			  <div class="row-fluid">
 			    <div class="span3">Site Title</div>
 			    <div class="span8"><input type="text" name="site_title" value="<?php echo $config['site_title']; ?>" /></div>
 			    <span class="help-inline"><?php echo form_error('site_title'); ?></span>			    

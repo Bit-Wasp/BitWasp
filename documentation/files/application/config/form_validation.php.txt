@@ -1,8 +1,14 @@
 <?php
-// Add errors for:
-//  callback_register_check_role
-// callback_check_delete_on_read
-// calback_recipient_exists
+/**
+ * Form Validation Rules
+ * 
+ * This file contains the form validation rules to be used throughout
+ * the application. All rules are centralized here, never hard coded to
+ * a form. For custom callbacks (rules prefixed with callback_) which
+ * call functions in the controller performing the validation,
+ * the corresponding error messages are found in ./application/language/english/form_validation_lang.php.
+ */
+
 $config = array('register_form'=>array(
 										array(	'field' => 'user_name',
 												'label' => 'user name',
@@ -480,6 +486,12 @@ $config = array('register_form'=>array(
 										array('field' => 'list',
 											  'label' => '',
 											  'rules' => 'callback_check_user_search_list'
+										)
+							),
+				'admin_maintenance_mode' => array(
+										array('field' => 'maintenance_mode',
+											  'label' => 'Maintenance mode',
+											  'rules' => 'callback_check_bool'
 										)
 							),
 				'order_dispute' => array(

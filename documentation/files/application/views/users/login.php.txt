@@ -1,5 +1,6 @@
           <div class="mainContent span6">
             <h2>Login</h2>
+
             <div class="alert">            
 <?php if(isset($returnMessage)){ echo $returnMessage; } else { ?>
 				Enter your user name and password to login.

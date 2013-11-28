@@ -593,4 +593,22 @@ class Bw_bitcoin {
 		return (isset($update) && $this->CI->currencies_model->update_exchange_rates($update) == TRUE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * Check Alert
+	 * 
+	 * Query bitcoin daemon for an alert. Returns the alert message if
+	 * there is currently a network alert, otherwise it returns FALSE.
+	 * 
+	 * @return	string/FALSE
+	 */
+	public function check_alert() {
+		// Return false if the bitcoin daemon is offline.
+		$info = $this->getinfo();
+		if(!is_array($info))
+			return FALSE;
+		
+		// Return the string if there's an alert, otherwise false.
+		return (is_string($info['errors']) && strlen($info['errors']) > 0) ? $info['errors'] : FALSE;
+	}
+
 };

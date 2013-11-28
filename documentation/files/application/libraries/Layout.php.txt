@@ -87,8 +87,14 @@ class Layout {
 			}
 		}	
 		
+		$header = array('title' => $data['title'],
+						'site_title' => $data['site_title'],
+						'site_description' => $data['site_description'],
+						'maintenance_mode' => $CI->bw_config->maintenance_mode,
+						'header_meta' => $data['header_meta']);
+		
 		// Load the HTML.
-		$CI->load->view('templates/header',$data);
+		$CI->load->view('templates/header',$header);
 		$CI->load->view('templates/bar/'.$bar['role'], $bar);
 		$CI->load->view('templates/midsection');
         $CI->load->view('templates/sidebar', $category_data);

@@ -12,6 +12,7 @@
 		  <br />
 		  
 		  <?php echo form_open('admin/maintenance', array('class' => 'form-horizontal')); ?>
+		  <?php echo validation_errors(); ?>
 		    <div class='row-fluid'>
 			  <div class='span3'><strong>Current Status</strong></div>
 			  <div class='span4'><i><?php echo ($config['maintenance_mode'] == TRUE) ? 'Enabled' : 'Disabled'; ?></i></div>
@@ -26,6 +27,7 @@
 			    </select>
 			  </div>
 		    </div>
+		    <span class='help-inline'><?php echo form_error('maintenenace_mode'); ?></span>
 
    			<div class="form-actions">
 			  <input type='submit' name='set_maintenance_mode' value='Update' class="btn btn-primary" />

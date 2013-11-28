@@ -87,7 +87,7 @@ class General {
 		}
 		return $hash;
 	}
-	
+			
 	/**
 	 * Password
 	 * 

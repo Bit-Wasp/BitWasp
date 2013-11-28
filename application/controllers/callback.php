@@ -48,11 +48,34 @@ class Callback extends CI_Controller {
 	 * @see		Models/Bitcoin_Model	 
 	 * @see		Libraries/Bw_Bitcoin
 	 */
-	public function block($block_hash){
+	public function block($block_hash) {
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');	
 		
 		$this->bw_bitcoin->blocknotify($block_hash);
+	}	
+	
+	/**
+	 * Alert
+	 * 
+	 * This callback is used by the bitcoin daemon to inform the site
+	 * of an alert, and to put it into maintenance mode. The alert
+	 * message is stored in the log for the admin to see.
+	 * 
+	 */
+	public function alert() {
+		$this->load->library('bw_bitcoin');		
+		
+		// Load the current, if any, bitcoin alert.
+		$alert = $this->bw_bitcoin->check_alert();
+		if($alert !== FALSE) {
+			// If there is an alert, log the alert message for the admin.
+			$this->load->model('admin_model');
+			$this->logs_model->add('Bitcoin Alert', 'Bitcoin Alert', $alert, 'Alert');
+			// If the site is not already in maintenance mode, go into that now.
+			if($this->bw_config->maintenance_mode == FALSE)
+				$this->admin_model->set_mode('maintenance');
+		}
 	}
 	
 	/**

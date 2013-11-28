@@ -149,7 +149,7 @@ class Users extends CI_Controller {
 		$data['header_meta'] = $this->load->view('users/register_hash_header', NULL, true);
 
 		// If registration is disabled, and no token is set, direct to the login page.
-		if($this->bw_config->registration_allowed == FALSE && $token == NULL)
+		if($this->bw_config->maintenance_mode == TRUE || $this->bw_config->registration_allowed == FALSE && $token == NULL)
 			redirect('login');
 			
 		// If a token is invalid, redirect to the register page.
@@ -180,121 +180,128 @@ class Users extends CI_Controller {
 		// Check if we need the message_pin form, or the other one!
 		if ($this->form_validation->run($register_validation) == FALSE) {
 			// Show the register form.
-			
 			$data['title'] = 'Register';
             $data['page'] = $register_page; 
             $data['token'] = $token;
 			$data['captcha'] = $this->bw_captcha->generate();
 			
 		} else {
-			// Work out if the role was supplied via a token, take that.
-			
-			$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password0')) : $this->input->post('password0');
-			// Generate the users salt and hashed password.
-			$salt = $this->general->generate_salt();
-			$password = $this->general->password($password, $salt);
-			
-			$user_name = $this->input->post('user_name');
-			
-			// Generate OpenSSL keys for the users private messages.	
-			if($data['encrypt_private_messages'] == TRUE) {
-				$pin = $this->input->post('message_pin0');
-				$message_password = $this->general->hash($this->input->post('message_pin0'), $salt);
-				
-				$message_keys = $this->openssl->keypair($message_password);
-				unset($message_password);
-			
+			// If there's no token, the admin cannot register.
+			if($token == NULL && !$this->general->matches_any($data['role'], array('Buyer','Vendor'))) {
+				$data['title'] = 'Register';
+				$data['page'] = $register_page;
+				$data['token'] = $token;
+				$data['captcha'] = $this->bw_captcha->generate();
+				$data['returnMessage'] = 'Please select a valid role.';
 			} else {
-				// Set default values for the message keys.
-				$message_keys = array(	'public_key' => '0',
-										'private_key' => '0');
-			}	
-
-			// Generate a user hash.
-			$user_hash = $this->general->unique_hash('users', 'user_hash');
-
-			// Build the array for the model.
-			$register_info = array(	'password' => $password,
-									'location' => $this->input->post('location'),
-									'register_time' => time(),
-									'salt' => $salt,
-									'user_hash' => $user_hash,
-									'user_name' => $user_name,
-									'user_role' => $data['role'],
-									'public_key' => $message_keys['public_key'],
-									'private_key' => $message_keys['private_key'],
-									'local_currency' => $this->input->post('local_currency') );		
 			
-			$add_user = $this->users_model->add($register_info, $data['token_info']);
-			
-			// Check the submission
-			if($add_user) {
-	
-				// Registration successful, show login page.
-				$data['title'] = 'Registration Successful';
-				$data['page'] = 'users/login';
-				$data['action_page'] = 'login';
-   				$data['captcha'] = $this->bw_captcha->generate();
-
-				$entry_fee = 'entry_payment_'.strtolower($data['role']);
-				$entry_fee = $this->bw_config->$entry_fee;
+				$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password0')) : $this->input->post('password0');
+				// Generate the users salt and hashed password.
+				$salt = $this->general->generate_salt();
+				$password = $this->general->password($password, $salt);
 				
-				if(isset($data['token_info']) && $data['token_info'] !== FALSE){
-					if($data['token_info']['entry_payment'] > 0) {
-						$address = $this->bw_bitcoin->new_fees_address();
-						$entry_fee = $data['token_info']['entry_payment'];
-						$info = array(	'user_hash' => $user_hash,
-										'amount' => $data['token_info']['entry_payment'],
-										'bitcoin_address' => $address);
-						if($this->users_model->set_entry_payment($info) == TRUE){
-								
-							if($address == NULL){
-								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
-							} else {
-								$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
+				$user_name = $this->input->post('user_name');
+				
+				// Generate OpenSSL keys for the users private messages.	
+				if($data['encrypt_private_messages'] == TRUE) {
+					$pin = $this->input->post('message_pin0');
+					$message_password = $this->general->password($this->input->post('message_pin0'), $salt);
+					
+					$message_keys = $this->openssl->keypair($message_password);
+					unset($message_password);
+				
+				} else {
+					// Set default values for the message keys.
+					$message_keys = array(	'public_key' => '0',
+											'private_key' => '0');
+				}	
+
+				// Generate a user hash.
+				$user_hash = $this->general->unique_hash('users', 'user_hash');
+
+				// Build the array for the model.
+				$register_info = array(	'password' => $password,
+										'location' => $this->input->post('location'),
+										'register_time' => time(),
+										'salt' => $salt,
+										'user_hash' => $user_hash,
+										'user_name' => $user_name,
+										'user_role' => $data['role'],
+										'public_key' => $message_keys['public_key'],
+										'private_key' => $message_keys['private_key'],
+										'local_currency' => $this->input->post('local_currency') );		
+				
+				$add_user = $this->users_model->add($register_info, $data['token_info']);
+				
+				// Check the submission
+				if($add_user) {
+		
+					// Registration successful, show login page.
+					$data['title'] = 'Registration Successful';
+					$data['page'] = 'users/login';
+					$data['action_page'] = 'login';
+					$data['header_meta'] = $this->load->view('users/login_hash_header', NULL, true);
+					$data['captcha'] = $this->bw_captcha->generate();
+
+					$entry_fee = 'entry_payment_'.strtolower($data['role']);
+					
+					if(isset($data['token_info']) && $data['token_info'] !== FALSE){
+						if($data['token_info']['entry_payment'] > 0) {
+							$address = $this->bw_bitcoin->new_fees_address();
+							$entry_fee = $data['token_info']['entry_payment'];
+							$info = array(	'user_hash' => $user_hash,
+											'amount' => $data['token_info']['entry_payment'],
+											'bitcoin_address' => $address);
+							if($this->users_model->set_entry_payment($info) == TRUE){
+									
+								if($address == NULL){
+									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
+								} else {
+									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
+								}
 							}
+						} else {
+							if($this->users_model->set_entry_paid($user_hash))
+								$data['returnMessage'] = 'Your account has been created, please login below.';
+						}
+					} else if(isset($this->bw_config->$entry_fee) && $this->bw_config->$entry_fee > 0) {
+			
+						$address = $this->bw_bitcoin->new_fees_address();
+						
+						$info = array(	'user_hash' => $user_hash,
+										'amount' => $entry_fee,
+										'bitcoin_address' => $address );
+						if($this->users_model->set_entry_payment($info) == TRUE){
+							// Work out which return message to display.
+							// $address == NULL: bitcoind offline.
+							// Otherwise display the normal message.
+							$data['returnMessage'] = ($address == NULL) ? "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details." : "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 						}
 					} else {
 						if($this->users_model->set_entry_paid($user_hash))
 							$data['returnMessage'] = 'Your account has been created, please login below.';
 					}
-				} else if(isset($entry_fee) && $entry_fee > 0){
-		
-					$address = $this->bw_bitcoin->new_fees_address();
 					
-					$info = array(	'user_hash' => $user_hash,
-									'amount' => $entry_fee,
-									'bitcoin_address' => $address );
-					if($this->users_model->set_entry_payment($info) == TRUE){
-						// Work out which return message to display.
-						// $address == NULL: bitcoind offline.
-						// Otherwise display the normal message.
-						$data['returnMessage'] = ($address == NULL) ? "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details." : "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
-					}
-				} else {
-					if($this->users_model->set_entry_paid($user_hash))
-						$data['returnMessage'] = 'Your account has been created, please login below.';
-				}
-				
-				if($this->bw_bitcoin->new_address($user_hash) == FALSE)
-					$this->logs_model->add('User Registration', 'Unable to create bitcoin topup address', 'It was not possible to create a bitcoin address when creating an account.', 'Warning');
+					if($this->bw_bitcoin->new_address($user_hash) == FALSE)
+						$this->logs_model->add('User Registration', 'Unable to create bitcoin topup address', 'It was not possible to create a bitcoin address when creating an account.', 'Warning');
 
-				// REMOVE BEFORE PRODUCTION
-				$this->load->model('bitcoin_model');
-				if($data['role'] == 'Buyer'){
-					$credit = array('user_hash' => $user_hash,
-									'value' => (float)0.03333333);
-					$this->bitcoin_model->update_credits(array($credit));
+					// REMOVE BEFORE PRODUCTION
+					$this->load->model('bitcoin_model');
+					if($data['role'] == 'Buyer'){
+						$credit = array('user_hash' => $user_hash,
+										'value' => (float)0.03333333);
+						$this->bitcoin_model->update_credits(array($credit));
+					}
+					
+				} else {
+					// Unsuccessful submission, show form again.
+					$data['title'] = 'Register';
+					$data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
+					$data['page'] = $register_page; 
+					$data['token'] = $token;
+					$data['captcha'] = $this->bw_captcha->generate();
+					
 				}
-				
-			} else {
-				// Unsuccessful submission, show form again.
-				$data['title'] = 'Register';
-				$data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
-				$data['page'] = $register_page; 
-	        	$data['token'] = $token;
-   				$data['captcha'] = $this->bw_captcha->generate();
-   				
 			}
 		}
 		
@@ -503,7 +510,7 @@ class Users extends CI_Controller {
 	 * @return	boolean
 	 */	
 	public function check_role($param) {
-		$allowed_values = ($this->bw_config->vendor_registration_allowed) ? array('1','2') : array('1');	
+		$allowed_values = ($this->bw_config->vendor_registration_allowed) ? array('1','2','3') : array('1','3');	
 		return ($this->general->matches_any($param, $allowed_values)) ? TRUE : FALSE;
 	}
 	
@@ -515,7 +522,7 @@ class Users extends CI_Controller {
 	 * @param	int	$param
 	 * @return	boolean
 	 */
-	public function check_valid_currency($param){
+	public function check_valid_currency($param) {
 		$this->load->model('currencies_model');
 		return ($this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
 	}

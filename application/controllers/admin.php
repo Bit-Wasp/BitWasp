@@ -210,8 +210,7 @@ class Admin extends CI_Controller {
 			
 			// If the update happened successfully, redirect!
 			if($update)
-				echo 'asdf';
-				//redirect('admin/autorun');
+				redirect('admin/autorun');
 		}
 
 		$data['config'] = $this->bw_config->load_admin('autorun');
@@ -1041,7 +1040,7 @@ class Admin extends CI_Controller {
 		$this->load->model('users_model');
 		
 		$params = array();
-		$data['users'] = $this->users_model->user_list();
+		$data['users'] = $this->users_moasdel->user_list();
 		
 		// If the user is searching for by username.
 		if($this->input->post('search_username') == 'Search') {

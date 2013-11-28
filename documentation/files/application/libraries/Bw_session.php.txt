@@ -11,7 +11,7 @@
  * @category	Session
  * @author		BitWasp
  */
-class Bw_session  {
+class Bw_session {
 
 	public $CI;
 
@@ -20,7 +20,7 @@ class Bw_session  {
 	public $user_role;
 	public $auth_level;
 	
-	public function __construct(){
+	public function __construct() {
 		$this->CI = &get_instance();
 		$this->CI->load->model('auth_model');
 		$this->CI->load->model('users_model');
@@ -32,10 +32,12 @@ class Bw_session  {
 			$account = $this->CI->users_model->get(array('user_hash' => $this->CI->current_user->user_hash));
 			
 			// Kill a session due to inactivity, or if the user is deleted/banned while logged in.
+			// Also kill a session if maintenance mode is on and the user role is not an admin.
 			if((time()-$this->CI->current_user->last_activity) > $this->CI->bw_config->login_timeout
 				&& $this->CI->session->userdata('new_session') !== 'true' 
 				|| $account == FALSE 
-				|| $account['banned'] == '1'){ 
+				|| $account['banned'] == '1'
+				|| $this->CI->bw_config->maintenance_mode == TRUE && $account['user_role'] !== 'Admin') {
 				
 				//if(!$this->CI->general->matches_any( $this->URI[0], array('login', 'register'))){
 					$this->destroy(); 

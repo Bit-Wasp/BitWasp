@@ -61,14 +61,14 @@ class Logs_Model extends CI_Model {
 	 * Add a record to the log table. Specify the script/uri which is
 	 * recording the log ($caller), the title of the log ($title),
 	 * the log message ($message) and the warning level $level.
-	 * 
+	 * Info / Warning / Error / Alert
 	 * @param	string	$caller
 	 * @param	string	$title
 	 * @param	string	$message
 	 * @param	string	$level
 	 * return	boolean
 	 */
-	public function add($caller, $title, $message, $level){
+	public function add($caller, $title, $message, $level) {
 		return ($this->db->insert('logs', array('caller' => $caller,
 												'title' => $title, 
 												'info_level' => $level,
