@@ -3,10 +3,8 @@
 /**
  * Admin Model
  *
- * Nothing here yet..
- * 
  * @package		BitWasp
- * @subpackage	Controllers
+ * @subpackage	Models
  * @category	Admin
  * @author		BitWasp
  * 

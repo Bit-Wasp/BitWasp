@@ -448,7 +448,7 @@ class Bw_bitcoin {
 			}
 		}
 	}
-	
+
 	/**
 	 * Block Notify
 	 * 
@@ -478,10 +478,7 @@ class Bw_bitcoin {
 		if($this->CI->bitcoin_model->have_block($block_hash) == FALSE) {
 			$block = $this->getblock($block_hash);
 			
-			if($block == NULL)
-				return FALSE;
-			
-			if(!isset($block['code']) && isset($block['height']))
+			if($block !== NULL && !isset($block['code']) && isset($block['height']))
 				$this->CI->bitcoin_model->add_block($block_hash, $block['height']);
 		}
 		
@@ -526,7 +523,13 @@ class Bw_bitcoin {
 				// Try to credit the balance to a users account if the topup transaction has reached 7 confirmations.
 				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'main' && $txn['credited'] == '0' && $array['confirmations'] > 6){
 					array_push($credits, $array);
-					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
+					
+					$test = $this->CI->bitcoin_model->set_credited($txn['txn_id']);
+					ob_start();
+					var_dump($test);
+					$test = ob_get_contents();
+					ob_end_clean();
+					$this->CI->logs('bw_bitcoin','credit','credit '.$txn['txn_id'].'<br />test was '.$test,'debug');
 					
 					$to_address = $this->new_main_address();
 					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
@@ -596,19 +599,22 @@ class Bw_bitcoin {
 	/**
 	 * Check Alert
 	 * 
-	 * Query bitcoin daemon for an alert. Returns the alert message if
-	 * there is currently a network alert, otherwise it returns FALSE.
+	 * Query bitcoin daemon for an alert. Returns an array detailing the
+	 * message and that it came from the bitcoin daemon. Otherwise it
+	 * returns FALSE.
 	 * 
-	 * @return	string/FALSE
+	 * @return	array/FALSE
 	 */
 	public function check_alert() {
+		return array('source' => 'Bitcoin', 'message' => 'Holy fucking shit!');
+		
 		// Return false if the bitcoin daemon is offline.
 		$info = $this->getinfo();
 		if(!is_array($info))
 			return FALSE;
 		
 		// Return the string if there's an alert, otherwise false.
-		return (is_string($info['errors']) && strlen($info['errors']) > 0) ? $info['errors'] : FALSE;
+		return (is_string($info['errors']) && strlen($info['errors']) > 0) ? array('message' => $info['errors'], 'source' => 'Bitcoin') : FALSE;
 	}
 
 };

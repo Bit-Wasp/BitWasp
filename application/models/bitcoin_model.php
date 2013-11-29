@@ -372,9 +372,10 @@ class Bitcoin_model extends CI_Model {
 	 */			
 	public function update_credits($updates) {
 		$code = TRUE;
-		// Loop through each update, and update accordingly. 
 		
+		// Loop through each update, and update accordingly. 
 		foreach($updates as $update) {
+			
 			// Calculate the new balance. 
 			$balance = $this->current_balance($update['user_hash'])+$update['value'];	
 			
@@ -397,7 +398,7 @@ class Bitcoin_model extends CI_Model {
 	 * @return	bool
 	 */			
 	public function set_credited($txn_id) {
-		$this->db->where('txn_id', $txn_id);
+		$this->db->where('txn_id', "$txn_id");
 		return ($this->db->update('pending_txns', array('credited' => '1'))) ? TRUE : FALSE;
 	}
 	

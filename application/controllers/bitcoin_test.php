@@ -16,11 +16,31 @@ class Bitcoin_Test extends CI_Controller {
 
 	public function alert() {
 		$this->load->library('bw_curl');
-		$latest_version = parse_ini_string($this->bw_curl->get_request('https://raw.github.com/Bit-Wasp/BitWasp/master/version.ini'));
-		$info = $this->bw_curl->get_request("https://api.github.com/orgs/Bit-Wasp/repos");
 		
-		$info = $this->bw_curl->get_request("https://api.github.com/repos/Bit-Wasp/BitWasp/commits");
-		echo '<pre>';print_r($info);echo '</pre>';
+		$repo = json_decode($this->bw_curl->get_request("https://api.github.com/repos/Bit-Wasp/BitWasp/commits"));
+		if($repo == FALSE)
+			return FALSE;
+
+		$commit_limit = 10; 
+		$count = 0;
+		foreach($repo as $commit) {
+			$commit = $commit->commit;
+			if($count == $commit_limit)
+				break;
+			
+			$date = strtotime($commit->author->date);
+			$message = htmlentities($commit->message);
+			if(strpos($message, "[ALERT]") !== FALSE)
+				return array('time' => $date,
+							 'message' => $message);
+							 
+			$count++;
+		}
+		return FALSE;
+	}
+
+	public function wtf(){
+		var_dump($this->alert());
 	}
 	
 	public function keypair() {
