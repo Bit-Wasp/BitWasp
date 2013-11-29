@@ -487,6 +487,7 @@ class Bw_bitcoin {
 		if($pending == FALSE)
 			return FALSE;
 			
+		print_r($pending);
 		// Prepare to build arrays of any transactions who need to be credited or have their confirmations changed.
 		$credits = array();
 		$confirmations = array();
@@ -506,6 +507,7 @@ class Bw_bitcoin {
 				
 				// Try to credit the balance to a users account if the topup transaction has reached 7 confirmations.
 				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'topup' && $txn['credited'] == '0' && $array['confirmations'] > 6){
+					echo "update credits\n";
 					array_push($credits, $array);
 					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
 					
