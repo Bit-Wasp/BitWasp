@@ -504,6 +504,19 @@ class Bw_bitcoin {
 							   'category' => $txn['category'],
 							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.
 				
+				// Try to credit the balance to a users account if the topup transaction has reached 7 confirmations.
+				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'topup' && $txn['credited'] == '0' && $array['confirmations'] > 6){
+					array_push($credits, $array);
+					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
+					
+					$to_address = $this->new_main_address();
+					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
+					if(isset($send['code'])) {
+						$accounts = $this->listaccounts();
+						$this->CI->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
+					}	
+				}
+
 				// If the transaction is to do with fee's, then check if the number of transactions exceeds one.
 				// If the entry_payment still exists, and the confirmed balance >= the amount, then delete the 
 				// record and activate the account.
@@ -520,24 +533,6 @@ class Bw_bitcoin {
 					}
 				}
 				
-				// Try to credit the balance to a users account if the topup transaction has reached 7 confirmations.
-				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'main' && $txn['credited'] == '0' && $array['confirmations'] > 6){
-					array_push($credits, $array);
-					
-					$test = $this->CI->bitcoin_model->set_credited($txn['txn_id']);
-					ob_start();
-					var_dump($test);
-					$test = ob_get_contents();
-					ob_end_clean();
-					$this->CI->logs('bw_bitcoin','credit','credit '.$txn['txn_id'].'<br />test was '.$test,'debug');
-					
-					$to_address = $this->new_main_address();
-					$send = $this->sendfrom("topup", $to_address, (float)$array['value']);
-					if(isset($send['code'])) {
-						$accounts = $this->listaccounts();
-						$this->CI->logs_model->add('Block Notify Callback', "Error moving funds from 'topup' account", "Current Balance: BTC {$accounts['topup']}\nMove some funds into the topup address to cover transaction fee's.", "Severe.");
-					}	
-				}
 				
 				// If the transaction has more than 50 confirmations, stop tracking it.
 				if($array['confirmations'] > 50)
@@ -606,7 +601,6 @@ class Bw_bitcoin {
 	 * @return	array/FALSE
 	 */
 	public function check_alert() {
-		return array('source' => 'Bitcoin', 'message' => 'Holy fucking shit!');
 		
 		// Return false if the bitcoin daemon is offline.
 		$info = $this->getinfo();
