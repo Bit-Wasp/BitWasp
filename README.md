@@ -2,8 +2,8 @@ BitWasp
 ===
 
 ```
-Project Homepage: http://bitwasp.tk
-Test site: http://bitmerchant.tk
+Project Homepage: http://bit-wasp.org
+Test site: http://demo.bit-wasp.org
 Facebook page: https://facebook.com/BitWasp
 ```
 
