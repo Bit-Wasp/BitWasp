@@ -71,7 +71,7 @@ class Listings extends CI_Controller {
 		if($this->form_validation->run('edit_listing') === TRUE) {
 			// Compare post values to the original, remove any NULL entries.
 			if($data['item']['price'] !== $this->input->post('price') ||
-			  $data['item']['currency']['id'] !== $this->input->post('currency')){
+			  $data['item']['currency']['id'] !== $this->input->post('currency')) {
 				$changes['currency'] = $this->input->post('currency');
 				$changes['price'] = $this->input->post('price');
 			}
@@ -82,7 +82,7 @@ class Listings extends CI_Controller {
 			$changes['ship_from'] = ($data['item']['ship_from'] == $this->input->post('ship_from')) ? NULL : $this->input->post('ship_from');
 			$changes = array_filter($changes, 'strlen');
 			
-			if(count($changes) > 0){
+			if(count($changes) > 0) {
 				$data['returnMessage'] = 'Unable to save your changes at this time.';
 				if($this->listings_model->update($item_hash, $changes) == TRUE) 
 					$data['returnMessage'] = 'Your changes have been saved.';
@@ -122,7 +122,7 @@ class Listings extends CI_Controller {
 		$data['local_currency'] = (array)$this->current_user->currency;
 		$data['locations'] = $this->general_model->locations_list();
 		
-		if($this->form_validation->run('add_listing') == TRUE){
+		if($this->form_validation->run('add_listing') == TRUE) {
 			
 			$properties = array('add_time' => time(),
 								'category' => $this->input->post('category'),
@@ -149,7 +149,7 @@ class Listings extends CI_Controller {
 			}
 		}
 		
-		if($data['page'] == 'listings/add'){
+		if($data['page'] == 'listings/add') {
 			$data['categories'] = $this->categories_model->list_all();
 			$data['currencies'] = $this->currencies_model->get();
 		}
@@ -176,9 +176,9 @@ class Listings extends CI_Controller {
 			
 		// Delete an items images as well.
 		if($this->listings_model->delete($hash) !== FALSE) {
-			if(count($item['images']) > 0){
+			if(count($item['images']) > 0) {
 				// Delete each image.
-				foreach($item['images'] as $image){
+				foreach($item['images'] as $image) {
 					$this->images_model->delete_item_img($hash, $image['hash']);
 				}
 			}
@@ -215,9 +215,9 @@ class Listings extends CI_Controller {
 		$data['page'] = 'listings/images';
 		
 		// If the Add Image form has been submitted:
-		if($this->input->post('add_image') == 'Create'){
+		if($this->input->post('add_image') == 'Create') {
 			
-			if(!$this->upload->do_upload()){
+			if(!$this->upload->do_upload()) {
 				// If there is an error with the file, display the errors.
 				$data['returnMessage'] = $this->upload->display_errors();
 			} else {
@@ -365,7 +365,7 @@ class Listings extends CI_Controller {
 		$this->load->model('categories_model');
 		$categories = $this->categories_model->list_all();
 		$cat_id[] = array();
-		foreach($categories as $category){
+		foreach($categories as $category) {
 			$cat_id[] = $category['id'];
 		}
 		return $this->general->matches_any($param, $cat_id);

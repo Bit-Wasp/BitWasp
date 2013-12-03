@@ -192,7 +192,7 @@ class Images_model extends CI_Model {
 		$item = $item->row_array();
 		
 		// As the link has been deleted, it's safe to update main_image to a new one before deleting the image.
-		if($item['main_image'] == $image_hash){
+		if($item['main_image'] == $image_hash) {
 			$images = $this->by_item($item_hash);
 			if(count($images) > 0) {
 				$this->main_image($item_hash, $images[0]['hash']);

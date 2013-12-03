@@ -37,7 +37,7 @@ class Authorize extends CI_Controller {
 	 * @see		Models/Users_Model
 	 * @return	void
 	 */
-	public function index(){		
+	public function index() {
 		// Abort if there is no stored session data about an
 		// authorization request.
 		if(!is_string($this->session->userdata('current_auth_req')))

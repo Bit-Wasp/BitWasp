@@ -343,7 +343,7 @@ class Accounts extends CI_Controller {
 	 * @param	int
 	 * @return	bool
 	 */
-	public function check_valid_currency($param){
+	public function check_valid_currency($param) {
 		$this->load->model('currencies_model');
 		return ($this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
 	}

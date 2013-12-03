@@ -78,7 +78,7 @@ class General {
 	 * @param		string	$password
 	 * @return		string
 	 */
-	public function hash($password){ 
+	public function hash($password) {
 		$sha_limit_loop = 10;
 		
 		$hash = $password;
@@ -122,13 +122,13 @@ class General {
 	 * @param		int
 	 * @return		string
 	 */ 
-	public function unique_hash($table, $column, $length = 16){
+	public function unique_hash($table, $column, $length = 16) {
 
 		$hash = substr($this->hash($this->generate_salt()), 0, $length);
 		// Test the DB, see if the hash is unique. 
 		$test = $this->CI->general_model->check_unique_entry($table, $column, $hash);
 
-		while($test == FALSE){
+		while($test == FALSE) {
 			$hash = substr($this->hash($this->generate_salt()), 0, $length);
 
 			// Perform the test again, and see if the loop goes on.
@@ -166,8 +166,8 @@ class General {
 	 * @param		int
 	 * @return		string
 	 */
-	public function role_from_id($id){
-		switch($id){
+	public function role_from_id($id) {
+		switch($id) {
 			case '1':
 				$result = 'Buyer';
 				break;
@@ -192,7 +192,7 @@ class General {
 	 * @param		int
 	 * @return		string
 	 */
-	public function format_time($timestamp){
+	public function format_time($timestamp) {
 		// Load the current time, and check the difference between the times in seconds.
 		$currentTime = time();
 		$difference = $currentTime-$timestamp;
@@ -208,7 +208,7 @@ class General {
 			return 'about ' . round($difference / 3600) . ' hours ago';
 		} else if($difference < (48*60*60)) {		// Just over a day.
 			return '1 day ago';
-		} else if($timestamp == "0" || $timestamp == NULL){ //The timestamp wasn't set which means it has never happened.
+		} else if($timestamp == "0" || $timestamp == NULL) { //The timestamp wasn't set which means it has never happened.
 			return 'Never';
 		} else { // Otherwise just return the basic date.
 			return date('j F Y',(int)$timestamp);

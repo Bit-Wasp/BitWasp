@@ -69,12 +69,21 @@ class Callback extends CI_Controller {
 		// Load the current, if any, bitcoin alert.
 		$alert = $this->bw_bitcoin->check_alert();
 		if($alert !== FALSE) {
-			// If there is an alert, log the alert message for the admin.
-			$this->load->model('admin_model');
-			$this->logs_model->add('Bitcoin Alert', 'Bitcoin Alert', $alert, 'Alert');
-			// If the site is not already in maintenance mode, go into that now.
-			if($this->bw_config->maintenance_mode == FALSE)
-				$this->admin_model->set_mode('maintenance');
+			$this->load->model('alerts_model');
+
+			// If the site has never responded to this error before, proceed:
+			if($this->alerts_model->check($alert['message']) == FALSE) {
+				// If there is an alert, log the alert message for the admin.
+				$this->load->model('admin_model');
+				$this->logs_model->add('Bitcoin Alert', 'Bitcoin Alert', $alert['message'], 'Alert');
+				
+				// Record the alert
+				$this->alerts_model->add($alert);
+				
+				// If the site is not already in maintenance mode, go into that now.
+				if($this->bw_config->maintenance_mode == FALSE)
+					$this->admin_model->set_mode('maintenance');
+			}
 		}
 	}
 	

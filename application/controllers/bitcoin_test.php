@@ -13,78 +13,6 @@ class Bitcoin_Test extends CI_Controller {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
 	}
-
-	public function alert() {
-		$this->load->library('bw_curl');
-		
-		$repo = json_decode($this->bw_curl->get_request("https://api.github.com/repos/Bit-Wasp/BitWasp/commits"));
-		if($repo == FALSE)
-			return FALSE;
-
-		$commit_limit = 10; 
-		$count = 0;
-		foreach($repo as $commit) {
-			$commit = $commit->commit;
-			if($count == $commit_limit)
-				break;
-			
-			$date = strtotime($commit->author->date);
-			$message = htmlentities($commit->message);
-			if(strpos($message, "[ALERT]") !== FALSE)
-				return array('time' => $date,
-							 'message' => $message);
-							 
-			$count++;
-		}
-		return FALSE;
-	}
-
-	public function wtf(){
-		var_dump($this->alert());
-	}
-	
-	public function keypair() {
-		$this->load->library('bitcoin_crypto');
-		$key = $this->bitcoin_crypto->getNewKeySet();
-		echo '<pre>';print_r($key);echo '</pre>';
-	}
-
-	public function electrum() {
-	
-		$this->load->library('mpkgen');
-		$account = "main";
-	
-		if(!isset($this->bw_config->electrum_mpk))
-			return FALSE;
-		// Load the MPK
-		$mpk = trim($this->bw_config->electrum_mpk);
-			
-		// If the iteration record doesn't exist, create one at 0.
-		if(!isset($this->bw_config->electrum_iteration)){
-			$iteration = 0;
-			// Exit if we can't create the record.
-			if(!$this->config_model->create('electrum_iteration', '0'))
-				return FALSE;
-		} else {
-			// Record exists, use that.
-			$iteration = $this->bw_config->electrum_iteration;
-		}
-		$address = $this->mpkgen->address($mpk, $iteration);
-		if(!is_string($address))
-			return FALSE;
-			
-		// Now need to update electrum_iteration
-		echo $address;
-	}
-	
-	/*
-	public function sendtome(){
-		$value = 0.11158281;
-		$from = "topup";
-		$to_address = $this->bw_bitcoin->new_main_address();
-		$send = $this->bw_bitcoin->sendfrom("topup", $to_address, 0.00113456/2);
-		var_dump($send);
-	}*/
 	
 	public function transaction($transaction) {	
 		echo '<pre>';
@@ -94,7 +22,7 @@ class Bitcoin_Test extends CI_Controller {
 		echo '</pre><br />';
 	}
 	
-	public function get_block($block){
+	public function get_block($block) {
 		echo '<pre>';
 		$info = $this->bw_bitcoin->getblock($block);
 		$info['time_f'] = $this->general->format_time($info['time']);

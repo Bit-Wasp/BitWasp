@@ -31,7 +31,7 @@ class Messages extends CI_Controller {
 		$this->load->library('openssl');
 	
 		// Automatically check if a PIN is required.
-		if($this->bw_config->encrypt_private_messages == TRUE){
+		if($this->bw_config->encrypt_private_messages == TRUE) {
 			// If not set, redirect so the user can enter their pin.
 			if($this->current_user->message_password == NULL && uri_string() !== 'message/pin')
 				redirect('message/pin');
@@ -116,8 +116,8 @@ class Messages extends CI_Controller {
 			}
 		} else {		
 			$get = $this->messages_model->get($hash);
-			if($get !== FALSE){
-				if($this->messages_model->delete($get['id']) == TRUE){
+			if($get !== FALSE) {
+				if($this->messages_model->delete($get['id']) == TRUE) {
 					$this->session->set_flashdata('msg_delete', 'true');
 					redirect('message/deleted');
 				} else {
@@ -156,7 +156,7 @@ class Messages extends CI_Controller {
 
 		if($this->session->flashdata('msg_delete') == TRUE) {
 			$data['returnMessage'] = 'Message has been deleted';
-		} else if($this->session->flashdata('msgs_delete') == TRUE){
+		} else if($this->session->flashdata('msgs_delete') == TRUE) {
 			$data['returnMessage'] = 'All messages have been deleted.';
 		} else {
 			redirect('inbox');
@@ -178,7 +178,7 @@ class Messages extends CI_Controller {
 	 * @param	string
 	 * @return	void
 	 */
-	public function send($identifier = NULL){
+	public function send($identifier = NULL) {
 		
 		$this->load->library('form_validation');
 	
@@ -194,12 +194,12 @@ class Messages extends CI_Controller {
 			redirect('message/send');
 		
 		// Parse information from the reply_info array.
-		if(is_array($reply_info)){
+		if(is_array($reply_info)) {
 			$data['to_name'] = $reply_info['to_name'];
 			$data['subject'] = $reply_info['subject'];
 
 			// If the public key is specified, load it's information.
-			if(isset($reply_info['public_key'])){
+			if(isset($reply_info['public_key'])) {
 				$data['public_key'] = $reply_info['public_key'];
 				$data['fingerprint'] = $reply_info['fingerprint'];
 				$data['fingerprint_f'] = $reply_info['fingerprint_f'];
@@ -207,7 +207,7 @@ class Messages extends CI_Controller {
 		} 	
 		
 		// If the public key is set, load the JS for clientside PGP.
-		if($data['public_key'] !== ''){
+		if($data['public_key'] !== '') {
 			$data['header_meta'] = $this->load->view('messages/encryption_header', NULL, true);
 			$data['returnMessage'] = 'This message will be encrypted automatically if you have javascript enabled.<br />';
 		}
@@ -216,7 +216,7 @@ class Messages extends CI_Controller {
 			// Form validation was successful, prepare the message.
 			$data['from'] = $this->current_user->user_id;
 			$message = $this->bw_messages->prepare_input($data);
-			if($this->messages_model->send($message)){
+			if($this->messages_model->send($message)) {
 				$this->session->set_flashdata('msg_sent','true');
 				redirect('message/sent');
 			} 
@@ -246,7 +246,7 @@ class Messages extends CI_Controller {
 		$data['title'] = 'Inbox';
 		$data['page'] = 'messages/inbox';
 
-		if($this->session->flashdata('msg_sent') == TRUE){
+		if($this->session->flashdata('msg_sent') == TRUE) {
 			$data['returnMessage'] = 'Message has been sent';
 		} else {
 			redirect('inbox');
@@ -271,23 +271,23 @@ class Messages extends CI_Controller {
 	 * @param	string
 	 * @return	void
 	 */
-	public function enter_pin(){	
+	public function enter_pin() {
 		$this->load->model('users_model');
 		$this->load->library('form_validation');
 
 		$this->load->helper(array('form'));
 	
-		if ($this->form_validation->run('message_pin_form') == TRUE){
+		if ($this->form_validation->run('message_pin_form') == TRUE) {
 			// Load the users salt, public key, and private key.
 			$user = $this->users_model->message_data(array('user_hash' => $this->current_user->user_hash));
 			$message_password = $this->general->password($this->input->post('pin'), $user['salt']);
-		
-			// Encrypt with public key, attempt to decrypt with private key & password.
+			
+			// Encrypt with public key, attempt to decrypt with private key & password.			
 			$solution = $this->general->generate_salt();
 			$challenge = $this->openssl->encrypt($solution, $user['public_key']);
 			$answer = $this->openssl->decrypt($challenge, $user['private_key'], $message_password);
 			
-			if($answer == $solution){
+			if($answer == $solution) {
 				$this->current_user->set_message_password($message_password);
 				unset($message_password);
 				redirect('inbox');
@@ -339,7 +339,7 @@ class Messages extends CI_Controller {
 	 * @param	string	$param (the message body)
 	 * @return	boolean
 	 */
-	public function check_pgp_is_required($param){
+	public function check_pgp_is_required($param) {
 		$this->load->model('accounts_model');
 		$encrypted = ((stripos($param, '-----BEGIN PGP MESSAGE-----') !== FALSE) && (stripos($param, '-----END PGP MESSAGE-----') !== FALSE)) ? '1' : '0' ;
 		$user = $this->accounts_model->get(array('user_name' => $this->input->post('user_name')));

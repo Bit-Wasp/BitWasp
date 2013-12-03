@@ -62,7 +62,7 @@ class Bw_captcha {
 		
 		$key = $this->CI->session->userdata('captcha_key');
 		
-		if(isset($answer) && isset($key)){
+		if(isset($answer) && isset($key)) {
 			$test = $this->CI->captchas_model->get($key);
 			
 			if($test == NULL)
@@ -93,7 +93,7 @@ class Bw_captcha {
 		// Check if there is a challenge set for this user. Delete old and create a new one.
 		// Either way, the timed removal of old captchas will fix this sort of thing.
 		$old_challenge = $this->CI->session->userdata('captcha_key');
-		if(!empty($old_challenge) && is_string($old_challenge)){
+		if(!empty($old_challenge) && is_string($old_challenge)) {
 			$old_captcha = $this->CI->captchas_model->get($old_challenge);
 			$this->CI->captchas_model->delete($old_captcha['id']);
 		}
@@ -104,7 +104,7 @@ class Bw_captcha {
 		$i = 0;
 		
 		// create a captcha based on supplied length.
-		while ($i < $this->CI->bw_config->captcha_length){
+		while ($i < $this->CI->bw_config->captcha_length) {
 			$characters .= substr($possible, mt_rand(0, strlen($possible)-1), 1);
 			$i++;
 		}

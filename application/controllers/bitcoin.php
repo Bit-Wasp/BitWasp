@@ -102,7 +102,7 @@ class Bitcoin extends CI_Controller {
 		
 		// If there is any information about a recent transaction, display it.
 		$info = (array)json_decode($this->session->flashdata('info'));
-		if(count($info) !== 0){
+		if(count($info) !== 0) {
 			$action = ($info['category'] == 'send') ? 'sent to' : 'received on';
 			$data['returnMessage'] = "{$info['value']}BTC was $action {$info['address']}.<br/ >Transaction ID: {$info['txn_id']}";
 		}

@@ -67,11 +67,11 @@ class Openssl {
 
 		$keypair = openssl_pkey_new($openssl_config);
 
-		/* Extract the private key from $res to $privKey */
+		/* Extract the private key from $res to $private_key */
 		openssl_pkey_export($keypair, $private_key, $message_password, $openssl_config);
 		unset($message_password);
 		
-		// Extract the public key from $res to $pubKey 
+		// Extract the public key from $res to $public_key
 		$public_key = openssl_pkey_get_details($keypair);
 		$public_key = $public_key['key'];
 		unset($keypair);
@@ -88,7 +88,11 @@ class Openssl {
 	 * @return		string
 	 */
 	public function encrypt($text, $public_key) { 
+		echo 'a';
 		openssl_public_encrypt($text, $encrypted, $public_key);
+		var_dump($encrypted);
+		echo 'b';
+		echo openssl_error_string();
 		return $encrypted;
 	}
 	

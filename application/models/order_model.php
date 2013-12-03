@@ -50,7 +50,7 @@ class Order_model extends CI_Model {
 	 * @param		int	$order_id
 	 * @return		bool
 	 */
-	public function cancel($order_id){
+	public function cancel($order_id) {
 		$this->db->where('id', $order_id);
 		return ($this->db->update('orders', array('progress' => '0')) == TRUE) ? TRUE : FALSE;
 	}
@@ -67,7 +67,7 @@ class Order_model extends CI_Model {
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
 		$this->db->where('progress', $progress);
 		$query = $this->db->get('orders');
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$row = $query->result_array();
 			return $this->build_array($row);
 		}
@@ -143,8 +143,8 @@ class Order_model extends CI_Model {
 	 * @param	array	$allowed_progress
 	 * @return	array/FALSE
 	 */
-	public function load_order($id, $allowed_progress = array()){
-		switch($this->current_user->user_role){
+	public function load_order($id, $allowed_progress = array()) {
+		switch($this->current_user->user_role) {
 			case 'Vendor':
 				$this->db->where('vendor_hash', $this->current_user->user_hash);
 				break;
@@ -160,7 +160,7 @@ class Order_model extends CI_Model {
 		if($query->num_rows() > 0) {
 			$result = $query->result_array();$i = 1;
 			foreach($result as $res) {
-				if($this->general->matches_any($res['progress'], $allowed_progress) == TRUE){
+				if($this->general->matches_any($res['progress'], $allowed_progress) == TRUE) {
 					$row = $this->build_array($query->result_array());
 					return $row[0];
 				}
@@ -226,15 +226,15 @@ class Order_model extends CI_Model {
 		$place = 0;
 		
 		// Process items already on the order.
-		foreach($order_info['items'] as $item){
-			if($item['hash'] == $update['item_hash']){
+		foreach($order_info['items'] as $item) {
+			if($item['hash'] == $update['item_hash']) {
 				$found_item = TRUE;
 				$quantity = ($act == 'update') ? ($item['quantity']+$update['quantity']) : ($update['quantity']);
 			} else {
 				$quantity = $item['quantity'];
 			}
 			
-			if($quantity > 0){
+			if($quantity > 0) {
 				if($place++ !== 0)		$item_string .= ":";
 					
 				$item_string .= $item['hash']."-".$quantity;
@@ -246,7 +246,7 @@ class Order_model extends CI_Model {
 				$item_string .= ":".$update['item_hash']."-".$update['quantity'];
 		}
 		
-		if(empty($item_string)){
+		if(empty($item_string)) {
 			$this->delete($order_id);
 			return TRUE;
 		}
@@ -334,13 +334,13 @@ class Order_model extends CI_Model {
 			return FALSE;
 			
 		$update['time'] = time();
-		if($current_progress == '1' && $this->general->matches_any($set_progress, array('2','4')) == TRUE){
+		if($current_progress == '1' && $this->general->matches_any($set_progress, array('2','4')) == TRUE) {
 			$update['progress'] = ($set_progress == '2') ? '2' : '4';
 			
-		} else if($current_progress == '3' && $this->general->matches_any($set_progress, array('4','5'))== TRUE){
+		} else if($current_progress == '3' && $this->general->matches_any($set_progress, array('4','5'))== TRUE) {
 			$update['progress'] = ($set_progress == '5') ? '5' : '4';
 			
-		} else if($current_progress == '4' && $this->general->matches_any($set_progress, array('5','6')) == TRUE){
+		} else if($current_progress == '4' && $this->general->matches_any($set_progress, array('5','6')) == TRUE) {
 			$update['progress'] = ($set_progress == '5') ? '5' : '7';
 			
 		} else {

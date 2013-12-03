@@ -33,7 +33,7 @@ class Items extends CI_Controller {
 	 * @access	public
 	 * @see		Models/Items_Model
 	 */
-	public function index(){				
+	public function index() {
 		$data['title'] = 'Items';
 		$data['page'] = 'items/index';
 		$data['items'] = $this->items_model->get_list();		
@@ -51,7 +51,7 @@ class Items extends CI_Controller {
 	 * @param	string
 	 * @return	void
 	 */
-	public function category($hash){		
+	public function category($hash) {
 		$this->load->model('categories_model');
 		
 		$data['category'] = $this->categories_model->get(array('hash' => "$hash"));

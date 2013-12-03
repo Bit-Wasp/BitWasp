@@ -30,7 +30,7 @@ class Layout {
 	 * This stores predefined information about the job, such as the name,
 	 * description, and the frequency at which it should be run.
 	 */	
-	public function __construct($data){
+	public function __construct($data) {
 
 		$CI = &get_instance();
 		$CI->load->model('currencies_model');
@@ -76,7 +76,7 @@ class Layout {
 					$bar['role'] = 'half';
 			
 			// If guests are allowed to browse, load the categories.
-			if($bar['allow_guests'] == TRUE){
+			if($bar['allow_guests'] == TRUE) {
 				$categories = $CI->categories_model->menu();		
 				$category_data['cats'] = (empty($categories)) ? 'No Categories' : $this->menu($categories , 0, $data['currentCat']); 
 				
@@ -109,7 +109,7 @@ class Layout {
 	 * A recursive function to generate a menu from an array of categories.
 	 * Uses each categories parent ID to determine where it should be placed.
 	 */	
-	public function menu($categories, $level, $params){
+	public function menu($categories, $level, $params) {
 		$content = ''; 
 		$level++; 
 		

@@ -37,7 +37,7 @@ class Shipping_costs_model extends CI_Model {
 		if($query->num_rows() > 0) { 
 			$results = $query->result_array();
 			$output = array();
-			foreach($results as $res){
+			foreach($results as $res) {
 				$output[$res['destination_id']] = array('cost' => $res['cost'],
 														'enabled' => $res['enabled'],
 														'destination_id' => $res['destination_id'],

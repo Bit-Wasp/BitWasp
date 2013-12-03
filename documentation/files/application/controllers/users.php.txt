@@ -77,7 +77,7 @@ class Users extends CI_Controller {
 			
 			$data['returnMessage'] = "Your details were incorrect, try again.";
 			
-			if($user_info !== FALSE){
+			if($user_info !== FALSE) {
 				
 				$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
 				$password = $this->general->password($password, $user_info['salt']);
@@ -107,7 +107,7 @@ class Users extends CI_Controller {
 						
 					} elseif ($user_info['user_role'] == 'Vendor' 
 						&& $this->bw_config->force_vendor_pgp == TRUE
-						&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE){
+						&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE) {
 							
 						// Redirect to register a PGP key.
 						$this->bw_session->create($user_info, 'force_pgp');	// enable a half-session where the user registers a PGP key.
@@ -165,6 +165,7 @@ class Users extends CI_Controller {
 		
 		$this->form_validation->set_error_delimiters('<span class="form-error">', '</span>');
 		
+		$data['terms_of_service'] = ($this->bw_config->terms_of_service_toggle == TRUE) ? $this->bw_config->terms_of_service : FALSE;
 		$data['force_vendor_pgp'] = $this->bw_config->force_vendor_pgp;
 		$data['encrypt_private_messages'] = $this->bw_config->encrypt_private_messages;
 		$data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
@@ -177,6 +178,16 @@ class Users extends CI_Controller {
 		
 		$data['role'] = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['txt'];
 		
+		
+		// If there is any information about a recent transaction, display it.
+		$info = (array)json_decode($this->session->flashdata('info'));
+		if(count($info) !== 0){
+			// If the information is to do with topping up a WIF key:
+			if($info['action'] == 'tos_fail')
+				$data['returnMessage'] = "You must agree to the terms of service to register an account.";
+		}
+
+		
 		// Check if we need the message_pin form, or the other one!
 		if ($this->form_validation->run($register_validation) == FALSE) {
 			// Show the register form.
@@ -186,6 +197,13 @@ class Users extends CI_Controller {
 			$data['captcha'] = $this->bw_captcha->generate();
 			
 		} else {
+			// Display an error if the user has not agreed to the terms of service.
+			if($data['terms_of_service'] !== FALSE && $this->input->post('tos_agree') !== '1') {
+				$info = json_encode(array('action' => 'tos_fail'));
+				$this->session->set_flashdata('info', $info);
+				redirect('register');
+			}
+			
 			// If there's no token, the admin cannot register.
 			if($token == NULL && !$this->general->matches_any($data['role'], array('Buyer','Vendor'))) {
 				$data['title'] = 'Register';
@@ -206,7 +224,6 @@ class Users extends CI_Controller {
 				if($data['encrypt_private_messages'] == TRUE) {
 					$pin = $this->input->post('message_pin0');
 					$message_password = $this->general->password($this->input->post('message_pin0'), $salt);
-					
 					$message_keys = $this->openssl->keypair($message_password);
 					unset($message_password);
 				
@@ -245,16 +262,16 @@ class Users extends CI_Controller {
 
 					$entry_fee = 'entry_payment_'.strtolower($data['role']);
 					
-					if(isset($data['token_info']) && $data['token_info'] !== FALSE){
+					if(isset($data['token_info']) && $data['token_info'] !== FALSE) {
 						if($data['token_info']['entry_payment'] > 0) {
 							$address = $this->bw_bitcoin->new_fees_address();
 							$entry_fee = $data['token_info']['entry_payment'];
 							$info = array(	'user_hash' => $user_hash,
 											'amount' => $data['token_info']['entry_payment'],
 											'bitcoin_address' => $address);
-							if($this->users_model->set_entry_payment($info) == TRUE){
+							if($this->users_model->set_entry_payment($info) == TRUE) {
 									
-								if($address == NULL){
+								if($address == NULL) {
 									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
 								} else {
 									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
@@ -271,7 +288,7 @@ class Users extends CI_Controller {
 						$info = array(	'user_hash' => $user_hash,
 										'amount' => $entry_fee,
 										'bitcoin_address' => $address );
-						if($this->users_model->set_entry_payment($info) == TRUE){
+						if($this->users_model->set_entry_payment($info) == TRUE) {
 							// Work out which return message to display.
 							// $address == NULL: bitcoind offline.
 							// Otherwise display the normal message.
@@ -287,7 +304,7 @@ class Users extends CI_Controller {
 
 					// REMOVE BEFORE PRODUCTION
 					$this->load->model('bitcoin_model');
-					if($data['role'] == 'Buyer'){
+					if($data['role'] == 'Buyer') {
 						$credit = array('user_hash' => $user_hash,
 										'value' => (float)0.03333333);
 						$this->bitcoin_model->update_credits(array($credit));
@@ -347,7 +364,7 @@ class Users extends CI_Controller {
 							 'fingerprint' => $key['fingerprint'],
 							 'public_key' => $key['clean_key']);
 							 
-				if($this->accounts_model->add_pgp_key($key) == TRUE){
+				if($this->accounts_model->add_pgp_key($key) == TRUE) {
 					// Create full session
 					$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
 					$this->bw_session->create($user_info);
@@ -382,10 +399,10 @@ class Users extends CI_Controller {
 
 		// If no entry payment exists in the table for the registration,
 		// or the user has been flagged as paid, redirect to the next page.
-		if($data['entry_payment'] == FALSE || $data['user']['entry_paid'] == '1'){
+		if($data['entry_payment'] == FALSE || $data['user']['entry_paid'] == '1') {
 			if ($data['user']['user_role'] == 'Vendor' 
 				&& $this->bw_config->force_vendor_pgp == TRUE
-				&& $this->accounts_model->get_pgp_key($data['user']['id']) == FALSE){
+				&& $this->accounts_model->get_pgp_key($data['user']['id']) == FALSE) {
 						
 				// Redirect to register a PGP key.
 				$this->session->unset_userdata('entry_payment');
@@ -401,7 +418,7 @@ class Users extends CI_Controller {
 		}
 
 		// Payment is still not completed, but the bitcoin address is not set.
-		if($data['entry_payment'] !== FALSE && $data['entry_payment']['bitcoin_address'] == '0'){
+		if($data['entry_payment'] !== FALSE && $data['entry_payment']['bitcoin_address'] == '0') {
 			// Try to generate another.
 			$payment_address = $this->bw_bitcoin->new_fees_address();
 			if($payment_address !== NULL) {
@@ -467,7 +484,7 @@ class Users extends CI_Controller {
 			// Check the answer to what we have on record as the solution.
 			$answer = $this->input->post('answer');
 			
-			if($this->auth_model->check_two_factor_token($answer) == TRUE){
+			if($this->auth_model->check_two_factor_token($answer) == TRUE) {
 				// If successful, create a full session and redirect to the homepage.
 				$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
 				$this->bw_session->create($user_info);

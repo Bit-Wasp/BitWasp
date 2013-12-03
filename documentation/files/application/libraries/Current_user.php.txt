@@ -37,14 +37,14 @@ class Current_User {
 	 * This function generates all the information we want to provide
 	 * using this library.
 	 */
-	public function __construct(){
+	public function __construct() {
 		$this->CI = &get_instance();
 			
 		$this->URI = explode("/", uri_string());
 			
 		$this->CI->load->model('currencies_model');			
 		
-		if($this->CI->session->userdata('logged_in') == 'true'){
+		if($this->CI->session->userdata('logged_in') == 'true') {
 			$this->CI->load->model('messages_model');
 			$this->logged_in = TRUE;
 			$this->user_id = $this->CI->session->userdata('user_id');
@@ -118,7 +118,7 @@ class Current_User {
 	 * @param		string
 	 * @return		void
 	 */
-	public function set_message_password($password){
+	public function set_message_password($password) {
 		$this->CI->session->set_userdata('message_password',$password);
 		$this->CI->session->set_userdata('message_password_granted', time());
 	}

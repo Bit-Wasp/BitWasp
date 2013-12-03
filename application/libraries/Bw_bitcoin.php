@@ -59,7 +59,7 @@ class Bw_bitcoin {
 	 * 
 	 * @return		array/FALSE
 	 */
-	public function get_exchange_rates(){
+	public function get_exchange_rates() {
 		$this->CI->load->library('bw_curl');
 		
 		$source = $this->CI->bw_config->bitcoin_rate_config();
@@ -71,7 +71,7 @@ class Bw_bitcoin {
 			return FALSE;
 			
 		$array =  json_decode($json_result);
-		if($array !== FALSE && $array !== NULL){
+		if($array !== FALSE && $array !== NULL) {
 			$array->price_index = $source_name;
 			return $array;
 		} else {
@@ -172,7 +172,7 @@ class Bw_bitcoin {
 	 * Query bitcoind to get the balance this particular address has
 	 * received.
 	 */
-	public function getreceivedbyaddress($address){
+	public function getreceivedbyaddress($address) {
 		return $this->CI->jsonrpcclient->getreceivedbyaddress($address);
 	}
 	
@@ -216,7 +216,7 @@ class Bw_bitcoin {
 	public function listaccounts($confirmations = 6) {
 		$tmp = (array)$this->CI->jsonrpcclient->listaccounts($confirmations);
 		$res = array();
-		foreach($tmp as $acc => $bal){
+		foreach($tmp as $acc => $bal) {
 			if(!preg_match('/\s+/', $acc) && $acc !== '')
 				$res[$acc] = (float)$bal;			
 		}
@@ -269,7 +269,7 @@ class Bw_bitcoin {
 	 * @param		float	$value
 	 * @return		bool
 	 */			
-	public function sendfrom($src_ac, $to_address, $value){
+	public function sendfrom($src_ac, $to_address, $value) {
 		return $this->CI->jsonrpcclient->sendfrom($src_ac, $to_address, (float)$value);
 	}
 
@@ -317,7 +317,7 @@ class Bw_bitcoin {
 	 * 
 	 * @return		string/FALSE
 	 */			
-	public function new_main_address(){
+	public function new_main_address() {
 		$address = $this->CI->jsonrpcclient->getnewaddress("main");
 		return ($address == NULL || isset($address['code'])) ? FALSE : $address;
 	}
@@ -330,7 +330,7 @@ class Bw_bitcoin {
 	 *
 	 * @return	string/FALSE
 	 */
-	public function new_fees_address(){
+	public function new_fees_address() {
 		$address = $this->CI->jsonrpcclient->getnewaddress("fees");
 		return ($address == NULL || isset($address['code'])) ? FALSE : $address;
 	}
@@ -470,7 +470,7 @@ class Bw_bitcoin {
 	 * @param		string	$block_hash
 	 * @return		void
 	 */		
-	public function blocknotify($block_hash){
+	public function blocknotify($block_hash) {
 		$this->CI->load->model('users_model');
 		$this->CI->load->model('logs_model');
 					
@@ -492,7 +492,7 @@ class Bw_bitcoin {
 		$confirmations = array();
 		
 		// Loop through pending transactions.
-		foreach($pending as $txn){
+		foreach($pending as $txn) {
 			$transaction = $this->gettransaction($txn['txn_id']);
 
 			// Probably don't need this check as it will have been done before,
@@ -505,7 +505,7 @@ class Bw_bitcoin {
 							   'value' => $txn['value'] );	// Re-cast as float, avoids error code.
 				
 				// Try to credit the balance to a users account if the topup transaction has reached 7 confirmations.
-				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'topup' && $txn['credited'] == '0' && $array['confirmations'] > 6){
+				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'topup' && $txn['credited'] == '0' && $array['confirmations'] > 6) {
 					array_push($credits, $array);
 					$this->CI->bitcoin_model->set_credited($txn['txn_id']);
 					
@@ -520,11 +520,11 @@ class Bw_bitcoin {
 				// If the transaction is to do with fee's, then check if the number of transactions exceeds one.
 				// If the entry_payment still exists, and the confirmed balance >= the amount, then delete the 
 				// record and activate the account.
-				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'fees' && $transaction['confirmations'] >1 ){
+				if($txn['category'] == 'receive' && $transaction['details'][0]['account'] == 'fees' && $transaction['confirmations'] >1 ) {
 					$user_hash = $this->CI->users_model->get_payment_address_owner($txn['address']);
 					$entry = $this->CI->users_model->get_entry_payment($user_hash);
 			
-					if($entry !== FALSE){	
+					if($entry !== FALSE) {
 						$addr_balance = $this->getreceivedbyaddress($txn['address']);
 
 						if($addr_balance >= $entry['amount'])
@@ -566,7 +566,7 @@ class Bw_bitcoin {
 		// Function to get the exchange rates via an API.
 		$rates = $this->get_exchange_rates();
 
-		if($rates == FALSE){
+		if($rates == FALSE) {
 			$this->CI->logs_model->add('Price Index', 'Unable to fetch exchange rates', 'An attempt to update the Bitcoin Exchange rates failed. Please review your ./application/config/bitcoin_index.php file for any errors, or that the proxy is correctly configured','Error');
 			return TRUE;
 		}

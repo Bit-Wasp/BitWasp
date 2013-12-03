@@ -277,6 +277,24 @@ class Bw_config {
 	public $maintenance_mode 		= 0;
 
 	/**
+	 * Terms Of Service
+	 * 
+	 * A place to store the terms of service, which can be displayed if
+	 * the admin wishes. This can be disabled using the terms_of_service_toggle
+	 * setting. The default value is empty ''.
+	 */
+	public $terms_of_service		= '';
+	
+	/**
+	 * Terms Of Service Toggle
+	 * 
+	 * This is an integer value, where '0' will be FALSE, '1' will mean
+	 * TRUE. This is converted to boolean as normal. Default value is
+	 * turned off; 0;
+	 */
+	public $terms_of_service_toggle = 0;
+	
+	/**
 	 * Constructor
 	 * 
 	 * Load the CodeIgniter framework, along with the config/currencies 
@@ -298,21 +316,25 @@ class Bw_config {
 		if($config == FALSE)
 			die('Error, BitWasp configuration not found.');
 		
+		// Update the config values in the class with the 
 		foreach($config as $key => $value) {
 			$this->$key = $value;
 		}
 
-		// Convert ENUM's to boolean values.
+		// Convert numeric boolean representations to boolean.
 		$this->registration_allowed = ($this->registration_allowed == '1') ? TRUE : FALSE;
 		$this->vendor_registration_allowed = ($this->vendor_registration_allowed == '1') ? TRUE : FALSE;
 		$this->encrypt_private_messages = ($this->encrypt_private_messages == '1') ? TRUE : FALSE;
 		$this->force_vendor_pgp = ($this->force_vendor_pgp == '1') ? TRUE : FALSE;
 		$this->maintenance_mode = ($this->maintenance_mode == '1') ? TRUE : FALSE;
+		$this->terms_of_service_toggle = ($this->terms_of_service_toggle == '1') ? TRUE : FALSE;
 		
+		// Load the currencies and exchange rates.
 		$this->currencies = $this->CI->currencies_model->get_exchange_rates();
+		// Load the configuration of the bitcoin_index options.
 		$this->price_index_config = $this->CI->config->item('bitcoin_index');	
 		
-		// Automatically convert to seconds
+		// Convert to seconds
 		$this->login_timeout = $this->login_timeout*60;
 	}
 
@@ -324,7 +346,7 @@ class Bw_config {
 	 * @param		string
 	 * @return		array
 	 */
-	public function load_admin($panel){
+	public function load_admin($panel) {
 		
 		if($panel == '') {
 			$result = array('site_description' => $this->site_description,
@@ -335,7 +357,8 @@ class Bw_config {
 							'allow_guests' => $this->allow_guests,
 							'global_proxy_url' => $this->global_proxy_url,
 							'global_proxy_type' => $this->global_proxy_type,
-							'maintenance_mode' => $this->maintenance_mode);
+							'maintenance_mode' => $this->maintenance_mode,
+							'terms_of_service_toggle' => $this->terms_of_service_toggle);
 		} else if($panel == 'bitcoin') {
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,
@@ -394,7 +417,7 @@ class Bw_config {
 	 * 
 	 * @return		array/FALSE
 	 */
-	public function bitcoin_rate_config(){
+	public function bitcoin_rate_config() {
 		$array = $this->price_index_config;	
 		return ($this->price_index == '') ? FALSE : $array[$this->price_index];
 	}

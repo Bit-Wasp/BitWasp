@@ -94,16 +94,16 @@ class Orders extends CI_Controller {
 			if($current_order == FALSE) 	redirect('order/list');
 			
 			// If the refund goes through, and cancelling it works:
-			if(	$this->escrow_model->pay($current_order['id'], 'buyer_cancel') == TRUE){
+			if(	$this->escrow_model->pay($current_order['id'], 'buyer_cancel') == TRUE) {
 				
-				if($this->order_model->cancel($current_order['id']) == TRUE ){
+				if($this->order_model->cancel($current_order['id']) == TRUE ) {
 						
 					// Send message to vendor
 					$data['from'] = $this->current_user->user_id;
 					$details = array('username' => $current_order['vendor']['user_name'],
 									 'subject' => "Order #{$current_order['id']} has been cancelled.");
 					$details['message'] = "{$this->current_user->user_name} has cancelled their order with you for the following items:<br /><br />\n";
-					for($i = 0; $i < count($current_order['items']); $i++){
+					for($i = 0; $i < count($current_order['items']); $i++) {
 						$details['message'] .= "{$current_order['items'][$i]['quantity']} x {$current_order['items'][$i]['name']}<br />\n";
 					}
 					$details['message'] .= "<br />Total price: {$current_order['currency']['symbol']} {$current_order['price']}";
@@ -135,12 +135,12 @@ class Orders extends CI_Controller {
 				} 
 			} 
 
-			if($success == FALSE){
+			if($success == FALSE) {
 				$current_order = $this->order_model->load_order($id, array('4'));
 				
 				// Item has been dispatched - either finalized already, or is in escrow and must be paid.
 				if(	($current_order['finalized'] == '0' && $this->escrow_model->pay($current_order['id'], 'vendor') == TRUE) ||
-					$current_order['finalized'] == '1'){
+					$current_order['finalized'] == '1') {
 					if($this->order_model->progress_order($current_order['id'],'4', '6') == TRUE) 
 						$success = TRUE;
 				}
@@ -207,7 +207,7 @@ class Orders extends CI_Controller {
 				}
 				
 				// Code hasn't run successfully yet, try progress=3.
-				if(!isset($buyer)){
+				if(!isset($buyer)) {
 					$get = $this->order_model->load_order($id, array('3'));					
 					if($get !== FALSE && $get['progress'] == '3') {
 						if($this->order_model->progress_order($id, '3') == TRUE) {
@@ -235,9 +235,9 @@ class Orders extends CI_Controller {
 		// If requesting a user to finalize early..
 		$finalize_early = $this->input->post('finalize_early');
 		if(is_array($finalize_early)) {
-			foreach($finalize_early as $id => $order){
+			foreach($finalize_early as $id => $order) {
 				$get = $this->order_model->load_order($id, array('1'));
-				if($get !== FALSE){
+				if($get !== FALSE) {
 					// If the order exists, progress it.
 					if($this->order_model->progress_order($id, '1', '2') == TRUE) {
 							
@@ -246,7 +246,7 @@ class Orders extends CI_Controller {
 						$details = array('username' => $get['buyer']['user_name'],
 										 'subject' => "Must finalize early for Order #{$get['id']}");
 						$details['message'] = "{$this->current_user->user_name} has requested that you finalize this transaction early before they dispatch the item. Please authorize payment to the vendor to continue with this purchase. You may cancel the transaction at this point to receive a refund.<br /><br />";
-						for($i = 0; $i < count($get['items']); $i++){
+						for($i = 0; $i < count($get['items']); $i++) {
 							$details['message'] .= "{$get['items'][$i]['quantity']} x {$get['items'][$i]['name']}<br />\n";
 						}
 						$details['message'] .= "<br />Total price: {$get['currency']['symbol']}{$get['price']}";
@@ -271,7 +271,7 @@ class Orders extends CI_Controller {
 			
 			// If the refund goes through, and cancelling it works:
 			if(	$this->escrow_model->pay($current_order['id'], 'buyer') == TRUE &&
-				$this->order_model->cancel($current_order['id']) == TRUE ){
+				$this->order_model->cancel($current_order['id']) == TRUE ) {
 					
 				// Send message to vendor
 				$data['from'] = $this->current_user->user_id;
@@ -405,7 +405,7 @@ class Orders extends CI_Controller {
 				if($this->escrow_model->add($escrow) == FALSE) {
 					$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
 				} else {
-					if($this->order_model->progress_order($data['order']['id'], '0') == FALSE){
+					if($this->order_model->progress_order($data['order']['id'], '0') == FALSE) {
 						$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
 					} else {
 					
@@ -414,7 +414,7 @@ class Orders extends CI_Controller {
 						$details = array('username' => $data['order']['vendor']['user_name'],
 										 'subject' => "New Order #{$data['order']['id']} from ".$this->current_user->user_name);
 						$details['message'] = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
-						for($i = 0; $i < count($data['order']['items']); $i++){
+						for($i = 0; $i < count($data['order']['items']); $i++) {
 							$details['message'] .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
 						}
 						$details['message'] .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\n";

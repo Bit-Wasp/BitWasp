@@ -276,7 +276,7 @@ class Bitcoin_crypto {
 	$n = $g->getOrder();
 
     $privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
-    while($privKey > $n){
+    while($privKey > $n) {
 		$privKey = gmp_strval(gmp_init(bin2hex(openssl_random_pseudo_bytes(32)),16));
 	}
     $privKeyHex = self::encodeHex($privKey);

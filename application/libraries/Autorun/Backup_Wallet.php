@@ -12,7 +12,7 @@
  * 
  * @package		BitWasp
  * @subpackage	Autorun
- * @category	User Inactivity
+ * @category	Backup Wallet
  * @author		BitWasp
  */
 class Backup_Wallet {
@@ -55,7 +55,7 @@ class Backup_Wallet {
 			return FALSE;
 		
 		// Check if there are any accounts/bitcoind is offline.
-		$accounts = $this->CI->bw_bitcoin->listaccounts(0);
+		$accounts = $this->CI->bw_bitcoin->listaccounts();
 		if(count($accounts) == 0 || $this->CI->general->matches_any($accounts, array(NULL, FALSE)) ) 
 			return FALSE;
 			
@@ -69,23 +69,21 @@ class Backup_Wallet {
 		$this->CI->load->library('bw_messages');
 
 		$admin = $this->CI->accounts_model->get(array('user_name' => 'admin'));
+		
 		// Loop through each account
 		$success = TRUE;
-		foreach($accounts as $account => $balance){
+		foreach($accounts as $account => $balance) {
 			$var = "max_".$account."_balance";
 			// Do not touch the accounts "", "topup", ones with a zero balance, or 
 			// accounts whos balance is not above the backup threshold.
-			echo $account . " "; var_dump($this->CI->bw_config->$var);echo '<br />';
 			if(!isset($this->CI->bw_config->$var) || $account == 'topup' || $balance <= 0 || isset($this->CI->bw_config->$var) && $balance < $this->CI->bw_config->$var) 
 				continue;
 
 			// Send the excess amount to the newly generated public address.
 			$send_amount = ($balance-$this->CI->bw_config->$var);
 	
-			echo '<br />actual run:<br />';
 			// Send coins to newly generated ECDSA keypair's address
-			if($this->CI->bw_config->balance_backup_method == 'ECDSA'){
-				echo $account."<br />";
+			if($this->CI->bw_config->balance_backup_method == 'ECDSA') {
 				// Load the ECDSA library.
 				$this->CI->load->library('bitcoin_crypto');
 				
@@ -94,7 +92,7 @@ class Backup_Wallet {
 				
 				// Send to the derived bitcoin address
 				$send = $this->CI->bw_bitcoin->sendfrom($account, $key['pubAdd'], (float)$send_amount);
-				if(!isset($send['code'])){
+				if(!isset($send['code'])) {
 					
 					// Send the wallet to the admin user.
 					$data['from'] = $admin['id'];
@@ -109,7 +107,7 @@ class Backup_Wallet {
 					}
 					// Prepare the input.
 					$message = $this->CI->bw_messages->prepare_input($data, $details);
-					if($this->CI->messages_model->send($message) !== TRUE){
+					if($this->CI->messages_model->send($message) !== TRUE) {
 						$success = FALSE; 
 					}
 					
@@ -126,9 +124,9 @@ class Backup_Wallet {
 				$mpk = trim($this->CI->bw_config->electrum_mpk);
 
 				// If the iteration record doesn't exist, create one at 0.
-				if(!isset($this->CI->bw_config->electrum_iteration)){
+				if(!isset($this->CI->bw_config->electrum_iteration)) {
 					$iteration = 0;
-					if(!$this->CI->config_model->create('electrum_iteration', '0')){
+					if(!$this->CI->config_model->create('electrum_iteration', '0')) {
 						// Exit if we can't create the record.
 						continue;
 					}
@@ -143,7 +141,7 @@ class Backup_Wallet {
 
 				// All checks are done. Send the coins.
 				$send = $this->CI->bw_bitcoin->sendfrom($account, $address, (float)$send_amount);
-				if(!isset($send['code'])){
+				if(!isset($send['code'])) {
 					$this->CI->config_model->update(array('electrum_iteration' => $iteration+1));
 					
 					// Send the wallet to the admin user.
@@ -160,7 +158,7 @@ class Backup_Wallet {
 					}
 					// Prepare the input.
 					$message = $this->CI->bw_messages->prepare_input($data, $details);
-					if($this->CI->messages_model->send($message) !== TRUE){
+					if($this->CI->messages_model->send($message) !== TRUE) {
 						$success = FALSE; 
 					}
 				} else {

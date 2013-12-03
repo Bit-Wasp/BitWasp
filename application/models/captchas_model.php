@@ -50,7 +50,7 @@ class Captchas_model extends CI_Model {
 	 * @param	int	$time
 	 * @return	bool
 	 */			
-	public function purge_expired($time){
+	public function purge_expired($time) {
 		$this->db->where('time <', $time);
 		$delete = $this->db->delete('captchas');
 		return ($delete) ? TRUE : FALSE;
@@ -71,7 +71,7 @@ class Captchas_model extends CI_Model {
 				 ->where('key', $identifier);
 				 
 		$query = $this->db->get();
-		if($query->num_rows() == 0){
+		if($query->num_rows() == 0) {
 			// Failure; key invalid, captcha has expired.
 			return NULL;
 		} else {

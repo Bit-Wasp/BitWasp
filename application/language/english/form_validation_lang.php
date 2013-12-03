@@ -1,4 +1,5 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 // BitWasp callback errors
 $lang['check_admin_roles'] = 'You must select a valid user role.';
 $lang['check_autorun_interval'] = 'Interval must be 0 (for disabled) or a numeric interval.';
@@ -32,7 +33,7 @@ $lang['check_user_search_with_property'] = 'You must select a valid specifier';
 $lang['check_user_search_list'] = 'You must select a valid order for the list';
 $lang['check_user_search_order_by'] = 'You must select a valid column to order the list by.';
 	
-// CodeIgniter
+// CodeIgniter callback errors
 $lang['alpha_dash'] = "The %s field must only contain letters, numbers, and dashes (-).";
 $lang['required'] = "You must enter the %s.";
 $lang['is_unique'] = "This %s is already taken. Please choose another.";	

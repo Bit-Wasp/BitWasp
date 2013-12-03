@@ -48,7 +48,7 @@ class Currencies_model extends CI_Model {
 		}
 		
 		$results = array();
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			if($id == NULL)
 				return $query->result_array();
 			

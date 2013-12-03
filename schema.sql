@@ -24,6 +24,14 @@ CREATE TABLE IF NOT EXISTS `bw_addresses` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
+CREATE TABLE IF NOT EXISTS `bw_alerts` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `source` varchar(30) NOT NULL,
+  `message` text NOT NULL,
+  `time` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Contains a log of the alert messages.' ;
+
 CREATE TABLE IF NOT EXISTS `bw_autorun` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(40) NOT NULL,
@@ -66,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `bw_categories` (
 CREATE TABLE IF NOT EXISTS `bw_config` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `parameter` varchar(30) NOT NULL,
-  `value` varchar(50) NOT NULL,
+  `value` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `parameter` (`parameter`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
@@ -102,7 +110,9 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (28, 'global_proxy_type', 'Disabled'),
 (29, 'maintenance_mode', '0'),
 (30, 'settings_preserve', ''),
-(31, 'autorun_preserve', '');
+(31, 'autorun_preserve', ''),
+(32, 'terms_of_service', ''),
+(33, 'terms_of_service_toggle', '0');
 
 CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,

@@ -138,7 +138,7 @@ class Messages_model extends CI_Model {
 						 'to_id' => $info['from']['id'],
 						 'force_pgp_messages' => $info['from']['force_pgp_messages'],
 						 'subject' => $info['subject']);
-			if(isset($info['from']['pgp'])){
+			if(isset($info['from']['pgp'])) {
 				$res['public_key'] = $info['from']['pgp']['public_key'];		
 				$res['fingerprint'] = $info['from']['pgp']['fingerprint'];
 				$res['fingerprint_f'] = $info['from']['pgp']['fingerprint'];
@@ -151,7 +151,7 @@ class Messages_model extends CI_Model {
 						 'to_id' => $user['id'],
 						 'force_pgp_messages' => $user['force_pgp_messages'],
 						 'subject' => NULL);
-			if(isset($user['pgp'])){
+			if(isset($user['pgp'])) {
 				$res['public_key'] = $user['pgp']['public_key'];
 				$res['fingerprint'] = $user['pgp']['fingerprint'];
 				$res['fingerprint_f'] = $user['pgp']['fingerprint_f'];

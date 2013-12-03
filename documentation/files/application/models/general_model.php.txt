@@ -31,7 +31,7 @@ class General_model extends CI_Model {
 	 * @param	string	$hash
 	 * @return	bool
 	 */
-	public function check_unique_entry($table, $column, $entry){
+	public function check_unique_entry($table, $column, $entry) {
 		$this->db->where($column, $entry);
 		$query = $this->db->get($table);
 		return ($query->num_rows() < 1) ? TRUE : FALSE;
@@ -51,10 +51,10 @@ class General_model extends CI_Model {
 		$this->db->where('login_time <', $threshold);
 		$this->db->where('banned !=', '1');
 		$query = $this->db->get('users');
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$array = $query->result_array();
 			$results = array();
-			foreach($array as $user){
+			foreach($array as $user) {
 				if($user['login_time'] == '0') {
 					if($user['register_time'] < $threshold)
 						array_push($results, $user);
@@ -188,7 +188,7 @@ class General_model extends CI_Model {
 	 * @param	int	$id
 	 * @return	string/FALSE
 	 */
-	public function location_by_id($id){
+	public function location_by_id($id) {
 		if($id == 'worldwide')
 			return 'Worldwide';
 			

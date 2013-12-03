@@ -327,9 +327,8 @@ class Admin extends CI_Controller {
 				if($this->input->post('balance_backup_method_disabled') == '1') $changes['balance_backup_method'] = 'Disabled';
 
 				// Disable wallet backups if the MPK isn't set up.
-				if($changes['balance_backup_method'] == 'Electrum' && $this->bw_config->electrum_mpk == ''){
+				if($changes['balance_backup_method'] == 'Electrum' && $this->bw_config->electrum_mpk == '')
 					$this->autorun_model->set_interval('backup_wallet', '0');
-				}
 
 				// Check if electrum_mpk is being updated with text.
 				if($this->bw_config->balance_backup_method == 'Electrum') {
@@ -337,13 +336,16 @@ class Admin extends CI_Controller {
 					if(strlen($electrum_mpk) > 0)
 						$changes['electrum_mpk'] = ($electrum_mpk !== $data['config']['electrum_mpk']) ? $electrum_mpk : NULL ;
 				}
+
 				// See later for how we set electrum_mpk to ''.
 
 				// Load the array of accounts, and the balance to back up.
 				$backup_balances = $this->input->post('account');
+
 				// Load the array of disabled accounts (value will = 1)
 				$disabled_backups = $this->input->post('backup_disabled');
 				if(is_array($backup_balances)) {
+
 					foreach($backup_balances as $account => $balance) {
 						// Disable access to '' and topup.
 						if($this->general->matches_any($account, array('','topup')) == TRUE)
@@ -599,10 +601,18 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+
+	/**
+	 * Logs
+	 * 
+	 * Either displays a list of logs (when $record = NULL) or a specific
+	 * log record.
+	 * 
+	 * @param	string	$record
+	 * @return	void
+	 */
 	public function logs($record = NULL) {
 
-		$this->load->model('logs_model');
-		
 		if($record == NULL){
 			$data['nav'] = $this->generate_nav();
 			$data['page'] = 'admin/logs_list';
@@ -610,16 +620,15 @@ class Admin extends CI_Controller {
 			$data['logs'] = $this->logs_model->fetch();
 			
 		} else {
+			// If the record doesn't exist, redirect to the list.
 			$data['log'] = $this->logs_model->fetch($record);
 			if($data['log'] == FALSE)
 				redirect('admin/logs');
 
 			$data['page'] = 'admin/log';
 			$data['title'] = "Log Record: {$data['log']['id']}";
-
 		}
 		$this->load->library('Layout', $data);		
-		
 	}
 
 	/**
@@ -961,7 +970,7 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	/**f
+	/**
 	 * Topup Addresses
 	 * 
 	 * This function gathers a list of accounts from the bitcoin daemon
@@ -1130,6 +1139,45 @@ class Admin extends CI_Controller {
 	}
 
 	/**
+	 * Terms Of Service
+	 * 
+	 * This function allows an administrator to configure a terms of
+	 * service which registering users must agree to in order to register
+	 * an account. The admin can disable the option by selecting the
+	 * 'disable' checkbox on the page. If this is not selected, then the
+	 * user can alter the textbox containing the agreement to display.
+	 */
+	public function tos() {
+		$this->load->library('form_validation');
+
+		$data['config'] = $this->bw_config->load_admin('');
+		$data['tos'] = $this->bw_config->terms_of_service;
+
+		if($this->input->post('tos_update') == 'Update') {				 
+			if($this->form_validation->run('admin_tos') == TRUE) {
+
+				$tos_toggle = $this->input->post('terms_of_service_toggle');
+				// If the toggle has changed, record it.
+				if($config_toggle !== $tos_toggle)
+					$changes['terms_of_service_toggle'] = $tos_toggle;				
+
+				// If the TOS is enabled, update the record if it has changed.
+				if(($data['config']['terms_of_service_toggle'] == TRUE && $tos_toggle == '1') || $tos_toggle == '1')
+					$changes['terms_of_service'] = ($data['config']['terms_of_service'] !== htmlentities($this->input->post('terms_of_service'))) ? htmlentities($this->input->post('terms_of_service')) : NULL;
+
+				$changes = array_filter($changes, 'strlen');
+				if(count($changes) > 0)
+					if($this->config_model->update($changes) == TRUE)
+						redirect('admin/tos');
+			}
+		}
+		
+		$data['title'] = 'Terms Of Service';
+		$data['page'] = 'admin/tos';
+		$this->load->library('Layout',$data);
+	}
+
+	/**
 	 * Generate Nav
 	 * 
 	 * Generates the navigation bar for the admin panel. Will display
@@ -1265,7 +1313,7 @@ class Admin extends CI_Controller {
 	 * @param	int	$param
 	 * @return	boolean
 	 */
-	public function check_admin_roles($param){
+	public function check_admin_roles($param) {
 		return ($this->general->matches_any($param, array('1','2','3')) == TRUE) ? TRUE : FALSE;
 	}
 	
@@ -1277,7 +1325,7 @@ class Admin extends CI_Controller {
 	 * @param	int	$param
 	 * @return	boolean
 	 */
-	public function check_autorun_interval($param){
+	public function check_autorun_interval($param) {
 		return (is_numeric($param) && $param >= '0') ? TRUE : FALSE;
 	}
 	
@@ -1422,4 +1470,5 @@ class Admin extends CI_Controller {
 };
 
 /* End of file: Admin.php */
+	
 

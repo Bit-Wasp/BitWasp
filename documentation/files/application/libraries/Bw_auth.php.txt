@@ -67,18 +67,18 @@ class Bw_auth {
 	 * 
 	 * Remove any expired authorization for a page.
 	 */
-	public function auth_timeout(){
+	public function auth_timeout() {
 		// Clear auth req data if the user isn't on the authorize page.
 		if($this->URI[0] !== 'authorize')
 			$this->CI->session->unset_userdata('current_auth_req');
 		
-		if(count($this->auth_reqs) > 0){
+		if(count($this->auth_reqs) > 0) {
 			$auth_reqs = $this->auth_reqs;
 			$new = array();
 			
 			// Purge any expired ones. 
 			foreach($auth_reqs as $key => $req){
-				if( ($req->time+$req->timeout) > time() ){
+				if( ($req->time+$req->timeout) > time() ) {
 					$new[$key] = array( 'timeout' => $req->timeout,
 										'time' => $req->time);
 				}

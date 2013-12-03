@@ -25,6 +25,11 @@
 			  <br />
 			  
 			  <div class="row-fluid">
+			    <div class="span3">Terms Of Service</div>
+			    <div class="span8"><?php echo anchor('admin/tos', 'Configure'); ?></div>
+			  <br />
+			  
+			  <div class="row-fluid">
 				<div class="span3">Allow Guests to Browse?</div>
 				<div class="span5">
                   <label class="radio inline"><input type='radio' name='allow_guests' value='0' <?php echo ($config['allow_guests'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
@@ -38,8 +43,9 @@
 				<div class="span5">
 				  <select name='openssl_keysize'>
 					<?php
-					$seed = 512;
-					for($i = 1; $i < 4; $i++){ 
+					// 2048,4096. Should probably hard code that..
+					$seed = 1024;
+					for($i = 1; $i < 3; $i++){ 
 						$size = 2*$seed; $seed *=2; $selected = false;
 						if($size == $config['openssl_keysize']) 
 							$selected = true;

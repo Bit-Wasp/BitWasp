@@ -78,13 +78,13 @@ class Image {
 			$this->import = $image_info;
 		} else if($this->use_library == 'gd') {
 			
-			if($image_info['file_ext'] == '.png'){			
+			if($image_info['file_ext'] == '.png') {
 				// Load PNG image.
 				$this->gd_import = imagecreatefrompng($image_info['full_path']);				
-			} elseif($image_info['file_ext'] == '.jpeg' || $image_info['file_ext'] == '.jpg'){
+			} elseif($image_info['file_ext'] == '.jpeg' || $image_info['file_ext'] == '.jpg') {
 				// Load JPEG image.
 				$this->gd_import = imagecreatefromjpeg($image_info['full_path']);
-			} elseif($image_info['file_ext'] == '.gif' ){
+			} elseif($image_info['file_ext'] == '.gif' ) {
 				// Load GIF image
 				$this->gd_import = imagecreatefromgif($image_info['full_path']);
 			}
@@ -199,7 +199,7 @@ class Image {
 	 * @param		string	$filename
 	 * @return		string/FALSE
 	 */
-	public function encode($filename){
+	public function encode($filename) {
 		$filename = '/tmp/'.$filename;
 		return ($file = file_get_contents($filename)) ? base64_encode($file) : FALSE;	
 	}
@@ -210,7 +210,7 @@ class Image {
 	 * Create the HTML string that will display the image temporarily.
 	 * @param	string	$filename
 	 */
-	public function temp($filename){
+	public function temp($filename) {
 		$image = $this->encode($filename);
 		$html = "<img src=\"data:image/png;base64,{$image}\" />\n";
 		return $html;

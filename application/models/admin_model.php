@@ -18,7 +18,7 @@ class Admin_model extends CI_Model {
 	 * @access	public
 	 * @return	void
 	 */		
-	public function __construct(){
+	public function __construct() {
 		parent::__construct();
 	}	
 

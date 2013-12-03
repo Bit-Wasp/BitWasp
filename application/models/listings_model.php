@@ -20,7 +20,7 @@ class Listings_model extends CI_Model {
 	 * @access	public
 	 * @see 	Models/Accounts_Model
 	 */	
-	public function __construct(){
+	public function __construct() {
 		$this->load->model('accounts_model');
 	}
 	

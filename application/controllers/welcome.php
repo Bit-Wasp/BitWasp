@@ -13,7 +13,7 @@
  */
 class Welcome extends CI_Controller {
 
-	public function construct(){
+	public function construct() {
 		parent::__construct();
 	}
 	/**

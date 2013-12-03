@@ -19,7 +19,7 @@ class Users_model extends CI_Model {
 	 * @access	public
 	 * @return	void
 	 */	
-	public function __construct(){
+	public function __construct() {
 		parent::__construct();
 	}
 
@@ -36,7 +36,7 @@ class Users_model extends CI_Model {
 	public function add($data, $token_info = NULL) {
 		$sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$query = $this->db->query($sql, array($data['user_name'],$data['password'],$data['salt'], $data['user_hash'], $data['user_role'], time(), $data['public_key'], $data['private_key'], $data['location'])); 
-		if($query){
+		if($query) {
 			if($token_info !== FALSE)			$this->delete_registration_token($token_info['id']);
 			
 			return TRUE;
@@ -108,12 +108,10 @@ class Users_model extends CI_Model {
 
 		if($query->num_rows() > 0) {
 			$row = $query->row_array();
-			$pubkey = base64_decode($row['public_key']);
-			$privkey = base64_decode($row['private_key']);
 			
 			$results = array('salt' => $row['salt'],
-							 'public_key' => $pubkey,
-							 'private_key' => $privkey);
+							 'public_key' => base64_decode($row['public_key']),
+							 'private_key' => base64_decode($row['private_key']));
 			return $results;
 		}
 			
@@ -131,7 +129,7 @@ class Users_model extends CI_Model {
 	 * @param	string	$password
 	 * @return	array/FALSE
 	 */					
-	public function check_password($user_name, $password){
+	public function check_password($user_name, $password) {
 		$this->db->select('id')
 				 ->where('user_name',$user_name)
 				 ->where('password', $password);
@@ -188,7 +186,7 @@ class Users_model extends CI_Model {
 		$this->db->select('id, user_type, token_content, entry_payment');
 		$query = $this->db->get_where('registration_tokens', array('token_content' => $token));
 		
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$info = $query->row_array();
 			$info['user_type'] = array( 'int' => $info['user_type'],
 										'txt' => $this->general->role_from_id($info['user_type']));
@@ -236,7 +234,7 @@ class Users_model extends CI_Model {
 	 * @param	array	info
 	 * @return	boolean
 	 */
-	 public function set_entry_payment($info){
+	 public function set_entry_payment($info) {
 		 $info['time'] = time();
 		 return ($this->db->insert('entry_payment', $info)) ? TRUE : FALSE;
 	 }
@@ -322,7 +320,7 @@ class Users_model extends CI_Model {
 	  * @param	string	$user_hash
 	  * @return	boolean
 	  */
-	public function delete_entry_payment($user_hash){
+	public function delete_entry_payment($user_hash) {
 		 $this->db->where('user_hash', $user_hash);
 		 return ($this->db->delete('entry_payment') == TRUE) ? TRUE : FALSE;
 	} 
@@ -335,21 +333,21 @@ class Users_model extends CI_Model {
 	 * @param	array	(opt)$params
 	 * @return	array/FALSE
 	 */
-	public function user_list($params = array()){
-		if(isset($params['order_by'])){
+	public function user_list($params = array()) {
+		if(isset($params['order_by'])) {
 			$this->db->order_by("{$params['order_by']}", "{$params['list']}");
 			unset($params['order_by']);
 			unset($params['list']);
 		}	
 		
-		foreach($params as $column => $value){
+		foreach($params as $column => $value) {
 			$this->db->where("{$column}", "{$value}");
 		}
 		
 		$query = $this->db->get('users');
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$results = array();
-			foreach($query->result_array() as $result){
+			foreach($query->result_array() as $result) {
 				$tmp = $result;
 				$tmp['register_time_f'] = $this->general->format_time($tmp['register_time']);
 				$tmp['login_time_f'] = $this->general->format_time($tmp['login_time']);
@@ -376,7 +374,7 @@ class Users_model extends CI_Model {
 		$query = $this->db->get('users');
 		if($query->num_rows() > 0) {
 			$users = array();
-			foreach($query->result_array() as $result){
+			foreach($query->result_array() as $result) {
 				$user = $result;
 				$user['register_time_f'] = $this->general->format_time($user['register_time']);
 				$user['login_time_f'] = $this->general->format_time($user['login_time']);

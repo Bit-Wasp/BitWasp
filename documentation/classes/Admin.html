@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-272243613"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-119854534"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-272243613" class="accordion-body collapse in">
+            <div id="namespace-119854534" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -160,6 +160,7 @@
                                                     <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
                                                     <li class="class"><a href="../classes/Fees_model.html">Fees_model</a></li>
                                                     <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/Alerts_model.html">Alerts_model</a></li>
                                                     <li class="class"><a href="../classes/General_model.html">General_model</a></li>
                                                     <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
                                                     <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
@@ -377,6 +378,7 @@ CodeIgniter will be assigned to.</p>
                                                                     <a href="../classes/Admin.html#method_topup_addresses" class="">topup_addresses()</a><br />
                                                                     <a href="../classes/Admin.html#method_maintenance" class="">maintenance()</a><br />
                                                                     <a href="../classes/Admin.html#method_user_list" class="">user_list()</a><br />
+                                                                    <a href="../classes/Admin.html#method_tos" class="">tos()</a><br />
                                                                     <a href="../classes/Admin.html#method_generate_nav" class="">generate_nav()</a><br />
                                                                     <a href="../classes/Admin.html#method_check_captcha_length" class="">check_captcha_length()</a><br />
                                                                     <a href="../classes/Admin.html#method_check_bool" class="">check_bool()</a><br />
@@ -911,15 +913,16 @@ redirected back to the User Info Page. Has Admin Nav Bar.</p>
             <article class="method">
                 <h3 class="public ">logs()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">logs( <span class="argument">$record</span>)</pre>
-                <p><em></em></p>
-                
+                <pre class="signature" style="margin-right: 54px;">logs(string <span class="argument">$record</span>) : void</pre>
+                <p><em>Logs</em></p>
+                <p>Either displays a list of logs (when $record = NULL) or a specific
+log record.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>string</td>
                                 <td>$record</td>
                                 <td>
 </td>
@@ -1203,8 +1206,10 @@ fee's charged for an order price within a specified price range.</p>
                 <h3 class="public ">topup_addresses()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
                 <pre class="signature" style="margin-right: 54px;">topup_addresses()</pre>
-                <p><em></em></p>
-                
+                <p><em>Topup Addresses</em></p>
+                <p>This function gathers a list of accounts from the bitcoin daemon
+and finds topup addresses for them. These addresses will not change
+until they finally receive funds.</p>
 
 
                 
@@ -1270,6 +1275,36 @@ such as whether or not the user is banned, or has their account
 activated/paid for. Lists can be ordered by particular values,
 such as the user id, last login time, registration time, etc.
 The order can be randomized, or just ordered ascending or descending.</p>
+
+
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_tos" name="method_tos" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">tos()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">tos()</pre>
+                <p><em>Terms Of Service</em></p>
+                <p>This function allows an administrator to configure a terms of
+service which registering users must agree to in order to register
+an account. The admin can disable the option by selecting the
+'disable' checkbox on the page. If this is not selected, then the
+user can alter the textbox containing the agreement to display.</p>
 
 
                 
@@ -2073,7 +2108,7 @@ Returns TRUE on valid input, FALSE on failure.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 28th, 2013 at 13:50.
+                    on December 3rd, 2013 at 14:27.
                 </section>
             </section>
         </section>

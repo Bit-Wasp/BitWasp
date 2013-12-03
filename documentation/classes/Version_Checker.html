@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1791749011"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-317889750"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1791749011" class="accordion-body collapse in">
+            <div id="namespace-317889750" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -160,6 +160,7 @@
                                                     <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
                                                     <li class="class"><a href="../classes/Fees_model.html">Fees_model</a></li>
                                                     <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/Alerts_model.html">Alerts_model</a></li>
                                                     <li class="class"><a href="../classes/General_model.html">General_model</a></li>
                                                     <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
                                                     <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
@@ -358,6 +359,7 @@ new version information to the admin via the logging system.</p>
                             <section class="span4">
                                                                     <a href="../classes/Version_Checker.html#method___construct" class="">__construct()</a><br />
                                                                     <a href="../classes/Version_Checker.html#method_job" class="">job()</a><br />
+                                                                    <a href="../classes/Version_Checker.html#method_check_alerts" class="">check_alerts()</a><br />
                                                             </section>
                             <section class="span4">
                                                                     <a href="../classes/Version_Checker.html#property_config" class="">$config</a><br />
@@ -547,6 +549,36 @@ description, and the frequency at which it should be run.</p>
         </aside>
     </div>
 
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_alerts" name="method_check_alerts" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_alerts()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_alerts() : boolean</pre>
+                <p><em>Check Alerts</em></p>
+                <p>This function will check the 10 most recent github entries for
+any information about an alert. If an alert is detected, it will
+leave an log for the admin, and put the site into maintenance mode.</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
                                                                     </div>
     </section>
 
@@ -596,7 +628,7 @@ description, and the frequency at which it should be run.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on November 28th, 2013 at 13:50.
+                    on December 3rd, 2013 at 14:27.
                 </section>
             </section>
         </section>

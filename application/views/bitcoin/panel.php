@@ -46,7 +46,7 @@ if(is_array($transactions)) { ?>
 			    </tr>
 			  </thead>
 			  <tbody>  
-<?php foreach($transactions as $transaction) : ?>
+<?php foreach($transactions as $transaction) { ?>
 
 				<tr class='<?php echo ($transaction['category'] == 'receive') ? 'success' : 'error'; ?>'>
 				  <td><?php echo $transaction['value_f']; ?></td>
@@ -56,7 +56,7 @@ if(is_array($transactions)) { ?>
 				  <td><?php echo $transaction['time_f']; ?></td>
 				  <td><?php echo ($transaction['credited'] == '1') ? 'applied' : ''; ?></td>
 				</tr>				
-<?php endforeach; ?>
+<?php } ?>
 
 			  </tbody>
 			</table>

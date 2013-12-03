@@ -3,10 +3,8 @@
 /**
  * Admin Model
  *
- * Nothing here yet..
- * 
  * @package		BitWasp
- * @subpackage	Controllers
+ * @subpackage	Models
  * @category	Admin
  * @author		BitWasp
  * 
@@ -20,7 +18,7 @@ class Admin_model extends CI_Model {
 	 * @access	public
 	 * @return	void
 	 */		
-	public function __construct(){
+	public function __construct() {
 		parent::__construct();
 	}	
 

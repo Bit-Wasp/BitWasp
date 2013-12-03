@@ -29,7 +29,7 @@ class Auth_model extends CI_Model {
 				 
 		$query = $this->db->get('page_authorization');
 		
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$row = $query->row_array();
 			return $row['auth_level'];
 		}
@@ -52,7 +52,7 @@ class Auth_model extends CI_Model {
 
 		$query = $this->db->get('page_authorization');
 		
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$row = $query->row_array();
 			return $row['timeout']*60;
 		}

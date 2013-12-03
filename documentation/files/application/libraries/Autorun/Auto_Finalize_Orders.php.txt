@@ -144,8 +144,8 @@ class Auto_Finalize_Orders {
 		// and buyer has not logged in for 30 days. Give funds to vendor
 		// as buyer has not logged in to send funds, or raise a dispute.
 		$orders = $this->CI->order_model->admin_orders_by_progress('4','0');
-		if($orders !== FALSE){
-			foreach($orders as $order){
+		if($orders !== FALSE) {
+			foreach($orders as $order) {
 				$buyer = $this->CI->accounts_model->get(array('id' => $order['buyer_id']));
 				
 				if($buyer !== FALSE && $buyer['login_activity'] < (time()-$this->threshold*24*60*60)) {

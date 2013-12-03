@@ -69,7 +69,7 @@ class Bw_messages {
 				$subject = '[no subject]';
 			$message = $this->CI->input->post('message');
 			$remove_on_read = ($this->CI->input->post('delete_on_read') == '1') ? '1' : '0';
-		} else if(is_array($system)){
+		} else if(is_array($system)) {
 			// If it's a system message, load from the array.
 			$username = $system['username'];
 			$subject = $system['subject'];
@@ -91,11 +91,11 @@ class Bw_messages {
 		$encrypted = ((stripos($message, '-----BEGIN PGP MESSAGE-----') !== FALSE) && (stripos($message, '-----END PGP MESSAGE-----') !== FALSE)) ? '1' : '0' ;
 		
 		// If the message isn't already encrypted with PGP..
-		if($encrypted == '0'){
+		if($encrypted == '0') {
 			// If the sender has requested it, or the recipient has forced it,
 			// encrypt the message with the recipients public key.
 			if( ($this->CI->input->post('pgp_encrypt') == '1') ||
-			    ($to['force_pgp_messages'] == '1') ){
+			    ($to['force_pgp_messages'] == '1') ) {
 					$this->CI->load->model('accounts_model');
 					$pgp = $this->CI->accounts_model->get_pgp_key($to['id']);
 					$content['message'] = $this->CI->gpg->encrypt($pgp['fingerprint'], $content['message']);
@@ -137,7 +137,7 @@ class Bw_messages {
 	 * @param		array	$messages
 	 * @return		array
 	 */
-	public function prepare_output($messages = NULL){
+	public function prepare_output($messages = NULL) {
 		$this->CI->load->model('users_model');
 		$this->CI->load->model('accounts_model');
 		

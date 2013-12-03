@@ -91,7 +91,7 @@ class Fees_model extends CI_Model {
 			}	
 		}
 
-		if(!isset($cost)){
+		if(!isset($cost)) {
 			// Load the default rate as we haven't found an applicable fee range yet.
 			$rate = $default_rate;
 			$cost = $order_price*$default_rate/100;

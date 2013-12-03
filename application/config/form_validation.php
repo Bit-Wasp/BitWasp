@@ -1,4 +1,5 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 /**
  * Form Validation Rules
  * 
@@ -491,6 +492,12 @@ $config = array('register_form'=>array(
 				'admin_maintenance_mode' => array(
 										array('field' => 'maintenance_mode',
 											  'label' => 'Maintenance mode',
+											  'rules' => 'callback_check_bool'
+										)
+							),
+				'admin_tos' => array(
+										array('field' => 'terms_of_service_toggle',
+											  'label' => 'Terms of Service',
 											  'rules' => 'callback_check_bool'
 										)
 							),

@@ -16,7 +16,6 @@ class Bw_session {
 	public $CI;
 
 	public $URI;
-	public $session_id;
 	public $user_role;
 	public $auth_level;
 	
@@ -28,7 +27,7 @@ class Bw_session {
 		
 		$this->URI = $this->CI->current_user->URI;	
 		
-		if($this->CI->current_user->logged_in()){
+		if($this->CI->current_user->logged_in()) {
 			$account = $this->CI->users_model->get(array('user_hash' => $this->CI->current_user->user_hash));
 			
 			// Kill a session due to inactivity, or if the user is deleted/banned while logged in.
@@ -39,11 +38,9 @@ class Bw_session {
 				|| $account['banned'] == '1'
 				|| $this->CI->bw_config->maintenance_mode == TRUE && $account['user_role'] !== 'Admin') {
 				
-				//if(!$this->CI->general->matches_any( $this->URI[0], array('login', 'register'))){
-					$this->destroy(); 
-					redirect('login');
+				$this->destroy(); 
+				redirect('login');
 					
-				//}		
 			} else {
 				// Remove new_session from memory if set.
 				if($this->CI->session->userdata('new_session'))
@@ -171,10 +168,10 @@ class Bw_session {
 		if($this->auth_level == 'login' && $this->CI->current_user->logged_in())
 			return TRUE;
 		
-		if($this->auth_level == 'vendor' && $this->CI->general->matches_any(strtolower($this->user_role), array('vendor')))
+		if($this->auth_level == 'vendor' && $this->CI->general->matches_any($this->user_role, array('Vendor')))
 			return TRUE;
 		
-		if($this->auth_level == 'buyer' && $this->CI->general->matches_any(strtolower($this->user_role), array('buyer')))
+		if($this->auth_level == 'buyer' && $this->CI->general->matches_any($this->user_role, array('Buyer')))
 			return TRUE;
 		
 		if($this->auth_level == 'admin' && $this->user_role == 'Admin')
@@ -182,7 +179,7 @@ class Bw_session {
 
 		// Check if the page needs password authorization. 
 		$multi_levels = explode('|', $this->auth_level);
-		if($multi_levels[0] == 'auth'){
+		if($multi_levels[0] == 'auth') {
 			
 			if(		(	$multi_levels[1] == 'all' 
 						&& $this->CI->current_user->logged_in()

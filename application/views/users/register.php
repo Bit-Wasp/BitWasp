@@ -105,6 +105,17 @@ if($force_vendor_pgp == 'Enabled')
                     <span class="help-inline"><?php echo form_error('location'); ?></span>					
 				  </div>
                 </div>
+                
+                <?php if($terms_of_service !== FALSE) { ?>
+                <div class="control-group">
+				  <label class="control-label" for="terms_of_service">Terms of Service</label>
+				  <div class="controls">
+					<textarea class='span12' cols='6' rows='7' readonly><?php echo $terms_of_service; ?></textarea>
+					<br />
+					<input type='checkbox' name='tos_agree' value='1' /> Click to agree to the terms of service.
+				  </div>
+                </div>
+                <?php } ?>
 
                 <!-- Captcha -->
                 <div class="control-group">

@@ -98,7 +98,7 @@ class Categories_model extends CI_Model {
 			return FALSE;
 		}
 		
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$row = $query->row_array();
 			$this->db->where('category', $row['id']);
 			$query = $this->db->get('items');
@@ -186,7 +186,7 @@ class Categories_model extends CI_Model {
 	 * @access	public
 	 * @return	array
 	 */				
-	public function menu(){
+	public function menu() {
 		$this->load->model('items_model');
 		
 		$this->db->select('id, description, name, hash, parent_id');
@@ -199,7 +199,7 @@ class Categories_model extends CI_Model {
 			return array();
 			
 		// Add all categories to $menu[] array.
-		foreach($query->result() as $result){
+		foreach($query->result() as $result) {
 			$items = $this->items_model->get_list(array('category' => $result->id));
 			
 			$menu[$result->id] = array(	'id' => $result->id,
@@ -212,13 +212,13 @@ class Categories_model extends CI_Model {
 		}
 		
 		// Store all child categories as an array $menu[parentID]['children']
-		foreach($menu as $ID => &$menuItem){
+		foreach($menu as $ID => &$menuItem) {
 			if($menuItem['parent_id'] !== '0')								
 				$menu[$menuItem['parent_id']]['children'][$ID] = &$menuItem;
 		}
 
 		// Remove child categories from the first level of the $menu[] array.
-		foreach(array_keys($menu) as $ID){
+		foreach(array_keys($menu) as $ID) {
 			if($menu[$ID]['parent_id'] != "0")
 				unset($menu[$ID]);
 		}

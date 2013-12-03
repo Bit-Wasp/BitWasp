@@ -64,7 +64,7 @@ class Items_model extends CI_Model {
 		if(count($opt) > 0) {
 			
 			// If there is a list of item ID's to load..
-			if(isset($opt['item_id_list'])){
+			if(isset($opt['item_id_list'])) {
 				$use_id_list = TRUE;
 				$use_id_count = 0;
 				if($opt['item_id_list'] !== FALSE) {
@@ -90,8 +90,8 @@ class Items_model extends CI_Model {
 		if(isset($use_id_list) && $use_id_count == 0)
 			return FALSE;
 		
-		if($query->num_rows() > 0){
-			foreach($query->result_array() as $row){
+		if($query->num_rows() > 0) {
+			foreach($query->result_array() as $row) {
 
 				// Load vendor information. Skip item if the user is banned.
 				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
@@ -177,9 +177,9 @@ class Items_model extends CI_Model {
 		$this->db->order_by('add_time', 'asc');
 		$query = $this->db->get('bw_items');
 		
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$results = array();
-			foreach($query->result_array() as $row){
+			foreach($query->result_array() as $row) {
 				
 				$row['description_s'] = substr(strip_tags($row['description']),0,50);
 				if(strlen($row['description']) > 50) $row['description_s'] .= '...';

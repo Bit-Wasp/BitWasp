@@ -14,7 +14,7 @@ define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
 
 class Mpkgen {
 
-	public function address($mpk, $iteration){
+	public function address($mpk, $iteration) {
 
 		// Equation takes place over Fp
 		// E: y^2 = x^3 + ax + b

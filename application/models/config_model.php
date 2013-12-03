@@ -27,9 +27,9 @@ class Config_model extends CI_Model {
 	 * Loads the current config into $this->config. Can specify different
 	 * config rows, but yet to be implemented.
 	 */
-	public function __construct($config = 1){	
+	public function __construct($config = 1) {
 		$query = $this->db->get('config');
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$this->config = $query->result_array();
 			foreach($query->result_array() as $config) {
 				$this->config[$config['parameter']] = $config['value'];
@@ -47,7 +47,7 @@ class Config_model extends CI_Model {
 	 * @access	public
 	 * @return	array
 	 */				
-	public function get(){
+	public function get() {
 		return $this->config;
 	}	
 	
@@ -62,7 +62,7 @@ class Config_model extends CI_Model {
 	 */				
 	public function update($records) {
 		$success = TRUE;
-		foreach($records as $key => $update){
+		foreach($records as $key => $update) {
 			$this->db->where('parameter', "$key");
 			if($this->db->update('config', array('value' => $update)) !== TRUE)
 				$success = FALSE;
@@ -80,7 +80,7 @@ class Config_model extends CI_Model {
 	 * @param	string	$value
 	 * @return	boolean
 	 */
-	public function create($parameter, $value){
+	public function create($parameter, $value) {
 		$insert = array('parameter' => $parameter,
 						'value'		=> $value);
 		return ($this->db->insert('config', $insert) == TRUE) ? TRUE : FALSE;

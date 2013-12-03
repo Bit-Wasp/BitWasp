@@ -2,8 +2,8 @@ BitWasp
 ===
 
 ```
-Project Homepage: http://bitwasp.tk
-Test site: http://bitmerchant.tk
+Project Forums: http://bit-wasp.org
+Test site: http://test.bit-wasp.org
 Facebook page: https://facebook.com/BitWasp
 ```
 
@@ -29,7 +29,7 @@ SQL Database
 ```
 
 The following is a brief account of setting up BitWasp. For detailed 
-instructions, please check out http://bitwasp.tk/index.php/topic,28.0.html
+instructions, please check out http://bit-wasp.org/index.php/topic,28.0.html
 
 Run the following to import the database schema:
 ```
@@ -83,4 +83,4 @@ Our Bitcoin Address: 19EkDTAaGWySZv1QsWxyWwYMZpo7jpvPYe
 
 Anyone interested in contributing code or time to help with testing, please get in touch!
 
-Features list: http://bitwasp.tk/index.php/topic,4.msg4.html#msg4
+Features list: http://bit-wasp.org/index.php/topic,4.msg4.html#msg4

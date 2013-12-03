@@ -79,7 +79,7 @@ class GPG {
 	 * 
 	 * Returns whether the GPG extension has been detected.
 	 */
-	public function have_GPG(){
+	public function have_GPG() {
 		return $this->have_GPG;
 	}
 	
@@ -108,7 +108,7 @@ class GPG {
 		} else if($this->style == 'proc') {
 			$info = gnupg_import($this->gpg, $key);
 		} 
-		if(isset($info['fingerprint'])){
+		if(isset($info['fingerprint'])) {
 			$info['clean_key'] = htmlentities($key);
 			return $info;
 		}

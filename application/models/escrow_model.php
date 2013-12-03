@@ -49,7 +49,7 @@ class Escrow_model extends CI_Model {
 		unset($info['buyer_hash']);
 		
 		// Debit buyers account. 
-		if($this->bitcoin_model->update_credits(array($update)) == TRUE){
+		if($this->bitcoin_model->update_credits(array($update)) == TRUE) {
 		
 			// If successful, add the funds to escrow.
 			if($this->db->insert('escrow', $info))
@@ -170,7 +170,7 @@ class Escrow_model extends CI_Model {
 		$fee_recipient = 'admin';
 
 		// Determine who is the sender/recipient.
-		switch($user){
+		switch($user) {
 			// Escrow - return to buyer minus fee.
 			case 'buyer':
 				$recipient = $escrow['buyer_id'];
@@ -265,7 +265,7 @@ class Escrow_model extends CI_Model {
 	public function get_dispute($order_id) {
 		$this->db->where('order_id', $order_id);
 		$query = $this->db->get('disputes');
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$row = $query->row_array();
 			$row['dispute_message'] = nl2br($row['dispute_message']);
 			$row['last_update_f'] = $this->general->format_time($row['last_update']);
@@ -285,9 +285,9 @@ class Escrow_model extends CI_Model {
 	public function disputes_list() {
 		$this->db->order_by('last_update DESC');
 		$query = $this->db->get('disputes');
-		if($query->num_rows() > 0){
+		if($query->num_rows() > 0) {
 			$result = $query->result_array();
-			foreach($result as &$dispute){
+			foreach($result as &$dispute) {
 				$dispute['disputing_user'] = $this->accounts_model->get(array('id' => $dispute['disputing_user_id']));
 				$dispute['other_user'] = $this->accounts_model->get(array('id' => $dispute['other_user_id']));
 				$dispute['last_update_f'] = $this->general->format_time($dispute['last_update']);

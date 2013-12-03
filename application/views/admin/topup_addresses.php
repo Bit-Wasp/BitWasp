@@ -9,7 +9,7 @@
 if($accounts == FALSE) { ?>
 There are no accounts in the wallet, or bitcoind is offline. Please check the server.
 <?php } else { ?>
-<p>The bitcoin wallet can be topped up by sending funds directly to an account address.</p><br />
+<p>The bitcoin wallet can be topped up by sending funds directly to an account address. Balances will update after 6 confirmations.</p><br />
 	
 <?php	foreach($accounts as $account => $info) { ?>
 			<div class='row-fluid'>
