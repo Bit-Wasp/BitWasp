@@ -574,16 +574,16 @@ class Bw_bitcoin {
 		// Parse results depending on where they're from.
 		if($this->CI->bw_config->price_index == 'CoinDesk') {
 			$update = array('time' => strtotime($rates->time->updated),
-							'usd' => $rates->bpi->USD->rate,
-							'gbp' => $rates->bpi->GBP->rate,
-							'eur' => $rates->bpi->EUR->rate,
+							'usd' => str_replace(",", "", $rates->bpi->USD->rate),
+							'gbp' => str_replace(",", "", $rates->bpi->GBP->rate),
+							'eur' => str_replace(",", "", $rates->bpi->EUR->rate),
 							'price_index' => $rates->price_index
 					);
 		} else if($this->CI->bw_config->price_index == 'BitcoinAverage') {
 			$update = array('time' => strtotime($rates->timestamp),
-							'usd' => ($rates->USD->averages->last !== '0.0000') ? $rates->USD->averages->last : $this->CI->currencies_model->get_exchange_rate('usd'),
-							'gbp' => ($rates->GBP->averages->last !== '0.0000') ? $rates->GBP->averages->last : $this->CI->currencies_model->get_exchange_rate('gbp'),
-							'eur' => ($rates->EUR->averages->last !== '0.0000') ? $rates->EUR->averages->last : $this->CI->currencies_model->get_exchange_rate('eur'),
+							'usd' => ($rates->USD->averages->last !== '0.0000') ? str_replace(",", "", $rates->USD->averages->last) : $this->CI->currencies_model->get_exchange_rate('usd'),
+							'gbp' => ($rates->GBP->averages->last !== '0.0000') ? str_replace(",", "", $rates->GBP->averages->last) : $this->CI->currencies_model->get_exchange_rate('gbp'),
+							'eur' => ($rates->EUR->averages->last !== '0.0000') ? str_replace(",", "", $rates->EUR->averages->last) : $this->CI->currencies_model->get_exchange_rate('eur'),
 							'price_index' => $rates->price_index
 					);
 		}
