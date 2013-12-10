@@ -54,28 +54,6 @@ class Accounts extends CI_Controller {
 	}
 
 	/**
-	 * Items
-	 * 
-	 * @param	string	$user_hash
-	 */
-	public function items($user_hash) {
-		$data['user'] = $this->accounts_model->get(array('user_hash' => $user_hash));
-		if($data['user'] == FALSE)
-			redirect('');
-		if($data['user']['user_role'] !== 'Vendor')
-			redirect('user/'.$data['user']['user_hash']);		
-
-		$this->load->model('items_model');
-		if($data['user']['user_role'] == 'Vendor')
-			$data['items'] = $this->items_model->get_list(array('vendor_hash' => $data['user']['user_hash']));
-				
-		$data['title'] = $data['user']['user_name']."'s Items";
-		$data['custom_title'] = $data['title'];
-		$data['page'] = 'items/index';
-		$this->load->library('Layout', $data);
-	}
-	
-	/**
 	 * View own user profile
 	 * URI: /account
 	 * 
