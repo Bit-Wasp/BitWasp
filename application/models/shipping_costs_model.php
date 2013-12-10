@@ -79,10 +79,17 @@ class Shipping_costs_model extends CI_Model {
 	 * @param	int	$location_id
 	 * @return	array/FALSE
 	 */
-	public function list_by_location($location_id) {
+	public function list_IDs_by_location($location_id) {
 		$this->db->where('destination_id', $location_id);
 		$query = $this->db->get('shipping_costs');
-		return ($query->num_rows() > 0) ? $query->result_array() : FALSE ;
+		if ($query->num_rows() > 0) {
+			$tmp = array();
+			foreach($query->result_array() as $item){
+				array_push($tmp, $item['item_id']);
+			}
+			return $tmp;
+		}
+		return FALSE;
 	}
 	
 	/**

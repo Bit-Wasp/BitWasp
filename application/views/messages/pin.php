@@ -17,7 +17,7 @@
 
               <div class="form-actions">
                 <button type='submit' class="btn btn-primary">Submit</button>
-                <?php echo anchor('home', 'Cancel', 'title="Cancel" class="btn"');?>
+                <?php echo anchor('', 'Cancel', 'title="Cancel" class="btn"');?>
               </div>
             </fieldset>
           </form>

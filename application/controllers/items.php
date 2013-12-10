@@ -106,7 +106,7 @@ class Items extends CI_Controller {
 				redirect('items');
 				
 			// Generate a list of items using a list
-			$opt['item_id_list'] = $this->shipping_costs_model->list_by_location($location);
+			$opt['item_id_list'] = $this->shipping_costs_model->list_IDs_by_location($location);
 			$data['items'] = $this->items_model->get_list($opt);
 		}
 		$data['title'] = 'Items shipped to '.$data['location'];

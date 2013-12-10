@@ -566,6 +566,7 @@ CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
   `item_id` int(9) NOT NULL,
   `destination_id` varchar(10) NOT NULL,
   `cost` decimal(20,8) NOT NULL,
+  `enabled` enum('0','1'),
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

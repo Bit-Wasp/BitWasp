@@ -207,6 +207,7 @@ class Categories_model extends CI_Model {
 										'description' => $result->description,
 										'hash' => $result->hash,
 										'count' => count($items),
+										'count_children' => count($this->get_children($result->id)),
 										'parent_id' => $result->parent_id
 									);
 		}
@@ -264,6 +265,7 @@ class Categories_model extends CI_Model {
 	 * @return	string
 	 */
 	public function generate_select_list_recurse($array){
+		
 		if(isset($array['children']) && is_array($array['children'])){
 			$output = '<option style="font-weight:bold;" value="'.$array['id'].'">'.$array['name'].'</option>'."\n";
 			foreach($array['children'] as $child){
