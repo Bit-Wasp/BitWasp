@@ -61,6 +61,9 @@ class Delete_Message_History {
 			if($this->CI->general_model->drop_id('messages', $message['id']) == FALSE)
 				$result = FALSE;
 		}
+		
+		@$this->logs_model->add("Delete Messages", "Deleted old messages", count($old_messages). " messages older than {$this->CI->bw_config->delete_messages_after} days have been deleted.", "Info");
+						
 		return $result;		
 		
 	}

@@ -22,11 +22,7 @@
               <div class="control-group">
                 <label class="control-label" for="category">Category</label>
                 <div class="controls">
-                  <select name='category' class='span5'>
-<?php foreach ($categories as $category): ?>
-		            <option value='<?php echo $category['id'];?>'><?php echo $category['name'];?></option>
-<?php endforeach; ?>
-                  </select>
+                  <?php echo $categories; ?>
                   <span class="help-inline"><?php echo form_error('category'); ?></span>
                 </div>
               </div>

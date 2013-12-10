@@ -53,13 +53,14 @@ class Bitcoin extends CI_Controller {
 				
 			$send = $this->bw_bitcoin->cashout($data['cashout_address'], (float)$amount);
 			if(!isset($send['code'])) {			
+				$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
+				
 				// Set up flashdata to display information about the transaction on the bitcoin panel.
 				$info = json_encode(array(	'value' => $amount,
 											'address' => $data['cashout_address'],
 											'txn_id' => $send,
 											'category' => 'send')); 
 				$this->session->set_flashdata('info', $info);
-				$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
 				redirect('bitcoin');
 			} else {
 				// Leave an error message if the user was not redirected.

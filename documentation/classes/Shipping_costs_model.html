@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-475094348"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-812294769"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-475094348" class="accordion-body collapse in">
+            <div id="namespace-812294769" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -357,7 +357,7 @@
                             <section class="span4">
                                                                     <a href="../classes/CI_Model.html#method___construct" class="">__construct()</a><br />
                                                                     <a href="../classes/Shipping_costs_model.html#method_for_item" class="">for_item()</a><br />
-                                                                    <a href="../classes/Shipping_costs_model.html#method_check_cost_location" class="">check_cost_location()</a><br />
+                                                                    <a href="../classes/Shipping_costs_model.html#method_costs_to_location" class="">costs_to_location()</a><br />
                                                                     <a href="../classes/Shipping_costs_model.html#method_list_by_location" class="">list_by_location()</a><br />
                                                                     <a href="../classes/Shipping_costs_model.html#method_update" class="">update()</a><br />
                                                                     <a href="../classes/CI_Model.html#method___get" class="">__get()</a><br />
@@ -512,33 +512,36 @@ the array if successful, or FALSE if no entries exist.</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
-            <a id="method_check_cost_location" name="method_check_cost_location" class="anchor"></a>
+            <a id="method_costs_to_location" name="method_costs_to_location" class="anchor"></a>
             <article class="method">
-                <h3 class="public ">check_cost_location()</h3>
+                <h3 class="public ">costs_to_location()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">check_cost_location( <span class="argument">$item_id</span>,  <span class="argument">$location_id</span>)</pre>
-                <p><em></em></p>
-                
+                <pre class="signature" style="margin-right: 54px;">costs_to_location( <span class="argument">$item_list</span>, int <span class="argument">$location</span>) : float</pre>
+                <p><em>Item List Cost</em></p>
+                <p>This function calculates the shipping cost for an array of items.
+It requires the users location.</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
                                 <td></td>
-                                <td>$item_id</td>
+                                <td>$item_list</td>
                                 <td>
 </td>
                             </tr>
                                                     <tr>
-                                <td></td>
-                                <td>$location_id</td>
+                                <td>int</td>
+                                <td>$location</td>
                                 <td>
 </td>
                             </tr>
                                             </table>
                 
                 
-                            </article>
+                                    <h4>Returns</h4>
+                    float
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -721,7 +724,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on December 3rd, 2013 at 14:26.
+                    on December 10th, 2013 at 00:15.
                 </section>
             </section>
         </section>

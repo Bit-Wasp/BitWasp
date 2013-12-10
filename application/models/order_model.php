@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Order_model extends CI_Model {
 	
 	/**
@@ -282,6 +281,22 @@ class Order_model extends CI_Model {
 		return $price;
 	}
 	
+	/**
+	 * Fix Price
+	 * 
+	 * This function is used to fix the order's price at a set value. 
+	 * It is used once the user places the order, to update the price
+	 * to contain the order_price plus the additional fee's. This will
+	 * then remain unchanged, on record as the price. 
+	 * 
+	 * @param	int	$order_id
+	 * @param	float $order_price
+	 * @return	boolean
+	 */
+	public function set_price($order_id, $order_price) {
+		$this->db->where('id', "$order_id");
+		return ($this->db->update('orders', array('price' => $order_price)) == TRUE) ? TRUE : FALSE;
+	}
 	/**
 	 * Set Finalized
 	 * 

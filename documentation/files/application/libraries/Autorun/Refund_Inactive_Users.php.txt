@@ -54,7 +54,7 @@ class Refund_Inactive_Users {
 		$interval = $this->CI->bw_config->refund_after_inactivity*24*60*60;
 
 		if($interval == 0)		// Check if this feature is disabled.
-			return TRUE;		
+			return FALSE;		
 		
 		$time = (time()-$interval);
 		$stale_users = $this->CI->general_model->get_stale_users($time);
@@ -65,16 +65,23 @@ class Refund_Inactive_Users {
 		$this->CI->load->model('accounts_model');
 		$this->CI->load->library('bw_bitcoin');
 		$result = TRUE;
+		$total_btn = 0;
+		$count = 0;
 		foreach($stale_users as $user) {
 			
 			// If the users balance is > 0, and they have a valid cashout address, refund their bitcoins.
 			if($user['bitcoin_balance'] > 0 && $this->CI->bw_bitcoin->validateaddress($user['bitcoin_cashout_address']) !== FALSE) {
-					
 				$send = $this->bw_bitcoin->cashout($data['cashout_address'], (float)$user['bitcoin_balance']);
-				if(!isset($send['code'])) 
+				if(!isset($send['code'])) {
 					$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
+					$total_btc += $user['bitcoin_balance'];
+					$count++;
+				}
 			}
 		}
+		
+		@$this->logs_model->add("Refund Users Job", "Refunded User Balances", "$total_btc has been refunded to $count users.", "Info");
+						
 		return $result;
 	}
 	

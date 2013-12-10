@@ -68,7 +68,7 @@ class Currencies_model extends CI_Model {
 	 * on a successful run, otherwise, returns FALSE.
 	 *
 	 * @access	public
-	 * @return	bool
+	 * @return	boolean/array
 	 */				
 	public function get_exchange_rates() {
 		$this->db->select('time, usd, eur, gbp');
@@ -80,9 +80,9 @@ class Currencies_model extends CI_Model {
 			$row = $query->row_array();
 			$row['time_f'] = $this->general->format_time($row['time']);
 			
-			$result = array('bpi' => array('usd' => $row['usd'],
-											'eur' => $row['eur'],
-											'gbp' => $row['gbp']),
+			$result = array('bpi' => array('usd' => number_format($row['usd'],4,".",","),
+											'eur' => number_format($row['eur'],4,".",","),
+											'gbp' => number_format($row['gbp'],4,".",",") ),
 							'time' => $row['time'],
 							'time_f' => $this->general->format_time($row['time']));
 			return $result;

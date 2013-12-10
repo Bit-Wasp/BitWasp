@@ -70,7 +70,7 @@ class Fees_model extends CI_Model {
 	 * 
 	 * Calculates the fee to be applied to an order of $order_price.
 	 * 
-	 * @param	string	$
+	 * @param	string	$order_price
 	 */
 	public function calculate($order_price) {
 		$fees_list = $this->fees_list();

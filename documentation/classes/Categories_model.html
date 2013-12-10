@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-999933112"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-682574820"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-999933112" class="accordion-body collapse in">
+            <div id="namespace-682574820" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -365,6 +365,8 @@
                                                                     <a href="../classes/Categories_model.html#method_update_items_category" class="">update_items_category()</a><br />
                                                                     <a href="../classes/Categories_model.html#method_update_parent_category" class="">update_parent_category()</a><br />
                                                                     <a href="../classes/Categories_model.html#method_menu" class="">menu()</a><br />
+                                                                    <a href="../classes/Categories_model.html#method_generate_select_list" class="">generate_select_list()</a><br />
+                                                                    <a href="../classes/Categories_model.html#method_generate_select_list_recurse" class="">generate_select_list_recurse()</a><br />
                                                                     <a href="../classes/CI_Model.html#method___get" class="">__get()</a><br />
                                                             </section>
                             <section class="span4">
@@ -829,6 +831,82 @@ on menu children, and unset any loose children from the very first level.</p>
 
                                     <div class="row-fluid">
         <div class="span8 content class">
+            <a id="method_generate_select_list" name="method_generate_select_list" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">generate_select_list()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">generate_select_list() : string</pre>
+                <p><em>Generate Select List</em></p>
+                <p>This function creates a <select> menu to select categories, which
+displays parent categories in bold. When chosing a category, if
+block_access_to_parent_category is used in form validation, the bold
+categories will be disallowed. The name of the post variable is 'category'.</p>
+
+<p>It uses a recursive function, generate_select_list_recurse() to
+recurse into the multidimensional array to show child/parent
+categories.</p>
+
+
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_generate_select_list_recurse" name="method_generate_select_list_recurse" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">generate_select_list_recurse()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">generate_select_list_recurse(array <span class="argument">$array</span>) : string</pre>
+                <p><em>Generate Select List Recurse</em></p>
+                <p>Called by generate_select_list, this function takes a multidimensional
+array as input, and recurses deeper into the array
+if $array['children'] > 0. If that is the case, the select option
+will be in bold, indicating a parent category. Otherwise the option
+is not altered.</p>
+
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$array</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr><td colspan="2"><em>None found</em></td></tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
             <a id="method___get" name="method___get" class="anchor"></a>
             <article class="method">
                 <h3 class="public ">__get()</h3>
@@ -914,7 +992,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on December 3rd, 2013 at 14:26.
+                    on December 10th, 2013 at 00:15.
                 </section>
             </section>
         </section>

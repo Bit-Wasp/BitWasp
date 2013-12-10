@@ -1,6 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 // BitWasp callback errors
+$lang['block_access_to_parent_category'] = 'Categories in bold are parent categories, and cannot be selected. Please choose a subcategory for your item.';
 $lang['check_admin_roles'] = 'You must select a valid user role.';
 $lang['check_autorun_interval'] = 'Interval must be 0 (for disabled) or a numeric interval.';
 $lang['check_bitcoin_account_exists'] = 'You must select an account from your wallet.';

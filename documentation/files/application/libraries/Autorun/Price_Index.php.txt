@@ -44,9 +44,13 @@ class Price_Index {
 	 * record the new update.
 	 */
 	public function job() {
+		$stat = FALSE;
 		if($this->CI->bw_config->price_index !== 'Disabled')
-			if($this->CI->bw_bitcoin->ratenotify() == TRUE)
+			if($this->CI->bw_bitcoin->ratenotify() == TRUE){
+				$stat = TRUE;
 				$this->CI->autorun_model->set_updated('price_index');
+			}
+		return $stat;
 	}
 	
 };

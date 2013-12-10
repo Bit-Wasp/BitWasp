@@ -88,11 +88,7 @@ class Openssl {
 	 * @return		string
 	 */
 	public function encrypt($text, $public_key) { 
-		echo 'a';
 		openssl_public_encrypt($text, $encrypted, $public_key);
-		var_dump($encrypted);
-		echo 'b';
-		echo openssl_error_string();
 		return $encrypted;
 	}
 	

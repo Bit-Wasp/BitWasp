@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Items extends CI_Controller {
 
 	/**
@@ -115,8 +114,6 @@ class Items extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-
-	
 	/**
 	 * Load a specific item
 	 * URI: /item/$hash
@@ -124,7 +121,7 @@ class Items extends CI_Controller {
 	 * @access	public
 	 * @see		Models/Items_Model
 	 * 
-	 * @param	string
+	 * @param	string	$hash
 	 * @return	void
 	 */	
 	public function get($hash) {
@@ -132,10 +129,17 @@ class Items extends CI_Controller {
 		if($data['item'] == FALSE) 
 			redirect('items');
 
+		$this->load->model('shipping_costs_model');
+
+		$info = (array)json_decode($this->session->flashdata('returnMessage'));
+		if(count($info) !== 0)
+			$data['returnMessage'] = $info['message'];
+
 		$data['logged_in'] = $this->current_user->logged_in();
 		$data['page'] = 'items/get';
 		$data['title'] = $data['item']['name'];
 		$data['user_role'] = $this->current_user->user_role;
+		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
 		$this->load->library('Layout', $data);
 	}
 };

@@ -94,7 +94,7 @@ class Listings extends CI_Controller {
 		
 		$data['page'] = 'listings/edit';
 		$data['title'] = 'Edit '.$data['item']['name'];
-		$data['categories'] = $this->categories_model->list_all();
+		$data['categories'] = $this->categories_model->generate_select_list();
 		$data['currencies'] = $this->currencies_model->get();
 		
 		$this->load->library('Layout', $data);
@@ -150,7 +150,7 @@ class Listings extends CI_Controller {
 		}
 		
 		if($data['page'] == 'listings/add') {
-			$data['categories'] = $this->categories_model->list_all();
+			$data['categories'] = $this->categories_model->generate_select_list();
 			$data['currencies'] = $this->currencies_model->get();
 		}
 		$this->load->library('Layout', $data);
@@ -435,6 +435,25 @@ class Listings extends CI_Controller {
 	public function check_bool($param) {
 		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
 	}
+
+	/**
+	 * Block Access To Parent Category
+	 * 
+	 * This function blocks form submission when a user selects a category
+	 * which has child categories in it. If it has child categories,
+	 * it returns FALSE, to block form submission. Otherwise it returns
+	 * TRUE, allowing the submission.
+	 * 
+	 * @param	int	$category_id
+	 * @return	boolean
+	 */
+	public function block_access_to_parent_category($category_id){
+		$info = $this->categories_model->get_children($category_id);
+		// If it has children, return FALSE, as they are not allowed
+		// to post there.
+		return ($info['count'] > 0) ? FALSE : TRUE;
+	}
+
 
 };
 

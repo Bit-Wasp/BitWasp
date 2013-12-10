@@ -225,6 +225,56 @@ class Categories_model extends CI_Model {
 		// Return constructed menu.
 		return $menu;
 	}
+	
+
+	/**
+	 * Generate Select List
+	 * 
+	 * This function creates a <select> menu to select categories, which
+	 * displays parent categories in bold. When chosing a category, if
+	 * block_access_to_parent_category is used in form validation, the bold 
+	 * categories will be disallowed. The name of the post variable is 'category'.
+	 * 
+	 * It uses a recursive function, generate_select_list_recurse() to
+	 * recurse into the multidimensional array to show child/parent
+	 * categories.
+	 * 
+	 * @return	string
+	 */
+	public function generate_select_list() {
+		$cats = $this->menu();
+		$select = "<select name=\"category\" class='span5' autocomplete=\"off\">\n<option value=\"\"></option>";
+		foreach($cats as $cat){
+			$select.= $this->generate_select_list_recurse($cat);
+		}
+		$select.= '</select>';
+		return $select;
+	}
+	
+	/**
+	 * Generate Select List Recurse
+	 * 
+	 * Called by generate_select_list, this function takes a multidimensional 
+	 * array as input, and recurses deeper into the array 
+	 * if $array['children'] > 0. If that is the case, the select option
+	 * will be in bold, indicating a parent category. Otherwise the option 
+	 * is not altered.
+	 * 
+	 * @param	array	$array
+	 * @return	string
+	 */
+	public function generate_select_list_recurse($array){
+		if(isset($array['children']) && is_array($array['children'])){
+			$output = '<option style="font-weight:bold;" value="'.$array['id'].'">'.$array['name'].'</option>'."\n";
+			foreach($array['children'] as $child){
+				$output.= $this->generate_select_list_recurse($child);
+			}
+		} else {
+			$output = '<option value="'.$array['id'].'">'.$array['name'].'</option>'."\n";
+		}
+		return $output;
+	}
+
 };
 
 /* End of file Categories_model.php */

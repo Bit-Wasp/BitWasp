@@ -1,8 +1,7 @@
         <div class="span9 mainContent" id="view-account">
           <div class="container-fluid">
 			  
-			<?php if(isset($returnMessage)) { ?>
-			<div class='alert'><?php echo $returnMessage; ?></div> <?php } ?>
+			<?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
 			
             <div class="row-fluid">
               <div class="span9 btn-group">
@@ -35,8 +34,13 @@
 	        </div>
 <?php } ?>
 
-<?php if(isset($user['pgp']['public_key'])) { ?>
+<?php if($user['user_role'] == 'Vendor' ) { ?>
+	  	    <div class="row-fluid">
+	          <div class="span7 offset2"><?php echo anchor('accounts/items/'.$user['user_hash'], "Click here to see {$user['user_name']}'s items!"); ?></div>
+	        </div>
+<?php } ?>
 
+<?php if(isset($user['pgp']['public_key'])) { ?>
 			<div class="row-fluid">
 			  <div class="span2"><strong>PGP Fingerprint</strong></div>
 			  <div class="span7"><?php echo $user['pgp']['fingerprint_f']; ?></div>
@@ -48,6 +52,8 @@
 			  </pre>
             </div>
 <?php } ?>
+
+	
           </div>
         </div>
 

@@ -61,9 +61,13 @@ class Delete_Transaction_History {
 			
 		$result = TRUE;
 		foreach($old_transactions as $transaction) {
-			if($this->CI->general_model->drop_id('pending_txns', $transaction['id']) == FALSE)
+			if($this->CI->general_model->drop_id('pending_txns', $transaction['id']) == FALSE){
 				$result = FALSE;
+			}
 		}
+		
+		@$this->logs_model->add("Clear Transactions", "Cleared old transacations", count($old_transactions)." transactions older than ".$this->CI->bw_config->delete_transactions_after." days have been deleted.", "Info");
+						
 		return $result;		
 		
 	}

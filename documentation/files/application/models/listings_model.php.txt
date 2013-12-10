@@ -100,11 +100,9 @@ class Listings_model extends CI_Model {
 	 */					
 	public function update($item_hash, $changes) {
 		$this->db->where('hash', $item_hash);
-		$this->db->where('vendor_hash', $this->current_user->user_hash);
-		
+		$this->db->where('vendor_hash', $this->current_user->user_hash);		
 		return ($this->db->update('items', $changes)) ? TRUE : FALSE;
 	}	
-
 
 };
 

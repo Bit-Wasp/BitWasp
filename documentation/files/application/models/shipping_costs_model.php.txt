@@ -49,11 +49,27 @@ class Shipping_costs_model extends CI_Model {
 	}
 
 	/**
+	 * Item List Cost
 	 * 
+	 * This function calculates the shipping cost for an array of items.
+	 * It requires the users location.
+	 * 
+	 * @param	array	$items
+	 * @param	int	$location
+	 * @return	float
 	 */
-	public function check_cost_location($item_id, $location_id) {
-	}
-	
+	 public function costs_to_location($item_list, $location) {
+		 $cost = 0.00000000;
+		 foreach($item_list as $item) {
+			 $costs = $this->for_item($item['id']);
+			 // Try the users location_id as the index.. if that's not 
+			 // there, the user must be buying a worldwide item.
+			 $tmp = (isset($costs[$location])) ? $costs[$location]['cost'] : $costs['worldwide']['cost'];
+			 $cost+= $tmp*$item['quantity'];
+		 }
+		 return $cost;
+	 }
+
 	/**
 	 * List by Location
 	 * 

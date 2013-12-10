@@ -152,7 +152,7 @@ class Orders extends CI_Controller {
 				$details = array('username' => $current_order['vendor']['user_name'],
 								 'subject' => "Order #{$current_order['id']} has been finalized");
 				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. BTC {$current_order['price']} has been credited to your account.<br />\n";
-				$details['message'].= ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />\n';
+				$details['message'].= ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />';
 				$message = $this->bw_messages->prepare_input($data, $details);
 				$message['order_id'] = $current_order['id'];
 				$this->messages_model->send($message);
@@ -319,9 +319,20 @@ class Orders extends CI_Controller {
 	 */
 	public function purchase_item($item_hash) {	
 		$this->load->library('form_validation');
+		$this->load->model('accounts_model');
+		$this->load->model('shipping_costs_model');
+		
 		$item_info = $this->items_model->get($item_hash);
 		if($item_info == FALSE) 
 			redirect('items');
+
+	
+		$account = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
+		$shipping_costs = $this->shipping_costs_model->for_item($item_info['id']);
+		if($shipping_costs == FALSE || (!isset($shipping_costs[$account['location']]) && !isset($shipping_costs['worldwide']))) {
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'This item is not available in your location. Message the vendor to discuss availability.')));
+			redirect('item/'.$item_info['hash']);
+		}
 
 		$order = $this->order_model->load($item_info['vendor_hash'],'0');
 		if($order == FALSE) {
@@ -378,6 +389,8 @@ class Orders extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('bitcoin_model');
 		$this->load->model('fees_model');
+		$this->load->model('shipping_costs_model');
+		$this->load->model('accounts_model');
 		
 		$data['order'] = $this->order_model->load_order($id, array('0'));
 		if($data['order'] == FALSE)
@@ -388,19 +401,22 @@ class Orders extends CI_Controller {
 		$data['title'] = 'Place Order #'.$data['order']['id'];
 		$data['page'] = 'orders/place';
 		$data['header_meta'] = $this->load->view('orders/encryption_header', NULL, true);
-		$data['fee'] = $this->fees_model->calculate($data['order']['price']);
+		
+		$data['fees']['shipping_cost'] = $this->shipping_costs_model->costs_to_location($data['order']['items'], $data['order']['buyer']['location']);
+		$data['fees']['fee'] = $this->fees_model->calculate(($data['order']['price']+$data['fees']['shipping_cost']));
+		$data['fees']['total'] = $data['fees']['shipping_cost']+$data['fees']['fee'];
 
 		if($this->form_validation->run('order_place') == TRUE) {
 
-			if($balance <= 0 || $balance < ($data['order']['price']+$data['fee'])) {
+			if($balance <= 0 || $balance < ($data['order']['price']+$data['fees']['total'])) {
 				$data['returnMessage'] = 'You have insufficient funds to place this order. Please top up and try again';
 			} else {
 				$escrow = array('order_id' => $data['order']['id'],
 								'buyer_id' => $this->current_user->user_id,
 								'vendor_id' => $data['order']['vendor']['id'],
 								'buyer_hash' => $this->current_user->user_hash,
-								'fee' => $data['fee'],
-								'amount' => $data['order']['price']);			
+								'fee' => $data['fees']['fee'],
+								'amount' => $data['order']['price']+$data['fees']['shipping_cost']);
 				
 				if($this->escrow_model->add($escrow) == FALSE) {
 					$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
@@ -408,7 +424,8 @@ class Orders extends CI_Controller {
 					if($this->order_model->progress_order($data['order']['id'], '0') == FALSE) {
 						$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
 					} else {
-					
+						$this->order_model->set_price($data['order']['id'], ($data['order']['price']+$data['fees']['shipping_cost']));
+							
 						// Send message to vendor
 						$info['from'] = $this->current_user->user_id;
 						$details = array('username' => $data['order']['vendor']['user_name'],

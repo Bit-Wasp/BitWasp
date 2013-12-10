@@ -30,5 +30,4 @@ class Bitcoin_Test extends CI_Controller {
 		echo '</pre>';
 	}
 	
-	
 };

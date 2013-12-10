@@ -1049,7 +1049,7 @@ class Admin extends CI_Controller {
 		$this->load->model('users_model');
 		
 		$params = array();
-		$data['users'] = $this->users_moasdel->user_list();
+		$data['users'] = $this->users_model->user_list();
 		
 		// If the user is searching for by username.
 		if($this->input->post('search_username') == 'Search') {

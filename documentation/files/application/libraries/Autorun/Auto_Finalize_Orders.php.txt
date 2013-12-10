@@ -48,7 +48,7 @@ class Auto_Finalize_Orders {
 		
 		$this->CI = &get_instance();
 		$this->threshold = $this->CI->bw_config->auto_finalize_threshold;
-		if($this->threshold == '0') // Leave loading dependencies here if job disabled.
+		if($this->threshold == '0') // dont load dependencies here if job disabled.
 			return TRUE;
 		$this->CI->load->model('order_model');
 		$this->CI->load->model('accounts_model');
@@ -102,7 +102,7 @@ class Auto_Finalize_Orders {
 						$payment_message = "Autorefund #{$order['id']}";
 						// Debit vendor account manually.
 						// As escrow record does not exist, update transactions manually.
-						$debit = array('user_hash' => $vendor['user_hash'],
+						$debit =  array('user_hash' => $vendor['user_hash'],
 										'value' => (float)$order['amount']);
 						$credit = array('user_hash' => $buyer['user_hash'],
 										'value' => (float)$order['amount']);
@@ -110,7 +110,7 @@ class Auto_Finalize_Orders {
 						
 						// Update balances and set progress to 7.
 						if($this->CI->bitcoin_model->update_credits($transactions) == TRUE
-						  && $this->CI->order_model->admin_set_progress($order['id'], '7') == TRUE ) {
+						&& $this->CI->order_model->admin_set_progress($order['id'], '7') == TRUE ) {
 							
 							// Send message to vendor
 							$data['from'] = $admin['id'];

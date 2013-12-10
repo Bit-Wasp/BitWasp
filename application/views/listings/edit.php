@@ -23,11 +23,7 @@
               <div class="control-group">
                 <label class="control-label" for="category">Category</label>
                 <div class="controls">
-                  <select name='category' class='span5'>
-<?php foreach ($categories as $category): ?>
-		            <option value='<?php echo $category['id'];?>' <?php echo ($item['category'] == $category['id']) ? 'selected="selected"' : ''; ?>><?php echo $category['name'];?></option>
-<?php endforeach; ?>
-                  </select>
+                  <?php echo $categories; ?>
                   <span class="help-inline"><?php echo form_error('category'); ?></span>
                 </div>
               </div>
@@ -47,9 +43,9 @@
                 <label class="control-label" for="currency">Currency</label>
                 <div class="controls">
 				  <select name='currency' class='span5' autocomplete="off">
-<?php foreach ($currencies as $currency): ?>
+<?php foreach ($currencies as $currency) { ?>
 		            <option value="<?php echo $currency['id'];?>" <?php echo ($item['currency']['id'] == $currency['id']) ? 'selected="selected"' : '';?>><?php echo $currency['name'];?> (<?php echo $currency['symbol'];?>)</option>
-<?php endforeach; ?>
+<?php } ?>
                   </select>
                   <span class="help-inline"><?php echo form_error('currency'); ?></span>
                 </div>

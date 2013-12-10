@@ -79,7 +79,7 @@ class Version_Checker {
 					return TRUE;
 			}
 		}
-		return FALSE;
+		return TRUE;
 	}
 
 	/** 

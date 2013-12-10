@@ -21,12 +21,17 @@
 
 			  <div class="row-fluid">
 				<div class="span2">Price</div>
-				<div class="span5"><?php echo $local_currency['symbol'] . ' ' . $order['price_l']; ?> (+ BTC <?php echo $fee; ?> in fees)</div>
+				<div class="span5"><?php echo $local_currency['symbol'] . ' ' . $order['price_l']; ?> (+ BTC <?php echo $fees['fee']; ?> in fees)</div>
+			  </div>
+
+			  <div class="row-fluid">
+				<div class="span2">Shipping Cost</div>
+				<div class="span5"><?php echo $order['currency']['symbol']; ?> <?php echo $fees['shipping_cost']; ?></div>
 			  </div>
 
 			  <div class="row-fluid">
 				<div class="span2">Total</div>
-				<div class="span5"><?php echo 'BTC '.($order['price']+$fee); ?></div>
+				<div class="span5"><?php echo 'BTC '.($order['price']+$fees['total']); ?></div>
 			  </div>
 			  
 			  <div class="row-fluid">
@@ -41,7 +46,9 @@
                 <span class="help-inline"><?php echo form_error('user_name'); ?></span>
 			  </div>
 			  
-              <textarea style="display:none;" name="public_key"><?php if($order['vendor']['pgp']['public_key'] !== '') echo $order['vendor']['pgp']['public_key']; ?></textarea>
+              <?php if(isset($order['vendor']['pgp'])) 
+				echo '<textarea style="display:none;" name="public_key">'.$order['vendor']['pgp']['public_key'].'</textarea>';
+			  ?>
 
               <div class="form-actions">
                 <input type='submit' class="btn btn-primary" value='Place Order' onclick='messageEncrypt()' />

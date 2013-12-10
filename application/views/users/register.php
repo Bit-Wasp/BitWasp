@@ -70,9 +70,9 @@ if(isset($token_info) && $token_info !== FALSE){?>
 					  <option value='2'>Vendor</option>
 					</select><br />
 					<div class="span8"><?php 
-echo form_error('user_type')."<br />";
+echo form_error('user_type');
 if($force_vendor_pgp == 'Enabled')
-	echo "If you are registering as a vendor, it is required you upload a PGP public key. Please have one ready on your first login.";
+	echo "<br />If you are registering as a vendor, it is required you upload a PGP public key. Please have one ready on your first login.";
 ?></div>
 				  </div>
 				</div>

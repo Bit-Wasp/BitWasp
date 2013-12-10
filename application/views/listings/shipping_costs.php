@@ -88,7 +88,7 @@
 		    
             <div class="form-actions">
 		      <input type='submit' name='shipping_costs_update' value='Update' class='btn btn-primary' />
-              <?php echo anchor('listings','Cancel', array('class'=>'returnLink btn'));?>
+              <?php echo anchor('listings/edit/'.$item['hash'],'Cancel', array('class'=>'returnLink btn'));?>
 		    </div>
 		  </form>
 		</div>
