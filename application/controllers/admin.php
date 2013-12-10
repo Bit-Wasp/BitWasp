@@ -19,6 +19,7 @@ class Admin extends CI_Controller {
 	 */
 	public function __construct() {
 		parent::__construct();
+		$this->load->model('admin_model');
 		
 		// Define information for the navigation panel.
 		$this->nav = array(	'' => 			array(	'panel' => '',
@@ -115,8 +116,9 @@ class Admin extends CI_Controller {
 					}
 				}
 			}
-	
-			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated.','Info');
+
+			$log = $this->admin_model->format_config_changes($changes);
+			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated:<br />'.$log,'Info');
 
 			if(isset($changes) && $this->config_model->update($changes) == TRUE)
 				redirect('admin');			
@@ -399,6 +401,9 @@ class Admin extends CI_Controller {
 						$changes['electrum_mpk'] = '';
 				}
 		
+				$log = $this->admin_model->format_config_changes($changes);
+				$this->logs_model->add('Admin: Bitcoin Panel','Bitcoin configuration updated','The bitcoin configuration of the site has been updated:<br />'.$log,'Info');
+		
 				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
 					redirect('admin/bitcoin');	
 			}
@@ -497,6 +502,9 @@ class Admin extends CI_Controller {
 			
 			$changes = array_filter($changes, 'strlen');
 
+			$log = $this->admin_model->format_config_changes($changes);
+			$this->logs_model->add('Admin: Users Panel','Users configuration updated','The users configuration of the site has been updated:<br />'.$log,'Info');
+
 			// Update config
 			if($this->config_model->update($changes) == TRUE)
 				redirect('admin/users');
@@ -552,9 +560,15 @@ class Admin extends CI_Controller {
 				$changes['auto_finalize_threshold'] = ($data['config']['auto_finalize_threshold'] == $this->input->post('auto_finalize_threshold') ) ? NULL : $this->input->post('auto_finalize_threshold');
 				
 				$changes = array_filter($changes, 'strlen');
+				
 				if(count($changes) > 0)
-					if($this->config_model->update($changes) == TRUE)
+					if($this->config_model->update($changes) == TRUE){
+						$log = $this->admin_model->format_config_changes($changes);
+						$this->logs_model->add('Admin: Items Panel','Items configuration updated','The items configuration of the site has been updated:<br />'.$log,'Info');
+
 						redirect('admin/users');
+					}
+				
 			}
 		}	
 			
@@ -925,6 +939,9 @@ class Admin extends CI_Controller {
 				$changes = array_filter($changes, 'strlen');
 				if(count($changes) > 0) 
 					if($this->config_model->update($changes) == TRUE){
+						$log = $this->admin_model->format_config_changes($changes);
+						$this->logs_model->add('Admin: Fees Panel','Fees configuration updated','The fees configuration of the site has been updated:<br />'.$log,'Info');
+
 						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
 						redirect('admin/items/fees');
 					}
