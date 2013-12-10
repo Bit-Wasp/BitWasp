@@ -76,7 +76,7 @@ $route['listings/delete_image/(:any)'] = 'listings/delete_image/$1';
 $route['item/(:any)'] = 'items/get/$1';
 $route['items'] = 'items/index';
 $route['location/(:any)'] = 'items/location/$1';
-$route['location'] = 'items/location';
+$route['location/(:any)/(:any)'] = 'items/location/$1/$2';
 $route['category/(:any)'] = 'items/category/$1';
 
 // Bitcoin testing functions. Remove before production!!

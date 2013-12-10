@@ -94,7 +94,7 @@ class Listings extends CI_Controller {
 		
 		$data['page'] = 'listings/edit';
 		$data['title'] = 'Edit '.$data['item']['name'];
-		$data['categories'] = $this->categories_model->generate_select_list();
+		$data['categories'] = $this->categories_model->generate_select_list($data['item']['category']);
 		$data['currencies'] = $this->currencies_model->get();
 		
 		$this->load->library('Layout', $data);

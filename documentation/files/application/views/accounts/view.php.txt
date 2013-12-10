@@ -34,10 +34,15 @@
 	        </div>
 <?php } ?>
 
-<?php if($user['user_role'] == 'Vendor' ) { ?>
-	  	    <div class="row-fluid">
-	          <div class="span7 offset2"><?php echo anchor('accounts/items/'.$user['user_hash'], "Click here to see {$user['user_name']}'s items!"); ?></div>
-	        </div>
+<?php if(isset($items) && $items !== FALSE) { ?>
+			<div class="row-fluid">
+			  <div class="span2"><strong>Vendor Items</strong></div>
+			  <div class="span7">
+<?php foreach($items as $item) { ?>
+				<?php echo anchor('item/'.$item['hash'], "{$item['name']} {$item['price_f']}"); ?><br />
+<?php } ?>
+			  </div>
+			</div>
 <?php } ?>
 
 <?php if(isset($user['pgp']['public_key'])) { ?>

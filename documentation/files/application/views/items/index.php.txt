@@ -1,8 +1,6 @@
         <div class="span9 mainContent" id="item_view">
           <h2><?php 
-          if(isset($category)) { echo 'Category: '.$category['name']; }
-          else if(isset($location)) { echo 'Location: '.$location; }
-          else if(isset($custom_title)) { echo $custom_title; }
+          if(isset($custom_title)) { echo $custom_title; }
           else { echo 'Items'; }
           ?></h2>
           <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>

@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-682574820"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-733329131"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-682574820" class="accordion-body collapse in">
+            <div id="namespace-733329131" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -835,7 +835,7 @@ on menu children, and unset any loose children from the very first level.</p>
             <article class="method">
                 <h3 class="public ">generate_select_list()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">generate_select_list() : string</pre>
+                <pre class="signature" style="margin-right: 54px;">generate_select_list( <span class="argument">$selected</span>) : string</pre>
                 <p><em>Generate Select List</em></p>
                 <p>This function creates a <select> menu to select categories, which
 displays parent categories in bold. When chosing a category, if
@@ -847,6 +847,15 @@ recurse into the multidimensional array to show child/parent
 categories.</p>
 
 
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$selected</td>
+                                <td>
+</td>
+                            </tr>
+                                            </table>
                 
                 
                                     <h4>Returns</h4>
@@ -870,7 +879,7 @@ categories.</p>
             <article class="method">
                 <h3 class="public ">generate_select_list_recurse()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">generate_select_list_recurse(array <span class="argument">$array</span>) : string</pre>
+                <pre class="signature" style="margin-right: 54px;">generate_select_list_recurse(array <span class="argument">$array</span>,  <span class="argument">$selected</span>) : string</pre>
                 <p><em>Generate Select List Recurse</em></p>
                 <p>Called by generate_select_list, this function takes a multidimensional
 array as input, and recurses deeper into the array
@@ -884,6 +893,12 @@ is not altered.</p>
                                                     <tr>
                                 <td>array</td>
                                 <td>$array</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$selected</td>
                                 <td>
 </td>
                             </tr>
@@ -992,7 +1007,7 @@ syntax as controllers.</p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on December 10th, 2013 at 00:15.
+                    on December 10th, 2013 at 14:06.
                 </section>
             </section>
         </section>

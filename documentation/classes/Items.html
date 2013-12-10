@@ -138,10 +138,10 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1276144880"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-820116381"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1276144880" class="accordion-body collapse in">
+            <div id="namespace-820116381" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                     
@@ -578,16 +578,26 @@ URI: /items</p>
             <article class="method">
                 <h3 class="public ">location()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">location( <span class="argument">$location</span>) : void</pre>
+                <pre class="signature" style="margin-right: 54px;">location( <span class="argument">$source</span>, string <span class="argument">$location</span>) : void</pre>
                 <p><em>Location</em></p>
-                <p>Load all items that are shipped to a specific location ID.
-URI: /location/$hash</p>
+                <p>This function requires that $source is either 'ship-to' or 'ship-from'.
+If not, it will redirect the user to the items page. It will then
+check if a form was posted, and will then load the appropriate items,
+or if the requested post $location doesn't exist, will redirect to items.
+Otherwise, it can be called by supplying the parameters via GET.
+URI: /location/$source/$location</p>
 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
                                 <td></td>
+                                <td>$source</td>
+                                <td>
+</td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
                                 <td>$location</td>
                                 <td>
 </td>
@@ -727,7 +737,7 @@ URI: /item/$hash</em></p>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on December 10th, 2013 at 00:15.
+                    on December 10th, 2013 at 14:06.
                 </section>
             </section>
         </section>
