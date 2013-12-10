@@ -108,7 +108,7 @@ class Items_model extends CI_Model {
 				$price_l = (float)($row['price_b']*$local_currency['rate']);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
 				$row['price_l'] = $price_l;
-				$row['price_f'] = $local_currency['symbol'].''.$row['price_l'];
+				$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];
 
 				$row['images'] = $this->images_model->by_item($row['id']);
 				array_push($results, $row);
