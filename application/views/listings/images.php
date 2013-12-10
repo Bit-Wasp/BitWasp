@@ -35,13 +35,13 @@
 
  	          <div class="form-actions">
                 <input type="submit" name="add_image" value="Create" class="btn btn-primary" />
-                <?php echo anchor("listings","Cancel", 'class="btn"'); ?>
+                <?php echo anchor("item/".$item['hash'] ,"Cancel", 'class="btn"'); ?>
               </div>
             </fieldset>
           </form>
 
           <ul id="image_listing" class="thumbnails">
-<?php foreach ($images as $image): ?>
+<?php foreach ($images as $image) { ?>
             <li class="span3 image_box">
               <div class="thumbnail">
 		        <img class="productImg" src="data:image/jpeg;base64,<?php echo $image['encoded'];?>" title="<?php echo $item['name']; ?>" width='150' />
@@ -51,7 +51,7 @@
               </div>
             </li>
             
-<?php endforeach ?>
+<?php } ?>
 	      </ul>
         </div>
         

@@ -32,7 +32,11 @@ class Callback extends CI_Controller {
 	 * @see		Models/Bitcoin_Model
 	 * @see		Libraries/Bw_Bitcoin
 	 */	
-	public function wallet($txn_id){
+	public function wallet($txn_id = NULL){
+		// Abort if no transaction ID is supplied.
+		if($txn_id == NULL)
+			return FALSE;
+			
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');	
 		
@@ -48,7 +52,11 @@ class Callback extends CI_Controller {
 	 * @see		Models/Bitcoin_Model	 
 	 * @see		Libraries/Bw_Bitcoin
 	 */
-	public function block($block_hash) {
+	public function block($block_hash = NULL) {
+		// Abort if no block hash is supplied.
+		if($block_hash == NULL)
+			return FALSE;
+			
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');	
 		
