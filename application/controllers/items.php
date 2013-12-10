@@ -58,8 +58,10 @@ class Items extends CI_Controller {
 			redirect('items');
 		
 		$data['title'] = 'Items by Category: '.$data['category']['name'];
+		$data['custom_title'] = 'Category: '.$data['category']['name'];
 		$data['page'] = 'items/index';
 		$data['items'] = $this->items_model->get_list( array('category' => $data['category']['id']) );
+		
 		$this->load->library('Layout', $data);
 	}
 
@@ -92,14 +94,14 @@ class Items extends CI_Controller {
 
 		// If they request a domestic location, roll with that. 
 		if($location == 'domestic') {
+			// Load the users account to see what 'domestic' means!
 			$this->load->model('accounts_model');
 			$user = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
+			
 			$opt['ship_from'] = $user['location'];
 			$data['location'] = $this->general_model->location_by_id($user['location']);
-
 			$data['items'] = $this->items_model->get_list($opt);
 		} else {
-
 			// Load the location.
 			$data['location'] = $this->general_model->location_by_id($location);
 			if($data['location'] == FALSE)
@@ -109,7 +111,9 @@ class Items extends CI_Controller {
 			$opt['item_id_list'] = $this->shipping_costs_model->list_IDs_by_location($location);
 			$data['items'] = $this->items_model->get_list($opt);
 		}
+		
 		$data['title'] = 'Items shipped to '.$data['location'];
+		$data['custom_title'] = 'Location: '.$data['location'];
 		$data['page'] = 'items/index';
 		$this->load->library('Layout', $data);
 	}
