@@ -63,7 +63,6 @@ $order_str = 'My Orders'; if($count_new_orders > 0)	$order_str .= " ($count_new_
 				</form>
 			  </div>
 			  
-			  <li><?php echo anchor('location/domestic','Domestic'); ?></li>
 <?php } ?>
               <?php echo $cats; ?>
             </ul>

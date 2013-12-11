@@ -322,11 +322,17 @@ class Bw_config {
 		}
 
 		// Convert numeric boolean representations to boolean.
+		$this->registration_allowed_num = $this->registration_allowed;
 		$this->registration_allowed = ($this->registration_allowed == '1') ? TRUE : FALSE;
+		$this->vendor_registration_allowed_num = $this->vendor_registration_allowed;
 		$this->vendor_registration_allowed = ($this->vendor_registration_allowed == '1') ? TRUE : FALSE;
+		$this->encrypt_private_messages_num = $this->encrypt_private_messages;
 		$this->encrypt_private_messages = ($this->encrypt_private_messages == '1') ? TRUE : FALSE;
+		$this->force_vendor_pgp_num = $this->force_vendor_pgp;
 		$this->force_vendor_pgp = ($this->force_vendor_pgp == '1') ? TRUE : FALSE;
+		$this->maintenance_mode_num = $this->maintenance_mode;
 		$this->maintenance_mode = ($this->maintenance_mode == '1') ? TRUE : FALSE;
+		$this->terms_of_service_toggle_num = $this->terms_of_service_toggle;
 		$this->terms_of_service_toggle = ($this->terms_of_service_toggle == '1') ? TRUE : FALSE;
 		
 		// Load the currencies and exchange rates.
