@@ -202,19 +202,22 @@ class Categories_model extends CI_Model {
 		foreach($query->result() as $result) {
 			$items = $this->items_model->get_list(array('category' => $result->id));
 			
+			$count_child_items = count($this->get_children($result->id));
 			$menu[$result->id] = array(	'id' => $result->id,
 										'name' => $result->name,
 										'description' => $result->description,
 										'hash' => $result->hash,
 										'count' => count($items),
-										'count_children' => count($this->get_children($result->id)),
+										'count_children' => $count_child_items,
 										'parent_id' => $result->parent_id
 									);
+			if(isset($menu[$result->parent_id]))
+				$menu[$result->parent_id]['count_children'] += $count_child_items;
 		}
 		
 		// Store all child categories as an array $menu[parentID]['children']
 		foreach($menu as $ID => &$menuItem) {
-			if($menuItem['parent_id'] !== '0')								
+			if($menuItem['parent_id'] !== '0')	
 				$menu[$menuItem['parent_id']]['children'][$ID] = &$menuItem;
 		}
 
