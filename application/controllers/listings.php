@@ -214,7 +214,7 @@ class Listings extends CI_Controller {
 
 		// Load image_upload rules from ./config/image_upload.php and then load the upload library.
 		$this->config->load('image_upload', TRUE);
-		$coneitherfig = $this->config->item('image_upload');
+		$config = $this->config->item('image_upload');
 		$this->load->library('upload', $config);	// Build upload class.
 
 		$data['title'] = 'Item Images';
