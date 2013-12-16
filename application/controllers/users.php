@@ -269,9 +269,8 @@ class Users extends CI_Controller {
 							$info = array(	'user_hash' => $user_hash,
 											'amount' => $data['token_info']['entry_payment'],
 											'bitcoin_address' => $address);
-							if($this->users_model->set_entry_payment($info) == TRUE) {
-									
-								if($address == NULL) {
+							if($this->users_model->set_entry_payment($info) == TRUE) {									
+								if($address == FALSE) {
 									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee_amount. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
 								} else {
 									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee_amount to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
@@ -420,7 +419,7 @@ class Users extends CI_Controller {
 		if($data['entry_payment'] !== FALSE && $data['entry_payment']['bitcoin_address'] == '0') {
 			// Try to generate another.
 			$payment_address = $this->bw_bitcoin->new_fees_address();
-			if($payment_address !== NULL) {
+			if($payment_address !== FALSE) {
 				
 				if($this->users_model->set_payment_address($data['user']['user_hash'], $payment_address) == TRUE) {
 					// If we add the bitcoin address, show the user the details to make payment.

@@ -12,7 +12,6 @@
  * @author		BitWasp
  * 
  */
-
 class Bitcoin extends CI_Controller {
 
 	/**
@@ -52,8 +51,11 @@ class Bitcoin extends CI_Controller {
 			$amount = $this->input->post('amount');
 				
 			$send = $this->bw_bitcoin->cashout($data['cashout_address'], (float)$amount);
-			if(!isset($send['code'])) {			
-				$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
+			if($send == FALSE) {
+				// Leave an error message
+				$data['returnMessage'] = 'Bitcoin is not currently available at this time, please try again later.';
+			} else if(!isset($send['code'])) {	
+	//			$this->bw_bitcoin->walletnotify($send); // Add it immediately to prevent duplicates.
 				
 				// Set up flashdata to display information about the transaction on the bitcoin panel.
 				$info = json_encode(array(	'value' => $amount,
@@ -63,8 +65,9 @@ class Bitcoin extends CI_Controller {
 				$this->session->set_flashdata('info', $info);
 				redirect('bitcoin');
 			} else {
+				
 				// Leave an error message if the user was not redirected.
-				$data['returnMessage'] = 'There was an error processing your transaction. Please ensure you entered a positive, decimal number to send.<br />DEBUG: ';print_r($send);
+				$data['returnMessage'] = 'There was an error processing your transaction. Please ensure you entered a positive, decimal number to send.<br />Error: '.$send['message'];
 			}
 		} 
 		
@@ -129,7 +132,15 @@ class Bitcoin extends CI_Controller {
 	 * @return	bool
 	 */
 	public function check_bitcoin_address($param) {
-		return ($param == '' || $this->bw_bitcoin->validateaddress($param) == TRUE) ? TRUE : FALSE;
+		if($param == '')
+			return TRUE;
+		
+		if($this->bw_bitcoin->getinfo() == NULL) {
+			$this->load->library('bitcoin_crypto');
+			return $this->bitcoin_crypto->checkAddress($param);
+		}
+		
+		return ($this->bw_bitcoin->validateaddress($param) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -140,6 +151,7 @@ class Bitcoin extends CI_Controller {
 	 */
 	public function check_has_sufficient_balance($param) {
 		$balance = $this->bitcoin_model->current_balance();
+		
 		return (($param > 0) && ((float)$param <= (float)$balance)) ? TRUE : FALSE;
 	}
 };

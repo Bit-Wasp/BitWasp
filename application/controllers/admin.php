@@ -379,13 +379,13 @@ class Admin extends CI_Controller {
 						if($this->input->post('price_index') !== 'Disabled'){		
 							// If the price index was previously disabled, set the auto-run script interval back up..
 							if($data['price_index'] == 'Disabled') 
-								$this->config_model->set_autorun_interval('price_index','15');
+								$this->autorun_model->set_autorun_interval('price_index','15');
 								
 							// And request new exchange rates.
 							$this->bw_bitcoin->ratenotify();
 						} else {
 							// When disabling BPI updates, set the interval to 0.
-							$this->config_model->set_autorun_interval('price_index', '0');
+							$this->autorun_model->set_autorun_interval('price_index', '0');
 						}
 						// Redirect when complete.
 						redirect('admin/bitcoin');

@@ -1,6 +1,6 @@
         <div class="span9 mainContent" id="manage_items">
           <h2>Shipping Costs: <?php echo $item['name']; ?></h2>
-          <?php if(isset($returnMessage)) echo '<div class="alert alert-success">' . $returnMessage . '</div>'; ?>
+          <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 		  <?php echo form_open('listings/shipping/'.$item['hash'], array('class' => 'form-horizontal')); ?>
 
 		    <table cellspacing='0' class='table'>

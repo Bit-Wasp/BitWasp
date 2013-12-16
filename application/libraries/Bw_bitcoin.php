@@ -34,7 +34,7 @@ class Bw_bitcoin {
 	 * the main bitcoin chain.
 	 */
 	public $testnet;
-		
+	
 	/**
 	 * Constructor
 	 * 
@@ -47,10 +47,25 @@ class Bw_bitcoin {
 		
 		$this->CI->config->load('bitcoin', TRUE);
 		$this->config = $this->CI->config->item('bitcoin');	
-		
+
 		$this->CI->load->library('jsonrpcclient', $this->config);
 		$this->CI->load->model('bitcoin_model');
 	}
+
+	/**
+	 * __call
+	 * 
+	 * Magic method! Checks bitcoin is enabled whenever performing something.
+	 */
+	public function __call($method,$arguments) {
+        if(method_exists($this, $method) && $method !== 'ratenotify' && $method !== 'getinfo') {
+            $info = $this->getinfo();
+            if($info == NULL) 
+				return FALSE;
+				
+            call_user_func_array(array($this,$method),$arguments);
+        }
+    }
 	
 	/**
 	 * Get Exchange Rates
@@ -204,6 +219,7 @@ class Bw_bitcoin {
 	public function importprivkey($wif, $account) {
 		return $this->CI->jsonrpcclient->importprivkey("$wif", "$account", TRUE);
 	}
+	
 	/**
 	 * List Accounts
 	 * 
@@ -402,17 +418,19 @@ class Bw_bitcoin {
 		if(isset($send[0]) && $send[0]['account'] == "main" && $send[0]['category'] == "send") {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
 			if($user_hash !== FALSE) {
-				$update = array('txn_id' => $txn_hash,
-								'user_hash' => $user_hash,
-								'value' => $send[0]['amount'],
-								'confirmations' => $transaction['confirmations'],
-								'address' => $send[0]['address'],
-								'category' => 'send',
-								'credited' => '1',
-								'time' => $transaction['time']);
 
 				// If we do not already have this transaction, add it, and deduct the users balance.
 				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
+
+					$update = array('txn_id' => $txn_hash,
+									'user_hash' => $user_hash,
+									'value' => $send[0]['amount'],
+									'confirmations' => $transaction['confirmations'],
+									'address' => $send[0]['address'],
+									'category' => 'send',
+									'credited' => '1',
+									'time' => $transaction['time']);
+
 
 					$this->CI->bitcoin_model->add_pending_txn($update);
 					

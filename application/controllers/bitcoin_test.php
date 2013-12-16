@@ -29,5 +29,8 @@ class Bitcoin_Test extends CI_Controller {
 		print_r($info);
 		echo '</pre>';
 	}
-	
+
+	public function test(){
+		var_dump($this->bw_bitcoin->getinfo());
+	}
 };

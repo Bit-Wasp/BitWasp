@@ -4,8 +4,12 @@ require_once(dirname(__FILE__).'/ecc-lib/auto_load.php');
 // Determine bitcoin address version
 $CI = &get_instance();
 $bitcoin_info = $CI->bw_bitcoin->getinfo();
-$byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
-define("BITCOIN_ADDRESS_VERSION", $byte);// this is a hex byte
+if($bitcoin_info == NULL){
+	$byte = '6F';
+} else {
+	$byte = ($bitcoin_info['testnet'] == TRUE) ? "6F" : "00";
+}
+define("BITCOIN_ADDRESS_VERSION", '6F');// this is a hex byte
 
 /**
  * Bitcoin Crypto Library

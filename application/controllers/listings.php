@@ -124,11 +124,12 @@ class Listings extends CI_Controller {
 		
 		if($this->form_validation->run('add_listing') == TRUE) {
 			
+			$hash = $this->general->unique_hash('items','hash');
 			$properties = array('add_time' => time(),
 								'category' => $this->input->post('category'),
 								'currency' => $data['local_currency']['id'],
 								'description' => $this->input->post('description'),
-								'hash' => $this->general->unique_hash('items','hash'),
+								'hash' => $hash,
 								'hidden' => ($this->input->post('hidden') == 'on') ? '1' : '0',
 								'main_image' => 'default',
 								'name' => $this->input->post('name'),
@@ -138,11 +139,9 @@ class Listings extends CI_Controller {
 						);
 			// Add the listing
 			if($this->listings_model->add($properties) == TRUE) {
-				// Allow the user to add some images.
-				$data['page'] = 'listings/images';
-				$data['title'] = 'Item Created';
-				$data['item'] = $this->listings_model->get($properties['hash']);
-				$data['images'] = $this->images_model->by_item($properties['hash']);
+				$this->session->set_userdata('new_item','true');
+				$this->session->set_flashdata('shipping_returnMessage',json_encode(array('returnMessage' => 'Your item has been created. You must now configure shipping costs for your item.', 'success' => TRUE)));
+				redirect('listings/shipping/'.$hash);
 			} else {
 				// Display an error message.
 				$data['returnMessage'] = 'Error adding your item, please try again later.';
@@ -206,9 +205,16 @@ class Listings extends CI_Controller {
 		$this->load->model('images_model');
    	 	$this->load->library('form_validation');
 
+		$info = (array)json_decode($this->session->flashdata('images_returnMessage'));
+		if(count($info) !== 0){
+			if(isset($info['success']) && $info['success'] == TRUE)
+				$data['success'] = TRUE;
+			$data['returnMessage'] = $info['returnMessage'];
+		}
+
 		// Load image_upload rules from ./config/image_upload.php and then load the upload library.
 		$this->config->load('image_upload', TRUE);
-		$config = $this->config->item('image_upload');
+		$coneitherfig = $this->config->item('image_upload');
 		$this->load->library('upload', $config);	// Build upload class.
 
 		$data['title'] = 'Item Images';
@@ -266,10 +272,20 @@ class Listings extends CI_Controller {
 		$data['item'] = $this->listings_model->get($item_hash);
 		if($data['item'] == FALSE)
 			redirect('listings');
+
+		$info = (array)json_decode($this->session->flashdata('shipping_returnMessage'));
+		if(count($info) !== 0){
+			if(isset($info['success']) && $info['success'] == TRUE)
+				$data['success'] = TRUE;
+			$data['returnMessage'] = $info['returnMessage'];
+		}
 		
 		$this->load->library('form_validation');
 		$this->load->model('accounts_model');
 		$this->load->model('shipping_costs_model');
+
+		$new_item = $this->session->userdata('new_item');
+		$redirect_to = ($new_item == 'true') ? 'listings/images/'.$data['item']['hash'] : 'listings/shipping/'.$data['item']['hash'];
 		
 		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
 		
@@ -279,7 +295,7 @@ class Listings extends CI_Controller {
 				$country = $this->input->post('country');
 				$enabled = $this->input->post('enabled');
 				$delete = $this->input->post('delete');
-				print_r($enabled);
+
 				$array = array();
 				$i = 0; 
 				foreach($prices as $key => $price) {
@@ -294,8 +310,15 @@ class Listings extends CI_Controller {
 						$i++;
 				}
 
-				if($this->shipping_costs_model->update($data['item']['id'], $array))
-					redirect('listings/shipping/'.$data['item']['hash']);
+				if($new_item == 'true')
+					$this->session->unset_userdata('new_item');
+					
+				if($this->shipping_costs_model->update($data['item']['id'], $array)) {
+					if($new_item == 'true')
+						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
+						
+					redirect($redirect_to);
+				}
 				
 			//}
 		}
