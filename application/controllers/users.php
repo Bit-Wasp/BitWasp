@@ -13,6 +13,14 @@
  */
 class Users extends CI_Controller {
 
+	/** 
+	 * Coin
+	 * 
+	 * This variable contains the 0th currency to be used on the site.
+	 * Used for cosmetic purposes, ie, so 'Bitcoin' isn't hardcoded everywhere.
+	 */
+	public $coin;
+
 	/**
 	 * Constructor
 	 * 
@@ -25,6 +33,9 @@ class Users extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('users_model');
+		$this->load->model('currencies_model');
+		$this->coin = $this->currencies_model->get('0');
+		
 		$this->load->library('bw_captcha');	
 		$this->block_category_display = ($this->bw_config->allow_guests == TRUE) ? TRUE : FALSE;
 	}
@@ -145,7 +156,6 @@ class Users extends CI_Controller {
 	 * @return	void
 	 */
 	public function register($token = NULL) {
-
 		$data['header_meta'] = $this->load->view('users/register_hash_header', NULL, true);
 
 		// If registration is disabled, and no token is set, direct to the login page.
@@ -171,6 +181,7 @@ class Users extends CI_Controller {
 		$data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
 		$data['locations'] = $this->general_model->locations_list();
 		$data['currencies'] = $this->currencies_model->get();
+		$data['coin'] = $this->coin;
 		
 		// Different rules depending on whether a PIN must be entered.		
 		$register_page = ($data['encrypt_private_messages'] == TRUE) ? 'users/register' : 'users/register_no_pin';
@@ -271,9 +282,9 @@ class Users extends CI_Controller {
 											'bitcoin_address' => $address);
 							if($this->users_model->set_entry_payment($info) == TRUE) {									
 								if($address == FALSE) {
-									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee_amount. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
+									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee of {$this->coin['symbol']} {$entry_fee_amount}. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details.";
 								} else {
-									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee_amount to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
+									$data['returnMessage'] = "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee_amount} to {$address}. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 								}
 							}
 						} else {
@@ -290,7 +301,7 @@ class Users extends CI_Controller {
 							// Work out which return message to display.
 							// $address == NULL: bitcoind offline.
 							// Otherwise display the normal message.
-							$data['returnMessage'] = ($address == NULL) ? "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details." : "Your account has been created, but this site requires you pay an entry fee. Please send BTC $entry_fee to $address. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
+							$data['returnMessage'] = ($address == NULL) ? "Your account has been created, but this site requires you pay an entry fee of BTC $entry_fee. Currently the bitcoin daemon is offline, and no receiving addresses can be generated. Please try log in later for details." : "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee} to {$address}. <br /><br />You can log in to view these details again, but will not gain full access until the fee is paid.";
 						}
 					} else {
 						if($this->users_model->set_entry_paid($user_hash))
@@ -386,7 +397,8 @@ class Users extends CI_Controller {
 		
 		$data['user'] = $this->users_model->get(array('id' => $this->current_user->user_id));
 		$data['entry_payment'] = $this->users_model->get_entry_payment($data['user']['user_hash']);
-
+		$data['coin'] = $this->coin;
+		
 		// If no entry payment exists in the table for the registration,
 		// or the user has been flagged as paid, redirect to the next page.
 		if($data['entry_payment'] == FALSE || $data['user']['entry_paid'] == '1') {
@@ -417,19 +429,19 @@ class Users extends CI_Controller {
 					// If we add the bitcoin address, show the user the details to make payment.
 					$data['entry_payment']['bitcoin_address'] = $payment_address;
 					$data['entry_payment']['received'] = $this->bw_bitcoin->getreceivedbyaddress($payment_address);
-					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh one you have made the payment to check for receipt."; 
+					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of {$this->coin['symbol']} {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh one you have made the payment to check for receipt."; 
 				} else {
 					// Otherwise tell them bitcoind is still down.
 					$this->logs_model->add('User Registration', 'Error adding fee payment adress', 'It was not possible to record a fee payment address at registration.','Error');
-					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. Unfortunately, it was not possible to create a fee's address at this time. Please try again later to check for the payment address.";
+					$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of {$this->coin['symbol']} {$data['entry_payment']['amount']}. Unfortunately, it was not possible to create a fee's address at this time. Please try again later to check for the payment address.";
 				}
 			} else {
-				$this->logs_model->add('User Registration', 'Bitcoind down at registration', 'User signed in to view payment details, bitcoind was unable to create a payment address for the fees', 'Warning');
-				$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. Unfortunately, the bitcoin processing system is unavailable at this time. Please try again later to check for the payment address.";
+				$this->logs_model->add('User Registration', $this->coin['name'].'d down at registration', 'User signed in to view payment details, bitcoind was unable to create a payment address for the fees', 'Warning');
+				$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of {$this->coin['symbol']} {$data['entry_payment']['amount']}. Unfortunately, the {$this->coin['name']} processing system is unavailable at this time. Please try again later to check for the payment address.";
 			}
 		} else if($data['entry_payment'] !== FALSE) {
 			$data['entry_payment']['received'] = $this->bw_bitcoin->getreceivedbyaddress($data['entry_payment']['bitcoin_address']);
-			$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of BTC {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh once you have made the payment to check for receipt."; 	
+			$data['returnMessage'] = "We thank you for registering on our site. In order to complete setting up your account, you must make a payment of {$this->coin['symbol']} {$data['entry_payment']['amount']}. This can be sent to {$data['entry_payment']['bitcoin_address']}. Click refresh once you have made the payment to check for receipt."; 	
 		}
 				
 		$data['title'] = 'Entry Payment';

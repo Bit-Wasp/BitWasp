@@ -57,7 +57,7 @@ if($bitcoin_info == NULL) { ?>
 			?>
 			<div class="row-fluid">
 			  <span class="span3"><?php echo ucfirst($acc); ?> balance</span>
-			  <span class="span2"><?php echo $coin['symbol']; ?> <?php echo $bal; ?></span>
+			  <span class="span3"><?php echo $coin['symbol']; ?> <?php echo $bal; ?></span>
 			  <span class="span5"><?php echo (isset($config[$var]) && $acc !== '' && $acc !== 'topup' && $config[$var] > 0) ? 'Backup balances exceeding BTC '.$config[$var]."." : '' ; ?></span>
 			</div>
 
