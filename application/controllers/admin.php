@@ -247,7 +247,8 @@ class Admin extends CI_Controller {
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		$data['bitcoin_index'] = $this->bw_config->price_index;
 		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
-
+		$data['coin'] = $this->coin;
+		
 		// If there is any information about a recent transaction, display it.
 		$info = (array)json_decode($this->session->flashdata('info'));
 		if(count($info) !== 0){
@@ -294,6 +295,7 @@ class Admin extends CI_Controller {
 		$data['price_index'] = $this->bw_config->price_index;
 		// Load the list of accounts in the bitcoin daemon.
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
+		$data['coin'] = $this->coin;
 		
 		// If the WIF Import form was submitted:
 		if($this->input->post('submit_wallet_topup') == 'Topup') {
@@ -456,7 +458,8 @@ class Admin extends CI_Controller {
 		$data['nav'] = $this->generate_nav();
 		$data['user_count'] = $this->general_model->count_entries('users');
 		$data['config'] = $this->bw_config->load_admin('users');
-
+		$data['coin'] = $this->coin;
+		
 		$data['page'] = 'admin/users';
 		$data['title'] = $this->nav['users']['heading'];
 		$this->load->library('Layout', $data);
@@ -934,6 +937,7 @@ class Admin extends CI_Controller {
 	public function fees() {
 		$this->load->library('form_validation');
 		$this->load->model('fees_model');
+		$data['coin'] = $this->coin;
 		
 		if($this->input->post('update_config') == 'Update') {
 			$data['config'] = $this->bw_config->load_admin('fees');

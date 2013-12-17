@@ -99,7 +99,7 @@ if($acc !== '') { ?>					<option value="<?php echo $acc; ?>"><?php echo $acc; ?>
 			  <span class="help-inline offset2"><?php echo form_error('delete_transactions_after'); ?></span>
 
 			  <div class="row-fluid">
-				<div class="span3">Use A Bitcoin Index?</div>
+				<div class="span3">Use A <?php echo $coin['name']; ?> Price Index?</div>
 				<div class="span4">
 				  <select name='price_index' autocomplete="off">
 <?php foreach($config['price_index_config'] as $key => $index_config){ ?>
@@ -144,7 +144,7 @@ if($acc !== '') { ?>					<option value="<?php echo $acc; ?>"><?php echo $acc; ?>
 				<span class="span3">Backup <?php echo ucfirst($account); ?> After</span>
 				<span class="span4">
 				  <div class="input-prepend">
-				    <span class="add-on"><i>BTC</i></span>
+				    <span class="add-on"><i><?php echo $coin['symbol']; ?></i></span>
 					<input type='text' class='span10' name='account[<?php echo $account; ?>]' value='<?php echo (isset($config[$var])) ? $config[$var] : '0.00000000'; ?>' /> 
 				  </div>
 				</span>

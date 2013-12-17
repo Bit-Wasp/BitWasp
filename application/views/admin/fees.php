@@ -14,7 +14,7 @@
 			  <div class='span2 offset1'>Minimum Fee</div>
 			  <div class='span3'>
 				<div class="input-prepend">
-				  <span class="add-on span1"><i>BTC</i></span>
+				  <span class="add-on span1"><i><?php echo $coin['symbol']; ?></i></span>
 				  <input type='text' name='minimum_fee' value='<?php echo $config['minimum_fee']; ?>' class='span11' />
 				</div>
 			  </div>

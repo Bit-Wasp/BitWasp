@@ -56,6 +56,8 @@ class Layout {
 		if($CI->current_user->logged_in()) { 
 			
 			$CI->load->model('bitcoin_model');		
+			$CI->load->model('currencies_model');
+			$bar['coin'] = $CI->currencies_model->get('0');
 			// If the user is logged in, load their role, and the categories. 
 			$bar['role'] = strtolower($CI->current_user->user_role);			
 			$bar['balance'] = $CI->bitcoin_model->current_balance();

@@ -56,8 +56,11 @@ class Orders extends CI_Controller {
 	 * @return	void
 	 */
 	public function list_purchases() {
+		
 		$this->load->library('form_validation');		
-	
+		$this->load->model('currencies_model');
+		$data['coin'] = $this->currencies_model->get('0');
+		
 		// Check if we are Proceeding an order, or Recounting it.
 		$place_order = $this->input->post('place_order');
 		$recount = $this->input->post('recount');
@@ -151,7 +154,7 @@ class Orders extends CI_Controller {
 				$data['from'] = $this->current_user->user_id;
 				$details = array('username' => $current_order['vendor']['user_name'],
 								 'subject' => "Order #{$current_order['id']} has been finalized");
-				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. BTC {$current_order['price']} has been credited to your account.<br />\n";
+				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. {$coin['symbol']} {$current_order['price']} has been credited to your account.<br />\n";
 				$details['message'].= ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />';
 				$message = $this->bw_messages->prepare_input($data, $details);
 				$message['order_id'] = $current_order['id'];

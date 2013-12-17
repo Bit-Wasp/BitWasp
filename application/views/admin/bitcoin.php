@@ -9,17 +9,17 @@
 <?php 
 if($bitcoin_info == NULL) { ?>
 		    <div class="row-fluid">
-			  <span class="span3">Bitcoin Status</span>
-			  <span class="span7">The bitcoin daemon is currently disabled.</span>
+			  <span class="span3"><?php echo $coin['name']; ?> Status</span>
+			  <span class="span7">The <?php echo strtolower($coin['name']); ?> daemon is currently disabled.</span>
 		    </div>
 <?php } else { ?>
 		    <div class="row-fluid">
-		  	  <span class="span3">Bitcoin Status</span>
-			  <span class="span7">Bitcoind is currently running<?php if($bitcoin_info['testnet'] == TRUE) echo ' <b>in the testnet</b>'; ?>.</span>
+		  	  <span class="span3"><?php echo $coin['name']; ?> Status</span>
+			  <span class="span7"><?php echo $coin['name']; ?>d is currently running<?php if($bitcoin_info['testnet'] == TRUE) echo ' <b>in the testnet</b>'; ?>.</span>
 		    </div>
 		  
 		    <div class="row-fluid">
-			  <span class="span3">Bitcoin Version</span>
+			  <span class="span3"><?php echo $coin['name']; ?> Version</span>
 			  <span class="span7"><?php echo $bitcoin_info['version']; ?></span>
 		    </div>
 <?php } ?>
@@ -40,7 +40,7 @@ if($bitcoin_info == NULL) { ?>
 			</div>
 			
 			<div class="row-fluid">
-			  <span class="span3">Use A Bitcoin Price Index?</span>
+			  <span class="span3">Use A <?php echo $coin['name']; ?> Price Index?</span>
 			  <span class="span4"><?php if($bitcoin_index == '') { echo 'Disabled'; }
 			  else { echo $bitcoin_index; } ?></span>
 			</div>
@@ -57,7 +57,7 @@ if($bitcoin_info == NULL) { ?>
 			?>
 			<div class="row-fluid">
 			  <span class="span3"><?php echo ucfirst($acc); ?> balance</span>
-			  <span class="span2">BTC <?php echo $bal; ?></span>
+			  <span class="span2"><?php echo $coin['symbol']; ?> <?php echo $bal; ?></span>
 			  <span class="span5"><?php echo (isset($config[$var]) && $acc !== '' && $acc !== 'topup' && $config[$var] > 0) ? 'Backup balances exceeding BTC '.$config[$var]."." : '' ; ?></span>
 			</div>
 
