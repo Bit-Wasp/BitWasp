@@ -11,7 +11,8 @@
 class Admin extends CI_Controller {
 
 	public $nav;
-
+	public $coin;
+	
 	/**
 	 * Constructor
 	 *
@@ -20,14 +21,16 @@ class Admin extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('admin_model');
+		$this->load->model('currencies_model');
+		$this->coin = $this->currencies_model->get('0');
 		
 		// Define information for the navigation panel.
 		$this->nav = array(	'' => 			array(	'panel' => '',
 													'title' => 'General',
 													'heading' => 'Admin Panel'),
 							'bitcoin' => 	array(  'panel' => '/bitcoin',
-													'title' => 'Bitcoin',
-													'heading' => 'Bitcoin Panel'),
+													'title' => $this->coin['name'],
+													'heading' => $this->coin['name'].' Panel'),
 							'items' =>		array(	'panel' => '/items',
 													'title' => 'Items',
 													'heading' => 'Items Panel'),
@@ -41,6 +44,7 @@ class Admin extends CI_Controller {
 													'title' => 'Logs',
 													'heading' => 'Logs Panel')
 						);
+						
 	}
 	
 	/**
@@ -243,13 +247,13 @@ class Admin extends CI_Controller {
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		$data['bitcoin_index'] = $this->bw_config->price_index;
 		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
-		
+
 		// If there is any information about a recent transaction, display it.
 		$info = (array)json_decode($this->session->flashdata('info'));
 		if(count($info) !== 0){
 			// If the information is to do with topping up a WIF key:
 			if($info['action'] == 'topup')
-				$data['returnMessage'] = "BTC {$info['topup_amount']} was added to the '{$info['account']}' account.";
+				$data['returnMessage'] = $this->coin['symbol']." {$info['topup_amount']} was added to the '{$info['account']}' account.";
 		}
 		
 		$data['page'] = 'admin/bitcoin';
@@ -307,7 +311,7 @@ class Admin extends CI_Controller {
 					$info = json_encode(array('action' => 'topup',
 											  'topup_amount' => $topup_amount,
 											  'account' => $this->input->post('topup_account')));
-					$this->logs_model->add('Admin: Bitcoin Panel','Bitcoin Wallet Topup',"'".$this->input->post('topup_account')."' has been credited by BTC ".$topup_amount.".",'Info');
+					$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' Wallet Topup',"'".$this->input->post('topup_account')."' has been credited by {$this->coin['symbol']} {$topup_amount}.",'Info');
 	
 					$this->session->set_flashdata("info",$info);
 					redirect('admin/bitcoin');
@@ -402,7 +406,7 @@ class Admin extends CI_Controller {
 				}
 		
 				$log = $this->admin_model->format_config_changes($changes);
-				$this->logs_model->add('Admin: Bitcoin Panel','Bitcoin configuration updated','The bitcoin configuration of the site has been updated:<br />'.$log,'Info');
+				$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' configuration updated','The '.$this->coin['name'].' configuration of the site has been updated:<br />'.$log,'Info');
 		
 				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
 					redirect('admin/bitcoin');	
