@@ -42,7 +42,7 @@ class Listings extends CI_Controller {
 	public function manage() {
 		$data['title'] = 'Manage Listings';
 		$data['page'] = 'listings/manage';
-		$data['items'] = $this->items_model->by_user($this->current_user->user_hash);
+		$data['items'] = $this->listings_model->my_listings();
 		$this->load->library('Layout', $data);
 	}
 	
