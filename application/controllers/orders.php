@@ -13,6 +13,8 @@
  */
 class Orders extends CI_Controller {
 
+	public $coin;
+
 	/**
 	 * Constructor
 	 * 
@@ -38,6 +40,8 @@ class Orders extends CI_Controller {
 		$this->load->model('bitcoin_model');
 		$this->load->model('escrow_model');	
 		$this->load->model('messages_model');
+		$this->load->model('currencies_model');
+		$this->coin = $this->currencies_model->get('0');
 	}
 	
 	/**
@@ -58,8 +62,7 @@ class Orders extends CI_Controller {
 	public function list_purchases() {
 		
 		$this->load->library('form_validation');		
-		$this->load->model('currencies_model');
-		$data['coin'] = $this->currencies_model->get('0');
+		$data['coin'] = $this->coin;
 		
 		// Check if we are Proceeding an order, or Recounting it.
 		$place_order = $this->input->post('place_order');
@@ -191,7 +194,8 @@ class Orders extends CI_Controller {
 			$data['returnMessage'] = "Order has been updated.";
 			
 		$this->load->library('form_validation');
-
+		$data['coin'] = $this->coin;
+		
 		// If an order is being dispatched..
 		$dispatch = $this->input->post('dispatch');
 		if(is_array($dispatch)) {
