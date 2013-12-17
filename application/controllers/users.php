@@ -300,14 +300,6 @@ class Users extends CI_Controller {
 					if($this->bw_bitcoin->new_address($user_hash) == FALSE)
 						$this->logs_model->add('User Registration', 'Unable to create bitcoin topup address', 'It was not possible to create a bitcoin address when creating an account.', 'Warning');
 
-					// REMOVE BEFORE PRODUCTION
-					$this->load->model('bitcoin_model');
-					if($data['role'] == 'Buyer') {
-						$credit = array('user_hash' => $user_hash,
-										'value' => (float)0.03333333);
-						$this->bitcoin_model->update_credits(array($credit));
-					}
-					
 				} else {
 					// Unsuccessful submission, show form again.
 					$data['title'] = 'Register';
