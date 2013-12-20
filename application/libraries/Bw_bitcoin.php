@@ -206,6 +206,21 @@ class Bw_bitcoin {
 		return $this->CI->jsonrpcclient->gettransaction($tx_hash);
 	}
 
+	public function createrawtransaction($transaction){
+		return $this->CI->jsonrpcclient->createrawtransaction($transaction['inputs'], $transaction['outputs']);
+	}
+	public function decoderawtransaction($transaction_hex){
+		return $this->CI->jsonrpcclient->decoderawtransaction($transaction_hex);
+	}
+	public function signrawtransaction($transaction_hex){
+		return $this->CI->jsonrpcclient->signrawtransaction($transaction_hex);
+	}
+	public function sendrawtransaction($transaction_hex){
+		return $this->CI->jsonrpcclient->sendrawtransaction($transaction_hex);
+	}
+	public function addmultisigaddress($n, $public_keys, $account = ""){
+		return $this->CI->jsonrpcclient->addmultisigaddress($n, $public_keys, $account);
+	}
 	/**
 	 * Import Private Key
 	 * 

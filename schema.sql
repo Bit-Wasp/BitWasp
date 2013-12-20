@@ -5,6 +5,11 @@
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u4
 
+CREATE DATABASE db_bitwasp
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_general_ci;
+
+USE db_bitwasp;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -22,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `bw_addresses` (
   `user_hash` varchar(20) NOT NULL,
   `bitcoin_address` varchar(35) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_alerts` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -30,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `bw_alerts` (
   `message` text NOT NULL,
   `time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Contains a log of the alert messages.' ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Contains a log of the alert messages.' ;
 
 CREATE TABLE IF NOT EXISTS `bw_autorun` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -42,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `bw_autorun` (
   `index` varchar(40) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index` (`index`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_blocks` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -50,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `bw_blocks` (
   `number` int(10) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_captchas` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -59,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `bw_captchas` (
   `time` int(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `key` (`key`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_categories` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -69,7 +74,7 @@ CREATE TABLE IF NOT EXISTS `bw_categories` (
   `parent_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_config` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -77,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `bw_config` (
   `value` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `parameter` (`parameter`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (1, 'registration_allowed', '1'),
@@ -118,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `bw_country_codes` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `country` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 INSERT INTO `bw_country_codes` (`id`, `country`) VALUES
 (1, 'Undeclared'),
@@ -367,7 +372,7 @@ CREATE TABLE IF NOT EXISTS `bw_currencies` (
   `name` varchar(40) NOT NULL,
   `symbol` varchar(10) NOT NULL,
   `code` varchar(5) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `bw_currencies` (`id`, `name`, `symbol`, `code`) VALUES
 (0, 'Bitcoin', 'BTC', 'BTC'),
@@ -384,7 +389,7 @@ CREATE TABLE IF NOT EXISTS `bw_disputes` (
   `order_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `order_id` (`order_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `bw_escrow` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -394,7 +399,7 @@ CREATE TABLE IF NOT EXISTS `bw_escrow` (
   `amount` decimal(20,8) NOT NULL,
   `fee` decimal(20,8) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_entry_payment` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -404,7 +409,7 @@ CREATE TABLE IF NOT EXISTS `bw_entry_payment` (
   `bitcoin_address` varchar(40) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_hash` (`user_hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -415,7 +420,7 @@ CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
   `btc` int(11) NOT NULL DEFAULT '1',
   `price_index` varchar(45),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 INSERT INTO `bw_exchange_rates` (`id`, `time`, `usd`, `eur`, `gbp`, `btc`, `price_index`) VALUES
 (1, '1380761400', 101.7737, 74.9879, 62.8264, 1, 'CoinDesk');
@@ -426,7 +431,7 @@ CREATE TABLE IF NOT EXISTS `bw_fees` (
   `high` decimal(20,8) NOT NULL COMMENT 'Orders less than this value apply to this range',
   `rate` decimal(4,3) NOT NULL COMMENT 'Percentage fee to be charged for this range',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_logs` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -438,7 +443,7 @@ CREATE TABLE IF NOT EXISTS `bw_logs` (
   `hash` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `bw_images` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -448,7 +453,7 @@ CREATE TABLE IF NOT EXISTS `bw_images` (
   `width` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 INSERT INTO `bw_images` (`id`, `hash`, `encoded`, `height`, `width`) VALUES
 (0, 'default', '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', 0, 0);
@@ -468,14 +473,14 @@ CREATE TABLE IF NOT EXISTS `bw_items` (
   `ship_from` int(5) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_item_images` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `image_hash` varchar(20) NOT NULL,
   `item_hash` varchar(29) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_messages` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -489,7 +494,7 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
   `order_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Stores encrypted/plaintext messages.' ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='Stores encrypted/plaintext messages.' ;
 
 CREATE TABLE IF NOT EXISTS `bw_orders` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -503,7 +508,7 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
   `vendor_hash` varchar(20) NOT NULL,
   `finalized` enum('0','1') NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_page_authorization` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -512,7 +517,7 @@ CREATE TABLE IF NOT EXISTS `bw_page_authorization` (
   `timeout` int(3) NOT NULL,
   `URI` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 INSERT INTO `bw_page_authorization` (`id`, `URI`, `auth_level`, `timeout`, `system`) VALUES
 (1, 'login', 'guestonly', 0, '1'),
@@ -542,14 +547,14 @@ CREATE TABLE IF NOT EXISTS `bw_pending_txns` (
   `user_hash` varchar(20) NOT NULL,
   `value` decimal(10,8) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_pgp_keys` (
   `id` int(9) NOT NULL,
   `fingerprint` varchar(128) NOT NULL,
   `public_key` blob NOT NULL,
   `user_id` int(9) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -559,7 +564,7 @@ CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   `entry_payment` decimal(20,8),
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -568,14 +573,14 @@ CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
   `cost` decimal(20,8) NOT NULL,
   `enabled` enum('0','1'),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `user_id` int(9) NOT NULL,
   `solution` varchar(128) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 
 CREATE TABLE IF NOT EXISTS `bw_users` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
@@ -601,7 +606,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `local_currency` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_hash` (`user_hash`,`user_name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
