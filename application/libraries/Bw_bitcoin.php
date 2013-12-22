@@ -221,6 +221,9 @@ class Bw_bitcoin {
 	public function addmultisigaddress($n, $public_keys, $account = ""){
 		return $this->CI->jsonrpcclient->addmultisigaddress($n, $public_keys, $account);
 	}
+	public function createmultisig($n, $public_keys){
+		return $this->CI->jsonrpcclient->createmultisig($n, $public_keys);
+	}
 	/**
 	 * Import Private Key
 	 * 
@@ -434,18 +437,20 @@ class Bw_bitcoin {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
 			if($user_hash !== FALSE) {
 
+
+				$update = array('txn_id' => $txn_hash,
+								'user_hash' => $user_hash,
+								'value' => $send[0]['amount'],
+								'confirmations' => $transaction['confirmations'],
+								'address' => $send[0]['address'],
+								'category' => 'send',
+								'credited' => '1',
+								'time' => $transaction['time']);
+
+
+
 				// If we do not already have this transaction, add it, and deduct the users balance.
 				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
-
-					$update = array('txn_id' => $txn_hash,
-									'user_hash' => $user_hash,
-									'value' => $send[0]['amount'],
-									'confirmations' => $transaction['confirmations'],
-									'address' => $send[0]['address'],
-									'category' => 'send',
-									'credited' => '1',
-									'time' => $transaction['time']);
-
 
 					$this->CI->bitcoin_model->add_pending_txn($update);
 					

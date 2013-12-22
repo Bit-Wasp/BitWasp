@@ -42,5 +42,8 @@ class Bw_transaction {
 		return $output;
 	}
 
+	public function print_json(){
+		return addslashes(json_encode($this->inputs))." ".addslashes(json_encode($this->outputs));
+	}
 };
 
