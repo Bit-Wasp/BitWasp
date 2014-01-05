@@ -7,7 +7,7 @@
 
 CREATE DATABASE db_bitwasp
   DEFAULT CHARACTER SET utf8
-  DEFAULT COLLATE utf8_general_ci;
+  DEFAULT COLLATE utf8_unicode_ci;
 
 USE db_bitwasp;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
