@@ -127,7 +127,7 @@ class Users extends CI_Controller {
 					} else {
 						// Success! Log the user in.
 						$this->bw_session->create($user_info);
-						redirect('/');
+						redirect('');
 					}
 				} 
 			}
