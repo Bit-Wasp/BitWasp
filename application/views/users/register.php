@@ -85,11 +85,7 @@ if($force_vendor_pgp == 'Enabled')
 				<div class="control-group">
                   <label class="control-label" for="location">Location</label>
                   <div class="controls">
-				    <select name='location' value='1'>
-<?php foreach($locations as $location) { ?>
-					  <option value='<?php echo $location['id']; ?>'><?php echo $location['country']; ?></option>
-<?php } ?>
-				    </select>
+					<?php echo $locations_select; ?>
                     <span class="help-inline"><?php echo form_error('location'); ?></span>
                   </div>
                 </div> 

@@ -62,7 +62,8 @@ class Accounts_model extends CI_Model {
 			$result['user_hash'] = $result['user_hash'];
 			$result['register_time_f'] = $this->general->format_time($result['register_time']);
 			$result['login_time_f'] = $this->general->format_time($result['login_time']);
-			$result['location_f'] = $this->general_model->location_by_id($result['location']);
+			$this->load->model('location_model');
+			$result['location_f'] = $this->location_model->location_by_id($result['location']);
 			if(isset($opt['own']) && $opt['own'] == TRUE)
 				$result['currency'] = $this->currencies_model->get($result['local_currency']);
 			

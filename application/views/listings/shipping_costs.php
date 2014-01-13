@@ -29,13 +29,7 @@
 			  
 			    <tr>
 				  <td class="span3">
-			        <select name="country[]" autocomplete='off'>
-				      <option value=''></option>
-<?php foreach($locations as $location) { 
-	if($location['id'] == '1') continue; ?>
-					  <option value="<?php echo $location['id']; ?>"<?php if($location['id'] == $account['location']) echo ' selected="selected" '; ?>><?php echo $location['country']; ?></option>
-<?php } ?>
-				    </select>
+			        <?php echo $locations; ?>
 				  </td>
 				  <td class="span4">
                     <div class="input-prepend">
@@ -65,13 +59,7 @@
  } ?>		    
 		        <tr>
 				  <td class='span3'>
-				    <select name="country[]" autocomplete='off'>
-				      <option value=''></option>
-<?php foreach($locations as $location) { 
-	if($location['id'] == '1') continue; ?>
-					  <option value="<?php echo $location['id']; ?>"><?php echo $location['country']; ?></option>
-<?php } ?>
-				    </select>
+				    <?php echo $locations; ?>
 				  </td>
 				  <td class='span4'>
                     <div class="input-prepend">

@@ -32,6 +32,8 @@ class Shipping_costs_model extends CI_Model {
 	 * @return	array/FALSE
 	 */
 	public function for_item($item_id) {
+		$this->load->model('location_model');
+		$this->db->where('enabled', '1');
 		$this->db->where('item_id', $item_id);
 		$query = $this->db->get('shipping_costs');
 		if($query->num_rows() > 0) { 
@@ -41,13 +43,39 @@ class Shipping_costs_model extends CI_Model {
 				$output[$res['destination_id']] = array('cost' => $res['cost'],
 														'enabled' => $res['enabled'],
 														'destination_id' => $res['destination_id'],
-														'destination_f' => $this->general_model->location_by_id($res['destination_id']));
+														'destination_f' => $this->location_model->location_by_id($res['destination_id']));
 			}
 			return $output;
 		} 
 		return FALSE;
 	}
 
+	/**
+	 * Find Location Cost
+	 * 
+	 * This function will load the list of shipping costs, and check if 
+	 * the supplied user location is allowed, by being a child of a
+	 * location in the shipping costs list. Returns the cost info if 
+	 * the user has an acceptable location, otherwise returns false.
+	 * 
+	 * @param	int	$item_id
+	 * @param	int $user_location_id
+	 * return	boolean
+	 */
+	public function find_location_cost($item_id, $user_location_id) {
+		$this->load->model('location_model');
+		
+		$costs_list = $this->for_item($item_id);
+		foreach($costs_list as $destination_id => $cost_info) {
+			if($destination_id == 'worldwide')
+				return $cost_info;
+				
+			if($this->location_model->validate_user_child_location($destination_id, $user_location_id) !== FALSE)
+				return $cost_info;
+		}
+		return FALSE;
+	}
+	
 	/**
 	 * Item List Cost
 	 * 

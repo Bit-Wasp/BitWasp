@@ -102,6 +102,7 @@ $route['admin/edit/bitcoin'] = 'admin/edit_bitcoin';
 $route['admin/edit/autorun'] = 'admin/edit_autorun';
 $route['admin/category/orphans/(:any)'] = 'admin/category_orphans/$1';
 $route['admin/items/fees'] = 'admin/fees';
+$route['admin/users/delete/(:any)'] = 'admin/user_delete/$1';
 $route['admin/users/list'] = 'admin/user_list';
 $route['admin/delete_item/(:any)'] = 'admin/delete_item/$1';
 $route['admin/tokens'] = 'admin/user_tokens';

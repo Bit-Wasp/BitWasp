@@ -245,9 +245,9 @@ class Categories_model extends CI_Model {
 	 * 
 	 * @return	string
 	 */
-	public function generate_select_list($selected = FALSE) {
+	public function generate_select_list($param_name, $class, $selected = FALSE) {
 		$cats = $this->menu();
-		$select = "<select name=\"category\" class='span5' autocomplete=\"off\">\n<option value=\"\"></option>";
+		$select = "<select name=\"{$param_name}\" class='{$class}' autocomplete=\"off\">\n<option value=\"\"></option>";
 		foreach($cats as $cat){
 			$select.= $this->generate_select_list_recurse($cat, $selected);
 		}

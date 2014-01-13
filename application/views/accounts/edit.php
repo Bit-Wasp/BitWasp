@@ -9,11 +9,7 @@
     	      <div class="control-group">
   		        <label class="control-label" for="location">Location</label>
 		        <div class="controls">
-			      <select name='location'>
-<?php foreach($locations as $location): ?>
-			        <option value='<?php echo $location['id']; ?>'<?php echo ($location['id'] == $user['location']) ? ' selected="selected"' : ''; ?>><?php echo $location['country']; ?></option>
-<?php endforeach; ?>
-			      </select>
+				  <?php echo $location_select; ?>
 			      <span class="help-inline"><?php echo form_error('location'); ?></span>
 		        </div>
 		      </div> 	  

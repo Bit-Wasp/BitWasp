@@ -159,8 +159,10 @@ class Bw_session {
 			//redirect('register/payment');			
 			
 		if($this->auth_level == 'guestonly') {
-			if($this->CI->current_user->logged_in())
-				redirect('');
+			if($this->URI[0] == 'login' || $this->URI[0] == 'register'){
+				if($this->CI->current_user->logged_in())
+					redirect('');
+			}
 			
 			return TRUE;
 		}

@@ -88,12 +88,13 @@ class Items extends CI_Controller {
 		if(!$this->general->matches_any($source, array('ship-to','ship-from')))
 			redirect('items');
 
+		$this->load->model('location_model');
 		$this->load->model('shipping_costs_model');
 	
 		// Load any posted location information.
 		if($this->input->post('ship_to_submit') == 'Go') {
 			$location = $this->input->post('location');
-			$data['location_name'] = $this->general_model->location_by_id($location);
+			$data['location_name'] = $this->location_model->location_by_id($location);
 			if($data['location_name'] == FALSE)
 				redirect('items');
 
@@ -103,13 +104,13 @@ class Items extends CI_Controller {
 			
 		} else if($this->input->post('ship_from_submit') == 'Go') {
 			$location = $this->input->post('location');
-			$data['location_name'] = $this->general_model->location_by_id($location);
+			$data['location_name'] = $this->location_model->location_by_id($location);
 			if($data['location_name'] == FALSE)
 				redirect('items');
 			
 			$data['items'] = $this->items_model->get_list(array('ship_from' => $location));
 		} else {
-			$data['location_name'] = $this->general_model->location_by_id($location);
+			$data['location_name'] = $this->location_model->location_by_id($location);
 			if($data['location_name'] == FALSE)
 				redirect('items');
 

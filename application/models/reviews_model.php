@@ -1,18 +1,18 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
- * Reviews Controller
+ * Reviews Model
  *
- * This class handles reviews of orders and vendors
+ * This class handles the database functions for making reviews.
  * 
  * @package		BitWasp
- * @subpackage	Controllers
+ * @subpackage	Models
  * @category	Reviews
  * @author		BitWasp
  * 
  */
-class Reviews extends CI_Controller {
-
+class Review_model extends CI_Model {
+	
 	/**
 	 * Constructor
 	 * 
@@ -23,7 +23,4 @@ class Reviews extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 	}
-	
 };
-
-/* End of File: Reviews.php */

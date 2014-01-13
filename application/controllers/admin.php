@@ -559,7 +559,9 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('categories_model');		
 		$data['nav'] = $this->generate_nav();
-		$data['categories'] = $this->categories_model->list_all();
+		$data['categories_add_select'] = $this->categories_model->generate_select_list('category_parent', 'span10');
+		$data['categories_rename_select'] = $this->categories_model->generate_select_list('rename_id', 'span10');
+		$data['categories_delete_select'] = $this->categories_model->generate_select_list('delete_id', 'span10');
 		$data['config'] = $this->bw_config->load_admin('items');
 				
 		if($this->input->post('admin_edit_items') == 'Update') {
@@ -1160,7 +1162,26 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/user_list';
 		$data['title'] = 'User List';
 		$this->load->library('Layout', $data);
+	}
+	
+	public function user_delete($user_hash) {
 		
+		$this->load->model('accounts_model');
+		$data['user'] = $this->accounts_model->get(array('user_hash' => $user_hash));
+		if($data['user'] == FALSE) {
+			redirect('admin/users/list');
+		}
+		
+		$this->load->library('form_validation');
+		if($this->input->post('delete_user') == 'Delete User') {
+			if($this->form_validation->run('admin_delete_user') == TRUE) {
+				
+			}
+		}
+		
+		$data['page'] = 'admin/user_delete';
+		$data['title'] = 'Delete Account: '.$data['user']['user_name'];
+		$this->load->library('Layout', $data);
 	}
 
 	/**
@@ -1201,6 +1222,52 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/tos';
 		$this->load->library('Layout',$data);
 	}
+
+	public function locations() {
+		
+		$this->load->library('form_validation');
+		$this->load->model('location_model');
+
+		if($this->input->post('update_location_list_source') == 'Submit') {
+			if($this->form_validation->run('admin_update_location_list_source') == TRUE) {
+				$changes = array();
+				$changes['location_list_source'] = ($this->input->post('location_source') !== $this->bw_config->location_list_source) ? $this->input->post('location_source') : NULL;
+				
+				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+					redirect('admin/locations');
+			}
+		}
+
+		if($this->input->post('add_custom_location') == 'Submit') {
+			if($this->form_validation->run('admin_add_custom_location') == TRUE) {
+				$location = array(	'location' => $this->input->post('create_location'),
+									'hash' => $this->general->unique_hash('locations_custom_list', 'hash'),
+									'parent_id' => $this->input->post('location'));
+				if($this->location_model->add_custom_location($location) == TRUE)
+					redirect('admin/locations');
+			}
+		}
+
+		if($this->input->post('delete_custom_location') == 'Submit') {
+			if($this->form_validation->run('admin_delete_custom_location') == TRUE) {
+				
+				if($this->location_model->delete_custom_location($this->input->post('location')) == TRUE)
+					redirect('admin/locations');
+			}
+		}
+		
+		$data['list_source'] = $this->bw_config->location_list_source;
+	
+		$data['locations_parent'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8', FALSE, TRUE);
+		$custom_locations_array = $this->location_model->get_list('Custom');
+		$data['locations_human_readable'] = $this->location_model->menu_human_readable($custom_locations_array, 0, '');
+
+		$data['locations_delete'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8');
+		$data['page'] = 'admin/locations';
+		$data['title'] = 'Configure Locations';
+		$this->load->library('Layout', $data);
+	}
+
 
 	/**
 	 * Generate Nav
@@ -1491,7 +1558,49 @@ class Admin extends CI_Controller {
 	public function check_user_search_list($param) {
 		return ($this->general->matches_any($param, array(NULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
 	}
-
+	
+	/**
+	 * Check Valid Location List Source
+	 * 
+	 * This function checks if the submited source of location info is 
+	 * correct. Allowed values are 'Default' for the standard country 
+	 * list, and 'Custom' for a custom list.
+	 * 
+	 * @param	string $param	
+	 * @return	boolean
+	 */
+	public function check_valid_location_list_source($param) {
+		return ($this->general->matches_any($param, array('Default', 'Custom')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Location Exists
+	 * 
+	 * This function checks if the supplied location id exists in the 
+	 * list of locations. Returns a boolean indicating outcome.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_location_exists($param){
+		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Valid Parent Location
+	 * 
+	 * Checks if the supplied location $id is allowed. Accepts 0 for the
+	 * root category, and otherwise checks if the parent category exists.
+	 * 
+	 * @param	int	$id
+	 * @return	boolean
+	 */
+	public function check_valid_parent_location($id) {
+		if($id == '0')
+			return TRUE;
+			
+		return ($this->location_model->location_by_id($id) !== FALSE) ? TRUE : FALSE;
+	}
 };
 
 /* End of file: Admin.php */

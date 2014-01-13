@@ -35,6 +35,7 @@ class Layout {
 		$CI = &get_instance();
 		$CI->load->model('currencies_model');
 		$CI->load->model('categories_model');
+		$CI->load->model('location_model');
 		$CI->load->library('form_validation');
 		// Header data; used to include clientside PGP.
 		if(!isset($data['header_meta'])) 
@@ -44,7 +45,8 @@ class Layout {
 		$bar['allow_guests'] 		= $CI->bw_config->allow_guests;
 		$category_data['cats'] 		= '';
 		$category_data['block'] 	= FALSE;
-		$category_data['locations'] = $CI->general_model->locations_list();
+		$category_data['locations_select'] = $CI->location_model->generate_select_list($CI->bw_config->location_list_source, 'location', 'span12');
+		
 		$data['site_title'] 		= $CI->bw_config->site_title;
 		$data['site_description']	= $CI->bw_config->site_description;
 		$footer['price_index']		= $CI->bw_config->price_index;

@@ -27,7 +27,7 @@
 				<td>Registered: <?php echo $user['register_time_f']; ?><br />Last Login: <?php echo $user['login_time_f']; ?></td>
 				<td><?php echo ($user['entry_paid']) ? 'yes' : ''; ?></td>
 				<td><?php echo ($user['banned'] == '1') ? 'yes' : ''; ?></td>
-				<td><?php echo anchor('admin/users/delete/'.$user['id'], 'Delete?', 'class="btn btn-mini"'); ?></td>
+				<td><?php echo anchor('admin/users/delete/'.$user['user_hash'], 'Delete?', 'class="btn btn-mini"'); ?></td>
 			  </tr>
 <?php } ?>
 			</tbody>
@@ -36,7 +36,6 @@
 	if(isset($search_fail) && $search_fail == TRUE) { echo 'No users found in your query'; }
 	else { echo 'There are no users at this time.'; }
 } ?>
-
 
 		  <?php echo form_open('admin/users/list', array('class' => 'form-horizontal')); ?>		 
 		  </form>

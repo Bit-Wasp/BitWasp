@@ -373,6 +373,28 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_can_delete_category'
 										)
 							),
+				'admin_add_custom_location' => array(
+										array('field' => 'create_location',
+											  'label' => 'Location name',
+											  'rules' => 'required|htmlentities'
+										),
+										array('field' => 'location',
+											  'label' => 'Parent location',
+											  'rules' => 'callback_check_location_exists'
+										)
+							),
+				'admin_delete_custom_location' => array(
+										array('field' => 'location',
+											  'label' => 'Location',
+											  'rules' => 'callback_check_location_exists'
+										)
+							),
+				'admin_update_location_list_source' => array(
+										array('field' => 'location_source',
+											  'label' => 'List',
+											  'rules' => 'callback_check_valid_location_list_source'
+										)
+							),
 				'admin_transfer_bitcoins' => array(
 										array('field' => 'from',
 											  'label' => 'Sending account',

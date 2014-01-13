@@ -8,7 +8,7 @@
 		    <div class="control-group">
               <label class="control-label" for="ban_user">Are you sure?</label>
               <div class="controls">
-                <label class="radio inline"><input type='radio' name='ban_user' value='0' <?php echo ($user['banned'] == '0') ? 'checked ' : ''; ?>/> Not Banned</label>
+                <label class="radio inline"><input type='radio' name='ban_user' value='0' <?php echo ($user['banned'] == '0') ? 'checked ' : ''; ?>/> Not Banned</label><br />
                 <label class="radio inline"><input type='radio' name='ban_user' value='1' <?php echo ($user['banned'] == '1') ? 'checked ' : ''; ?>/> Banned</label>
    			    <span class="help-inline"><?php echo form_error('ban_user'); ?></span>
 	          </div>

@@ -1,6 +1,5 @@
 
         <div class="span3">
-			
 <?php if($role !== 'guest' && $role !== 'half') { ?>
 		  <div class="well sidebar-nav">
 			  
@@ -32,14 +31,7 @@ $order_str = 'My Orders'; if($count_new_orders > 0)	$order_str .= " ($count_new_
 				<?php echo form_open('location/ship-to'); ?>
 				  <div class='span4'>Ship To</div>
 				  <div class='span5'>
-				    <select name='location' class='span12' autocomplete="off">
-				      <option value='worldwide'>Worldwide</option>
-<?php foreach($locations as $location) { 
-	if($location['id'] == 1)
-		continue; ?>
-				      <option value='<?php echo $location['id']; ?>'><?php echo $location['country']; ?></option>
-<?php } ?>
-			        </select>
+				    <?php echo $locations_select; ?>
 				  </div>
 				  <div class='span2'><input type='submit' name='ship_to_submit' class='btn' value='Go' /></div>
 				</form>
@@ -49,13 +41,7 @@ $order_str = 'My Orders'; if($count_new_orders > 0)	$order_str .= " ($count_new_
 				<?php echo form_open('location/ship-from'); ?>
 				  <div class='span4'>Ship From</div>
 				  <div class='span5'>
-				    <select name='location' class='span12' autocomplete="off">
-<?php foreach($locations as $location) { 
-	if($location['id'] == 1)
-		continue; ?>
-				      <option value='<?php echo $location['id']; ?>'><?php echo $location['country']; ?></option>
-<?php } ?>
-			        </select>
+				    <?php echo $locations_select; ?>
 				  </div>
 				  <div class='span2'><input type='submit' name='ship_from_submit' class='btn' value='Go' /></div>
 				</form>

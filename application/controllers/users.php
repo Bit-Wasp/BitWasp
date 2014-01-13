@@ -179,6 +179,10 @@ class Users extends CI_Controller {
 		$data['force_vendor_pgp'] = $this->bw_config->force_vendor_pgp;
 		$data['encrypt_private_messages'] = $this->bw_config->encrypt_private_messages;
 		$data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
+		
+		$this->load->model('location_model');
+		$data['locations_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'span5', 'location');
+		
 		$data['locations'] = $this->general_model->locations_list();
 		$data['currencies'] = $this->currencies_model->get();
 		$data['coin'] = $this->coin;
@@ -555,6 +559,6 @@ class Users extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_location($param) {
-		return ($this->general_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
+		return ($this->location_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
 	}
 };

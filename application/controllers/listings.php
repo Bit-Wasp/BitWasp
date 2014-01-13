@@ -61,8 +61,6 @@ class Listings extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('categories_model');
 		
-		$data['locations'] = $this->general_model->locations_list();
-		
 		// If the listing doesn't exist, or belong to this user, abort.
 		$data['item'] = $this->listings_model->get($item_hash);
 		if($data['item'] == FALSE)
@@ -94,8 +92,12 @@ class Listings extends CI_Controller {
 		
 		$data['page'] = 'listings/edit';
 		$data['title'] = 'Edit '.$data['item']['name'];
-		$data['categories'] = $this->categories_model->generate_select_list($data['item']['category']);
+		$data['categories'] = $this->categories_model->generate_select_list('category', 'span5', $data['item']['category']);
 		$data['currencies'] = $this->currencies_model->get();
+		
+		$this->load->model('location_model');
+		$data['item_location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'span5', $data['item']['ship_from']);
+		
 		
 		$this->load->library('Layout', $data);
 	}
@@ -116,11 +118,12 @@ class Listings extends CI_Controller {
 	public function add() {
 		$this->load->model('categories_model');
 		$this->load->library('form_validation');
+		$this->load->model('location_model');
 		
 		$data['page'] = 'listings/add';
 		$data['title'] = 'Add a Listing';
 		$data['local_currency'] = (array)$this->current_user->currency;
-		$data['locations'] = $this->general_model->locations_list();
+		$data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'span5');
 		
 		if($this->form_validation->run('add_listing') == TRUE) {
 			
@@ -149,7 +152,7 @@ class Listings extends CI_Controller {
 		}
 		
 		if($data['page'] == 'listings/add') {
-			$data['categories'] = $this->categories_model->generate_select_list();
+			$data['categories'] = $this->categories_model->generate_select_list('category','span5');
 			$data['currencies'] = $this->currencies_model->get();
 		}
 		$this->load->library('Layout', $data);
@@ -283,10 +286,8 @@ class Listings extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('accounts_model');
 		$this->load->model('shipping_costs_model');
-
 		$new_item = $this->session->userdata('new_item');
 		$redirect_to = ($new_item == 'true') ? 'listings/images/'.$data['item']['hash'] : 'listings/shipping/'.$data['item']['hash'];
-		
 		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
 		
 		if($this->input->post('shipping_costs_update') == 'Update') {
@@ -309,21 +310,22 @@ class Listings extends CI_Controller {
 					if($key !== 'worldwide')
 						$i++;
 				}
-
 				if($new_item == 'true')
 					$this->session->unset_userdata('new_item');
 					
 				if($this->shipping_costs_model->update($data['item']['id'], $array)) {
-					if($new_item == 'true')
+					if($new_item == 'true'){
 						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
-						
+					}
+					
 					redirect($redirect_to);
 				}
 				
 			//}
 		}
 		
-		$data['locations'] = $this->general_model->locations_list();
+		$this->load->model('location_model');
+		$data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'country[]', 'span5');
 		$data['current_user'] = $this->current_user->status();
 		$data['account'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
 		
@@ -432,7 +434,8 @@ class Listings extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_location($param) {
-		return ($param !== '1' && $this->general_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
+		$this->load->model('location_model');
+		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 
 	/**
@@ -444,7 +447,8 @@ class Listings extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_shipping_location($param) {
-		return ($param == 'worldwide' || ($param !== "1" && $this->general_modle->location_by_id($param) == TRUE)) ? TRUE : FALSE;
+		$this->load->model('location_model');
+		return ($param == 'worldwide' || ($this->location_model->location_by_id($param) !== FALSE)) ? TRUE : FALSE;
 	}
 
 	/**

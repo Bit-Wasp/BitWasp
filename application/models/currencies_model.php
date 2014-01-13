@@ -6,7 +6,7 @@
  * This class handles handles database queries regarding currencies.
  * 
  * @package		BitWasp
- * @subpackage	Controllers
+ * @subpackage	Models
  * @category	Currencies
  * @author		BitWasp
  * 

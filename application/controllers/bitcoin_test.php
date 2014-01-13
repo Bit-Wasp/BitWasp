@@ -79,7 +79,11 @@ class Bitcoin_Test extends CI_Controller {
 		
 	}
 
-	
+
+	public function location(){
+		$this->load->model('location_model');
+		var_dump($this->location_model->validate_user_child_location('3','2'));
+	}
 };
 
 
