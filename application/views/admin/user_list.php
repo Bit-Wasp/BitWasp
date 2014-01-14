@@ -2,7 +2,7 @@
 		  <h2><?php echo anchor('admin/users', 'Back', 'class="btn"'); ?> User List</h2>
 			  
 		  <?php if(isset($returnMessage)) { ?>
-		  <div class='alert<?php if($success == TRUE) echo ' alert-success'; ?>'><?php echo $returnMessage; ?></div>
+		  <div class='alert<?php if(isset($success) == TRUE) echo ' alert-success'; ?>'><?php echo $returnMessage; ?></div>
 		  <?php } ?>
 
 		  <p><?php echo anchor('admin/users/list#Search','Click here to search for a user'); ?></p>

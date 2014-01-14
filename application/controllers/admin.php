@@ -1078,6 +1078,14 @@ class Admin extends CI_Controller {
 		$params = array();
 		$data['users'] = $this->users_model->user_list();
 		
+		$returnMessage = json_decode($this->session->flashdata('returnMessage'));
+		if($returnMessage !== NULL) {
+			if(isset($returnMessage->success) && $returnMessage->success == TRUE)
+				$data['success'] = TRUE;
+			$data['returnMessage'] = $returnMessage->returnMessage;
+		}
+		
+		
 		// If the user is searching for by username.
 		if($this->input->post('search_username') == 'Search') {
 			if($this->form_validation->run('admin_search_username') == TRUE){
@@ -1166,19 +1174,21 @@ class Admin extends CI_Controller {
 	
 	public function user_delete($user_hash) {
 		
-		$this->load->model('accounts_model');
-		$data['user'] = $this->accounts_model->get(array('user_hash' => $user_hash));
+		$this->load->model('users_model');
+		$data['user'] = $this->users_model->get(array('user_hash' => $user_hash));
 		if($data['user'] == FALSE) {
 			redirect('admin/users/list');
 		}
 		
 		$this->load->library('form_validation');
-		if($this->input->post('delete_user') == 'Delete User') {
+		if($this->input->post('admin_delete_user') == 'Confirm') {
 			if($this->form_validation->run('admin_delete_user') == TRUE) {
-				
+				if($this->users_model->delete($user_hash) == TRUE) {
+					$this->session->set_flashdata('returnMessage', json_encode(array('returnMessage' => $data['user']['user_name'].' has been deleted.','success' => TRUE)));
+					redirect('admin/users/list');
+				}
 			}
 		}
-		
 		$data['page'] = 'admin/user_delete';
 		$data['title'] = 'Delete Account: '.$data['user']['user_name'];
 		$this->load->library('Layout', $data);
@@ -1334,6 +1344,19 @@ class Admin extends CI_Controller {
 		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
 	}
 
+	/**
+	 * Check YesNo
+	 * 
+	 * Checks if the suppli8ed parameter is 0 or 1. Same as check_bool, 
+	 * but uses a different error message
+	 * 
+	 * @param	int	$param
+	 * @return	boolean
+	 */
+	public function check_yesno($param) {
+		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
+	} 
+	
 	/**
 	 * Check Category Exists.
 	 * 
@@ -1586,6 +1609,20 @@ class Admin extends CI_Controller {
 		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * Check User Exists
+	 * 
+	 * This function checks that the supplied $param (a user hash) 
+	 * corresponds to a valid user. Returns a boolean indicating success
+	 * or failure.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_user_exists($param) {
+		$user = $this->accounts_model->get(array('user_hash' => $param));
+		return ($user == FALSE) ? FALSE : TRUE;
+	}
 	/**
 	 * Check Valid Parent Location
 	 * 

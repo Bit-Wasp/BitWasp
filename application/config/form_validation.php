@@ -511,6 +511,12 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_user_search_list'
 										)
 							),
+				'admin_delete_user' => array(
+										array('field' => 'user_delete',
+											  'label' => '',
+											  'rules' => 'callback_check_bool'
+										)
+							),
 				'admin_maintenance_mode' => array(
 										array('field' => 'maintenance_mode',
 											  'label' => 'Maintenance mode',

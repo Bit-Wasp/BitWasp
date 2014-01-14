@@ -46,17 +46,6 @@ class Users_model extends CI_Model {
 	}
 	
 	/**
-	 * Remove
-	 * 
-	 * Remove a user. Haven't had to code this yet..
-	 *
-	 * @access	public
-	 * @param	string
-	 * @return	boolean
-	 */				
-	public function remove($user_hash) {}
-	
-	/**
 	 * Get
 	 * 
 	 * Get a user, based on $user['user_hash'], $user['id'], $user['user_name']
@@ -83,6 +72,33 @@ class Users_model extends CI_Model {
 		
 		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
+	
+
+	/**
+	 * Deletes
+	 * 
+	 * Deletes a user account. 
+	 *
+	 * @access	public
+	 * @param	string
+	 * @return	boolean
+	 */				
+	public function delete($user_hash) {
+		$user = $this->get(array('user_hash' => $user_hash));
+		if($user == FALSE)
+			return FALSE;
+			
+		$this->db->where('user_hash', $user_hash);
+		$delete_user = $this->db->delete('users');
+		
+		return ($delete_user == TRUE) ? TRUE : FALSE;
+		//$this->db->where('user_hash', $user_hash);
+		//$delete_user = $this->db->delete('users');
+		
+		//$this->db->where('user_hash', $user_hash);
+		//$delete_user = $this->db->delete('users');
+		
+	}	
 	
 	/**
 	 * Message Data
