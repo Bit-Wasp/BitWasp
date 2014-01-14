@@ -127,6 +127,7 @@ class Users extends CI_Controller {
 					} else {
 						// Success! Log the user in.
 						$this->bw_session->create($user_info);
+						// Changed from redirect('/');
 						redirect('');
 					}
 				} 
@@ -181,9 +182,8 @@ class Users extends CI_Controller {
 		$data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
 		
 		$this->load->model('location_model');
-		$data['locations_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'span5', 'location');
+		$data['locations_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'span5');
 		
-		$data['locations'] = $this->general_model->locations_list();
 		$data['currencies'] = $this->currencies_model->get();
 		$data['coin'] = $this->coin;
 		

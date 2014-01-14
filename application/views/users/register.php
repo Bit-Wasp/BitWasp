@@ -98,7 +98,7 @@ if($force_vendor_pgp == 'Enabled')
 					  <option value='<?php echo $currency['id']; ?>'<?php echo ($currency['id'] == '0') ? ' selected="selected"' : NULL; ?>><?php echo $currency['name']; ?></option>
 <?php endforeach; ?>
 					</select>
-                    <span class="help-inline"><?php echo form_error('location'); ?></span>					
+                    <span class="help-inline"><?php echo form_error('local_currency'); ?></span>
 				  </div>
                 </div>
                 

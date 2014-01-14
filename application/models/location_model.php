@@ -203,7 +203,7 @@ class Location_model extends CI_Model {
 				$output.= $this->generate_select_list_recurse($child, $selected);
 			}
 		} else {
-			$select_txt = '';
+			$select_txt = ' ';
 			if($selected !== FALSE && $array['id'] == $selected ) $select_txt = ' selected="selected" ';
 			if($array['parent_id'] == '0') $select_txt .= "style=\"font-weight:bold;\" ";
 			$output = "<option value=\"{$array['id']}\"{$select_txt}>{$array['location']}</option>\n";
