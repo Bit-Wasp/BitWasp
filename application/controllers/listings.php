@@ -96,9 +96,9 @@ class Listings extends CI_Controller {
 		$data['currencies'] = $this->currencies_model->get();
 		
 		$this->load->model('location_model');
-		$data['item_location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'span5', $data['item']['ship_from']);
+		$data['item_location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'span5', $data['item']['ship_from']);
 		
-		
+	
 		$this->load->library('Layout', $data);
 	}
 	
@@ -286,23 +286,23 @@ class Listings extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('accounts_model');
 		$this->load->model('shipping_costs_model');
+		
 		$new_item = $this->session->userdata('new_item');
 		$redirect_to = ($new_item == 'true') ? 'listings/images/'.$data['item']['hash'] : 'listings/shipping/'.$data['item']['hash'];
-		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
-		
+		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id'], TRUE);
+
 		if($this->input->post('shipping_costs_update') == 'Update') {
 			//if($this->form_validation->run('shipping_costs') == TRUE) {
 				$prices = $this->input->post('price');
 				$country = $this->input->post('country');
 				$enabled = $this->input->post('enabled');
-				$delete = $this->input->post('delete');
-
+	
 				$array = array();
 				$i = 0; 
 				foreach($prices as $key => $price) {
 					$new_key = ($key !== 'worldwide') ? $country[$i] : $key;
 					
-					if($country[$i] !== '' && $delete[$new_key] !== '1')
+					if($country[$i] !== '')
 						$array[] = array('cost' => $price,
 										'destination_id' => $new_key,
 										'enabled' => (isset($enabled[$new_key]) && $enabled[$new_key] == '1') ? '1' : '0');
@@ -312,12 +312,12 @@ class Listings extends CI_Controller {
 				}
 				if($new_item == 'true')
 					$this->session->unset_userdata('new_item');
-					
+				
 				if($this->shipping_costs_model->update($data['item']['id'], $array)) {
 					if($new_item == 'true'){
 						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
 					}
-					
+					echo 'redirect here';
 					redirect($redirect_to);
 				}
 				
@@ -435,6 +435,7 @@ class Listings extends CI_Controller {
 	 */
 	public function check_location($param) {
 		$this->load->model('location_model');
+		echo $param;
 		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 

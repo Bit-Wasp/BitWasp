@@ -21,6 +21,18 @@ class Shipping_costs_model extends CI_Model {
 	public function __construct() {
 		parent::__construct();
 	}
+
+	public function get_item_hash($id){
+		$this->db->select('hash');
+		$this->db->where('id', $id);
+		$query = $this->db->get('items');
+		if($query->num_rows > 0){
+			$row = $query->row_array();
+			return $row['hash'];
+		} 
+		return FALSE;
+	}
+	
 	
 	/**
 	 * For Item
@@ -31,16 +43,34 @@ class Shipping_costs_model extends CI_Model {
 	 * @param	int	$item_id
 	 * @return	array/FALSE
 	 */
-	public function for_item($item_id) {
+	public function for_item($item_id, $all = FALSE) {
+		$this->load->model('items_model');
 		$this->load->model('location_model');
-		$this->db->where('enabled', '1');
+		
+		if($all == FALSE)
+			$this->db->where('enabled', '1');
+			
 		$this->db->where('item_id', $item_id);
 		$query = $this->db->get('shipping_costs');
 		if($query->num_rows() > 0) { 
+			
+			$item_hash = $this->get_item_hash($item_id);
+			$item = $this->items_model->get($item_hash);
+			
 			$results = $query->result_array();
 			$output = array();
 			foreach($results as $res) {
-				$output[$res['destination_id']] = array('cost' => $res['cost'],
+				
+				if($item['currency']['id'] !== '0'){
+					$this->load->model('currencies_model');
+					$currency = $this->currencies_model->get($item['currency']['id']);
+					$btc_cost = $res['cost']/$currency['rate'];
+				} else {
+					$btc_cost = $res['cost'];
+				}
+				
+				$output[$res['destination_id']] = array('cost' => round($btc_cost, 8, PHP_ROUND_HALF_UP),
+														'currency' => $item['currency']['symbol'],
 														'enabled' => $res['enabled'],
 														'destination_id' => $res['destination_id'],
 														'destination_f' => $this->location_model->location_by_id($res['destination_id']));
@@ -66,14 +96,16 @@ class Shipping_costs_model extends CI_Model {
 		$this->load->model('location_model');
 		
 		$costs_list = $this->for_item($item_id);
+		
 		foreach($costs_list as $destination_id => $cost_info) {
 			if($destination_id == 'worldwide')
-				return $cost_info;
+				$worldwide = $cost_info;
 				
 			if($this->location_model->validate_user_child_location($destination_id, $user_location_id) !== FALSE)
-				return $cost_info;
+				$btc_cost = $cost_info;
 		}
-		return FALSE;
+		
+		return (isset($worldwide)) ? $worldwide : FALSE;
 	}
 	
 	/**
@@ -87,6 +119,7 @@ class Shipping_costs_model extends CI_Model {
 	 * @return	float
 	 */
 	 public function costs_to_location($item_list, $location) {
+		 // Work out the cost in bitcoin.
 		 $cost = 0.00000000;
 		 foreach($item_list as $item) {
 			 $costs = $this->for_item($item['id']);
@@ -95,6 +128,8 @@ class Shipping_costs_model extends CI_Model {
 			 $tmp = (isset($costs[$location])) ? $costs[$location]['cost'] : $costs['worldwide']['cost'];
 			 $cost+= $tmp*$item['quantity'];
 		 }
+		 
+		 
 		 return $cost;
 	 }
 

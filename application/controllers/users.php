@@ -68,7 +68,6 @@ class Users extends CI_Controller {
 	 * @return	void
 	 */
 	public function login() {
-
 		$data['header_meta'] = $this->load->view('users/login_hash_header', NULL, true);
 		
 		$this->load->helper(array('form'));

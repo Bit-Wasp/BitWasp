@@ -9,21 +9,20 @@
 				  <th>Destination</th>
 				  <th>Cost</th>
 				  <th>Offered?</th>
-				  <th><?php if($shipping_costs !== FALSE) echo "Delete?"; ?></th>
 			    </tr>
 			  </thead>
 			  <tbody>
 <?php if($shipping_costs == FALSE) { ?>
 
 			    <tr>
-				  <td class='span3'>Worldwide <input type='hidden' name='country[worldwide]' value='worldwide' /> </td>
+				  <td class='span3'>Worldwide <input type='hidden' name='country[]' value='worldwide' /> </td>
 				  <td class='span4'>
                     <div class="input-prepend">
                       <span class="add-on"><i><?php echo $item['currency']['symbol']; ?></i></span>
-                      <input type="text" class="span2" name="price[worldwide]" value="<?php echo ($item['currency']['id'] == '0') ? '0.1' : '10'; ?>" />
+                      <input type="text" class="span2" name="price[]" value="<?php echo ($item['currency']['id'] == '0') ? '0.1' : '10'; ?>" />
                     </div>
 				  </td>
-				  <td class="span3"><input type="checkbox" name="enabled[worldwide]" value="1" /></td>
+				  <td class="span3"><input type="checkbox" name="enabled[]" value="1" /></td>
 				  <td class="span3"></td>
 			    </tr>
 			  
@@ -53,7 +52,6 @@
                     </div>
 				  </td>
 				  <td class="span3"><input type="checkbox" name="enabled[<?php echo $cost['destination_id']; ?>]" value="1" <?php if($cost['enabled'] == '1') echo 'checked '; ?>/></td>
-				  <td class="span3"><input type="checkbox" name="delete[<?php echo $cost['destination_id']; ?>]" value="1" /></td>
 			    </tr>
 <?php }
  } ?>		    

@@ -5,11 +5,7 @@
 -- Server version: 5.5.31
 -- PHP Version: 5.4.4-14+deb7u4
 
-CREATE DATABASE db_bitwasp
-  DEFAULT CHARACTER SET utf8
-  DEFAULT COLLATE utf8_unicode_ci;
-
-USE db_bitwasp;
+USE bitwasp;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 

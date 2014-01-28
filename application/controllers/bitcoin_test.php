@@ -78,7 +78,10 @@ class Bitcoin_Test extends CI_Controller {
 		//$send = $this->bw_bitcoin->sendrawtransaction($signed_transaction['hex']);
 		
 	}
-
+	public function a(){
+		$this->load->library('bitcoin_crypto');
+		echo $this->bitcoin_crypto->decodeBase58('nestpD3SujtqXvLEYPMG4xHhUrdGchRruM');
+	}
 
 	public function location(){
 		$this->load->model('location_model');

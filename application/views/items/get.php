@@ -24,7 +24,7 @@
 			if($shipping_costs !== FALSE && count($shipping_costs) > 0) {
 				echo "Ship's To: <br />";
 				foreach($shipping_costs as $shipping_charge) { 
-					echo " - {$shipping_charge['destination_f']} {$item['currency']['symbol']} {$shipping_charge['cost']} <br />";
+					echo " - {$shipping_charge['destination_f']} {$browsing_currency['symbol']} {$shipping_charge['cost']} <br />";
 				} 
 			}
 			?>

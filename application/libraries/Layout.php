@@ -37,6 +37,7 @@ class Layout {
 		$CI->load->model('categories_model');
 		$CI->load->model('location_model');
 		$CI->load->library('form_validation');
+		
 		// Header data; used to include clientside PGP.
 		if(!isset($data['header_meta'])) 
 			$data['header_meta'] = ''; 
