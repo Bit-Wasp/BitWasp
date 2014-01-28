@@ -18,6 +18,11 @@
 			  <span class="span3">Site Description</span>
 			  <span class="span7"><?php echo $site_description; ?></span>
 			</div>
+
+			<div class="row-fluid">
+			  <span class="span3">Location List</span>
+			  <span class="span7"><?php echo $config['location_list_source']; ?></span>
+			</div>
 			
 			<div class="row-fluid">
 			  <div class="span3">Terms Of Service</div>

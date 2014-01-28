@@ -23,6 +23,11 @@
 			    <span class="help-inline"><?php echo form_error('site_description'); ?></span>			    
 			  </div>
 			  <br />
+			
+			  <div class="">
+				<div class="span3">Location Settings</div>
+				<div class="span8"><?php echo anchor('admin/locations', 'Configure'); ?></div>
+			  </div>
 			  
 			  <div class="row-fluid">
 			    <div class="span3">Terms Of Service</div>

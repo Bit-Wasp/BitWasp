@@ -293,6 +293,18 @@ class Bw_config {
 	 * turned off; 0;
 	 */
 	public $terms_of_service_toggle = 0;
+
+	/**
+	 * Location List Source
+	 * 
+	 * This is a string which determines what list of locations will be 
+	 * used throughout the program. Options are 'Default' for the custom 
+	 * list of locations (list of countries), but 'Custom' allows a
+	 * predefined, heirarchal tree of locations to be built. 
+	 * 
+	 * Default value is 'Default'.
+	 */
+	public $location_list_source	= 'Default';
 	
 	/**
 	 * Constructor
@@ -364,7 +376,8 @@ class Bw_config {
 							'global_proxy_url' => $this->global_proxy_url,
 							'global_proxy_type' => $this->global_proxy_type,
 							'maintenance_mode' => $this->maintenance_mode,
-							'terms_of_service_toggle' => $this->terms_of_service_toggle);
+							'terms_of_service_toggle' => $this->terms_of_service_toggle,
+							'location_list_source' => $this->location_list_source);
 		} else if($panel == 'bitcoin') {
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,

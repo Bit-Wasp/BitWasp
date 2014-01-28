@@ -102,53 +102,43 @@ class Location_model extends CI_Model {
 	 */
 	public function get_list($list){
 		if($list == 'Default'){
-			$query = $this->db->get('country_codes');
+			//Load all categories and sort by parent category
+			$this->db->order_by("parent_id asc, location asc");
+			$query = $this->db->get('locations_default_list');
+
 			if($query->num_rows() == 0)
 				return array();
-				
-			$results = $query->result_array();
-			foreach($results as &$result) {
-				$result['location'] = $result['country'];
-				unset($result['country']);
-				$result['parent_id'] = '0';
-			}
-			return $results;
 		} else if($list == 'Custom') {
-			
-			
-			$this->db->select('id, location, hash, parent_id');
 			//Load all categories and sort by parent category
 			$this->db->order_by("parent_id asc, location asc");
 			$query = $this->db->get('locations_custom_list');
 			
 			if($query->num_rows() == 0) 
 				return array();
-				
-			// Add all categories to $menu[] array.
-			foreach($query->result() as $result) {				
-				$menu[$result->id] = array(	'id' => $result->id,
-											'location' => $result->location,
-											'hash' => $result->hash,
-											'parent_id' => $result->parent_id
-										);
-			}
-			
-			// Store all child categories as an array $menu[parentID]['children']
-			foreach($menu as $ID => &$menuItem) {
-				if($menuItem['parent_id'] !== '0')	
-					$menu[$menuItem['parent_id']]['children'][$ID] = &$menuItem;
-			}
-
-			// Remove child categories from the first level of the $menu[] array.
-			foreach(array_keys($menu) as $ID) {
-				if($menu[$ID]['parent_id'] != "0")
-					unset($menu[$ID]);
-			}
-			// Return constructed menu.
-			return $menu;
-		} else {
-			return FALSE;
 		}
+		
+		// Add all categories to $menu[] array.
+		foreach($query->result() as $result) {				
+			$menu[$result->id] = array(	'id' => $result->id,
+										'location' => $result->location,
+										'hash' => $result->hash,
+										'parent_id' => $result->parent_id
+									);
+		}
+		
+		// Store all child categories as an array $menu[parentID]['children']
+		foreach($menu as $ID => &$menuItem) {
+			if($menuItem['parent_id'] !== '0')	
+				$menu[$menuItem['parent_id']]['children'][$ID] = &$menuItem;
+		}
+
+		// Remove child categories from the first level of the $menu[] array.
+		foreach(array_keys($menu) as $ID) {
+			if($menu[$ID]['parent_id'] != "0")
+				unset($menu[$ID]);
+		}
+		// Return constructed menu.
+		return $menu;
 	}
 
 	/**
@@ -272,21 +262,16 @@ class Location_model extends CI_Model {
 	public function get_location_info($id){
 		if($this->bw_config->location_list_source == 'Default') {
 			$this->db->where('id', $id);
-			$query = $this->db->get('country_codes');
-			if($query->num_rows() > 0) {
-				$row = $query->row_array();
-				return array('id' => $row['id'],
-							 'location' => $row['country'],
-							 'parent_id' => '0');
-			}
+			$query = $this->db->get('locations_default_list');
+			
 		} else if($this->bw_config->location_list_source == 'Custom') {
 			$this->db->where('id', $id);
 			$query = $this->db->get('locations_custom_list');
-			if($query->num_rows() > 0) {
-				return $query->row_array();
-			} 			
+		} else {
+			return FALSE;
 		}
-		return FALSE;
+		
+		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 
 	/**
