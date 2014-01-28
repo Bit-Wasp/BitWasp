@@ -142,6 +142,15 @@ class Listings extends CI_Controller {
 						);
 			// Add the listing
 			if($this->listings_model->add($properties) == TRUE) {
+				$listing = $this->listings_model->get($hash);
+				
+				$this->load->model('shipping_costs_model');
+				$initial_shipping_costs = array(array('destination_id' => 'worldwide',
+													'cost' => ($data['local_currency']['id'] == '0') ? '0.003' : '10',
+													'enabled' => '0'));
+				$this->shipping_costs_model->update($listing['id'], $initial_shipping_costs);
+				
+				
 				$this->session->set_userdata('new_item','true');
 				$this->session->set_flashdata('shipping_returnMessage',json_encode(array('returnMessage' => 'Your item has been created. You must now configure shipping costs for your item.', 'success' => TRUE)));
 				redirect('listings/shipping/'.$hash);
@@ -289,7 +298,8 @@ class Listings extends CI_Controller {
 		
 		$new_item = $this->session->userdata('new_item');
 		$redirect_to = ($new_item == 'true') ? 'listings/images/'.$data['item']['hash'] : 'listings/shipping/'.$data['item']['hash'];
-		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id'], TRUE);
+		$data['shipping_costs'] = $this->shipping_costs_model->for_item_raw($data['item']['id'], TRUE);
+		
 
 		if($this->input->post('shipping_costs_update') == 'Update') {
 			//if($this->form_validation->run('shipping_costs') == TRUE) {
@@ -317,7 +327,6 @@ class Listings extends CI_Controller {
 					if($new_item == 'true'){
 						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
 					}
-					echo 'redirect here';
 					redirect($redirect_to);
 				}
 				
@@ -435,7 +444,6 @@ class Listings extends CI_Controller {
 	 */
 	public function check_location($param) {
 		$this->load->model('location_model');
-		echo $param;
 		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 

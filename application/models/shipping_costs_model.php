@@ -33,6 +33,23 @@ class Shipping_costs_model extends CI_Model {
 		return FALSE;
 	}
 	
+	public function for_item_raw($item_id, $all = FALSE) {
+		$this->load->model('items_model');
+		$this->load->model('location_model');
+		
+		if($all == FALSE)
+			$this->db->where('enabled', '1');
+			
+		$this->db->where('item_id', $item_id);
+		$query = $this->db->get('shipping_costs');
+		$results = array();
+		foreach($query->result_array() as $res){
+			$res['destination_f'] = $this->location_model->location_by_id($res['destination_id']);
+			$results[] = $res;
+		}
+		return (count($results) > 0) ? $results : FALSE;
+	}
+	
 	
 	/**
 	 * For Item
@@ -44,23 +61,14 @@ class Shipping_costs_model extends CI_Model {
 	 * @return	array/FALSE
 	 */
 	public function for_item($item_id, $all = FALSE) {
-		$this->load->model('items_model');
-		$this->load->model('location_model');
-		
-		if($all == FALSE)
-			$this->db->where('enabled', '1');
-			
-		$this->db->where('item_id', $item_id);
-		$query = $this->db->get('shipping_costs');
-		if($query->num_rows() > 0) { 
+		$query = $this->for_item_raw($item_id, $all);
+		if($query !== FALSE) { 
 			
 			$item_hash = $this->get_item_hash($item_id);
 			$item = $this->items_model->get($item_hash);
 			
-			$results = $query->result_array();
 			$output = array();
-			foreach($results as $res) {
-				
+			foreach($query as $res) {
 				if($item['currency']['id'] !== '0'){
 					$this->load->model('currencies_model');
 					$currency = $this->currencies_model->get($item['currency']['id']);
@@ -76,8 +84,10 @@ class Shipping_costs_model extends CI_Model {
 														'destination_f' => $this->location_model->location_by_id($res['destination_id']));
 			}
 			return $output;
-		} 
-		return FALSE;
+		} else {
+			return FALSE;
+		}
+		
 	}
 
 	/**
@@ -128,7 +138,6 @@ class Shipping_costs_model extends CI_Model {
 			 $tmp = (isset($costs[$location])) ? $costs[$location]['cost'] : $costs['worldwide']['cost'];
 			 $cost+= $tmp*$item['quantity'];
 		 }
-		 
 		 
 		 return $cost;
 	 }

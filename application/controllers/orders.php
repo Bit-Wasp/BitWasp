@@ -449,7 +449,7 @@ class Orders extends CI_Controller {
 						$this->messages_model->send($message);
 					
 						$data['success'] = TRUE;
-						$data['returnMessage'] = 'Your order has been placed. Funds have been added to escrow pending a response from your vendor.';
+						$data['returnMessage'] = 'Your order has been placed. Funds have been temporarily added to escrow pending a response from your vendor.';
 						$data['page'] = 'orders/purchases';
 						$data['title'] = 'My Purchases';
 					}

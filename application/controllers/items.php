@@ -170,11 +170,12 @@ class Items extends CI_Controller {
 		$data['user_role'] = $this->current_user->user_role;
 		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
 		$data['browsing_currency'] = $this->current_user->currency;
-		if($data['browsing_currency']['id'] !== '0'){
+		
+		if($data['browsing_currency']['id'] !== '0' && $data['shipping_costs'] !== FALSE){
 			$this->load->model('currencies_model');
 			
 			$currency = $this->currencies_model->get($data['browsing_currency']['id']);
-			
+
 			foreach($data['shipping_costs'] as &$cost){
 				$cost['cost'] = round($cost['cost']*$currency['rate'], 3, PHP_ROUND_HALF_UP);
 			}
