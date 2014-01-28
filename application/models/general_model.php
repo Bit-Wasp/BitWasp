@@ -166,41 +166,5 @@ class General_model extends CI_Model {
 		return $query->num_rows();
 	}
 		
-	/**
-	 * Locations List
-	 * 
-	 * List all the locations stored in the table. Return an array whether
-	 * true or false.
-	 *
-	 * @return	array
-	 */
-	public function locations_list() {
-		$query = $this->db->get('country_codes');
-		return ($query->num_rows() > 0) ? $query->result_array() : array(); 
-	}
-	
-	/**
-	 * Location by ID
-	 * 
-	 * Load the name of the location specified by $id. Returns a string
-	 * if successful or FALSE on failure.
-	 *
-	 * @param	int	$id
-	 * @return	string/FALSE
-	 */
-	public function location_by_id($id) {
-		if($id == 'worldwide')
-			return 'Worldwide';
-			
-		$this->db->select('country')
-		         ->where('id', $id);
-		$query = $this->db->get('country_codes');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			return $row['country'];
-		} 
-		
-		return FALSE;
-	}
 };
 
