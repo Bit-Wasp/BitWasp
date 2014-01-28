@@ -13,6 +13,8 @@
  */
 class Orders extends CI_Controller {
 
+	public $coin;
+
 	/**
 	 * Constructor
 	 * 
@@ -38,6 +40,8 @@ class Orders extends CI_Controller {
 		$this->load->model('bitcoin_model');
 		$this->load->model('escrow_model');	
 		$this->load->model('messages_model');
+		$this->load->model('currencies_model');
+		$this->coin = $this->currencies_model->get('0');
 	}
 	
 	/**
@@ -56,8 +60,10 @@ class Orders extends CI_Controller {
 	 * @return	void
 	 */
 	public function list_purchases() {
+		
 		$this->load->library('form_validation');		
-	
+		$data['coin'] = $this->coin;
+		
 		// Check if we are Proceeding an order, or Recounting it.
 		$place_order = $this->input->post('place_order');
 		$recount = $this->input->post('recount');
@@ -151,7 +157,7 @@ class Orders extends CI_Controller {
 				$data['from'] = $this->current_user->user_id;
 				$details = array('username' => $current_order['vendor']['user_name'],
 								 'subject' => "Order #{$current_order['id']} has been finalized");
-				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. BTC {$current_order['price']} has been credited to your account.<br />\n";
+				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. {$coin['symbol']} {$current_order['price']} has been credited to your account.<br />\n";
 				$details['message'].= ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />';
 				$message = $this->bw_messages->prepare_input($data, $details);
 				$message['order_id'] = $current_order['id'];
@@ -188,7 +194,8 @@ class Orders extends CI_Controller {
 			$data['returnMessage'] = "Order has been updated.";
 			
 		$this->load->library('form_validation');
-
+		$data['coin'] = $this->coin;
+		
 		// If an order is being dispatched..
 		$dispatch = $this->input->post('dispatch');
 		if(is_array($dispatch)) {
@@ -321,15 +328,15 @@ class Orders extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('accounts_model');
 		$this->load->model('shipping_costs_model');
+		$this->load->model('location_model');
 		
 		$item_info = $this->items_model->get($item_hash);
 		if($item_info == FALSE) 
 			redirect('items');
 
-	
 		$account = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
-		$shipping_costs = $this->shipping_costs_model->for_item($item_info['id']);
-		if($shipping_costs == FALSE || (!isset($shipping_costs[$account['location']]) && !isset($shipping_costs['worldwide']))) {
+		$shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $account['location']);
+		if($shipping_costs == FALSE && !isset($shipping_costs['worldwide'])) {
 			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'This item is not available in your location. Message the vendor to discuss availability.')));
 			redirect('item/'.$item_info['hash']);
 		}
@@ -442,7 +449,7 @@ class Orders extends CI_Controller {
 						$this->messages_model->send($message);
 					
 						$data['success'] = TRUE;
-						$data['returnMessage'] = 'Your order has been placed. Funds have been added to escrow pending a response from your vendor.';
+						$data['returnMessage'] = 'Your order has been placed. Funds have been temporarily added to escrow pending a response from your vendor.';
 						$data['page'] = 'orders/purchases';
 						$data['title'] = 'My Purchases';
 					}

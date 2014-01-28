@@ -41,13 +41,7 @@
 			  <div class="control-group">
 				<label class="control-label" for="ship_from">Ship From</label>
 				<div class="controls">
-				  <select name="ship_from">
-<?php foreach($locations as $location) { 
-	if($location['id'] == '1') continue;
-?>
-					<option value='<?php echo $location['id']; ?>'><?php echo $location['country']; ?></option>
-<?php } ?>
-				  </select>
+				  <?php echo $locations; ?>
                   <span class="help-inline"><?php echo form_error('ship_from'); ?></span>
 				</div>
 			  </div>

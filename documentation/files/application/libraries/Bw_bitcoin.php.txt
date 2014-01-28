@@ -34,7 +34,7 @@ class Bw_bitcoin {
 	 * the main bitcoin chain.
 	 */
 	public $testnet;
-		
+	
 	/**
 	 * Constructor
 	 * 
@@ -47,10 +47,25 @@ class Bw_bitcoin {
 		
 		$this->CI->config->load('bitcoin', TRUE);
 		$this->config = $this->CI->config->item('bitcoin');	
-		
+
 		$this->CI->load->library('jsonrpcclient', $this->config);
 		$this->CI->load->model('bitcoin_model');
 	}
+
+	/**
+	 * __call
+	 * 
+	 * Magic method! Checks bitcoin is enabled whenever performing something.
+	 */
+	public function __call($method,$arguments) {
+        if(method_exists($this, $method) && $method !== 'ratenotify' && $method !== 'getinfo') {
+            $info = $this->getinfo();
+            if($info == NULL) 
+				return FALSE;
+				
+            call_user_func_array(array($this,$method),$arguments);
+        }
+    }
 	
 	/**
 	 * Get Exchange Rates
@@ -191,6 +206,24 @@ class Bw_bitcoin {
 		return $this->CI->jsonrpcclient->gettransaction($tx_hash);
 	}
 
+	public function createrawtransaction($transaction){
+		return $this->CI->jsonrpcclient->createrawtransaction($transaction['inputs'], $transaction['outputs']);
+	}
+	public function decoderawtransaction($transaction_hex){
+		return $this->CI->jsonrpcclient->decoderawtransaction($transaction_hex);
+	}
+	public function signrawtransaction($transaction_hex){
+		return $this->CI->jsonrpcclient->signrawtransaction($transaction_hex);
+	}
+	public function sendrawtransaction($transaction_hex){
+		return $this->CI->jsonrpcclient->sendrawtransaction($transaction_hex);
+	}
+	public function addmultisigaddress($n, $public_keys, $account = ""){
+		return $this->CI->jsonrpcclient->addmultisigaddress($n, $public_keys, $account);
+	}
+	public function createmultisig($n, $public_keys){
+		return $this->CI->jsonrpcclient->createmultisig($n, $public_keys);
+	}
 	/**
 	 * Import Private Key
 	 * 
@@ -204,6 +237,7 @@ class Bw_bitcoin {
 	public function importprivkey($wif, $account) {
 		return $this->CI->jsonrpcclient->importprivkey("$wif", "$account", TRUE);
 	}
+	
 	/**
 	 * List Accounts
 	 * 
@@ -402,6 +436,8 @@ class Bw_bitcoin {
 		if(isset($send[0]) && $send[0]['account'] == "main" && $send[0]['category'] == "send") {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
 			if($user_hash !== FALSE) {
+
+
 				$update = array('txn_id' => $txn_hash,
 								'user_hash' => $user_hash,
 								'value' => $send[0]['amount'],
@@ -410,6 +446,8 @@ class Bw_bitcoin {
 								'category' => 'send',
 								'credited' => '1',
 								'time' => $transaction['time']);
+
+
 
 				// If we do not already have this transaction, add it, and deduct the users balance.
 				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {

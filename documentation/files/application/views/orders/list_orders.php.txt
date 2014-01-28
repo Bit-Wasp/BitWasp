@@ -26,7 +26,7 @@
 			  <tr>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>
-			    <td>BTC <?php echo $order['price']; ?></td>
+			    <td><?php echo $coin['symbol']; ?> <?php echo $order['price']; ?></td>
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td><ul><?php
 		foreach($order['items'] as $item) { ?><li><?php echo $item['quantity']; ?> x <?php echo anchor('item/'.$item['hash'], $item['name']); ?></li><?php } ?></ul></td>
@@ -40,7 +40,7 @@ if(is_array($await_dispatch)) {
 			  <tr>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>				
-			    <td>BTC <?php echo $order['price']; ?></td>
+			    <td><?php echo $coin['symbol']; ?> <?php echo $order['price']; ?></td>
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td>
 				  <ul>
@@ -59,7 +59,7 @@ if(is_array($await_finalize_early)) {
 			    <?php echo form_open('orders'); ?>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>
-			    <td>BTC <?php echo $order['price']; ?></td>
+			    <td><?php echo $coin['symbol']; ?> <?php echo $order['price']; ?></td>
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td><ul><?php
 		foreach($order['items'] as $item) { ?>
@@ -76,7 +76,7 @@ if(is_array($await_finalization)) {
 			  <tr>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>
-			    <td>BTC <?php echo $order['price']; ?></td>
+			    <td><?php echo $coin['symbol']; ?> <?php echo $order['price']; ?></td>
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td><ul><?php
 		foreach($order['items'] as $item) { ?>
@@ -92,7 +92,7 @@ if(is_array($in_dispute)) {
 			  <tr>
 				<td>#<?php echo $order['id']; ?></td>
 				<td><?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?></td>
-			    <td>BTC <?php echo $order['price']; ?></td>
+			    <td><?php echo $coin['symbol']; ?> <?php echo $order['price']; ?></td>
 			    <td><?php echo $order['time_f']; ?></td>
 			    <td><ul><?php
 		foreach($order['items'] as $item) { ?>

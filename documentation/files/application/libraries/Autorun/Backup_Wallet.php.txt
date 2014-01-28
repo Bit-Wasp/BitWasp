@@ -104,7 +104,10 @@ class Backup_Wallet {
 					if( isset($admin['pgp']) ) {
 						$this->CI->load->library('gpg');			
 						$details['message'] = $this->CI->gpg->encrypt($admin['pgp']['fingerprint'], $details['message']);
+					} else {
+						$details['message'] = nl2br($details['message']);
 					}
+					
 					// Prepare the input.
 					$message = $this->CI->bw_messages->prepare_input($data, $details);
 					if($this->CI->messages_model->send($message) !== TRUE) {

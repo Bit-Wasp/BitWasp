@@ -35,7 +35,7 @@
 
  	          <div class="form-actions">
                 <input type="submit" name="add_image" value="Create" class="btn btn-primary" />
-                <?php echo anchor("item/".$item['hash'] ,"Cancel", 'class="btn"'); ?>
+                <?php echo anchor("listings", "Cancel", 'class="btn"'); ?>
               </div>
             </fieldset>
           </form>

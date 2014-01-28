@@ -62,7 +62,7 @@ class gmp_Utils {
 
     public static function gmp_dechex($dec) {
         if (extension_loaded('gmp') && USE_EXT=='GMP') {
-            $hex = gmp_strval(gmp_init($hex), 16);
+            $hex = gmp_strval(gmp_init($dec), 16);
 
             return $hex;
         } else {

@@ -52,6 +52,34 @@ class Listings_model extends CI_Model {
 		return ($this->db->delete('items') == TRUE) ? TRUE : FALSE;
 	}
 	
+	public function my_listings(){
+		$this->db->select('id, hash, price, currency, hidden, category, name, description, main_image');
+		$this->db->where('vendor_hash', $this->current_user->user_hash);
+		$this->db->order_by('add_time', 'asc');
+		$query = $this->db->get('bw_items');
+		
+		if($query->num_rows() > 0) {
+			$results = array();
+			foreach($query->result_array() as $row) {
+				
+				$row['description_s'] = substr(strip_tags($row['description']),0,50);
+				if(strlen($row['description']) > 50) $row['description_s'] .= '...';
+				
+				$row['main_image'] = $this->images_model->get($row['main_image']);
+				$row['currency'] = $this->currencies_model->get($row['currency']);			
+							
+				$row['price_b'] = $row['price']/$row['currency']['rate'];
+				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
+				$row['price_l'] = (float)($row['price_b']*$local_currency['rate']);
+				$row['price_f'] = $local_currency['symbol'].''.$row['price_l'];	
+				array_push($results, $row);
+			}
+			return $results;
+		}
+			
+		return FALSE;
+	}
+
 	/**
 	 * Get 
 	 * 

@@ -23,6 +23,27 @@ class Admin_model extends CI_Model {
 	}	
 
 	/**
+	 * Format Config Changes
+	 * 
+	 * This function formats the array that is supplied to update the
+	 * sites configuration into a log message for the admin.
+	 * 
+	 * @param	array	$changes
+	 * @return	string
+	 */
+	public function format_config_changes($changes) {
+		ob_start();
+		echo "<pre>\n";
+		foreach($changes as $parameter => $value){
+			echo "$parameter - $value<br />\n";
+		}
+		echo "</pre>";
+		$output = ob_get_contents();
+		ob_end_clean();
+		return $output;
+	}
+
+	/**
 	 * Disable Autorun
 	 * 
 	 * Pass an array indexed by the job's ID into the autorun table, and

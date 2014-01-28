@@ -102,17 +102,19 @@ class Accounts extends CI_Controller {
 	 */	
 	public function edit() {
 		$this->load->library('form_validation');
-		$this->load->model('currencies_model');
-
+		
 		$data['page'] = 'accounts/edit';
 		$data['title'] = 'Account Settings';
 
-		// Load a list of currencies, and locations.
-		$data['currencies'] = $this->currencies_model->get();	
-		$data['locations'] = $this->general_model->locations_list();
-
 		// Load own user profile.
 		$data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
+
+		// Load a list of currencies, and locations.
+		$this->load->model('currencies_model');
+		$data['currencies'] = $this->currencies_model->get();	
+				
+		$this->load->model('location_model');
+		$data['location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'span5', $data['user']['location']);		
 
 		// Check if the user is forced to user PGP. If so, display the 'Replace' link instead of 'Delete'
 		$data['option_replace_pgp'] = FALSE;
@@ -333,7 +335,8 @@ class Accounts extends CI_Controller {
 	 * @return	bool
 	 */
 	public function check_location($param) {
-		return ($this->general_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
+		$this->load->model('location_model');
+		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 		
 	/**

@@ -11,7 +11,8 @@
 class Admin extends CI_Controller {
 
 	public $nav;
-
+	public $coin;
+	
 	/**
 	 * Constructor
 	 *
@@ -19,14 +20,17 @@ class Admin extends CI_Controller {
 	 */
 	public function __construct() {
 		parent::__construct();
+		$this->load->model('admin_model');
+		$this->load->model('currencies_model');
+		$this->coin = $this->currencies_model->get('0');
 		
 		// Define information for the navigation panel.
 		$this->nav = array(	'' => 			array(	'panel' => '',
 													'title' => 'General',
 													'heading' => 'Admin Panel'),
 							'bitcoin' => 	array(  'panel' => '/bitcoin',
-													'title' => 'Bitcoin',
-													'heading' => 'Bitcoin Panel'),
+													'title' => $this->coin['name'],
+													'heading' => $this->coin['name'].' Panel'),
 							'items' =>		array(	'panel' => '/items',
 													'title' => 'Items',
 													'heading' => 'Items Panel'),
@@ -40,6 +44,7 @@ class Admin extends CI_Controller {
 													'title' => 'Logs',
 													'heading' => 'Logs Panel')
 						);
+						
 	}
 	
 	/**
@@ -115,8 +120,9 @@ class Admin extends CI_Controller {
 					}
 				}
 			}
-	
-			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated.','Info');
+
+			$log = $this->admin_model->format_config_changes($changes);
+			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated:<br />'.$log,'Info');
 
 			if(isset($changes) && $this->config_model->update($changes) == TRUE)
 				redirect('admin');			
@@ -241,13 +247,14 @@ class Admin extends CI_Controller {
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		$data['bitcoin_index'] = $this->bw_config->price_index;
 		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
+		$data['coin'] = $this->coin;
 		
 		// If there is any information about a recent transaction, display it.
 		$info = (array)json_decode($this->session->flashdata('info'));
 		if(count($info) !== 0){
 			// If the information is to do with topping up a WIF key:
 			if($info['action'] == 'topup')
-				$data['returnMessage'] = "BTC {$info['topup_amount']} was added to the '{$info['account']}' account.";
+				$data['returnMessage'] = $this->coin['symbol']." {$info['topup_amount']} was added to the '{$info['account']}' account.";
 		}
 		
 		$data['page'] = 'admin/bitcoin';
@@ -288,6 +295,7 @@ class Admin extends CI_Controller {
 		$data['price_index'] = $this->bw_config->price_index;
 		// Load the list of accounts in the bitcoin daemon.
 		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
+		$data['coin'] = $this->coin;
 		
 		// If the WIF Import form was submitted:
 		if($this->input->post('submit_wallet_topup') == 'Topup') {
@@ -305,7 +313,7 @@ class Admin extends CI_Controller {
 					$info = json_encode(array('action' => 'topup',
 											  'topup_amount' => $topup_amount,
 											  'account' => $this->input->post('topup_account')));
-					$this->logs_model->add('Admin: Bitcoin Panel','Bitcoin Wallet Topup',"'".$this->input->post('topup_account')."' has been credited by BTC ".$topup_amount.".",'Info');
+					$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' Wallet Topup',"'".$this->input->post('topup_account')."' has been credited by {$this->coin['symbol']} {$topup_amount}.",'Info');
 	
 					$this->session->set_flashdata("info",$info);
 					redirect('admin/bitcoin');
@@ -377,13 +385,13 @@ class Admin extends CI_Controller {
 						if($this->input->post('price_index') !== 'Disabled'){		
 							// If the price index was previously disabled, set the auto-run script interval back up..
 							if($data['price_index'] == 'Disabled') 
-								$this->config_model->set_autorun_interval('price_index','15');
+								$this->autorun_model->set_autorun_interval('price_index','15');
 								
 							// And request new exchange rates.
 							$this->bw_bitcoin->ratenotify();
 						} else {
 							// When disabling BPI updates, set the interval to 0.
-							$this->config_model->set_autorun_interval('price_index', '0');
+							$this->autorun_model->set_autorun_interval('price_index', '0');
 						}
 						// Redirect when complete.
 						redirect('admin/bitcoin');
@@ -398,6 +406,9 @@ class Admin extends CI_Controller {
 					if(strlen($electrum_mpk) == 0)
 						$changes['electrum_mpk'] = '';
 				}
+		
+				$log = $this->admin_model->format_config_changes($changes);
+				$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' configuration updated','The '.$this->coin['name'].' configuration of the site has been updated:<br />'.$log,'Info');
 		
 				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
 					redirect('admin/bitcoin');	
@@ -447,7 +458,8 @@ class Admin extends CI_Controller {
 		$data['nav'] = $this->generate_nav();
 		$data['user_count'] = $this->general_model->count_entries('users');
 		$data['config'] = $this->bw_config->load_admin('users');
-
+		$data['coin'] = $this->coin;
+		
 		$data['page'] = 'admin/users';
 		$data['title'] = $this->nav['users']['heading'];
 		$this->load->library('Layout', $data);
@@ -497,6 +509,9 @@ class Admin extends CI_Controller {
 			
 			$changes = array_filter($changes, 'strlen');
 
+			$log = $this->admin_model->format_config_changes($changes);
+			$this->logs_model->add('Admin: Users Panel','Users configuration updated','The users configuration of the site has been updated:<br />'.$log,'Info');
+
 			// Update config
 			if($this->config_model->update($changes) == TRUE)
 				redirect('admin/users');
@@ -544,7 +559,9 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('categories_model');		
 		$data['nav'] = $this->generate_nav();
-		$data['categories'] = $this->categories_model->list_all();
+		$data['categories_add_select'] = $this->categories_model->generate_select_list('category_parent', 'span10');
+		$data['categories_rename_select'] = $this->categories_model->generate_select_list('rename_id', 'span10');
+		$data['categories_delete_select'] = $this->categories_model->generate_select_list('delete_id', 'span10');
 		$data['config'] = $this->bw_config->load_admin('items');
 				
 		if($this->input->post('admin_edit_items') == 'Update') {
@@ -552,9 +569,15 @@ class Admin extends CI_Controller {
 				$changes['auto_finalize_threshold'] = ($data['config']['auto_finalize_threshold'] == $this->input->post('auto_finalize_threshold') ) ? NULL : $this->input->post('auto_finalize_threshold');
 				
 				$changes = array_filter($changes, 'strlen');
+				
 				if(count($changes) > 0)
-					if($this->config_model->update($changes) == TRUE)
+					if($this->config_model->update($changes) == TRUE){
+						$log = $this->admin_model->format_config_changes($changes);
+						$this->logs_model->add('Admin: Items Panel','Items configuration updated','The items configuration of the site has been updated:<br />'.$log,'Info');
+
 						redirect('admin/users');
+					}
+				
 			}
 		}	
 			
@@ -916,6 +939,7 @@ class Admin extends CI_Controller {
 	public function fees() {
 		$this->load->library('form_validation');
 		$this->load->model('fees_model');
+		$data['coin'] = $this->coin;
 		
 		if($this->input->post('update_config') == 'Update') {
 			$data['config'] = $this->bw_config->load_admin('fees');
@@ -925,6 +949,9 @@ class Admin extends CI_Controller {
 				$changes = array_filter($changes, 'strlen');
 				if(count($changes) > 0) 
 					if($this->config_model->update($changes) == TRUE){
+						$log = $this->admin_model->format_config_changes($changes);
+						$this->logs_model->add('Admin: Fees Panel','Fees configuration updated','The fees configuration of the site has been updated:<br />'.$log,'Info');
+
 						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
 						redirect('admin/items/fees');
 					}
@@ -1051,6 +1078,14 @@ class Admin extends CI_Controller {
 		$params = array();
 		$data['users'] = $this->users_model->user_list();
 		
+		$returnMessage = json_decode($this->session->flashdata('returnMessage'));
+		if($returnMessage !== NULL) {
+			if(isset($returnMessage->success) && $returnMessage->success == TRUE)
+				$data['success'] = TRUE;
+			$data['returnMessage'] = $returnMessage->returnMessage;
+		}
+		
+		
 		// If the user is searching for by username.
 		if($this->input->post('search_username') == 'Search') {
 			if($this->form_validation->run('admin_search_username') == TRUE){
@@ -1135,7 +1170,28 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/user_list';
 		$data['title'] = 'User List';
 		$this->load->library('Layout', $data);
+	}
+	
+	public function user_delete($user_hash) {
 		
+		$this->load->model('users_model');
+		$data['user'] = $this->users_model->get(array('user_hash' => $user_hash));
+		if($data['user'] == FALSE) {
+			redirect('admin/users/list');
+		}
+		
+		$this->load->library('form_validation');
+		if($this->input->post('admin_delete_user') == 'Confirm') {
+			if($this->form_validation->run('admin_delete_user') == TRUE) {
+				if($this->users_model->delete($user_hash) == TRUE) {
+					$this->session->set_flashdata('returnMessage', json_encode(array('returnMessage' => $data['user']['user_name'].' has been deleted.','success' => TRUE)));
+					redirect('admin/users/list');
+				}
+			}
+		}
+		$data['page'] = 'admin/user_delete';
+		$data['title'] = 'Delete Account: '.$data['user']['user_name'];
+		$this->load->library('Layout', $data);
 	}
 
 	/**
@@ -1176,6 +1232,52 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/tos';
 		$this->load->library('Layout',$data);
 	}
+
+	public function locations() {
+		
+		$this->load->library('form_validation');
+		$this->load->model('location_model');
+
+		if($this->input->post('update_location_list_source') == 'Submit') {
+			if($this->form_validation->run('admin_update_location_list_source') == TRUE) {
+				$changes = array();
+				$changes['location_list_source'] = ($this->input->post('location_source') !== $this->bw_config->location_list_source) ? $this->input->post('location_source') : NULL;
+				
+				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+					redirect('admin/locations');
+			}
+		}
+
+		if($this->input->post('add_custom_location') == 'Submit') {
+			if($this->form_validation->run('admin_add_custom_location') == TRUE) {
+				$location = array(	'location' => $this->input->post('create_location'),
+									'hash' => $this->general->unique_hash('locations_custom_list', 'hash'),
+									'parent_id' => $this->input->post('location'));
+				if($this->location_model->add_custom_location($location) == TRUE)
+					redirect('admin/locations');
+			}
+		}
+
+		if($this->input->post('delete_custom_location') == 'Submit') {
+			if($this->form_validation->run('admin_delete_custom_location') == TRUE) {
+				
+				if($this->location_model->delete_custom_location($this->input->post('location')) == TRUE)
+					redirect('admin/locations');
+			}
+		}
+		
+		$data['list_source'] = $this->bw_config->location_list_source;
+	
+		$data['locations_parent'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8', FALSE, TRUE);
+		$custom_locations_array = $this->location_model->get_list('Custom');
+		$data['locations_human_readable'] = $this->location_model->menu_human_readable($custom_locations_array, 0, '');
+
+		$data['locations_delete'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8');
+		$data['page'] = 'admin/locations';
+		$data['title'] = 'Configure Locations';
+		$this->load->library('Layout', $data);
+	}
+
 
 	/**
 	 * Generate Nav
@@ -1242,6 +1344,19 @@ class Admin extends CI_Controller {
 		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
 	}
 
+	/**
+	 * Check YesNo
+	 * 
+	 * Checks if the suppli8ed parameter is 0 or 1. Same as check_bool, 
+	 * but uses a different error message
+	 * 
+	 * @param	int	$param
+	 * @return	boolean
+	 */
+	public function check_yesno($param) {
+		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
+	} 
+	
 	/**
 	 * Check Category Exists.
 	 * 
@@ -1466,7 +1581,63 @@ class Admin extends CI_Controller {
 	public function check_user_search_list($param) {
 		return ($this->general->matches_any($param, array(NULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
 	}
-
+	
+	/**
+	 * Check Valid Location List Source
+	 * 
+	 * This function checks if the submited source of location info is 
+	 * correct. Allowed values are 'Default' for the standard country 
+	 * list, and 'Custom' for a custom list.
+	 * 
+	 * @param	string $param	
+	 * @return	boolean
+	 */
+	public function check_valid_location_list_source($param) {
+		return ($this->general->matches_any($param, array('Default', 'Custom')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Location Exists
+	 * 
+	 * This function checks if the supplied location id exists in the 
+	 * list of locations. Returns a boolean indicating outcome.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_location_exists($param){
+		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check User Exists
+	 * 
+	 * This function checks that the supplied $param (a user hash) 
+	 * corresponds to a valid user. Returns a boolean indicating success
+	 * or failure.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_user_exists($param) {
+		$user = $this->accounts_model->get(array('user_hash' => $param));
+		return ($user == FALSE) ? FALSE : TRUE;
+	}
+	/**
+	 * Check Valid Parent Location
+	 * 
+	 * Checks if the supplied location $id is allowed. Accepts 0 for the
+	 * root category, and otherwise checks if the parent category exists.
+	 * 
+	 * @param	int	$id
+	 * @return	boolean
+	 */
+	public function check_valid_parent_location($id) {
+		if($id == '0')
+			return TRUE;
+			
+		return ($this->location_model->location_by_id($id) !== FALSE) ? TRUE : FALSE;
+	}
 };
 
 /* End of file: Admin.php */

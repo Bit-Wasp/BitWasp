@@ -1,0 +1,106 @@
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?>
+
+DEBUG - 2014-01-14 11:29:08 --> Config Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Hooks Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Utf8 Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> UTF-8 Support Enabled
+DEBUG - 2014-01-14 11:29:08 --> URI Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Router Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Output Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Security Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Input Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> CRSF cookie Set
+DEBUG - 2014-01-14 11:29:08 --> CSRF token verified
+DEBUG - 2014-01-14 11:29:08 --> Global POST and COOKIE data sanitized
+DEBUG - 2014-01-14 11:29:08 --> Language Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Loader Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Helper loaded: url_helper
+DEBUG - 2014-01-14 11:29:08 --> Database Driver Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Load Library: session
+DEBUG - 2014-01-14 11:29:08 --> Session Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Helper loaded: string_helper
+DEBUG - 2014-01-14 11:29:08 --> Load Library: encrypt
+DEBUG - 2014-01-14 11:29:08 --> Encrypt Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Session routines successfully run
+DEBUG - 2014-01-14 11:29:08 --> Load Library: general
+DEBUG - 2014-01-14 11:29:08 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Load Library: bw_config
+DEBUG - 2014-01-14 11:29:08 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Config file loaded: application/config/bitcoin_index.php
+DEBUG - 2014-01-14 11:29:08 --> Load Library: current_user
+DEBUG - 2014-01-14 11:29:08 --> Load Library: bw_session
+DEBUG - 2014-01-14 11:29:08 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Load Library: bw_auth
+DEBUG - 2014-01-14 11:29:08 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Controller Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Load Library: bw_captcha
+DEBUG - 2014-01-14 11:29:08 --> Helper loaded: captcha_helper
+DEBUG - 2014-01-14 11:29:08 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Load Library: image
+DEBUG - 2014-01-14 11:29:08 --> File loaded: application/views/users/login_hash_header.php
+DEBUG - 2014-01-14 11:29:08 --> Helper loaded: form_helper
+DEBUG - 2014-01-14 11:29:08 --> Load Library: form_validation
+DEBUG - 2014-01-14 11:29:08 --> Form Validation Class Initialized
+DEBUG - 2014-01-14 11:29:08 --> Language file loaded: language/english/form_validation_lang.php
+DEBUG - 2014-01-14 11:29:08 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Called set_userdata: {"newdata":{"logged_in":"true","last_activity":1389698949,"new_session":"true","user_id":"52","user_hash":"be1199ffd29f97de","user_name":"admin","user_role":"Admin","local_currency":"0","message_password":null},"newval":""}
+DEBUG - 2014-01-14 11:29:09 --> Redirecting to 
+DEBUG - 2014-01-14 11:29:09 --> Config Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Hooks Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Utf8 Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> UTF-8 Support Enabled
+DEBUG - 2014-01-14 11:29:09 --> URI Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Router Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> No URI present. Default controller set.
+DEBUG - 2014-01-14 11:29:09 --> Output Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Security Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Input Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> CRSF cookie Set
+DEBUG - 2014-01-14 11:29:09 --> Global POST and COOKIE data sanitized
+DEBUG - 2014-01-14 11:29:09 --> Language Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Loader Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Helper loaded: url_helper
+DEBUG - 2014-01-14 11:29:09 --> Database Driver Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Load Library: session
+DEBUG - 2014-01-14 11:29:09 --> Session Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Helper loaded: string_helper
+DEBUG - 2014-01-14 11:29:09 --> Load Library: encrypt
+DEBUG - 2014-01-14 11:29:09 --> Encrypt Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Session routines successfully run
+DEBUG - 2014-01-14 11:29:09 --> Load Library: general
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Load Library: bw_config
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Config file loaded: application/config/bitcoin_index.php
+DEBUG - 2014-01-14 11:29:09 --> Load Library: current_user
+DEBUG - 2014-01-14 11:29:09 --> Load Library: bw_messages
+DEBUG - 2014-01-14 11:29:09 --> Load Library: openssl
+DEBUG - 2014-01-14 11:29:09 --> Load Library: gpg
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Load Library: bw_session
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Load Library: bw_auth
+DEBUG - 2014-01-14 11:29:09 --> Called set_userdata: {"newdata":"last_activity","newval":1389698949}
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Controller Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Load Library: layout
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Load Library: form_validation
+DEBUG - 2014-01-14 11:29:09 --> Helper loaded: form_helper
+DEBUG - 2014-01-14 11:29:09 --> Form Validation Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:09 --> Model Class Initialized
+DEBUG - 2014-01-14 11:29:10 --> File loaded: application/views/templates/header.php
+DEBUG - 2014-01-14 11:29:10 --> File loaded: application/views/templates/bar/admin.php
+DEBUG - 2014-01-14 11:29:10 --> File loaded: application/views/templates/midsection.php
+DEBUG - 2014-01-14 11:29:10 --> File loaded: application/views/templates/sidebar.php
+DEBUG - 2014-01-14 11:29:10 --> File loaded: application/views/welcome_message.php
+DEBUG - 2014-01-14 11:29:10 --> File loaded: application/views/templates/footer.php
+DEBUG - 2014-01-14 11:29:10 --> Final output sent to browser
+DEBUG - 2014-01-14 11:29:10 --> Total execution time: 0.7009
+

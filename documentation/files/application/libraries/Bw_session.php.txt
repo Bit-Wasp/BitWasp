@@ -84,7 +84,6 @@ class Bw_session {
 			$userdata = array(	'user_id' => $user['id'],
 								'entry_payment' => 'true');
 		} else if($params == NULL) {
-			
 			$this->CI->session->unset_userdata('force_pgp');
 			$this->CI->session->unset_userdata('two_factor');
 			$this->CI->session->unset_userdata('entry_payment');
@@ -159,8 +158,11 @@ class Bw_session {
 			//redirect('register/payment');			
 			
 		if($this->auth_level == 'guestonly') {
-			if($this->CI->current_user->logged_in())
-				redirect('');
+			// Added this if block.
+			if($this->URI[0] == 'login' || $this->URI[0] == 'register'){
+				if($this->CI->current_user->logged_in())
+					redirect('');
+			}
 			
 			return TRUE;
 		}
@@ -180,7 +182,6 @@ class Bw_session {
 		// Check if the page needs password authorization. 
 		$multi_levels = explode('|', $this->auth_level);
 		if($multi_levels[0] == 'auth') {
-			
 			if(		(	$multi_levels[1] == 'all' 
 						&& $this->CI->current_user->logged_in()
 						&& $this->CI->bw_auth->check_current() )

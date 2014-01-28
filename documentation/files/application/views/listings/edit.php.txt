@@ -54,13 +54,7 @@
 			  <div class="control-group">
 				<label class="control-label" for="ship_from">Ship From</label>
 				<div class="controls">
-				  <select name="ship_from" autocomplete="off">
-<?php foreach($locations as $location) { 
-	if($location['id'] == '1') continue; 
-?>
-					<option value='<?php echo $location['id']; ?>' <?php echo ($location['id'] == $item['ship_from']) ? 'selected="selected"' : ''; ?>><?php echo $location['country']; ?></option>
-<?php } ?>
-				  </select>
+				  <?php echo $item_location_select; ?>
                   <span class="help-inline"><?php echo form_error('ship_from'); ?></span>
 				</div>
 			  </div>

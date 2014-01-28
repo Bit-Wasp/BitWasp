@@ -84,53 +84,43 @@ class Items extends CI_Controller {
 	 * @return	void
 	 */
 	public function location($source = '', $location = NULL) {
-
+		// If the $source is invalid, redirect to the items page.
 		if(!$this->general->matches_any($source, array('ship-to','ship-from')))
 			redirect('items');
 
+		$this->load->model('location_model');
 		$this->load->model('shipping_costs_model');
 	
 		// Load any posted location information.
 		if($this->input->post('ship_to_submit') == 'Go') {
 			$location = $this->input->post('location');
-			$data['location_name'] = $this->general_model->location_by_id($location);
-			//if($data['location_name'] == FALSE)
-				//redirect('items');
+			$data['location_name'] = $this->location_model->location_by_id($location);
+			if($data['location_name'] == FALSE)
+				redirect('items');
 
-			$data['title'] = 'Items shipped to '.$data['location_name'];
-			$data['custom_title'] = 'Shipping To: '.$data['location_name'];
 			// Generate a list of items using a list
 			$opt['item_id_list'] = $this->shipping_costs_model->list_IDs_by_location($location);
 			$data['items'] = $this->items_model->get_list($opt);
 			
 		} else if($this->input->post('ship_from_submit') == 'Go') {
-			
 			$location = $this->input->post('location');
-			$data['location_name'] = $this->general_model->location_by_id($location);
+			$data['location_name'] = $this->location_model->location_by_id($location);
 			if($data['location_name'] == FALSE)
 				redirect('items');
 			
-			$data['title'] = 'Items shipped from '.$data['location_name'];
-			$data['custom_title'] = 'Shipping From: '.$data['location_name'];
 			$data['items'] = $this->items_model->get_list(array('ship_from' => $location));
 		} else {
+			$data['location_name'] = $this->location_model->location_by_id($location);
+			if($data['location_name'] == FALSE)
+				redirect('items');
+
 			if($source == 'ship-to'){
-				$data['location_name'] = $this->general_model->location_by_id($location);
-				if($data['location_name'] == FALSE)
-					redirect('items');
-			
-				$data['title'] = 'Items shipped to '.$data['location_name'];
-				$data['custom_title'] = 'Shipping To: '.$data['location_name'];
-				
+				// Load the id's of items which are available in the $location
 				$opt['item_id_list'] = $this->shipping_costs_model->list_IDs_by_location($location);
 				$data['items'] = $this->items_model->get_list($opt);
+			
 			} else if($source == 'ship-from') {
-				$data['location_name'] = $this->general_model->location_by_id($location);
-				if($data['location_name'] == FALSE)
-					redirect('items');
-				
-				$data['title'] = 'Items shipped to '.$data['location_name'];
-				$data['custom_title'] = 'Shipping To: '.$data['location_name'];
+				// Simply specify the item has ship_from=$location.
 				$data['items'] = $this->items_model->get_list(array('ship_from' => $location));				
 			}
 		}
@@ -139,6 +129,15 @@ class Items extends CI_Controller {
 		if($location == '1')
 			redirect('items');	
 
+		// Set the appropriate titles.
+		if($source == 'ship-from') {
+			$data['title'] = 'Items shipped from '.$data['location_name'];
+			$data['custom_title'] = 'Shipping From: '.$data['location_name'];
+		} else if($source == 'ship-to') {
+			$data['title'] = 'Items shipped to '.$data['location_name'];
+			$data['custom_title'] = 'Shipping To: '.$data['location_name'];
+		}
+		
 		$data['page'] = 'items/index';
 		$this->load->library('Layout', $data);
 	}
@@ -170,6 +169,17 @@ class Items extends CI_Controller {
 		$data['title'] = $data['item']['name'];
 		$data['user_role'] = $this->current_user->user_role;
 		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
+		$data['browsing_currency'] = $this->current_user->currency;
+		
+		if($data['browsing_currency']['id'] !== '0' && $data['shipping_costs'] !== FALSE){
+			$this->load->model('currencies_model');
+			
+			$currency = $this->currencies_model->get($data['browsing_currency']['id']);
+
+			foreach($data['shipping_costs'] as &$cost){
+				$cost['cost'] = round($cost['cost']*$currency['rate'], 3, PHP_ROUND_HALF_UP);
+			}
+		}
 		$this->load->library('Layout', $data);
 	}
 };

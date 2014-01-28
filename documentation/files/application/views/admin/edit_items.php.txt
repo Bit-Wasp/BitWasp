@@ -9,7 +9,7 @@
 		      <div class="span7"><input type='text' class='span2' name='auto_finalize_threshold' value='<?php echo $config['auto_finalize_threshold']; ?>' /> days</div>
 			</div>
 			<div class="row-fluid">
-		      <div class="span7 offset3"><input type='checkbox' name='auto_finalize_threshold' value='1' <?php echo ($config['auto_finalize_threshold'] == '0') ? ' checked' : NULL; ?>' /> Disabled</div>
+		      <div class="span7 offset3"><input type="checkbox" name="auto_finalize_threshold" value="1" <?php echo ($config['auto_finalize_threshold'] == '0') ? ' checked' : NULL; ?>' /> Disabled</div>
 			</div>
 		    <span class="help-inline offset2"><?php echo form_error('auto_finalize_threshold'); ?></span>
 
@@ -36,13 +36,7 @@
 		    <div class="row-fluid">
 		      <div class="span2 offset1">Parent Category</div>
 			  <div class="span4">
-			    <select name='category_parent' autocomplete="off">					
-				  <option value=''></option>
-                  <option value='0'>Root Category</option>				  
-<?php foreach($categories as $category) { ?>
-				  <option value='<?php echo $category['id']; ?>'><?php echo $category['name']; ?></option>
-<?php } ?>		
-				</select>	
+			    <?php echo $categories_add_select; ?>
 			  </div>
 	          <span class="help-inline"><?php echo form_error('category_parent'); ?></span>			  
 		    </div>	
@@ -60,14 +54,7 @@
 		    
 		    <div class="row-fluid">
 			  <div class="span2 offset1">Category</div>
-			  <div class="span4">
-				<select name='rename_id' autocomplete="off">
-				  <option value=''></option>
-<?php foreach($categories as $category) { ?>
-				  <option value='<?php echo $category['id']; ?>'><?php echo $category['name']; ?></option>
-<?php } ?>				  
-				</select>
-			  </div>
+			  <div class="span4"><?php echo $categories_rename_select; ?></div>
 	          <span class="help-inline"><?php echo form_error('rename_id'); ?></span>			  			  
 		    </div>
 		    
@@ -91,12 +78,7 @@
 			<div class="row-fluid">
 			  <div class="span2 offset1">Category</div>
 			  <div class="span4">
-				<select name='delete_id' autocomplete="off">
-				  <option value=''></option>
-<?php foreach($categories as $category) { ?>
-				  <option value='<?php echo $category['id']; ?>'><?php echo $category['name']; ?></option>
-<?php } ?>		
-				</select>
+				  <?php echo $categories_delete_select; ?>
 			  </div>
 			  <span class="help-inline"><?php echo form_error('delete_id'); ?></span>
 			</div>

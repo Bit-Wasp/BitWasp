@@ -8,7 +8,7 @@
 <?php if($escrow_balance > 0) { ?>
 		  <div class="row-fluid">
 			<div class="span3">Escrow Balance</div>
-			<div class="span4">BTC <?php echo $escrow_balance; ?></div>
+			<div class="span4"><?php echo $coin['symbol']; ?> <?php echo $escrow_balance; ?></div>
 		  </div>
 <?php } ?>
 		  
@@ -48,7 +48,7 @@
 			}
 	} ?>
 				  </td>
-				  <td><?php echo 'BTC'.$order['price'];
+				  <td><?php echo $coin['symbol'].$order['price'];
 				  if($local_currency['id'] !== '0') echo '<br />'.$local_currency['symbol'].$order['price_l']; ?></td>
 				  <td><?php echo $order['progress_message']; ?></td>
 				  </form>

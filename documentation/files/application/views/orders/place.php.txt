@@ -21,17 +21,37 @@
 
 			  <div class="row-fluid">
 				<div class="span2">Price</div>
-				<div class="span5"><?php echo $local_currency['symbol'] . ' ' . $order['price_l']; ?> (+ BTC <?php echo $fees['fee']; ?> in fees)</div>
+				<div class="span5"><?php if($local_currency['id'] !== '0') {
+					echo $local_currency['symbol'] . ' ' . $order['price_l']." / "; 
+				}
+				echo $order['currency']['symbol']." ".$order['price']; ?>
+				 </div>
+			  </div>
+
+			  <div class="row-fluid">
+				<div class="span2">Fee</div>
+				<div class="span5"><?php if($local_currency['id'] !== '0') {
+					echo $local_currency['symbol']." ".round($fees['fee']*$local_currency['rate'], 2, PHP_ROUND_HALF_UP). " / ";
+				}
+				echo $order['currency']['symbol']." ".$fees['fee']; ?></div>
 			  </div>
 
 			  <div class="row-fluid">
 				<div class="span2">Shipping Cost</div>
-				<div class="span5"><?php echo $order['currency']['symbol']; ?> <?php echo $fees['shipping_cost']; ?></div>
+				<div class="span5"><?php if($local_currency['id'] !== '0') {
+						echo "{$local_currency['symbol']} ".round(($fees['shipping_cost'])*$local_currency['rate'], 2, PHP_ROUND_HALF_UP)." / ";
+					}
+				echo $order['currency']['symbol']." ".$fees['shipping_cost']; ?></div>
 			  </div>
 
 			  <div class="row-fluid">
 				<div class="span2">Total</div>
-				<div class="span5"><?php echo 'BTC '.($order['price']+$fees['total']); ?></div>
+				<div class="span5">
+					<?php if($local_currency['id'] !== '0') {
+						echo "{$local_currency['symbol']} ".round(($order['price']+$fees['total'])*$local_currency['rate'], 2, PHP_ROUND_HALF_UP)." / ";
+					}
+					echo $order['currency']['symbol']." ".($order['price']+$fees['total']); ?>
+				</div>
 			  </div>
 			  
 			  <div class="row-fluid">
