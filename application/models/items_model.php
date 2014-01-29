@@ -57,7 +57,7 @@ class Items_model extends CI_Model {
 		$this->load->model('location_model');
 		$results = array();
 		
-		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, description, main_image')
+		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, add_time, update_time, description, main_image')
 				 ->where('hidden !=', '1')
 				 ->order_by('add_time ASC');
 				 
@@ -105,6 +105,9 @@ class Items_model extends CI_Model {
 				$row['main_image'] = $this->images_model->get($row['main_image']);
 				$row['currency'] = $this->currencies_model->get($row['currency']);
 				$row['price_b'] = round(($row['price']/$row['currency']['rate']), '8', PHP_ROUND_HALF_UP);
+				$row['add_time_f'] = $this->general->format_time($row['add_time']);
+				
+				$row['update_time_f'] = $this->general->format_time($row['update_time']);
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 				$price_l = (float)($row['price_b']*$local_currency['rate']);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
@@ -153,7 +156,8 @@ class Items_model extends CI_Model {
 			$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
 			$row['price_l'] = $price_l;
 			$row['price_f'] = $local_currency['symbol'].''.$row['price_l'];
-							
+			$row['add_time_f'] = $this->general->format_time($row['add_time']);
+			$row['update_time_f'] = $this->general->format_time($row['update_time']);
 			$row['main_image'] = $this->images_model->get($row['main_image']);
 			$row['ship_from_f'] = $this->location_model->location_by_id($row['ship_from']);
 			$row['images'] = $this->images_model->by_item($hash);

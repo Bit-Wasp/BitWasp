@@ -7,7 +7,7 @@
  * 
  * @package		BitWasp
  * @subpackage	Controllers
- * @category	Items
+ * @category	Listings
  * @author		BitWasp
  * 
  */
@@ -16,11 +16,6 @@ class Listings extends CI_Controller {
 	/**
 	 * Constructor
 	 *
-	 * @access	public
-	 * @see		Models/Items_Model
-	 * @see		Models/Listings_Model
-	 * @see		Models/Currencies_Model
-	 * @see		Libraries/Image
 	 */
 	public function __construct() {
 		parent::__construct();

@@ -157,7 +157,7 @@ class Items extends CI_Controller {
 		$data['item'] = $this->items_model->get($hash);
 		if($data['item'] == FALSE) 
 			redirect('items');
-
+			
 		$this->load->model('shipping_costs_model');
 
 		$info = (array)json_decode($this->session->flashdata('returnMessage'));
