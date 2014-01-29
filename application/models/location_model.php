@@ -28,7 +28,7 @@ class Location_model extends CI_Model {
 	 * @return boolean
 	 */
 	 
-	public function get_location_heirarchy($child_location_id){
+	public function get_location_heirarchy($child_location_id) {
 		$location_heirarchy[] = $this->get_location_info($child_location_id);
 		do {
 			$previous_position = count($location_heirarchy)-1;
@@ -49,7 +49,7 @@ class Location_model extends CI_Model {
 	 * @param	string/int	id
 	 * @return	string/FALSE
 	 */
-	public function get_location_info($id){
+	public function get_location_info($id) {
 		if($this->bw_config->location_list_source == 'Default') {
 			$this->db->where('id', $id);
 			$query = $this->db->get('locations_default_list');
@@ -127,8 +127,8 @@ class Location_model extends CI_Model {
 	 * @param	string	$list
 	 * @return	array/FALSE
 	 */
-	public function get_list($list){
-		if($list == 'Default'){
+	public function get_list($list) {
+		if($list == 'Default') {
 			//Load all categories and sort by parent category
 			$this->db->order_by("parent_id asc, location asc");
 			$query = $this->db->get('locations_default_list');
@@ -191,7 +191,7 @@ class Location_model extends CI_Model {
 		if(isset($extras['worldwide']) && $extras['worldwide'] == TRUE)
 			$select.= "<option value=\"worldwide\">Worldwide</option>";
 		
-		foreach($locations as $cat){
+		foreach($locations as $cat) {
 			$select.= $this->generate_select_list_recurse($cat, $selected);
 		}
 		$select.= '</select>';
@@ -210,13 +210,13 @@ class Location_model extends CI_Model {
 	 * @param	array	$array
 	 * @return	string
 	 */
-	public function generate_select_list_recurse($array, $selected){
+	public function generate_select_list_recurse($array, $selected) {
 		
-		if(isset($array['children']) && is_array($array['children'])){
+		if(isset($array['children']) && is_array($array['children'])) {
 			$select_txt = '';
 			if($selected !== FALSE && $array['id'] == $selected) $select_txt = ' selected="selected" ';
 			$output = "<option style=\"font-weight:bold;\" value=\"{$array['id']}\"{$select_txt}>{$array['location']}</option>\n";
-			foreach($array['children'] as $child){
+			foreach($array['children'] as $child) {
 				$output.= $this->generate_select_list_recurse($child, $selected);
 			}
 		} else {

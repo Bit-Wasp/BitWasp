@@ -237,18 +237,27 @@ class Categories_model extends CI_Model {
 	 * This function creates a <select> menu to select categories, which
 	 * displays parent categories in bold. When chosing a category, if
 	 * block_access_to_parent_category is used in form validation, the bold 
-	 * categories will be disallowed. The name of the post variable is 'category'.
+	 * categories will be disallowed. The name of the post variable is $param_name,
+	 * and the class for the tag is $class. You can set an ID to be $selected
+	 * by default in the select box, otherwise leave it at FALSE, and $extras
+	 * is an array containing optional features. array('root' => TRUE) will 
+	 * display the root category as an option.
 	 * 
 	 * It uses a recursive function, generate_select_list_recurse() to
 	 * recurse into the multidimensional array to show child/parent
 	 * categories.
 	 * 
+	 * @param	string	$param_name
+	 * @param	string	$class
 	 * @return	string
 	 */
-	public function generate_select_list($param_name, $class, $selected = FALSE) {
+	public function generate_select_list($param_name, $class, $selected = FALSE, $extras = array()) {
 		$cats = $this->menu();
 		$select = "<select name=\"{$param_name}\" class='{$class}' autocomplete=\"off\">\n<option value=\"\"></option>";
-		foreach($cats as $cat){
+		if(isset($extras['root']) && $extras['root'] == TRUE) 
+			$select.= "<option style=\"font-weight:bold;\" value=\"0\">Root Category</option>";
+
+		foreach($cats as $cat) {
 			$select.= $this->generate_select_list_recurse($cat, $selected);
 		}
 		$select.= '</select>';
@@ -267,13 +276,13 @@ class Categories_model extends CI_Model {
 	 * @param	array	$array
 	 * @return	string
 	 */
-	public function generate_select_list_recurse($array, $selected){
+	public function generate_select_list_recurse($array, $selected) {
 		
-		if(isset($array['children']) && is_array($array['children'])){
+		if(isset($array['children']) && is_array($array['children'])) {
 			$select_txt = '';
 			if($selected !== FALSE && $array['id'] == $selected) $select_txt = ' selected="selected" ';
 			$output = "<option style=\"font-weight:bold;\" value=\"{$array['id']}\"{$select_txt}>{$array['name']}</option>\n";
-			foreach($array['children'] as $child){
+			foreach($array['children'] as $child) {
 				$output.= $this->generate_select_list_recurse($child, $selected);
 			}
 		} else {

@@ -559,7 +559,7 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('categories_model');		
 		$data['nav'] = $this->generate_nav();
-		$data['categories_add_select'] = $this->categories_model->generate_select_list('category_parent', 'span10');
+		$data['categories_add_select'] = $this->categories_model->generate_select_list('category_parent', 'span10', FALSE, array('root' => TRUE));
 		$data['categories_rename_select'] = $this->categories_model->generate_select_list('rename_id', 'span10');
 		$data['categories_delete_select'] = $this->categories_model->generate_select_list('delete_id', 'span10');
 		$data['config'] = $this->bw_config->load_admin('items');
