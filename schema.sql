@@ -219,6 +219,7 @@ CREATE TABLE IF NOT EXISTS `bw_items` (
   `description` blob NOT NULL,
   `main_image` varchar(20) NOT NULL,
   `add_time` int(20) NOT NULL,
+  `update_time` int(20) DEFAULT 0,
   `hidden` enum('0','1') NOT NULL,
   `ship_from` int(5) NOT NULL,
   PRIMARY KEY (`id`),
