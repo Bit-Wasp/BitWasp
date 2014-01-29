@@ -32,11 +32,37 @@ class Location_model extends CI_Model {
 		$location_heirarchy[] = $this->get_location_info($child_location_id);
 		do {
 			$previous_position = count($location_heirarchy)-1;
-			$location_heirarchy[] = $this->get_location_info($location_heirarchy[$previous_position]['parent_id']);	
-		} while($location_heirarchy[($previous_position+1)]['parent_id'] !== '0');
+			$current = $this->get_location_info($location_heirarchy[$previous_position]['parent_id']);	
+			$location_heirarchy[] = $current;
+		} while($location_heirarchy[($previous_position)]['parent_id'] !== '0' && $current['parent_id'] !== '0');
 	
 		return $location_heirarchy;
 	}
+
+	/**
+	 * Get Location Info
+	 * 
+	 * Function to get the array of information describing a location, 
+	 * specified by it's ID. Returns FALSE on failure, otherwise the 
+	 * database record for the location.
+	 * 
+	 * @param	string/int	id
+	 * @return	string/FALSE
+	 */
+	public function get_location_info($id){
+		if($this->bw_config->location_list_source == 'Default') {
+			$this->db->where('id', $id);
+			$query = $this->db->get('locations_default_list');
+			
+		} else if($this->bw_config->location_list_source == 'Custom') {
+			$this->db->where('id', $id);
+			$query = $this->db->get('locations_custom_list');
+		} else {
+			return FALSE;
+		}
+		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
+	}
+
 	
 	/**
 	 * Get Child Locations
@@ -78,6 +104,7 @@ class Location_model extends CI_Model {
 	public function validate_user_child_location($required_parent_id, $user_location_id) {
 		
 		$location_heirarchy = $this->get_location_heirarchy($user_location_id);
+		
 		$required_location_found = FALSE;
 		foreach($location_heirarchy as $location) {
 		
@@ -247,31 +274,6 @@ class Location_model extends CI_Model {
 			
 		$location = $this->get_location_info($id);
 		return ($location == FALSE) ? FALSE : $location['location'];
-	}
-
-	/**
-	 * Get Location Info
-	 * 
-	 * Function to get the array of information describing a location, 
-	 * specified by it's ID. Returns FALSE on failure, otherwise the 
-	 * database record for the location.
-	 * 
-	 * @param	string/int	id
-	 * @return	string/FALSE
-	 */
-	public function get_location_info($id){
-		if($this->bw_config->location_list_source == 'Default') {
-			$this->db->where('id', $id);
-			$query = $this->db->get('locations_default_list');
-			
-		} else if($this->bw_config->location_list_source == 'Custom') {
-			$this->db->where('id', $id);
-			$query = $this->db->get('locations_custom_list');
-		} else {
-			return FALSE;
-		}
-		
-		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 
 	/**

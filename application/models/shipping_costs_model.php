@@ -22,6 +22,15 @@ class Shipping_costs_model extends CI_Model {
 		parent::__construct();
 	}
 
+	/**
+	 * Get Item Hash
+	 * 
+	 * This helper function obtains the item hash for the item $id.
+	 * Returns the hash if the item exists, or FALSE on failure.
+	 * 
+	 * @param	int $id
+	 * @return	string/FALSE
+	 */
 	public function get_item_hash($id){
 		$this->db->select('hash');
 		$this->db->where('id', $id);
@@ -33,6 +42,23 @@ class Shipping_costs_model extends CI_Model {
 		return FALSE;
 	}
 	
+	/**
+	 * For Item Raw
+	 * 
+	 * Load the raw array of shipping information for the $item_id. Returning
+	 * results for locations not currently on offer is possible by setting
+	 * $all to TRUE.
+	 * 
+	 * This is used to display the shipping configuration format, where
+	 * converting to bitcoins is not desired if the item has a different
+	 * currency.
+	 * This information returned by this functioncanbe parsed by the for_item()
+	 * function.
+	 * 
+	 * @param	int	$item_id
+	 * @param	boolean(optional) 
+	 * @return	array/FALSE
+	 */
 	public function for_item_raw($item_id, $all = FALSE) {
 		$this->load->model('items_model');
 		$this->load->model('location_model');
@@ -54,8 +80,9 @@ class Shipping_costs_model extends CI_Model {
 	/**
 	 * For Item
 	 * 
-	 * Loads the array of shipping costs for a specified item. Returns
-	 * the array if successful, or FALSE if no entries exist.
+	 * Loads the raw array of shipping costs for a specified item. Then
+	 * it processes this, to convert the values to the BTC for universal use.
+	 * Returns an array if successful, or FALSE if no entries exist.
 	 * 
 	 * @param	int	$item_id
 	 * @return	array/FALSE
@@ -104,9 +131,7 @@ class Shipping_costs_model extends CI_Model {
 	 */
 	public function find_location_cost($item_id, $user_location_id) {
 		$this->load->model('location_model');
-		
 		$costs_list = $this->for_item($item_id);
-		
 		foreach($costs_list as $destination_id => $cost_info) {
 			if($destination_id == 'worldwide')
 				$worldwide = $cost_info;
@@ -114,7 +139,6 @@ class Shipping_costs_model extends CI_Model {
 			if($this->location_model->validate_user_child_location($destination_id, $user_location_id) !== FALSE)
 				$btc_cost = $cost_info;
 		}
-		
 		return (isset($worldwide)) ? $worldwide : FALSE;
 	}
 	

@@ -328,12 +328,10 @@ class Orders extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('accounts_model');
 		$this->load->model('shipping_costs_model');
-		$this->load->model('location_model');
-		
 		$item_info = $this->items_model->get($item_hash);
-		if($item_info == FALSE) 
+		if($item_info == FALSE) {
 			redirect('items');
-
+		}
 		$account = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
 		$shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $account['location']);
 		if($shipping_costs == FALSE && !isset($shipping_costs['worldwide'])) {
