@@ -52,7 +52,7 @@ class Listings_model extends CI_Model {
 		return ($this->db->delete('items') == TRUE) ? TRUE : FALSE;
 	}
 	
-	public function my_listings(){
+	public function my_listings() {
 		$this->db->select('id, hash, price, currency, hidden, category, name, description, main_image');
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
 		$this->db->order_by('add_time', 'asc');

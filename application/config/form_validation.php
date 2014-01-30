@@ -380,13 +380,13 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'location',
 											  'label' => 'Parent location',
-											  'rules' => 'callback_check_location_exists'
+											  'rules' => 'callback_check_custom_parent_location_exists'
 										)
 							),
 				'admin_delete_custom_location' => array(
 										array('field' => 'location',
 											  'label' => 'Location',
-											  'rules' => 'callback_check_location_exists'
+											  'rules' => 'callback_check_location'
 										)
 							),
 				'admin_update_location_list_source' => array(

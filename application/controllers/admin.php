@@ -1268,7 +1268,7 @@ class Admin extends CI_Controller {
 		
 		$data['list_source'] = $this->bw_config->location_list_source;
 	
-		$data['locations_parent'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8', FALSE, TRUE);
+		$data['locations_parent'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8', FALSE, array('root'=>TRUE));
 		$custom_locations_array = $this->location_model->get_list('Custom');
 		$data['locations_human_readable'] = $this->location_model->menu_human_readable($custom_locations_array, 0, '');
 
@@ -1599,13 +1599,32 @@ class Admin extends CI_Controller {
 	/**
 	 * Check Location Exists
 	 * 
+	 * This function checks if the supplied location id is either the
+	 * root location, or else checks if it is a valid custom location. 
+	 * If the value is zero, it is accepted by default. 
+	 * Returns a boolean indicating outcome.
+	 * 
+	 * @param	int	$param
+	 * @return	boolean
+	 */
+	public function check_custom_parent_location_exists($param){
+		if($param == '0')
+			return TRUE;
+			
+		return ($this->location_model->custom_location_by_id($param) !== FALSE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Location Exists
+	 * 
 	 * This function checks if the supplied location id exists in the 
-	 * list of locations. Returns a boolean indicating outcome.
+	 * list of locations. If the value is zero, it is accepted by default.
+	 * Returns a boolean indicating outcome.
 	 * 
 	 * @param	string	$param
 	 * @return	boolean
 	 */
-	public function check_location_exists($param){
+	public function check_location($param){
 		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 	
@@ -1623,21 +1642,7 @@ class Admin extends CI_Controller {
 		$user = $this->accounts_model->get(array('user_hash' => $param));
 		return ($user == FALSE) ? FALSE : TRUE;
 	}
-	/**
-	 * Check Valid Parent Location
-	 * 
-	 * Checks if the supplied location $id is allowed. Accepts 0 for the
-	 * root category, and otherwise checks if the parent category exists.
-	 * 
-	 * @param	int	$id
-	 * @return	boolean
-	 */
-	public function check_valid_parent_location($id) {
-		if($id == '0')
-			return TRUE;
-			
-		return ($this->location_model->location_by_id($id) !== FALSE) ? TRUE : FALSE;
-	}
+	
 };
 
 /* End of file: Admin.php */

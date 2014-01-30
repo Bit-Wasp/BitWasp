@@ -26,8 +26,7 @@ class Location_model extends CI_Model {
 	 * parent location, and so on, until it hits the root category.
 	 * 
 	 * @return boolean
-	 */
-	 
+	 */	 
 	public function get_location_heirarchy($child_location_id) {
 		$location_heirarchy[] = $this->get_location_info($child_location_id);
 		do {
@@ -63,7 +62,6 @@ class Location_model extends CI_Model {
 		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 
-	
 	/**
 	 * Get Child Locations
 	 * 
@@ -80,15 +78,14 @@ class Location_model extends CI_Model {
 
 		foreach ($array as $entry) {
 			if ($entry['parent_id'] == $id) 
-				$results[] = $el;
+				$results[] = $entry;
 			
 			if (isset($entry['children']) && count($entry['children']) > 0 && ($children = $this->get_child_locations($entry['children'], $id)) !== FALSE) 
 				$results = array_merge($results, $children);
 		}
 		return count($results) > 0 ? $results : FALSE;
 	}
-	
-	
+		
 	/**
 	 * Validate User Child Location
 	 * 
@@ -110,9 +107,9 @@ class Location_model extends CI_Model {
 		
 			if($location['id'] == $required_parent_id)
 				$required_location_found = TRUE;
+		
 			if($location['parent_id'] == $required_parent_id)
 				$required_location_found = TRUE;
-			
 		} 
 	
 		return $required_location_found;
@@ -174,12 +171,22 @@ class Location_model extends CI_Model {
 	 * This function creates a <select> menu to select categories, which
 	 * displays parent categories in bold. When chosing a category, if
 	 * block_access_to_parent_category is used in form validation, the bold 
-	 * categories will be disallowed. The name of the post variable is 'category'.
+	 * categories will be disallowed. The name of the post variable is 
+	 * set by $param_name, and the class for the tag is $class. An ID can
+	 * be selected by default on the page by setting $selected to the id,
+	 * otherwise leave it set to FALSE. Optional parameters can be set
+	 * in $extras: array('root' => TRUE) or array('worldwide' => TRUE) can
+	 * be set to display an option for the Root Location, or Worldwide.
 	 * 
 	 * It uses a recursive function, generate_select_list_recurse() to
 	 * recurse into the multidimensional array to show child/parent
 	 * categories.
 	 * 
+	 * @param	string	$list_type
+	 * @param	string	$param_name
+	 * @param	string	$class
+	 * @param	FALSE/string	$selected
+	 * @param	array	$extras
 	 * @return	string
 	 */
 	public function generate_select_list($list_type, $param_name, $class, $selected = FALSE, $extras = array()) {
@@ -187,7 +194,7 @@ class Location_model extends CI_Model {
 		$select = "<select name=\"{$param_name}\" class='{$class}' autocomplete=\"off\">\n";
 		$select.= "<option value=\"\"></option>\n";
 		if(isset($extras['root']) && $extras['root'] == TRUE)
-			$select.= "<option value=\"0\">Root Category</option>";
+			$select.= "<option style=\"font-weight:bold;\" value=\"0\">Root Category</option>";
 		if(isset($extras['worldwide']) && $extras['worldwide'] == TRUE)
 			$select.= "<option value=\"worldwide\">Worldwide</option>";
 		
@@ -277,6 +284,26 @@ class Location_model extends CI_Model {
 	}
 
 	/**
+	 * Custom Location By Id
+	 * 
+	 * This function takes an $id, and checks if this custom location exists.
+	 * Returns an array of information if it exists, or FALSE if it does 
+	 * not.
+	 * 
+	 * @param	int	$id
+	 * @return	array/FALSE
+	 */
+	public function custom_location_by_id($id){
+		$this->db->where('id', $id);
+		$query = $this->db->get('locations_custom_list');
+		if($query->num_rows() > 0) {
+			return $query->row_array();
+		} else {
+			return FALSE;
+		}
+	}
+
+	/**
 	 * Menu Human Readable
 	 * 
 	 * This is a recursive function which displays a heirarchy of locations
@@ -315,7 +342,6 @@ class Location_model extends CI_Model {
 
 		return $content;
 	}
-
 
 };
 
