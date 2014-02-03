@@ -116,7 +116,6 @@ INSERT INTO `bw_config` (`id`, `parameter`, `value`) VALUES
 (33, 'terms_of_service_toggle', '0'),
 (34, 'location_list_source', 'Default');
 
-
 CREATE TABLE IF NOT EXISTS `bw_currencies` (
   `id` int(9) NOT NULL,
   `name` varchar(40) NOT NULL,
@@ -135,6 +134,7 @@ CREATE TABLE IF NOT EXISTS `bw_disputes` (
   `dispute_message` text NOT NULL,
   `admin_message` text NOT NULL,
   `disputing_user_id` int(9) NOT NULL,
+  `other_user_id` int(9) NOT NULL,
   `last_update` varchar(20) NOT NULL,
   `order_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
