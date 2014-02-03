@@ -1260,19 +1260,18 @@ class Admin extends CI_Controller {
 
 		if($this->input->post('delete_custom_location') == 'Submit') {
 			if($this->form_validation->run('admin_delete_custom_location') == TRUE) {
-				
-				if($this->location_model->delete_custom_location($this->input->post('location')) == TRUE)
+				if($this->location_model->delete_custom_location($this->input->post('location_delete')) == TRUE)
 					redirect('admin/locations');
 			}
 		}
 		
 		$data['list_source'] = $this->bw_config->location_list_source;
 	
-		$data['locations_parent'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8', FALSE, array('root'=>TRUE));
+		$data['locations_parent'] = $this->location_model->generate_select_list('Custom', 'location', 'span8', FALSE, array('root'=>TRUE));
 		$custom_locations_array = $this->location_model->get_list('Custom');
 		$data['locations_human_readable'] = $this->location_model->menu_human_readable($custom_locations_array, 0, '');
 
-		$data['locations_delete'] = $this->location_model->generate_select_list($data['list_source'], 'location', 'span8');
+		$data['locations_delete'] = $this->location_model->generate_select_list('Custom', 'location_delete', 'span8');
 		$data['page'] = 'admin/locations';
 		$data['title'] = 'Configure Locations';
 		$this->load->library('Layout', $data);
@@ -1624,8 +1623,8 @@ class Admin extends CI_Controller {
 	 * @param	string	$param
 	 * @return	boolean
 	 */
-	public function check_location($param){
-		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
+	public function check_custom_location_exists($param){
+		return ($this->location_model->custom_location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 	
 	/**

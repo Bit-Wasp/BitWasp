@@ -384,9 +384,9 @@ $config = array('register_form'=>array(
 										)
 							),
 				'admin_delete_custom_location' => array(
-										array('field' => 'location',
+										array('field' => 'location_delete',
 											  'label' => 'Location',
-											  'rules' => 'callback_check_location'
+											  'rules' => 'callback_check_custom_location_exists'
 										)
 							),
 				'admin_update_location_list_source' => array(

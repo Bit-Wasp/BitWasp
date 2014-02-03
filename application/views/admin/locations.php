@@ -66,7 +66,7 @@
 			  </div>
 			  <div class="row-fluid">
 				<div class="span5 offset3">
-				  <span class="help-inline"><?php echo form_error('location'); ?></span><br />
+				  <span class="help-inline"><?php echo form_error('location_delete'); ?></span><br />
 				  <input type="submit" name="delete_custom_location" value="Submit" class="btn" />
 				</div>
 			  </div>
