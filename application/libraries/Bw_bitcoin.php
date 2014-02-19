@@ -389,7 +389,7 @@ class Bw_bitcoin {
 	 * Don't know why they'd do this, but this way we do the accounting properly.
 	 * 
 	 * @param		string	$txn_hash
-	 */			
+	 */
 	public function walletnotify($txn_hash) {
 
 		$transaction = $this->gettransaction($txn_hash);
@@ -406,17 +406,14 @@ class Bw_bitcoin {
 			if($detail['category'] == 'receive')
 				array_push($receive, $detail);
 		}
-		echo "wallet notify\n";
 
 		// Work out if the transaction is for a registration payment.
 		if(isset($receive[0]) && $receive[0]['account'] == 'fees' && $receive[0]['category'] == "receive") {
 			$this->CI->load->model('users_model');
 			$address = $receive[0]['address'];
-			echo 'received funds on '.$address."\n";
-			
+
 			$user_hash = $this->CI->users_model->get_payment_address_owner($address);
 			if($user_hash !== FALSE) {
-				echo "user hash found: ".$user_hash."\n";
 				// Add payment.
 				$update = array('txn_id' => $txn_hash,
 								'user_hash' => $user_hash,
@@ -426,20 +423,14 @@ class Bw_bitcoin {
 								'category' => 'receive',
 								'credited' => '0',
 								'time' => $transaction['time']);
-				
+
 				// If we don't have the payment, add it.
 				if($this->CI->bitcoin_model->user_transaction($user_hash, $txn_hash, $update['category']) == FALSE) {
-					echo "dont already have payment, add it\n";
 					$this->CI->bitcoin_model->add_pending_txn($update);
-				
-				} else {
-					echo "FAIL USER TXN\n";
 				}
-			} else {
-				echo "FAIL OWNER NOT FOUND\n";
 			}
 		}
-		
+
 		// Work out if the transaction is cashing out anything.
 		if(isset($send[0]) && $send[0]['account'] == "main" && $send[0]['category'] == "send") {
 			$user_hash = $this->CI->bitcoin_model->get_cashout_address_owner($send[0]['address']);
