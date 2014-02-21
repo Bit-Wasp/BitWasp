@@ -70,7 +70,7 @@ class GPG {
 			
 		} else {
 			// User does not have a GPG extension.
-			$this->have_GPG = FALSE;
+			die('GnuPG not installed');
 		}
 	}
 	
@@ -108,11 +108,12 @@ class GPG {
 		} else if($this->style == 'proc') {
 			$info = gnupg_import($this->gpg, $key);
 		} 
+		print_r($info);
 		if(isset($info['fingerprint'])) {
 			$info['clean_key'] = htmlentities($key);
 			return $info;
 		}
-				
+		
 		return FALSE;
 	}
 	

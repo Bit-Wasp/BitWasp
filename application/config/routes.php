@@ -1,3 +1,4 @@
+
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------------
@@ -75,9 +76,13 @@ $route['listings/delete_image/(:any)'] = 'listings/delete_image/$1';
 
 $route['item/(:any)'] = 'items/get/$1';
 $route['items'] = 'items/index';
-$route['location/(:any)'] = 'items/location/$1';
+$route['items/(:any)'] = 'items/index/$1';
+$route['location/(:any)/(:any)/(:num)'] = 'items/location/$1/$2/$3';
 $route['location/(:any)/(:any)'] = 'items/location/$1/$2';
+$route['location/(:any)'] = 'items/location/$1';
+$route['category/(:any)/(:num)'] = 'items/category/$1/$2';
 $route['category/(:any)'] = 'items/category/$1';
+
 
 // Bitcoin testing functions. Remove before production!!
 $route['bitcoin/i'] = 'bitcoin_test/index';
@@ -103,6 +108,7 @@ $route['admin/edit/autorun'] = 'admin/edit_autorun';
 $route['admin/category/orphans/(:any)'] = 'admin/category_orphans/$1';
 $route['admin/items/fees'] = 'admin/fees';
 $route['admin/users/delete/(:any)'] = 'admin/user_delete/$1';
+$route['admin/users/list/(:num)'] = 'admin/user_list/$1';
 $route['admin/users/list'] = 'admin/user_list';
 $route['admin/delete_item/(:any)'] = 'admin/delete_item/$1';
 $route['admin/tokens'] = 'admin/user_tokens';

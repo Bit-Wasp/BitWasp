@@ -194,9 +194,9 @@ class Location_model extends CI_Model {
 		$select = "<select name=\"{$param_name}\" class='{$class}' autocomplete=\"off\">\n";
 		$select.= "<option value=\"\"></option>\n";
 		if(isset($extras['root']) && $extras['root'] == TRUE)
-			$select.= "<option style=\"font-weight:bold;\" value=\"0\">Root Category</option>";
+			$select.= "<option style=\"font-weight:bold;\" value=\"0\">Root Location</option>";
 		if(isset($extras['worldwide']) && $extras['worldwide'] == TRUE)
-			$select.= "<option value=\"worldwide\">Worldwide</option>";
+			$select.= "<option style=\"font-weight:bold;\" value=\"worldwide\">Worldwide</option>";
 		
 		foreach($locations as $cat) {
 			$select.= $this->generate_select_list_recurse($cat, $selected);

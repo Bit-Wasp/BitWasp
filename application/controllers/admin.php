@@ -268,7 +268,7 @@ class Admin extends CI_Controller {
 	 * URI: /admin/edit/bitcoin
 	 * 
 	 * If the user submitted the Price Index form, we check for updates.
-	 * If the source specified exists, then update the config setting.
+u	 * If the source specified exists, then update the config setting.
 	 * + If the source was previously disabled, re-setup the periodic updates.
 	 * + Trigger a new update from the new price index.
 	 * If the source is set to disabled, then disable the periodic updates.
@@ -1071,12 +1071,23 @@ class Admin extends CI_Controller {
 	 * such as the user id, last login time, registration time, etc.
 	 * The order can be randomized, or just ordered ascending or descending.
 	 */
-	public function user_list() {
+	public function user_list($start = 0) {
 		$this->load->library('form_validation');
-		$this->load->model('users_model');
+		$this->load->library('pagination');
+		$this->load->model('users_model');		
+
+		$user_params = array();
+				
+		$pagination = array();
+		$pagination["base_url"] = site_url("admin/users/list");
+		$pagination["total_rows"] = $this->users_model->count_user_list($user_params);
+		$pagination["per_page"] = 40;
+		$pagination["uri_segment"] = 4;
+		$pagination["num_links"] = round($pagination["total_rows"] / $pagination["per_page"]);
+		$this->pagination->initialize($pagination);
 		
-		$params = array();
-		$data['users'] = $this->users_model->user_list();
+		$data['links'] = $this->pagination->create_links();		
+		$data['users'] = $this->users_model->user_list($user_params, $pagination['per_page'], $start);
 		
 		$returnMessage = json_decode($this->session->flashdata('returnMessage'));
 		if($returnMessage !== NULL) {
@@ -1085,7 +1096,6 @@ class Admin extends CI_Controller {
 			$data['returnMessage'] = $returnMessage->returnMessage;
 		}
 		
-		
 		// If the user is searching for by username.
 		if($this->input->post('search_username') == 'Search') {
 			if($this->form_validation->run('admin_search_username') == TRUE){
@@ -1093,7 +1103,8 @@ class Admin extends CI_Controller {
 				// Search for the user.
 				$user_name = $this->input->post('user_name');
 				$data['users'] = $this->users_model->search_user($user_name);
-
+				$data['links'] = '';
+				
 				// If the search fails, indicate the failed search error. 
 				if($data['users'] == FALSE) 
 					$data['search_fail'] = TRUE;
@@ -1101,7 +1112,7 @@ class Admin extends CI_Controller {
 
 		} else if($this->input->post('list_options') == 'Search') {
 			// If the user is listing users
-
+			$data['links'] = '';
 			if($this->form_validation->run('admin_search_user_list') == TRUE) {
 			
 				// Gather the search terms.
@@ -1165,6 +1176,7 @@ class Admin extends CI_Controller {
 				if($data['users'] == FALSE)
 					$data['search_fail'] = TRUE;
 			}
+		
 		}
 		
 		$data['page'] = 'admin/user_list';
@@ -1172,6 +1184,13 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
+	/**
+	 * User Delete
+	 * 
+	 * This page allows an administrator to delete a user. 
+	 * 
+	 * @param	string	$user_hash
+	 */
 	public function user_delete($user_hash) {
 		
 		$this->load->model('users_model');
@@ -1233,6 +1252,16 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout',$data);
 	}
 
+	/**
+	 * Locations
+	 * 
+	 * This page allows adminstrators to configure the sites location source.
+	 * A default list of countries, or a user-defined list can be chosen.
+	 * Admins can add locations to a multi-dimensional list, or delete them.
+	 * A graphical representation of this array of locations is displayed 
+	 * at the bottom of the page.
+	 * 
+	 */
 	public function locations() {
 		
 		$this->load->library('form_validation');
@@ -1346,7 +1375,7 @@ class Admin extends CI_Controller {
 	/**
 	 * Check YesNo
 	 * 
-	 * Checks if the suppli8ed parameter is 0 or 1. Same as check_bool, 
+	 * Checks if the supplied parameter is 0 or 1. Same as check_bool, 
 	 * but uses a different error message
 	 * 
 	 * @param	int	$param

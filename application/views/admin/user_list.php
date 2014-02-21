@@ -4,6 +4,8 @@
 		  <?php if(isset($returnMessage)) { ?>
 		  <div class='alert<?php if(isset($success) == TRUE) echo ' alert-success'; ?>'><?php echo $returnMessage; ?></div>
 		  <?php } ?>
+		  
+		  <?php echo $links; ?>
 
 		  <p><?php echo anchor('admin/users/list#Search','Click here to search for a user'); ?></p>
 		 

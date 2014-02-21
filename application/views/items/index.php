@@ -9,6 +9,10 @@
 	echo 'It is recommended that you update your location.<Br />';
 ?>
 
+	<div class='row-fluid'>
+		<?php echo $links; ?>
+	</div>
+
 <?php if($items !== FALSE && count($items) > 0) { ?>
 		  <div class='row-fluid'>
 <?php foreach ($items as $item): ?>
@@ -21,7 +25,6 @@
                 <?php echo anchor('item/'.$item['hash'], $item['name']);?>
                 <div class="price">Price: <span class="priceValue"><?php echo $item['price_f'];?></div>
                 <div class="vendor"><?php echo anchor('user/'.$item['vendor']['user_hash'],$item['vendor']['user_name']); ?></div>
-                <!--<div class="rating">item Rating: <?php echo $item['rating'];?>/5</div>-->
               </div>
 	        </div>
 	        

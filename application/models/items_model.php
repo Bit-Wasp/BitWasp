@@ -42,6 +42,66 @@ class Items_model extends CI_Model {
 	public function delete($id) {
 		$this->db->where('id', $id);
 		return ($this->db->delete('items') == TRUE) ? TRUE : FALSE;
+	} 
+	
+	/**
+	 * Get Count
+	 * 
+	 * Accepts an array containing the options for items, and returns
+	 * the total number of requests. 
+	 * 
+	 * @param	$opt
+	 * @return	int
+	 */
+	public function get_count($opt = array()){
+		$this->db->select('id')
+				 ->where('hidden !=', '1')
+				 ->order_by('add_time DESC');
+				 
+		// Add on extra options.
+		if(count($opt) > 0) {
+			// If there is a list of item ID's to load..
+			if(isset($opt['item_id_list'])) {
+				$use_id_list = TRUE;
+				$use_id_count = 0;
+				if($opt['item_id_list'] !== FALSE && count($opt['item_id_list']) > 0) {
+					foreach($opt['item_id_list'] as $item_id) {
+						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
+						$use_id_count++;
+					}
+				} else {
+					return 0;
+				}
+				
+				// Remove this option to avoid issues with the next step.
+				unset($opt['item_id_list']);
+			}
+			
+			foreach($opt as $key => $val) {
+				$this->db->where("$key", "$val");
+			}
+		}
+		$this->db->from("items");
+		return $this->db->count_all_results();
+	}
+	
+	/**
+	 * Pagination Links
+	 * 
+	 * @param	array	$items_config
+	 * @param	string	base_url
+	 * @param	int	
+	 */
+	public function pagination_links($items_config, $base_url, $url_segment){
+		$this->load->library('pagination');
+		$pagination = array();
+		$pagination["base_url"] = $base_url;
+		$pagination["total_rows"] = $this->get_count($items_config);
+		$pagination["per_page"] = 16;
+		$pagination["uri_segment"] = $url_segment;
+		$pagination["num_links"] = round($pagination["total_rows"] / $pagination["per_page"]);
+		$this->pagination->initialize($pagination);
+		return $this->pagination->create_links();
 	}
 	
 	/**
@@ -53,14 +113,87 @@ class Items_model extends CI_Model {
 	 * @param	array	$opt
 	 * @return	bool
 	 */					
+	public function get_list_pages($opt = array(), $start) {
+		$this->load->model('location_model');
+		$results = array();
+		
+		$limit = 16;
+		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, add_time, update_time, description, main_image')
+				 ->where('hidden !=', '1')
+				 ->order_by('add_time DESC')
+				 ->limit($limit, $start);
+				 
+		// Add on extra options.
+		if(count($opt) > 0) {
+			// If there is a list of item ID's to load..
+			if(isset($opt['item_id_list'])) {
+				$use_id_list = TRUE;
+				$use_id_count = 0;
+				if($opt['item_id_list'] !== FALSE && count($opt['item_id_list']) !== 0) {
+					foreach($opt['item_id_list'] as $item_id) {
+						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
+						$use_id_count++;
+					}
+				}
+				
+				// Remove this option to avoid issues with the next step.
+				unset($opt['item_id_list']);
+			}
+			
+			foreach($opt as $key => $val) {
+				$this->db->where("$key", "$val");
+			}
+		}
+				 
+		// Get the list of items.
+		$query = $this->db->get('items');
+
+		// Check that if we were meant to load a list that it was successful.
+		if(isset($use_id_list) && $use_id_count == 0)
+			return FALSE;
+		
+		if($query->num_rows() > 0) {
+			foreach($query->result_array() as $row) {
+
+				// Load vendor information. Skip item if the user is banned.
+				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
+				if($row['vendor']['banned'] == '1')
+					continue;
+					
+				// Load information about the items.
+				$row['description_s'] = substr(strip_tags($row['description']),0,70);
+				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
+				$row['main_image'] = $this->images_model->get($row['main_image']);
+				$row['currency'] = $this->currencies_model->get($row['currency']);
+				$row['price_b'] = round(($row['price']/$row['currency']['rate']), '8', PHP_ROUND_HALF_UP);
+				$row['add_time_f'] = $this->general->format_time($row['add_time']);
+				
+				$row['update_time_f'] = $this->general->format_time($row['update_time']);
+				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
+				$price_l = (float)($row['price_b']*$local_currency['rate']);
+				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
+				$row['price_l'] = $price_l;
+				$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];
+
+				$row['images'] = $this->images_model->by_item($row['id']);
+				array_push($results, $row);
+				
+			}
+		} else {
+			$results = array();
+		}	
+		
+		return $results;
+		
+	}
+	
 	public function get_list($opt = array()) {
 		$this->load->model('location_model');
 		$results = array();
 		
 		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, add_time, update_time, description, main_image')
 				 ->where('hidden !=', '1')
-				 ->order_by('add_time ASC');
-				 
+				 ->order_by('add_time DESC');				 
 		// Add on extra options.
 		if(count($opt) > 0) {
 			
@@ -125,6 +258,7 @@ class Items_model extends CI_Model {
 		return $results;
 		
 	}
+	
 	
 	/**
 	 * Get

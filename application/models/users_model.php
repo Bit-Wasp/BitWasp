@@ -341,15 +341,9 @@ class Users_model extends CI_Model {
 		 return ($this->db->delete('entry_payment') == TRUE) ? TRUE : FALSE;
 	} 
 	
-	/**
-	 * List Users
-	 * 
-	 * Display a list of users. Can supply a list of parameters, 
-	 * 
-	 * @param	array	(opt)$params
-	 * @return	array/FALSE
-	 */
-	public function user_list($params = array()) {
+	public function count_user_list($params) {
+		$this->db->select('id');
+		
 		if(isset($params['order_by'])) {
 			$this->db->order_by("{$params['order_by']}", "{$params['list']}");
 			unset($params['order_by']);
@@ -359,6 +353,36 @@ class Users_model extends CI_Model {
 		foreach($params as $column => $value) {
 			$this->db->where("{$column}", "{$value}");
 		}
+		
+		$this->db->from('users');
+		return $this->db->count_all_results();
+	}
+	
+	/**
+	 * List Users
+	 * 
+	 * Display a list of users. Can supply a list of parameters to narrow
+	 * down the dataset, and also does pagination.
+	 * 
+	 * @param	array	(opt)$params
+	 * @param	int	$users_per_page
+	 * @param	int $start
+	 * @return	array/FALSE
+	 */
+	public function user_list($params = array(), $users_per_page, $start) {
+		if(isset($params['order_by'])) {
+			$this->db->order_by("{$params['order_by']}", "{$params['list']}");
+			unset($params['order_by']);
+			unset($params['list']);
+		}	
+		
+		// Apply the conditions in $params
+		foreach($params as $column => $value) {
+			$this->db->where("{$column}", "{$value}");
+		}
+		
+		// Pagination 
+		$this->db->limit($users_per_page, $start);
 		
 		$query = $this->db->get('users');
 		if($query->num_rows() > 0) {
