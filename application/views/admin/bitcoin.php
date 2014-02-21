@@ -10,7 +10,7 @@
 if($bitcoin_info == NULL) { ?>
 		    <div class="row-fluid">
 			  <span class="span3"><?php echo $coin['name']; ?> Status</span>
-			  <span class="span7">The <?php echo strtolower($coin['name']); ?> daemon is currently disabled.</span>
+			  <span class="span7">Unable to make an outbound connection to the <?php echo strtolower($coin['name']); ?> daemon.</span>
 		    </div>
 <?php } else { ?>
 		    <div class="row-fluid">

@@ -70,13 +70,14 @@ class Autorun {
 			// If the job isn't in the job's list, add it.
 			if($run_jobs == TRUE) {
 				if(!isset($jobs[$class->config['index']])) {
-					$config = $class->config;
-					$config = array_map('htmlentities', $config);
-					$this->CI->autorun_model->add($class->config);
+					$def_config = $class->config;
+					$config = array_map('htmlentities', $def_config);
+					$this->CI->autorun_model->add($config);
 					
 					// Run the job & record that it's been updated.
-					if($class->job() == TRUE)
-						$this->CI->autorun_model->set_updated($class->config['index']);
+					if($def_config['interval'] !== '0')
+						if($class->job() == TRUE)
+							$this->CI->autorun_model->set_updated($class->config['index']);
 						
 				} else {
 					$job = $jobs[$class->config['index']];
