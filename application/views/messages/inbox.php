@@ -13,7 +13,7 @@
               </tr>
             </thead>
 	        <?php foreach ($messages as $message){ ?>
-            <tr<?php if(!$message['viewed']){?> class="info"<?}?>>
+            <tr<?php if(!$message['viewed']){?> class="info"<?php }?>>
 		          <td><?php echo anchor('user/'.$message['from']['user_hash'], $message['from']['user_name']);?></td>
 		          <td><?php if(!$message['viewed']) echo '<strong>'; ?>
 					  <?php if(strlen($message['subject']) > 35) $message['subject'] = substr($message['subject'],0,35).'...'; ?>
