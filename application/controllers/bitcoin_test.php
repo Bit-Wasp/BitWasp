@@ -30,6 +30,11 @@ class Bitcoin_Test extends CI_Controller {
 		echo '</pre>';
 	}
 
+	public function a(){
+		$this->load->model('order_model');
+		$order = $this->order_model->get('1');
+		print_r($order);
+	}
 };
 
 

@@ -44,6 +44,12 @@ class Accounts extends CI_Controller {
 		if($data['user']['user_role'] == 'Vendor')
 			$data['items'] = $this->items_model->get_list(array('vendor_hash' => $data['user']['user_hash']));
 	
+		$this->load->model('review_model');
+		$data['reviews'] = $this->review_model->random_latest_reviews(8, 'user', $data['user']['user_hash']);
+		$data['review_count']['all'] = $this->review_model->count_reviews('user', $data['user']['user_hash']);
+		$data['review_count']['positive'] = $this->review_model->count_reviews('user', $data['user']['user_hash'], 0);
+		$data['review_count']['disputed'] = $this->review_model->count_reviews('user', $data['user']['user_hash'], 1);
+	
 		// Load information for the view.
 		$data['logged_in'] = $this->current_user->logged_in();
 		$data['user_role'] = $this->current_user->user_role;

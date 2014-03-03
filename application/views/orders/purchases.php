@@ -48,9 +48,13 @@
 			}
 	} ?>
 				  </td>
-				  <td><?php echo $coin['symbol'].$order['price'];
+				  <td><?php echo $coin['symbol']." ".$order['price'];
 				  if($local_currency['id'] !== '0') echo '<br />'.$local_currency['symbol'].$order['price_l']; ?></td>
-				  <td><?php echo $order['progress_message']; ?></td>
+				  <td><?php echo $order['progress_message']; ?>
+				  <?php
+				  if(isset($review_auth[$order['id']]))
+					  echo '<br />'.anchor("reviews/form/{$review_auth[$order['id']]}/{$order['id']}",'Please review this order.');
+				  ?></td>
 				  </form>
 				</tr>
 <?php } ?>				

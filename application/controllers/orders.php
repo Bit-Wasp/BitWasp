@@ -60,10 +60,14 @@ class Orders extends CI_Controller {
 	 * @return	void
 	 */
 	public function list_purchases() {
-		
+		$info = (array)json_decode($this->session->flashdata('returnMessage'));
+		if(count($info) !== 0)
+			$data['returnMessage'] = $info['message'];
+			
 		$this->load->library('form_validation');		
 		$data['coin'] = $this->coin;
 		
+		// Process Form Submission
 		// Check if we are Proceeding an order, or Recounting it.
 		$place_order = $this->input->post('place_order');
 		$recount = $this->input->post('recount');
@@ -91,6 +95,7 @@ class Orders extends CI_Controller {
 			redirect($url);
 		}
 		
+		// Process Form Submission
 		// If cancelling an order..
 		$cancel_order = $this->input->post('cancel');
 		if(is_array($cancel_order)) {
@@ -124,6 +129,7 @@ class Orders extends CI_Controller {
 			}
 		}
 
+		// Process Form Submission
 		// If an order is being finalized.
 		$finalize_order = $this->input->post('finalize');
 		if(is_array($finalize_order)) {
@@ -157,7 +163,7 @@ class Orders extends CI_Controller {
 				$data['from'] = $this->current_user->user_id;
 				$details = array('username' => $current_order['vendor']['user_name'],
 								 'subject' => "Order #{$current_order['id']} has been finalized");
-				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. {$coin['symbol']} {$current_order['price']} has been credited to your account.<br />\n";
+				$details['message'] = "{$this->current_user->user_name} has issued payment for Order #{$current_order['id']}. {$this->coin['symbol']} {$current_order['price']} has been credited to your account.<br />\n";
 				$details['message'].= ($current_order['progress'] == '2') ? 'You may now dispatch the order<br />\n' : 'Please review this order now.<br />';
 				$message = $this->bw_messages->prepare_input($data, $details);
 				$message['order_id'] = $current_order['id'];
@@ -165,9 +171,16 @@ class Orders extends CI_Controller {
 			}
 			redirect('order/list');
 		}
-		
+
+		// Page Data
 		// Load information about orders.
+		$this->load->model('review_auth_model');
 		$data['orders'] = $this->order_model->my_purchases(); 
+		$id_list = array();
+		foreach($data['orders'] as $t_order){
+			$id_list[] = $t_order['id'];
+		}
+		$data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
 		$data['balance'] = $this->bitcoin_model->current_balance();
 		$data['escrow_balance'] = $this->escrow_model->balance();		
 		$data['page'] = 'orders/purchases';
@@ -192,6 +205,10 @@ class Orders extends CI_Controller {
 	public function list_orders($status = NULL) {
 		if($status == 'update')
 			$data['returnMessage'] = "Order has been updated.";
+			
+		$info = (array)json_decode($this->session->flashdata('returnMessage'));
+		if(count($info) !== 0)
+			$data['returnMessage'] = $info['message'];			
 			
 		$this->load->library('form_validation');
 		$data['coin'] = $this->coin;
@@ -300,7 +317,17 @@ class Orders extends CI_Controller {
 		$data['await_dispatch'] = $this->order_model->order_by_progress('3');
 		$data['await_finalization'] = $this->order_model->order_by_progress('4');
 		$data['in_dispute'] = $this->order_model->order_by_progress('5');
+		$data['complete'] = $this->order_model->order_by_progress('7');
 
+		$data['orders'] = $this->order_model->my_orders();
+		
+		$this->load->model('review_auth_model');
+		$id_list = array();
+		foreach($data['orders'] as $t_order){
+			$id_list[] = $t_order['id'];
+		}
+		$data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
+		
 		// Load info for display..
 		$data['local_currency'] = $this->current_user->currency;	
 		$data['balance'] = $this->bitcoin_model->current_balance(); //Maybe not needed?
@@ -430,6 +457,7 @@ class Orders extends CI_Controller {
 						$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
 					} else {
 						$this->order_model->set_price($data['order']['id'], ($data['order']['price']+$data['fees']['shipping_cost']));
+						$this->order_model->set_fees($data['order']['id'], $data['fees']['fee']);
 							
 						// Send message to vendor
 						$info['from'] = $this->current_user->user_id;

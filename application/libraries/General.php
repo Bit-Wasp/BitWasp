@@ -214,6 +214,7 @@ class General {
 			return date('j F Y',(int)$timestamp);
 		}
 	}
+	
 };
 
  /* End of file General.php */

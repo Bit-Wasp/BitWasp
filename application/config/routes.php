@@ -117,15 +117,19 @@ $route['admin/disputes'] = 'admin/dispute';
 
 $route['order/dispute/(:num)'] = 'orders/dispute/$1';
 $route['orders/dispute/(:num)'] = 'orders/dispute/$1';
+
 // Vendor
 $route['orders'] = 'orders/list_orders';
-// Buye
+$route['orders/review/(:any)/(:num)'] = 'reviews/form/1/$2';
+
+// Buyer
 $route['order/list'] = 'orders/list_purchases';
 $route['order/recount'] = 'orders/recount_all';
 $route['order/place/(:num)'] = 'orders/place/$1';
 $route['order/finalize/(:num)'] = 'orders/finalize/$1';
 $route['order/cancel/(:num)'] = 'orders/cancel/$1';
 $route['order/received/(:any)'] = 'orders/received_order/$1';
+$route['order/review/(:any)/(:num)'] = 'reviews/form/$1/$2';
 $route['order/(:any)'] = 'orders/purchase_item/$1';
 // Both
 

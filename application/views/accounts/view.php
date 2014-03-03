@@ -34,14 +34,36 @@
 	        </div>
 <?php } ?>
 
+<?php if($reviews !== FALSE) { ?>
+			<div class='row-fluid'>
+				<div class='well'><strong>Recent Reviews</strong><br />
+				<?php echo anchor('reviews/view/user/'.$user['user_hash'], "[All Reviews ({$review_count['all']})]"); ?> <?php echo anchor('reviews/view/user/'.$user['user_hash'].'/0', "[Positive Reviews ({$review_count['positive']})]"); ?> <?php echo anchor('reviews/view/user/'.$user['user_hash'].'/1', "[Disputed Reviews {$review_count['disputed']}]"); ?>
+				<?php	foreach($reviews as $review) { ?>
+					<br /><div class='row-fluid'>
+						<div class='span2'><?php foreach($review['rating'] as $rating_name => $rating){ echo ucfirst($rating_name) ." - $rating/5<br />"; } ?>Average: <?php echo $review['average_rating']; ?></div>
+						<div class='span1'>Comments:</div>
+						<div class='span6'><?php echo $review['comments']; ?></div>
+					</div><?php	} ?>
+				</div>
+			</div>
+<?php } ?>
+
 <?php if(isset($items) && $items !== FALSE) { ?>
 			<div class="row-fluid">
-			  <div class="span2"><strong>Vendor Items</strong></div>
-			  <div class="span7">
-<?php foreach($items as $item) { ?>
-				<?php echo anchor('item/'.$item['hash'], "{$item['name']} {$item['price_f']}"); ?><br />
-<?php } ?>
-			  </div>
+<div class='well'><strong>Vendor Items</strong><br />
+<?php $c = 0; 
+	foreach($items as $item) { 
+			$cal = $c++%4;
+			if($cal == 0) { // even, then create the row
+				echo "<div class='row-fluid'>\n";
+				echo "<div class='span3'>".anchor('item/'.$item['hash'], "{$item['name']}")."</div>\n";
+			} else if($cal == '3') {
+				echo "<div class='span3'>".anchor('item/'.$item['hash'], "{$item['name']}")."</div>\n";
+				echo "</div>\n";
+			} else {
+				echo "<div class='span3'>".anchor('item/'.$item['hash'], "{$item['name']}")."</div>\n";
+			}
+	} ?></div>
 			</div>
 <?php } ?>
 

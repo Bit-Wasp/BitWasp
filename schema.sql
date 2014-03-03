@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `bw_locations_custom_list` (
   `parent_id` int(9) NOT NULL,
   `hash` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 
 
@@ -249,7 +249,7 @@ CREATE TABLE IF NOT EXISTS `bw_locations_default_list` (
   `parent_id` int(9) NOT NULL,
   `hash` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 INSERT INTO `bw_locations_default_list` (`location`, `parent_id`, `hash`) VALUES
 ('Afghanistan', 0, ''),
@@ -513,11 +513,20 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
   `currency` int(2) NOT NULL,
   `items` text NOT NULL,
   `price` decimal(20,8) NOT NULL,
+  `fees` decimal(20,8) NOT NULL,
   `time` varchar(20) NOT NULL,
   `progress` int(1) NOT NULL,
   `buyer_id` int(9) NOT NULL,
   `vendor_hash` varchar(20) NOT NULL,
   `finalized` enum('0','1') NOT NULL,
+  `confirmed_time` varchar(20) NOT NULL,
+  `selected_escrow` enum('0','1') NOT NULL DEFAULT '0',
+  `dispatched_time` varchar(20) NOT NULL,
+  `disputed_time` varchar(20) NOT NULL,
+  `disputed` enum('0','1') NOT NULL DEFAULT '0',
+  `selected_payment_type_time` varchar(20) NOT NULL,
+  `received_time` varchar(20) NOT NULL,
+  `finalized_time` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
@@ -576,6 +585,26 @@ CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+
+CREATE TABLE IF NOT EXISTS `bw_review_auth_tokens` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `auth_token` varchar(64) NOT NULL,
+  `user_hash` varchar(20) NOT NULL,
+  `review_type` varchar(20) NOT NULL,
+  `order_id` int(9) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
+
+CREATE TABLE IF NOT EXISTS `bw_reviews` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `review_type` varchar(10) NOT NULL,
+  `subject_hash` varchar(20) NOT NULL,
+  `json` text NOT NULL,
+  `average_rating` varchar(4) NOT NULL,
+  `timestamp` varchar(20) NOT NULL,
+  `disputed` enum('0','1') NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 ;
 
 CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
   `id` int(9) NOT NULL AUTO_INCREMENT,

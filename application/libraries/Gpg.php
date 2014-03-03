@@ -68,10 +68,7 @@ class GPG {
 			$this->style = 'proc';
 			$this->version = phpversion('gnupg');
 			
-		} else {
-			// User does not have a GPG extension.
-			die('GnuPG not installed');
-		}
+		} 
 	}
 	
 	/**

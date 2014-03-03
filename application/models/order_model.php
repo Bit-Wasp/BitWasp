@@ -83,7 +83,8 @@ class Order_model extends CI_Model {
 	 */
 	public function my_orders() {
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
-				
+		$this->db->where('progress >','0');
+		$this->db->order_by('progress ASC, time desc');
 		$query = $this->db->get('orders');
 		if($query->num_rows() > 0) {
 			$row = $query->result_array();
@@ -297,19 +298,142 @@ class Order_model extends CI_Model {
 		$this->db->where('id', "$order_id");
 		return ($this->db->update('orders', array('price' => $order_price)) == TRUE) ? TRUE : FALSE;
 	}
+	
+	/**
+	 * Set Fees
+	 * 
+	 * Record the fees for a particular order.
+	 * 
+	 * @param	int	$order_id
+	 * @param	int $fee_price
+	 * @return	boolean
+	 */
+	public function set_fees($order_id, $fee_price) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('fees' => $fee_price)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Confirmed Time
+	 * 
+	 * Sets the order (specified by $order_id) confirmed_time to the
+	 * current timestamp, when a buyer confirms their order.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_confirmed_time($order_id){
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('confirmed_time' => time())) == TRUE)  ? TRUE : FALSE;
+	}
 	/**
 	 * Set Finalized
 	 * 
 	 * Mark an order as finalized, when it comes to receiving item or finalizing (escrow)
 	 * 
 	 * @param	int	$order_id
-	 * @return	bool
+	 * @return	boolean
 	 */
 	public function set_finalized($order_id) {
 		$this->db->where('id', $order_id);
 		return ($this->db->update('orders', array('finalized' => '1')) == TRUE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * Set Selected Escrow
+	 * 
+	 * Mark that a vendor chose to do an escrow transaction instead of a 
+	 * finalize early transaction
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_selected_escrow($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('selected_escrow' => '1')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Selected Payment Type Time
+	 * 
+	 * Record the timestamp for when a vendor chose to do an escrow transaction 
+	 * or a finalize early transaction, by specifying $order_id.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_selected_payment_type_time($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('selected_payment_type_time' => time())) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Finalized Time
+	 * 
+	 * Record the timestamp for when the order was paid, by specifying
+	 * $order_id.
+	 * 
+	 * @param	$order_id
+	 * @return	boolean
+	 */
+	public function set_finalized_time($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('finalized_time' => time())) == TRUE) ? TRUE : FALSE;
+	}
+	/**
+	 * Set Dispatched Time
+	 * 
+	 * Set the time an order was dispatched. Supply the order_id, and the
+	 * timestamp will be recorded.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_dispatched_time($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('dispatched_time' => time())) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Disputed Time
+	 * 
+	 * Set the timestamp for when an order was disputed, specified by the
+	 * $order_id
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_disputed_time($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('disputed_time' => time())) == TRUE) ? TRUE : FALSE;
+	} 
+	
+	/**
+	 * Set Disputed Order
+	 * 
+	 * Record that the order has been disputed, specified by $order_id.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_disputed_order($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('disputed' => '1')) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Received Time
+	 * 
+	 * Set the time an order was received. Supply the order_id, and the
+	 * timestamp will be recorded.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_received_time($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('received_time' => time())) == TRUE) ? TRUE : FALSE;
+	}
 	// 0: Order unconfirmed, and editable. 
 	//		Buyer: Confirm (put funds into escrow) (set=1)
 	// 1: Order is confirmed, and awaiting vendor response.
@@ -351,6 +475,7 @@ class Order_model extends CI_Model {
 		$update['time'] = time();
 		if($current_progress == '1' && $this->general->matches_any($set_progress, array('2','4')) == TRUE) {
 			$update['progress'] = ($set_progress == '2') ? '2' : '4';
+			$this->set_selected_payment_type_time($order_id);
 			
 		} else if($current_progress == '3' && $this->general->matches_any($set_progress, array('4','5'))== TRUE) {
 			$update['progress'] = ($set_progress == '5') ? '5' : '4';
@@ -360,6 +485,38 @@ class Order_model extends CI_Model {
 			
 		} else {
 			$update['progress'] = ($current_progress+1);
+		}
+		
+		if($update['progress'] == '1'){
+			$this->set_confirmed_time($order_id);
+		}
+		
+		// Vendor chose escrow, record this & timestamp.
+		if($current_progress == '1' && $update['progress'] == '4') {
+			$this->set_selected_escrow($order_id);
+			$this->set_dispatched_time($order_id);
+		}
+		// Buyer finalized early. Record timestamp.
+		if($update['progress'] == '3' || $current_progress == '4' && $update['progress'] == '7') { 
+			$this->set_finalized_time($order_id);
+		}
+		// Vendor setting item is dispatched. Record timestamp.
+		if($current_progress == '3' && $update['progress'] == '4') {
+			$this->set_dispatched_time($order_id);
+		}
+		// Buyer stating they received their item. Record timestamp.
+		if($current_progress == '4' && $update['progress'] == '7') {
+			$this->set_received_time($order_id);
+		}
+		// Dispute being created. Record timestamp.
+		if($update['progress'] == '5'){
+			$this->set_disputed_order($order_id);
+			$this->set_disputed_time($order_id);
+		}
+		// If progress == 7, allow users to review eachother.
+		if($update['progress'] == '7') {
+			$this->load->model('review_auth_model');
+			$this->review_auth_model->issue_tokens_for_order($order_id);
 		}
 		
 		$this->db->where('id', $current_order['id']);
@@ -395,7 +552,6 @@ class Order_model extends CI_Model {
 					// Load each item & quantity.
 					$array = explode("-", $item);
 					$item_info = $this->items_model->get($array[0]);
-					
 					$quantity = $array[1];
 					
 					// If the item no longer exists, display a message.
@@ -413,9 +569,7 @@ class Order_model extends CI_Model {
 						// to bitcoin, and add this up. Convert to local currency later.
 						$price_b_tmp = $item_info['price']/$item_info['currency']['rate'];
 						$price_b += $price_b_tmp*$quantity;
-						
 					}			
-
 					$item_array[$j++]['quantity'] = $quantity;					
 				}
 				
@@ -423,36 +577,37 @@ class Order_model extends CI_Model {
 				// for the order, and lets the user progress to the next step.
 				switch($order['progress']) {
 					case '0':	
-						$progress_message = '<input type="submit" class="btn btn-mini" name="recount['.$order['id'].']" value="Update" /> ';
-						$progress_message.= '<input type="submit" class="btn btn-mini" name="place_order['.$order['id'].']" value="Proceed with Order" />';
+						$buyer_progress_message = '<input type="submit" class="btn btn-mini" name="recount['.$order['id'].']" value="Update" /> <input type="submit" class="btn btn-mini" name="place_order['.$order['id'].']" value="Proceed with Order" />';
+						$vendor_progress_message = '';
+						// no vendor progress message
 						break;
 					case '1':
-						$progress_message = 'Awaiting vendor response.'; 
+						$buyer_progress_message = 'Awaiting vendor response.'; 
+						$vendor_progress_message = "<input type='submit' name='dispatch[{$order['id']}]' value='Dispatch' class='btn btn-mini' /> <input type='submit' name='finalize_early[{$order['id']}]' value='Finalize Early' class='btn btn-mini' />";
 						break;
 					case '2':
-						$progress_message = 'Must finalize early.<br />'; 
-						$progress_message.= '<input type="submit" class="btn btn-mini" name="cancel['.$order['id'].']" value="Cancel" /> ';
-						$progress_message.= '<input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="Finalize Early" /> ';
+						$buyer_progress_message = 'Must finalize early.<br /><input type="submit" class="btn btn-mini" name="cancel['.$order['id'].']" value="Cancel" /> <input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="Finalize Early" /> ';
+						$vendor_progress_message = "Awaiting early finalization. <input type='submit' name='cancel[{$order['id']}]' value='Cancel' class='btn btn-mini'/>";
 						break;
 					case '3':
-						$progress_message = "Awaiting dispatch.<br />";
-						$progress_message.= anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
+						$buyer_progress_message = "Awaiting dispatch.<br />".anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
+						$vendor_progress_message = "<input type='submit' name='dispatch[{$order['id']}' value='Confirm Dispatch' class='btn btn-mini' />";
 						break;
 					case '4':
-						$progress_message = "Item has been dispatched.<br />";
-						$progress_message.= '<input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="';
-						$progress_message.= ($order['finalized'] == '0') ? 'Finalize' : 'Received'; $progress_message.='" /> ';
-						$progress_message.= anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
+						$buyer_progress_message = "Item has been dispatched.<br /><input type=\"submit\" class=\"btn btn-mini\" name=\"finalize[{$order['id']}]\" value='".(($order['finalized'] == '0') ? 'Finalize' : 'Received')."' /> ".anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
+						$vendor_progress_message= "Awaiting ".(($order['finalized'] == '0') ? 'finalization' : 'delivery')." ".anchor('orders/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"'); 
 						break;
 					case '5':
-						$progress_message = "Disputed transaction.<br />";
-						$progress_message.= anchor('order/dispute/'.$order['id'], 'View', 'class="btn btn-mini"');
+						$buyer_progress_message = "Disputed transaction.<br />".anchor('order/dispute/'.$order['id'], 'View', 'class="btn btn-mini"');
+						$vendor_progress_message = "Disputed transaction.<br />".anchor('orders/dispute/'.$order['id'], 'View', 'class="btn btn-mini"');
 						break;
 					case '6':
-						$progress_message = "Item received. Pending confirmation.";
+						$buyer_progress_message = "Item received. Pending confirmation.";
+						$vendor_progress_message = "Item received. Pending confirmation.";
 						break;
 					case '7':
-						$progress_message = "Purchase completed. Please review.";
+						$buyer_progress_message = "Purchase complete.";
+						$vendor_progress_message = "Order complete.";
 						break;
 				}
 				$currency = $this->currencies_model->get($order['currency']);
@@ -465,22 +620,42 @@ class Order_model extends CI_Model {
 				$price_l = ($order['price']*$local_currency['rate']);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
 
-				$orders[$i++] = array('id' => $order['id'],
+				$tmp = array('id' => $order['id'],
 									'vendor' => $this->accounts_model->get(array('user_hash' => $order['vendor_hash'])),
 									'buyer' => $this->accounts_model->get(array('id' => $order['buyer_id'])),
 									'price' => $price,
 									'price_b' => (float)round($price_b, 8, PHP_ROUND_HALF_UP),
 									'price_l' => $price_l,
+									'fees' => $order['fees'],
 									'currency' => $currency,
 									'time' => $order['time'],
 									'time_f' => $this->general->format_time($order['time']),
 									'created_time_f' => $this->general->format_time($order['created_time']),
 									'items' => $item_array,
 									'finalized' => $order['finalized'],
+									'disputed' => $order['disputed'],
+									'vendor_selected_escrow' => $order['selected_escrow'],
 									'progress' => $order['progress'],
-									'progress_message' => $progress_message);
+									'progress_message' => ($this->current_user->user_role == 'Vendor') ? $vendor_progress_message : $buyer_progress_message);
 				
+				if($order['dispatched_time'] !== '') {
+					$tmp['dispatched_time'] = $order['dispatched_time'];
+				}
+				if($order['disputed_time'] !== '') {
+					$tmp['disputed_time'] = $order['disputed_time'];
+				}
+				if($order['selected_payment_type_time'] !== '') {
+					$tmp['selected_payment_type_time'] = $order['selected_payment_type_time'];
+				}
+				if($order['finalized_time'] !== '') {
+					$tmp['finalized_time'] = $order['finalized_time'];
+				}
+				if($order['received_time'] !== '') {
+					$tmp['received_time'] = $order['received_time'];
+				}
+				$orders[$i++] = $tmp;
 				unset($item_array);
+				unset($tmp);
 			}
 			return $orders;
 			

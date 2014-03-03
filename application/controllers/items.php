@@ -160,8 +160,6 @@ class Items extends CI_Controller {
 		if($data['item'] == FALSE) 
 			redirect('items');
 			
-		$this->load->model('shipping_costs_model');
-
 		$info = (array)json_decode($this->session->flashdata('returnMessage'));
 		if(count($info) !== 0)
 			$data['returnMessage'] = $info['message'];
@@ -170,15 +168,22 @@ class Items extends CI_Controller {
 		$data['page'] = 'items/get';
 		$data['title'] = $data['item']['name'];
 		$data['user_role'] = $this->current_user->user_role;
-		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
 		$data['browsing_currency'] = $this->current_user->currency;
+		
+		$this->load->model('shipping_costs_model');
+		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
+
+		$this->load->model('review_model');
+		$data['reviews'] = $this->review_model->random_latest_reviews(8, 'item', $hash);
+		$data['review_count']['all'] = $this->review_model->count_reviews('item', $hash);
+		$data['review_count']['positive'] = $this->review_model->count_reviews('item', $hash, 0);
+		$data['review_count']['disputed'] = $this->review_model->count_reviews('item', $hash, 1);
+		$data['average'] = $this->review_model->current_rating('item', $hash);
 		
 		if($data['browsing_currency']['id'] !== '0' && $data['shipping_costs'] !== FALSE){
 			$this->load->model('currencies_model');
-			
 			$currency = $this->currencies_model->get($data['browsing_currency']['id']);
-
-			foreach($data['shipping_costs'] as &$cost){
+			foreach($data['shipping_costs'] as &$cost) {
 				$cost['cost'] = round($cost['cost']*$currency['rate'], 3, PHP_ROUND_HALF_UP);
 			}
 		}
