@@ -833,7 +833,7 @@ u	 * If the source specified exists, then update the config setting.
 				$message = $this->bw_messages->prepare_input($info, $details);
 				$this->messages_model->send($message);
 				
-				$this->session->flashdata('returnMessage',json_encode('message','The selected item has been removed'));
+				$this->session->set_flashdata('returnMessage',json_encode(array('message' =>'The selected item has been removed')));
 				redirect('items');
 			} else { 
 				$data['returnMessage'] = 'Unable to delete that item at this time.';

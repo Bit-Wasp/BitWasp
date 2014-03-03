@@ -36,6 +36,10 @@ class Items extends CI_Controller {
 		$data['title'] = 'Items';
 		$data['page'] = 'items/index';
 		
+		$info = (array)json_decode($this->session->flashdata('returnMessage'));
+		if(count($info) !== 0)
+			$data['returnMessage'] = $info['message'];		
+		
 		$items_config = array();
 		$items_per_page = 4;
 		$data['links'] = $this->items_model->pagination_links($items_config, site_url('items'), 2);
@@ -61,9 +65,6 @@ class Items extends CI_Controller {
 		if($data['category'] == FALSE)
 			redirect('items');
 
-		$info = (array)json_decode($this->session->flashdata('returnMessage'));
-		if(count($info) !== 0)
-			$data['returnMessage'] = $info['message'];			
 					
 		$data['title'] = 'Items by Category: '.$data['category']['name'];
 		$data['custom_title'] = 'Category: '.$data['category']['name'];
