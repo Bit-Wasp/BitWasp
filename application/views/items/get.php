@@ -12,7 +12,7 @@
 			<?php echo $item['name'] ?></h2>
 			<div class="row-fluid">
 		      Vendor: <?php echo anchor('user/'.$item['vendor']['user_hash'],$item['vendor']['user_name']); ?>
-			  <span class="rating">(0)</span><br/>
+			  <span class="rating">(<?php echo anchor("reviews/view/user/".$item['vendor']['user_hash'], $vendor_rating); ?>)</span><br/>
 			  Added: <?php echo $item['add_time_f']; ?>
 			  <?php if($item['update_time'] !== '0') { ?>
 				  <br />Last Updated:<?php echo $item['update_time_f']; ?>

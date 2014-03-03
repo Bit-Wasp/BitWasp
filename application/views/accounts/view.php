@@ -34,6 +34,11 @@
 	        </div>
 <?php } ?>
 
+			<div class="row-fluid">
+			  <div class="span2">Average Rating</div>
+			  <div class="span7"><?php echo $average_rating; ?></div>
+			</div>
+
 <?php if($reviews !== FALSE) { ?>
 			<div class='row-fluid'>
 				<div class='well'><strong>Recent Reviews</strong><br />

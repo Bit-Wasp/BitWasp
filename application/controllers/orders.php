@@ -178,7 +178,7 @@ class Orders extends CI_Controller {
 		$data['orders'] = $this->order_model->my_purchases(); 
 		if($data['orders'] !== FALSE) {
 			$id_list = array();
-			foreach($data['orders'] as $t_order){
+			foreach($data['orders'] as $t_order) {
 				$id_list[] = $t_order['id'];
 			}
 			$data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
@@ -440,7 +440,7 @@ class Orders extends CI_Controller {
 		$data['fees']['shipping_cost'] = $this->shipping_costs_model->costs_to_location($data['order']['items'], $data['order']['buyer']['location']);
 		$data['fees']['fee'] = $this->fees_model->calculate(($data['order']['price']+$data['fees']['shipping_cost']));
 		$data['fees']['total'] = $data['fees']['shipping_cost']+$data['fees']['fee'];
-
+	
 		if($this->form_validation->run('order_place') == TRUE) {
 
 			if($balance <= 0 || $balance < ($data['order']['price']+$data['fees']['total'])) {

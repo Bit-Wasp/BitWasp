@@ -183,8 +183,9 @@ class Items extends CI_Controller {
 		$data['review_count']['all'] = $this->review_model->count_reviews('item', $hash);
 		$data['review_count']['positive'] = $this->review_model->count_reviews('item', $hash, 0);
 		$data['review_count']['disputed'] = $this->review_model->count_reviews('item', $hash, 1);
-		$data['average'] = $this->review_model->current_rating('item', $hash);
-		
+		$data['average_rating'] = $this->review_model->current_rating('item', $hash);
+		$data['vendor_rating'] = $this->review_model->current_rating('user', $data['item']['vendor']['user_hash']);
+
 		if($data['browsing_currency']['id'] !== '0' && $data['shipping_costs'] !== FALSE){
 			$this->load->model('currencies_model');
 			$currency = $this->currencies_model->get($data['browsing_currency']['id']);

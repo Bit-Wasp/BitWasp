@@ -49,6 +49,7 @@ class Accounts extends CI_Controller {
 		$data['review_count']['all'] = $this->review_model->count_reviews('user', $data['user']['user_hash']);
 		$data['review_count']['positive'] = $this->review_model->count_reviews('user', $data['user']['user_hash'], 0);
 		$data['review_count']['disputed'] = $this->review_model->count_reviews('user', $data['user']['user_hash'], 1);
+		$data['average_rating'] = $this->review_model->current_rating('user', $hash]);	
 	
 		// Load information for the view.
 		$data['logged_in'] = $this->current_user->logged_in();

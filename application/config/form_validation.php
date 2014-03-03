@@ -535,6 +535,10 @@ $config = array('register_form'=>array(
 										array('field' => 'buyer_address',
 											  'label' => 'Address',
 											  'rules' => 'required|htmlentities'
+										),
+										array('field' => 'public_key',
+											  'label' => 'Public Key',
+											  'rules' => 'required|callback_check_public_key'
 										)
 							),
 				'vendor_submit_review' => array(
