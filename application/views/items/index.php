@@ -5,10 +5,6 @@
           ?></h2>
           <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 
-<?php if(isset($location) && $location == 'Undeclared')
-	echo 'It is recommended that you update your location.<Br />';
-?>
-
 	<div class='row-fluid'>
 		<?php echo $links; ?>
 	</div>

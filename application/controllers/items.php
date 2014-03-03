@@ -60,7 +60,11 @@ class Items extends CI_Controller {
 		$data['category'] = $this->categories_model->get(array('hash' => "$hash"));
 		if($data['category'] == FALSE)
 			redirect('items');
-		
+
+		$info = (array)json_decode($this->session->flashdata('returnMessage'));
+		if(count($info) !== 0)
+			$data['returnMessage'] = $info['message'];			
+					
 		$data['title'] = 'Items by Category: '.$data['category']['name'];
 		$data['custom_title'] = 'Category: '.$data['category']['name'];
 		$data['page'] = 'items/index';
