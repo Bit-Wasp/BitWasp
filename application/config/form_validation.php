@@ -223,19 +223,15 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_location'
 										)
 							),
-				'shipping_costs_update' => array(
-										array('field' => 'country[]',
+				'add_shipping_cost' => array(
+										array('field' => 'add_location',
 											  'label' => 'Location',
 											  'rules' => 'callback_check_shipping_location'
 										),
-										array('field' => 'price[]',
+										array('field' => 'add_price',
 											  'label' => 'Price',
 											  'rules' => 'callback_check_is_positive'
-										),
-										array('field' => 'enabled[]',
-											  'label' => 'Enabled toggle',
-											  'rules' => 'callback_check_bool'
-										)										
+										)
 							),
 				'authorize' => array(
 										array('field' => 'password',
