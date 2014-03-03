@@ -312,10 +312,6 @@ class Listings extends CI_Controller {
 
 		if($this->input->post('add_shipping_cost') == 'Add') {
 			if($this->form_validation->run('add_shipping_cost') == TRUE) {
-				$prices = $this->input->post('add_price');
-				$destination = 
-				$enabled = '1';
-				
 				if($new_item == 'true')
 					$this->session->unset_userdata('new_item');
 				
