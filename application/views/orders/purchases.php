@@ -39,7 +39,7 @@
 <?php foreach($order['items'] as $item) { 
 			if($order['progress'] == '0') { ?>
 					<select name='quantity[<?php echo $item['hash']; ?>]' class="span1" autocomplete="off">
-<?php			for($i = 0; $i < 11; $i++) {?>
+<?php			for($i = 0; $i < 11; $i++) { ?>
 					  <option value='<?php echo $i; ?>' <?php if($i == $item['quantity']) echo 'selected="selected"'; ?>><?php echo $i; ?></option>
 <?php 			} ?>
 					</select> - <?php echo (($item['hash'] == 'removed') ? $item['name'] : anchor('item/'.$item['hash'], $item['name']));  ?><br />

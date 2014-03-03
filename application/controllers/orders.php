@@ -176,11 +176,14 @@ class Orders extends CI_Controller {
 		// Load information about orders.
 		$this->load->model('review_auth_model');
 		$data['orders'] = $this->order_model->my_purchases(); 
-		$id_list = array();
-		foreach($data['orders'] as $t_order){
-			$id_list[] = $t_order['id'];
+		if($data['orders'] !== FALSE) {
+			$id_list = array();
+			foreach($data['orders'] as $t_order){
+				$id_list[] = $t_order['id'];
+			}
+			$data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
 		}
-		$data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
+		
 		$data['balance'] = $this->bitcoin_model->current_balance();
 		$data['escrow_balance'] = $this->escrow_model->balance();		
 		$data['page'] = 'orders/purchases';
