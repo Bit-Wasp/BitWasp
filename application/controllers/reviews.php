@@ -53,20 +53,21 @@ class Reviews extends CI_Controller {
 		$data['review_count']['all'] = $this->review_model->count_reviews($review_type, $subject_hash);
 		$data['review_count']['positive'] = $this->review_model->count_reviews($review_type, $subject_hash, 0);
 		$data['review_count']['disputed'] = $this->review_model->count_reviews($review_type, $subject_hash, 1);
+
+		if($review_type == 'user') {
+			$this->load->model('accounts_model');
+			$account = $this->accounts_model->get(array('user_hash' =>$subject_hash));
+			$data['name'] = $account['user_name'];
+		} else if($review_type == 'item') {
+			$this->load->model('items_model');
+			$item = $this->items_model->get($subject_hash);
+			$data['name'] = $item['name'];
+		}
 		
 		// If the subject/type has some reviews, then load information about it.
 		// Even if search_reviews is empty. This is handled by the view.
-		if($data['review_count']['all'] > 0) {
+		if(isset($data['name'])) {
 			$data['average'] = $this->review_model->current_rating($review_type, $subject_hash);
-			if($review_type == 'user') {
-				$this->load->model('accounts_model');
-				$account = $this->accounts_model->get(array('user_hash' =>$subject_hash));
-				$data['name'] = $account['user_name'];
-			} else if($review_type == 'item') {
-				$this->load->model('items_model');
-				$item = $this->items_model->get($subject_hash);
-				$data['name'] = $item['name'];
-			}
 			$data['title'] = "Reviews for {$data['name']}";
 			$data['page'] = "reviews/view";
 		} else {

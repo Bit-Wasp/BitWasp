@@ -1,7 +1,5 @@
 		<div class="span9 mainContent" id="view-reviews">
 			
-			<?php 
-			if($review_count['all'] > 0) { ?>
 			<h2>Reviews for <?php echo $name; ?></h2>
 			<div class='row-fluid'>
 				<div class='span3'>Average Rating: <?php echo $average; ?></div>
@@ -20,9 +18,10 @@
 					</div><br /><?php	} ?>
 				</div>
 			<?php } else { 
-				echo "No ".(($disputed == '0') ? 'positive' : 'negative'). " reviews for {$name}.";
+				if($disputed == FALSE) { 
+					echo "No reviews for {$name}.";
+				} else {
+					echo "No ".(($disputed == '0') ? 'positive' : 'negative'). " reviews for {$name}.";
+				}
 			 } ?>
-		<?php } else { ?>
-			<h2>Not Found!</h2>
-		<?php } ?>
 		</div>

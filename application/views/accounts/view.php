@@ -35,7 +35,7 @@
 <?php } ?>
 
 			<div class="row-fluid">
-			  <div class="span2">Average Rating</div>
+			  <div class="span2"><strong>Average Rating</strong></div>
 			  <div class="span7"><?php echo $average_rating; ?></div>
 			</div>
 
