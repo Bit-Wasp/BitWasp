@@ -256,7 +256,7 @@ class Orders extends CI_Controller {
 					$this->messages_model->send($message);
 				}
 			}
-			//redirect('orders');
+			redirect('orders');
 		}
 		
 		// If requesting a user to finalize early..
