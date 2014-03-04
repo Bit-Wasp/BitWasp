@@ -111,7 +111,7 @@ class Reviews extends CI_Controller {
 					$this->form_validation->set_rules('vendor_shipping', 'the orders shipping', 'callback_check_numeric_rating');
 					$this->form_validation->set_rules('vendor_comments_source', 'Comments Source', 'callback_check_comments_source');
 					if($this->input->post('vendor_comments_source') == 'prepared') 
-					$this->form_validation->set_rules('vendor_prepared_comments', 'Vendor Comments', 'callback_check_vendor_prepared_comments');					
+						$this->form_validation->set_rules('vendor_prepared_comments', 'Vendor Comments', 'callback_check_vendor_prepared_comments');					
 					// If user wishes to type in their own data?
 					if($this->input->post('vendor_comments_source') == 'input') 
 						$this->form_validation->set_rules('vendor_free_comments', 'Vendor Comments', 'max_length[150]|htmlentities');
@@ -145,6 +145,8 @@ class Reviews extends CI_Controller {
 							}
 						} 
 						
+						$full_item_post = $this->input->post("item");
+						
 						// If the review is the long format:
 						if($this->input->post('review_length') == 'long') {
 							$c = 0;
@@ -154,13 +156,14 @@ class Reviews extends CI_Controller {
 								$this->form_validation->set_rules("item[{$c}][quality]", "item ".($c+1)."'s quality", 'callback_check_numeric_rating');
 								$this->form_validation->set_rules("item[{$c}][matches_desc]", "item ".($c+1)."'s matches description", 'callback_check_numeric_rating');
 								$this->form_validation->set_rules("item[{$c}][comments_source]", "item ".($c+1)."'s comments source", "callback_check_comments_source");
-								$item_post = $this->input->post("item[{$c}]");
+								
+								$item_post = $full_item_post[$c];
 								// Comments source will determine what rule to apply
 								if(isset($item_post['comments_source'])) {
-									if($item_post['comments_source'] == 'prepared') 
-										$this->form_validation->set_rules("item[{$c}][prepared_comments]", "item ".($c+1)."'s comments", "callback_check_prepared_comments");
-									if($item_post['comments_source'] == 'input') 
+									if($item_post['comments_source'] == 'input')
 										$this->form_validation->set_rules("item[{$c}][free_comments]", "item ".($c+1)."'s comments","max_length[150]|htmlentities");
+									if($item_post['comments_source'] == 'prepared') 
+										$this->form_validation->set_rules("item[{$c}][prepared_comments]", "item ".($c+1)."'s comments", "callback_check_item_prepared_comments");
 								}
 
 								if($this->form_validation->run() == TRUE) {
@@ -173,7 +176,7 @@ class Reviews extends CI_Controller {
 							}
 						}
 					}
-					
+
 					// If the generated rules are adhered to, we can proceed to store the reviews.
 					if($this->form_validation->run() == TRUE) {
 						if($this->review_model->publish_reviews($all_reviews, 'buyer') == TRUE) {

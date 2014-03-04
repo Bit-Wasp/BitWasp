@@ -37,7 +37,8 @@
 				<br />
 
 				<?php echo form_open($action_page, array('class' => 'form-horizontal')); ?>
-				<?php echo form_error('review_length'); ?>
+				
+				<?php echo validation_errors().form_error('review_length'); ?>
 					<div class='row-fluid'>
 						<div class='well' style='background-color:white;'>
 							<h4>Vendor Feedback</h4>
@@ -174,7 +175,7 @@
 								<div class='span7'>
 									<?php echo form_error("item[{$c}][comments_source]"); ?>
 									<input type='radio' name='item[<?php echo $c; ?>][comments_source]' value='prepared' /> Use prepared statements? <br />
-									<select name='item[<?php echo $c; ?>][comments_prepared]' autocomplete='off'>
+									<select name='item[<?php echo $c; ?>][prepared_comments]' autocomplete='off'>
 										<option value=''></option>
 										<option value='Did not match description.'>Did not match description.</option>
 										<option value='Poor quality.'>Poor quality.</option>
