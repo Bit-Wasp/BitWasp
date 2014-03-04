@@ -194,7 +194,7 @@ class Reviews extends CI_Controller {
 
 						if($this->form_validation->run() == TRUE) {
 							$comments = ($this->input->post('buyer_comments_source') == 'prepared') ? $this->input->post('buyer_prepared_comments') : $this->input->post('buyer_free_comments');
-							$rating = array('communication' => $this->input->post('buyer_communication'),
+							$rating_array = array('communication' => $this->input->post('buyer_communication'),
 											'cooperation' => $this->input->post('buyer_cooperation'));
 							$all_reviews[] = $this->review_model->prepare_review_array('user', $data['review_info']['buyer']['user_hash'], $data['review_info']['disputed'], $rating_array, $comments);
 							if($this->review_model->publish_reviews($all_reviews, 'vendor') == TRUE) {

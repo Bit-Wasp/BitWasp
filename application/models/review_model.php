@@ -297,7 +297,7 @@ class Review_model extends CI_Model {
 		foreach($rating_array as $rating) {
 			$average += $rating;
 		}
-		$average = round($average/count($rating), 1);
+		$average = round(($average/count($rating_array)), 1);
 		$rating_array['comments'] = $comments;
 		
 		return array(	'review_type' => $review_type,

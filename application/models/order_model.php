@@ -591,7 +591,7 @@ class Order_model extends CI_Model {
 						break;
 					case '3':
 						$buyer_progress_message = "Awaiting dispatch.<br />".anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
-						$vendor_progress_message = "<input type='submit' name='dispatch[{$order['id']}' value='Confirm Dispatch' class='btn btn-mini' />";
+						$vendor_progress_message = "<input type='submit' name='dispatch[{$order['id']}]' value='Confirm Dispatch' class='btn btn-mini' />";
 						break;
 					case '4':
 						$buyer_progress_message = "Item has been dispatched.<br /><input type=\"submit\" class=\"btn btn-mini\" name=\"finalize[{$order['id']}]\" value='".(($order['finalized'] == '0') ? 'Finalize' : 'Received')."' /> ".anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
