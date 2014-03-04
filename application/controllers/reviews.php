@@ -176,7 +176,6 @@ class Reviews extends CI_Controller {
 							}
 						}
 					}
-
 					// If the generated rules are adhered to, we can proceed to store the reviews.
 					if($this->form_validation->run() == TRUE) {
 						if($this->review_model->publish_reviews($all_reviews, 'buyer') == TRUE) {

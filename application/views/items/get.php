@@ -57,8 +57,8 @@
 				<?php echo anchor('reviews/view/item/'.$item['hash'], "[All Reviews ({$review_count['all']})]"); ?> <?php echo anchor('reviews/view/item/'.$item['hash'].'/0', "[Positive Reviews ({$review_count['positive']})]"); ?> <?php echo anchor('reviews/view/item/'.$item['hash'].'/1', "[Disputed Reviews {$review_count['disputed']}]"); ?>
 				<?php	foreach($reviews as $review) { ?>
 					<br /><div class='row-fluid'>
-						<div class='span2'><?php foreach($review['rating'] as $rating_name => $rating){ echo ucfirst($rating_name) ." - $rating/5<br />"; } ?>Average: <?php echo $review['average_rating']; ?></div>
-						<div class='span1'>Comments:</div>
+						<div class='span3'><?php foreach($review['rating'] as $rating_name => $rating){ echo ucfirst($rating_name) ." - $rating/5<br />"; } ?>Average: <?php echo $review['average_rating']; ?></div>
+						<div class='span2'>Comments:</div>
 						<div class='span6'><?php echo $review['comments']; ?></div>
 					</div><?php	} ?>
 				</div>

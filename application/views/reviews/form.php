@@ -78,8 +78,9 @@
 									<select name='vendor_prepared_comments' autocomplete='off'>
 										<option value=''></option>
 										<option value='Excellent vendor, would do business again.'>Excellent vendor, would do business again.</option>
-										<option value='Poor delivery time.'>Poor delivery time.</option>
+										<option value='Slow delivery.'>Poor delivery time.</option>
 										<option value='Poor communication.'>Poor communication.</option>
+										<option value='Poor communication & slow delivery.'>Poor communication & slow delivery.</option>
 										<option value='Fast delivery.'>Fast delivery.</option>
 									</select><br />
 
