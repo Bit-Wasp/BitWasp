@@ -430,7 +430,7 @@ class Order_model extends CI_Model {
 		$details = array(	'username' => $recipient,
 							'subject' => $subject,
 							'message' => $message);
-		$message = $this->bw_messages->prepare_input($admin['id'], $details);
+		$message = $this->bw_messages->prepare_input(array('from' => $admin['id']), $details);
 		$message['order_id'] = $order_id;
 		$this->messages_model->send($message);
 					
