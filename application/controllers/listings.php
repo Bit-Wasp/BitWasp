@@ -146,7 +146,6 @@ class Listings extends CI_Controller {
 													'enabled' => '1');
 				$this->shipping_costs_model->insert($initial_shipping_costs);
 				
-				
 				$this->session->set_userdata('new_item','true');
 				$this->session->set_flashdata('shipping_returnMessage',json_encode(array('returnMessage' => 'Your item has been created. You must now configure shipping costs for your item.', 'success' => TRUE)));
 				redirect('listings/shipping/'.$hash);
