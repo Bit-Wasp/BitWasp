@@ -140,10 +140,11 @@ class Listings extends CI_Controller {
 				$listing = $this->listings_model->get($hash);
 				
 				$this->load->model('shipping_costs_model');
-				$initial_shipping_costs = array(array('destination_id' => 'worldwide',
+				$initial_shipping_costs = array(	'item_id' => $listing['id'],
+													'destination_id' => 'worldwide',
 													'cost' => ($data['local_currency']['id'] == '0') ? '0.003' : '10',
-													'enabled' => '0'));
-				$this->shipping_costs_model->update($listing['id'], $initial_shipping_costs);
+													'enabled' => '0');
+				$this->shipping_costs_model->insert($initial_shipping_costs);
 				
 				
 				$this->session->set_userdata('new_item','true');

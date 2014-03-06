@@ -421,6 +421,21 @@ class Order_model extends CI_Model {
 		return ($this->db->update('orders', array('disputed' => '1')) == TRUE) ? TRUE : FALSE;
 	}
 	
+	public function send_order_message($order_id, $recipient, $subject, $message){
+		$this->load->library('bw_messages');
+		$this->load->model('messages_model');
+		$this->load->model('accounts_model');
+		
+		$admin = $this->accounts_model->get(array('user_name' => 'admin'));
+		$details = array(	'username' => $recipient,
+							'subject' => $subject,
+							'message' => $message);
+		$message = $this->bw_messages->prepare_input($admin['id'], $details);
+		$message['order_id'] = $order_id;
+		$this->messages_model->send($message);
+					
+	}
+	
 	/**
 	 * Set Received Time
 	 * 

@@ -204,11 +204,12 @@ class Shipping_costs_model extends CI_Model {
 		return ($this->db->update('shipping_costs', $cost_array) == TRUE) ? TRUE : FALSE;
 	}
 		
-	public function insert($array){
+	public function insert($array) {
+		print_r($array);
 		return ($this->db->insert('shipping_costs', $array) == TRUE) ? TRUE : FALSE;
 	}
 	
-	public function delete($id){
+	public function delete($id) {
 		$this->db->where('id', $id);
 		return ($this->db->delete('shipping_costs') == TRUE ) ? TRUE : FALSE;
 	}
