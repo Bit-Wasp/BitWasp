@@ -306,6 +306,9 @@ class Listings extends CI_Controller {
 										 'enabled' => $cost_array['enabled']);
 						$this->shipping_costs_model->update($cost_id, $t_array);
 					}
+					if($new_item == 'true') 
+						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
+					redirect($redirect_to);
 				} 
 			}
 		}
