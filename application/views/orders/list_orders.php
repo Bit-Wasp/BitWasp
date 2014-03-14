@@ -11,7 +11,7 @@
 		  <br />
 <?php } ?>
 
-<?php if(is_array($orders)) { ?>
+<?php if(is_array($orders) && count($orders) > 0) { ?>
 			<br />
 	        <div class="row-fluid">
 	          <div class="span2"></div>
@@ -52,7 +52,6 @@
 				  </form>
 				</tr>
 <?php } ?>				
-		
               </tbody>
             </table>
             
