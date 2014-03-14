@@ -315,15 +315,7 @@ class Orders extends CI_Controller {
 		}
 
 		// Load orders..
-		$data['new_orders'] = $this->order_model->order_by_progress('1');
-		$data['await_finalize_early'] = $this->order_model->order_by_progress('2');
-		$data['await_dispatch'] = $this->order_model->order_by_progress('3');
-		$data['await_finalization'] = $this->order_model->order_by_progress('4');
-		$data['in_dispute'] = $this->order_model->order_by_progress('5');
-		$data['complete'] = $this->order_model->order_by_progress('7');
-
 		$data['orders'] = $this->order_model->my_orders();
-		
 		$this->load->model('review_auth_model');
 		$id_list = array();
 		foreach($data['orders'] as $t_order){

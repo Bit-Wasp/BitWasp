@@ -55,6 +55,6 @@
               </tbody>
             </table>
             
-<?php } ?>
+<?php } else { echo 'You have no orders at this time!'; } ?>
         </div>
 

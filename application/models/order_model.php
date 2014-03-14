@@ -90,7 +90,7 @@ class Order_model extends CI_Model {
 			$row = $query->result_array();
 			return $this->build_array($row);
 		}
-		return FALSE;
+		return array();
 	}
 	
 	/**
