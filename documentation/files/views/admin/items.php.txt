@@ -10,11 +10,6 @@
 			</div>  
 
 			<div class="row-fluid">
-			  <span class="span3">Auto-Finalize Threshold</span>
-			  <span class="span7"><?php echo ($config['auto_finalize_threshold'] == '0') ? 'Disabled' : $config['auto_finalize_threshold']." days"; ?></span>
-			</div>
-
-			<div class="row-fluid">
 			  <span class="span3">Fees Configuration</span>
 			  <span class="span7"><?php echo anchor('admin/items/fees','Manage'); ?></span>
 			</div>

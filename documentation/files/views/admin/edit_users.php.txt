@@ -78,15 +78,6 @@
 			  <span class="help-inline offset2"><?php echo form_error('force_vendor_pgp'); ?></span>			
 			
 			  <div class="row-fluid">
-				<div class="span3">Refund After Inactivity</div>
-				<div class="span7">
-				  <label class="inline"><input type='text' class='span2' name='refund_after_inactivity' value='<?php echo $config['refund_after_inactivity']; ?>' /> days</label>
-				  <label class="inline"><input type='checkbox' name='refund_after_inactivity_disabled' <?php echo ($config['refund_after_inactivity'] == '0') ? 'checked ' : NULL; ?>	value='1' /> Disabled</label>
-				</div>
-			  </div>
-			  <span class="help-inline offset2"><?php echo form_error('refund_after_inactivity'); ?></span>
-
-			  <div class="row-fluid">
 				<div class="span3">Delete Messages After</div>
 				<div class="span7">
 				  <label class="inline"><input type='text' class='span2' name='delete_messages_after' value='<?php echo $config['delete_messages_after']; ?>' /> days</label>

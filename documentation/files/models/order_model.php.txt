@@ -39,40 +39,6 @@ class Order_model extends CI_Model {
 		return ($this->db->insert('orders', $order) == TRUE) ? TRUE : FALSE;
 	}
 	
-	/** 
-	 * Cancel
-	 * 
-	 * This function cancels an order by resetting it's progress to 0.
-	 * Buyers may cancel an order if FE is requested.
-	 * Returns a boolean.
-	 * 
-	 * @param		int	$order_id
-	 * @return		bool
-	 */
-	public function cancel($order_id) {
-		$this->db->where('id', $order_id);
-		return ($this->db->update('orders', array('progress' => '0')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Order By Progress
-	 * 
-	 * Load an order for the currently logged in vendor as specified by it's progress.
-	 * 
-	 * @param	int	$progress
-	 * @return	array/FALSE
-	 */
-	public function order_by_progress($progress) {
-		$this->db->where('vendor_hash', $this->current_user->user_hash);
-		$this->db->where('progress', $progress);
-		$query = $this->db->get('orders');
-		if($query->num_rows() > 0) {
-			$row = $query->result_array();
-			return $this->build_array($row);
-		}
-		return FALSE;
-	}
-	
 	/**
 	 * My Orders
 	 * 
@@ -81,7 +47,7 @@ class Order_model extends CI_Model {
 	 * 
 	 * @return	array/FALSE
 	 */
-	public function my_orders() {
+	public function vendor_orders() {
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
 		$this->db->where('progress >','0');
 		$this->db->order_by('progress ASC, time desc');
@@ -89,8 +55,9 @@ class Order_model extends CI_Model {
 		if($query->num_rows() > 0) {
 			$row = $query->result_array();
 			return $this->build_array($row);
+		} else {
+			return array();
 		}
-		return FALSE;
 	}
 	
 	/**
@@ -101,11 +68,11 @@ class Order_model extends CI_Model {
 	 * 
 	 * @return	array/FALSE
 	 */
-	public function my_purchases() {
+	public function buyer_orders() {
 		$this->db->where('buyer_id', $this->current_user->user_id)
 				 ->order_by('progress asc, time desc');
 		$query = $this->db->get('orders');
-		return ($query->num_rows() > 0) ? $this->build_array($query->result_array()) : FALSE;
+		return ($query->num_rows() > 0) ? $this->build_array($query->result_array()) : array();
 		
 	}
 	
@@ -114,6 +81,8 @@ class Order_model extends CI_Model {
 	 * 
 	 * Buyer can load an order about them, as specified by $vendor_hash,
 	 * and can optionally set a progress $progress.
+	 * This is needed when the buyer is making a purchase with a vendor, 
+	 * to see if any order exists already.
 	 * 
 	 * @param	string	$vendor_hash
 	 * @param	int	progress
@@ -246,6 +215,7 @@ class Order_model extends CI_Model {
 				$item_string .= ":".$update['item_hash']."-".$update['quantity'];
 		}
 		
+		// Delete order if the item_string is empty.
 		if(empty($item_string)) {
 			$this->delete($order_id);
 			return TRUE;
@@ -259,6 +229,69 @@ class Order_model extends CI_Model {
 				 ->where('progress', '0');
 		return ($this->db->update('orders', $order) == TRUE)  ? TRUE : FALSE;
 		
+	}
+	
+	/**
+	 * Set User Public Key
+	 * 
+	 * This function will set the {$user_type}_public_key for $order_id, 
+	 * to the supplied $public_key.
+	 * 
+	 * @param	int	$order_id
+	 * @param	string	$user_type
+	 * @param	string	$public_key
+	 * @return	boolean
+	 */
+	public function set_user_public_key($order_id, $user_type, $public_key) {
+		$user_type = strtolower($user_type);
+		if(!in_array($user_type, array('buyer','vendor','admin')))
+			return FALSE;
+		$index = $user_type.'_public_key';
+		$update = array($index => $public_key);
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', $update) == TRUE) ? TRUE : FALSE;
+	}
+	
+	
+	/**
+	 * Send Order Message
+	 * 
+	 * Sends a message to $recipient - the vendors name. The $order_id is 
+	 * specified, as well as the $message and $subject.
+	 */
+	public function send_order_message($order_id, $recipient, $subject, $message) {
+		$this->load->library('bw_messages');
+		$this->load->model('messages_model');
+		$this->load->model('accounts_model');
+		
+		$admin = $this->accounts_model->get(array('user_name' => 'admin'));
+		$details = array(	'username' => $recipient,
+							'subject' => $subject,
+							'message' => $message);
+		$message = $this->bw_messages->prepare_input(array('from' => $admin['id']), $details);
+		$message['order_id'] = $order_id;
+		$this->messages_model->send($message);
+					
+	}
+	
+	/**
+	 * Get Order By Address
+	 * 
+	 * Loads order details when given a multisig $address. Returns FALSE
+	 * if no such order exists, otherwise returns the order array.
+	 * 
+	 * @param	string	$address
+	 * @return	array/FALSE
+	 */
+	public function get_order_by_address($address) {
+		$this->db->where('address', $address);
+		$query = $this->db->get('orders');
+		if($query->num_rows() == 0){
+			return FALSE;
+		} else {
+			$build = $this->build_array($query->result_array());
+			return $build[0];
+		}
 	}
 	
 	/**
@@ -280,6 +313,161 @@ class Order_model extends CI_Model {
 		}
 		
 		return $price;
+	}
+
+	/**
+	 * Increase Users Order Count
+	 * 
+	 * Takes an $order_id, and increases the buyer/vendors order count.
+	 * 
+	 * @param	int	$order_id
+	 */
+	public function increase_users_order_count($order_id){
+		$this->load->model('users_model');
+		
+		$order = $this->get($order_id);
+		$this->users_model->increase_order_count($order['buyer']['id']);
+		$this->users_model->increase_order_count($order['vendor']['id']);
+	}
+
+	/**
+	 * Order Paid Callback
+	 * 
+	 * Loads orders marked as finalized, and generates the transaction 
+	 * for each. This is done at the end of the callback function, since 
+	 * it will have prepared all the information in the payments table.
+	 * 
+	 */
+	public function order_paid_callback() {
+		$query = $this->db->get('paid_orders_cache');
+		$paid = $query->result_array();
+			
+		$this->load->model('transaction_cache_model');
+		$this->load->model('accounts_model');			
+		$this->load->model('currencies_model');
+		$coin = $this->currencies_model->get('0');		
+		$this->load->library('bw_bitcoin');
+		$this->load->library('BitcoinLib');
+		$this->load->library('bw_transaction');
+
+		foreach($paid as $record) {
+			// Check that the bitcoin daemon is active before creating a transaction.
+			// This will preserve the paid_orders information until it's on.
+			if(!is_array($this->bw_bitcoin->getinfo()))
+				break;
+				
+			$order = $this->get($record['order_id']);
+			$vendor_address = BitcoinLib::public_key_to_address($order['vendor_public_key'], $coin['crypto_magic_byte']);
+			$admin_address = BitcoinLib::public_key_to_address($order['admin_public_key'], $coin['crypto_magic_byte']);
+
+			// Load inputs
+			$payments = $this->transaction_cache_model->payments_to_address($order['address']);
+
+			// Create the transaction inputs
+			$tx_ins = array();
+			$value = 0.00000000;
+			foreach($payments as $pmt) {
+				$tx_ins[] = array(	'txid' => $pmt['tx_id'],
+									'vout' => $pmt['vout']);
+				$value += (float)$pmt['value'];
+			}
+			
+			// Create the transaction outputs
+			$tx_outs = array();
+			$tx_outs = array(	$admin_address => (float)($order['fees']+$order['extra_fees']-0.0001),
+								$vendor_address => (float)($order['price']+$order['shipping_costs']-$order['extra_fees'])
+							);
+							
+			// Store json inputs.
+			$json = $this->bw_bitcoin->get_inputs_pkscripts($tx_ins);
+			foreach($json as &$ref) {
+				$ref['redeemScript'] = $order['redeemScript'];
+			}
+			$json = json_encode($json);
+			
+			$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
+			if($raw_transaction == FALSE) {
+				echo 'error :(';
+			} else {
+				$decoded_transaction = Raw_transaction::decode($raw_transaction);
+				$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $order['address'], $order['id']);
+				$this->order_model->set_unsigned_transaction($order['id'], $raw_transaction." ");
+				$this->order_model->set_json_inputs($order['id'], "'$json'");
+				
+				$next_progress = ($order['vendor_selected_escrow'] == '1') ? '4' : '3';
+				$this->progress_order($order['id'], '2', $next_progress);
+			}				
+			$this->transaction_cache_model->delete_finalized_record($order['id']);
+		}
+	}
+	
+	/**
+	 * Order Finalized Callback
+	 * 
+	 * This function is called with an array of information when an input
+	 * in an order has been spent. If this happens, it either corresponds
+	 * to an escrow or up-front payment going through. We need to check
+	 * that the spend was expected - matches a hash of the expected
+	 * outcome for that input we store on transaction creation.
+	 * It can also happen when the order is disputed - in which case it 
+	 * simply progresses to complete.
+	 * 
+	 * Updates order information where necessary.
+	 */
+	public function order_finalized_callback($array) {
+		$this->load->model('disputes_model');
+		foreach($array as $record) {
+			$order = $this->get_order_by_address($record['address']);
+			
+			$complete = false;
+			// If progress is 6, then a disputed order is completed.
+			if($order['progress'] == '6') {
+				if($this->progress_order($order['id'], '6') == TRUE) {
+					
+					$this->disputes_model->set_final_response($order['id']);
+					
+					$update = array('posting_user_id' => '',
+									'order_id' => $order_id,
+									'dispute_id' => $data['dispute']['id'],
+									'message' => 'Dispute closed, payment was broadcast.');
+					$this->disputes_model->post_dispute_update($update);
+					// Set final response. Prevents further posts in the 
+					// dispute. This is the only way an escrow dispute
+					// can be finalized. 
+					
+					$complete = true;
+				}
+				
+			}  else {
+				// Otherwise, progress depending on whether the transaction is escrow, or upfront.
+				
+				// Escrow
+				if($order['vendor_selected_escrow'] == '1') {
+					$this->progress_order($order['id'], '5', '7');
+					$this->set_received_time($order['id']);
+					$complete = true;
+					
+				}
+				
+				// Upfront payment. Vendor takes money to confirm dispatch.
+				if($order['vendor_selected_escrow'] == '0') {
+					$c = $this->progress_order($order['id'], '4');
+					$this->set_dispatched($order['id']);
+					$complete = true;
+				} 
+			}
+			
+			// If complete, then record the details.
+			if($complete) {
+				$this->set_finalized($order['id']);
+				
+				// Record the ID of the payment in the blockchain.
+				$this->set_final_transaction_id($order['id'], $record['final_id']);
+				// Record whether the spend transaction matches what was expected.
+				if($record['valid'] == TRUE)
+					$this->set_finalized_correctly($order['id']);
+			}
+		}
 	}
 	
 	/**
@@ -314,6 +502,34 @@ class Order_model extends CI_Model {
 	}
 	
 	/**
+	 * Set Address Details
+	 * 
+	 * Supply an array containing the output from the createmultisig 
+	 * command, called $address_details, and the $order_id being updated.
+	 * 
+	 * @param	int	$order_id
+	 * @param	array	$address_details
+	 * @return	boolean
+	 */
+	public function set_address_details($order_id, $address_details) {
+		$this->db->where('id', "$order_id");
+		return ($this->db->update('orders', $address_details) == TRUE) ? TRUE : FALSE;
+	}
+	/**
+	 * Set Shipping Costs
+	 * 
+	 * Record the fees for a particular order.
+	 * 
+	 * @param	int	$order_id
+	 * @param	int $shipping_cost
+	 * @return	boolean
+	 */
+	public function set_shipping_costs($order_id, $shipping_cost) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('shipping_costs' => $shipping_cost)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
 	 * Set Confirmed Time
 	 * 
 	 * Sets the order (specified by $order_id) confirmed_time to the
@@ -322,7 +538,7 @@ class Order_model extends CI_Model {
 	 * @param	int	$order_id
 	 * @return	boolean
 	 */
-	public function set_confirmed_time($order_id){
+	public function set_confirmed_time($order_id) {
 		$this->db->where('id', $order_id);
 		return ($this->db->update('orders', array('confirmed_time' => time())) == TRUE)  ? TRUE : FALSE;
 	}
@@ -350,7 +566,7 @@ class Order_model extends CI_Model {
 	 */
 	public function set_selected_escrow($order_id) {
 		$this->db->where('id', $order_id);
-		return ($this->db->update('orders', array('selected_escrow' => '1')) == TRUE) ? TRUE : FALSE;
+		return ($this->db->update('orders', array('vendor_selected_escrow' => '1')) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -368,6 +584,98 @@ class Order_model extends CI_Model {
 	}
 	
 	/**
+	 * Set Extra Fees
+	 * 
+	 * Used to charge add a fee to the order cost, such as chosing escrow.
+	 * This is deducted from the balance the vendor is due to receive.
+	 * 
+	 * @param	int	$order_id
+	 * @param	float	$fees
+	 * @return	boolean
+	 */
+	public function set_extra_fees($order_id, $fees) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('extra_fees' => $fees)) == TRUE) ? TRUE : FALSE;
+	}
+	/**
+	 * Set Paid Time
+	 * 
+	 * Set the specified $order_id as 'paid' at the current timestamp.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_paid_time($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('paid_time' => time())) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Unsigned Transaction
+	 * 
+	 * Used to store the generated 'unsigned transaction'. Called automatically
+	 * by the callback script once an order's price has been completely paid, 
+	 * to store the generated transaction paying the vendor. Will also
+	 * be used when the admin creates a transaction to resolve disputes.
+	 * 
+	 * @param	int	$order_id
+	 * @string	string	$unsigned_hex
+	 * @return	boolean
+	 */
+	public function set_unsigned_transaction($order_id, $unsigned_hex) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('unsigned_transaction' => $unsigned_hex)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Partially Signed Transaction
+	 * 
+	 * Set the partially_signed_transaction value for $order_id to 
+	 * $partially_signed_transaction. Done once a user has partially
+	 * signed an unsigned transaction, and is giving it back to the site
+	 * for the other user to sign and broadcast.
+	 * 
+	 * @param	int	$order_id
+	 * @param	string	$partially_signed_transaction
+	 * @return	boolean
+	 */
+	public function set_partially_signed_transaction($order_id, $partially_signed_transaction) {
+		($partially_signed_transaction == '') ? $this->set_signer_id($order_id, '') : $this->set_signer_id($order_id, $this->current_user->user_id);
+			
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('partially_signed_transaction' => $partially_signed_transaction)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Signer ID
+	 * 
+	 * Sets the ID of the person who created the partially signed transaction,
+	 * $signer_id, for $order_id. Returns a boolean indicating success.
+	 * 
+	 * @param	int	$order_id
+	 * @param	int	$signer_id
+	 * @return	boolean
+	 */ 
+	public function set_signer_id($order_id, $signer_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('partially_signing_user_id' => $signer_id)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set JSON Inputs
+	 * 
+	 * Record the created JSON inputs used to create an unsigned transaction.
+	 * Specify the $order_id, and the $json_inputs string.
+	 * 
+	 * @param	int	$order_id
+	 * @param	string	$json_inputs
+	 */
+	public function set_json_inputs($order_id, $json_inputs) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('json_inputs' => $json_inputs)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
 	 * Set Finalized Time
 	 * 
 	 * Record the timestamp for when the order was paid, by specifying
@@ -380,6 +688,47 @@ class Order_model extends CI_Model {
 		$this->db->where('id', $order_id);
 		return ($this->db->update('orders', array('finalized_time' => time())) == TRUE) ? TRUE : FALSE;
 	}
+	
+	/**
+	 * Set Finalized Correctly
+	 * 
+	 * Record that the spend-multisig transaction had the expected outcome.
+	 * Orders which do not have this setting flagged will be brought to
+	 * the attention of the admin to check for foul play, ie users cheating
+	 * the site from it's fee.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
+	public function set_finalized_correctly($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('finalized_correctly' => '1')) == TRUE) ? TRUE : FALSE;
+	}
+		
+	/**
+	 * Set Final Transaction
+	 * 
+	 * If an input is spent, that order is marked as complete and the 
+	 * final transaction ID is logged.
+	 * 
+	 * @param	int	$order_id
+	 * @param	string	$final_transaction_id
+	 * @return	boolean
+	 */
+	public function set_final_transaction_id($order_id, $final_transaction_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('final_transaction_id' => $final_transaction_id)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Set Dispatched 
+	 * 
+	 */
+	public function set_dispatched($order_id) {
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', array('dispatched' => '1')) == TRUE) ? TRUE : FALSE;
+	}
+
 	/**
 	 * Set Dispatched Time
 	 * 
@@ -395,18 +744,12 @@ class Order_model extends CI_Model {
 	}
 	
 	/**
-	 * Set Disputed Time
-	 * 
-	 * Set the timestamp for when an order was disputed, specified by the
-	 * $order_id
-	 * 
-	 * @param	int	$order_id
-	 * @return	boolean
+	 * Set Last Updated Time
 	 */
-	public function set_disputed_time($order_id) {
+	public function set_last_updated_time($order_id) {
 		$this->db->where('id', $order_id);
-		return ($this->db->update('orders', array('disputed_time' => time())) == TRUE) ? TRUE : FALSE;
-	} 
+		return ($this->db->update('orders', array('time' => time())) == TRUE) ? TRUE : FALSE;
+	}
 	
 	/**
 	 * Set Disputed Order
@@ -418,7 +761,8 @@ class Order_model extends CI_Model {
 	 */
 	public function set_disputed_order($order_id) {
 		$this->db->where('id', $order_id);
-		return ($this->db->update('orders', array('disputed' => '1')) == TRUE) ? TRUE : FALSE;
+		return ($this->db->update('orders', array('disputed' => '1',
+												  'disputed_time' => time())) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -434,26 +778,6 @@ class Order_model extends CI_Model {
 		$this->db->where('id', $order_id);
 		return ($this->db->update('orders', array('received_time' => time())) == TRUE) ? TRUE : FALSE;
 	}
-	// 0: Order unconfirmed, and editable. 
-	//		Buyer: Confirm (put funds into escrow) (set=1)
-	// 1: Order is confirmed, and awaiting vendor response.
-	//		Vendor: Finalize Early, (set=2)
-	// 		Vendor: Confirm Dispatch, proceed to escrow. (set=4)
-	// 2: Require early finalization
-	//		Buyer: Finalizes, (set=3) (credit to vendor account)
-	// 		Buyer: Cancel (set=0)
-	// 3: User has finalized. Vendor must send product.
-	//		Vendor: Confirm Dispatch. (set=4)
-	//		Buyer: Dispute				*************
-	// 4: Item is dispatched.
-	//		Buyer: May Dispute because product hasnt arrived. (set=5) **********
-	//		Buyer: Received. (set=6)	
-	// 5: Dispute Transaction.
-	// 		??? : Resolved (set=7)
-	// 6: Buyer received item (if no finalize early, auto pay vendor)
-	// 		auto pay vendor and set to 7.
-	// 7: Transaction Complete
-	// 		Offer both parties a chance to review the other.
 
 	/**
 	 * Progress Order
@@ -465,6 +789,7 @@ class Order_model extends CI_Model {
 	 * @param	int	$current_progress
 	 * @param	int	$set_progress
 	 * @return	bool
+	 * 
 	 */
 	public function progress_order($order_id, $current_progress, $set_progress = 0) {
 		$current_order = $this->get($order_id);
@@ -473,53 +798,50 @@ class Order_model extends CI_Model {
 			return FALSE;
 			
 		$update['time'] = time();
-		if($current_progress == '1' && $this->general->matches_any($set_progress, array('2','4')) == TRUE) {
-			$update['progress'] = ($set_progress == '2') ? '2' : '4';
-			$this->set_selected_payment_type_time($order_id);
-			
-		} else if($current_progress == '3' && $this->general->matches_any($set_progress, array('4','5'))== TRUE) {
-			$update['progress'] = ($set_progress == '5') ? '5' : '4';
-			
+		if($current_progress == '2' && in_array($set_progress, array('3','4'))) {
+			$update['progress'] = ($set_progress == '3') ? '3' : '4';
+		} else if($current_progress == '3' && $set_progress == '6') {
+			$update['progress'] = '6';
 		} else if($current_progress == '4' && $this->general->matches_any($set_progress, array('5','6')) == TRUE) {
-			$update['progress'] = ($set_progress == '5') ? '5' : '7';
-			
+			$update['progress'] = ($set_progress == '5') ? '5' : '6';
+		} else if($current_progress == '5' && $this->general->matches_any($set_progress, array('6','7')) == TRUE) {
+			$update['progress'] = ($set_progress == '6') ? '6' : '7';			
 		} else {
 			$update['progress'] = ($current_progress+1);
 		}
 		
-		if($update['progress'] == '1'){
+		if($update['progress'] == '1') {
 			$this->set_confirmed_time($order_id);
 		}
 		
+		if($update['progress'] == '2') {
+			$this->set_selected_payment_type_time($order_id);
+		}
+		
+		if($update['progress'] == '5') {
+			$this->set_dispatched_time($order_id);
+		}
+		if($update['progress'] == '6') {
+			$this->set_disputed_order($order_id);
+		}
 		// Vendor chose escrow, record this & timestamp.
 		if($current_progress == '1' && $update['progress'] == '4') {
 			$this->set_selected_escrow($order_id);
 			$this->set_dispatched_time($order_id);
 		}
-		// Buyer finalized early. Record timestamp.
-		if($update['progress'] == '3' || $current_progress == '4' && $update['progress'] == '7') { 
-			$this->set_finalized_time($order_id);
+		
+		if($current_progress == '2') {
+			$this->set_paid_time($order_id);
 		}
-		// Vendor setting item is dispatched. Record timestamp.
-		if($current_progress == '3' && $update['progress'] == '4') {
-			$this->set_dispatched_time($order_id);
-		}
-		// Buyer stating they received their item. Record timestamp.
-		if($current_progress == '4' && $update['progress'] == '7') {
-			$this->set_received_time($order_id);
-		}
-		// Dispute being created. Record timestamp.
-		if($update['progress'] == '5'){
-			$this->set_disputed_order($order_id);
-			$this->set_disputed_time($order_id);
-		}
-		// If progress == 7, allow users to review eachother.
+		
 		if($update['progress'] == '7') {
+			$this->increase_users_order_count($order_id);
 			$this->load->model('review_auth_model');
 			$this->review_auth_model->issue_tokens_for_order($order_id);
 		}
-		
-		$this->db->where('id', $current_order['id']);
+
+		$this->set_last_updated_time($order_id);
+		$this->db->where('id', $order_id);
 		return ($this->db->update('orders', $update) == TRUE) ? TRUE : FALSE;
 	}
 	
@@ -532,6 +854,8 @@ class Order_model extends CI_Model {
 	 * 
 	 * @param	array $orders
 	 * return 	array/FALSE
+	 * 
+	 * 					fix 	me
 	 */
 	public function build_array($orders ) {
 		$this->load->model('currencies_model');
@@ -576,34 +900,35 @@ class Order_model extends CI_Model {
 				// Determine the progress message. Contains a status update
 				// for the order, and lets the user progress to the next step.
 				switch($order['progress']) {
-					case '0':	
+					case '0':	// Buyer choses items. (1)
 						$buyer_progress_message = '<input type="submit" class="btn btn-mini" name="recount['.$order['id'].']" value="Update" /> <input type="submit" class="btn btn-mini" name="place_order['.$order['id'].']" value="Proceed with Order" />';
 						$vendor_progress_message = '';
 						// no vendor progress message
 						break;
-					case '1':
-						$buyer_progress_message = 'Awaiting vendor response.'; 
-						$vendor_progress_message = "<input type='submit' name='dispatch[{$order['id']}]' value='Dispatch' class='btn btn-mini' /> <input type='submit' name='finalize_early[{$order['id']}]' value='Finalize Early' class='btn btn-mini' />";
+					case '1':	// Vendor must chose escrow, or up-front. (2)
+						$buyer_progress_message = 'Awaiting vendor response. <input type="submit" class="btn btn-mini" name="cancel['.$order['id'].']" value="Cancel" /> ';
+						$vendor_progress_message = anchor('orders/accept/'.$order['id'], 'Accept Order', 'class="btn btn-mini"');
 						break;
-					case '2':
-						$buyer_progress_message = 'Must finalize early.<br /><input type="submit" class="btn btn-mini" name="cancel['.$order['id'].']" value="Cancel" /> <input type="submit" class="btn btn-mini" name="finalize['.$order['id'].']" value="Finalize Early" /> ';
-						$vendor_progress_message = "Awaiting early finalization. <input type='submit' name='cancel[{$order['id']}]' value='Cancel' class='btn btn-mini'/>";
+					case '2':	// Buyer must pay to address. Escrow: 4. Upfront: 3.
+						$buyer_progress_message = 'Pay to address. ';
+						$vendor_progress_message = 'Waiting for buyer to pay to the order address. <input type="submit" class="btn btn-mini" name="cancel['.$order['id'].']" value="Cancel" /> ';
 						break;
-					case '3':
-						$buyer_progress_message = "Awaiting dispatch.<br />".anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
-						$vendor_progress_message = "<input type='submit' name='dispatch[{$order['id']}' value='Confirm Dispatch' class='btn btn-mini' />";
+					case '3':	// An up-front payment. Buyer signs first.
+						$buyer_progress_message = "Please sign transaction.";
+						$vendor_progress_message = "Waiting on buyer to sign";
 						break;
-					case '4':
-						$buyer_progress_message = "Item has been dispatched.<br /><input type=\"submit\" class=\"btn btn-mini\" name=\"finalize[{$order['id']}]\" value='".(($order['finalized'] == '0') ? 'Finalize' : 'Received')."' /> ".anchor('order/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"');	
-						$vendor_progress_message= "Awaiting ".(($order['finalized'] == '0') ? 'finalization' : 'delivery')." ".anchor('orders/dispute/'.$order['id'], 'Dispute', 'class="btn btn-mini"'); 
+					case '4':	// Awaiting dispatch. Vendor must sign to indicate dispatch. (5)
+						$buyer_progress_message = "Awaiting Dispatch. ".anchor('purchases/dispute/'.$order['id'], 'View Dispute', 'class="btn btn-mini"');
+						$vendor_progress_message= "Sign transaction to confirm the items dispatch."; 
 						break;
-					case '5':
-						$buyer_progress_message = "Disputed transaction.<br />".anchor('order/dispute/'.$order['id'], 'View', 'class="btn btn-mini"');
-						$vendor_progress_message = "Disputed transaction.<br />".anchor('orders/dispute/'.$order['id'], 'View', 'class="btn btn-mini"');
+					case '5':	// Awaiting delivery. Escrow: buyer finalizes or disputes. 
+								// Upfront: buyer can dispute or mark received.
+						$buyer_progress_message = 'Order dispatched. '.(($order['vendor_selected_escrow'] == '0') ? '<input type="submit" name="received['.$order['id'].']" value="Confirm Receipt" class="btn btn-mini" /> or ' : 'Sign when the order is received, or ').anchor('purchases/dispute/'.$order['id'], 'Raise Dispute', 'class="btn btn-mini"');
+						$vendor_progress_message = 'Buyer awaiting delivery. '.anchor('orders/dispute/'.$order['id'], 'Raise Dispute', 'class="btn btn-mini"');
 						break;
-					case '6':
-						$buyer_progress_message = "Item received. Pending confirmation.";
-						$vendor_progress_message = "Item received. Pending confirmation.";
+					case '6':	// Disputed transaction.
+						$buyer_progress_message = "Disputed transaction. ".anchor('purchases/dispute/'.$order['id'], 'View Dispute', 'class="btn btn-mini"');
+						$vendor_progress_message = "Disputed transaction. ".anchor('orders/dispute/'.$order['id'], 'View Dispute', 'class="btn btn-mini"');
 						break;
 					case '7':
 						$buyer_progress_message = "Purchase complete.";
@@ -611,48 +936,34 @@ class Order_model extends CI_Model {
 						break;
 				}
 				$currency = $this->currencies_model->get($order['currency']);
-				
-				$price = ($currency !== '0') ? $order['price']/$currency['rate'] : $order['price'];
+
+				// Work out what price to display for the current user.
+				($this->current_user->user_role == 'Vendor') ? $order_price = ($order['price']+$order['shipping_costs']-$order['extra_fees']) : $order_price = ($order['price']+$order['shipping_costs']+$order['fees']);
+				$order_price = ($currency !== '0') ? $order_price/$currency['rate'] : $order_price;
 				
 				// Load the users local currency.
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 				// Convert the order's price into the users own currency.
-				$price_l = ($order['price']*$local_currency['rate']);
-				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
-
-				$tmp = array('id' => $order['id'],
-									'vendor' => $this->accounts_model->get(array('user_hash' => $order['vendor_hash'])),
-									'buyer' => $this->accounts_model->get(array('id' => $order['buyer_id'])),
-									'price' => $price,
-									'price_b' => (float)round($price_b, 8, PHP_ROUND_HALF_UP),
-									'price_l' => $price_l,
-									'fees' => $order['fees'],
-									'currency' => $currency,
-									'time' => $order['time'],
-									'time_f' => $this->general->format_time($order['time']),
-									'created_time_f' => $this->general->format_time($order['created_time']),
-									'items' => $item_array,
-									'finalized' => $order['finalized'],
-									'disputed' => $order['disputed'],
-									'vendor_selected_escrow' => $order['selected_escrow'],
-									'progress' => $order['progress'],
-									'progress_message' => ($this->current_user->user_role == 'Vendor') ? $vendor_progress_message : $buyer_progress_message);
+				$price_l = ($order_price*$local_currency['rate']);
+				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, 2, PHP_ROUND_HALF_UP) : round($price_l, 8, PHP_ROUND_HALF_UP);
 				
-				if($order['dispatched_time'] !== '') {
-					$tmp['dispatched_time'] = $order['dispatched_time'];
-				}
-				if($order['disputed_time'] !== '') {
-					$tmp['disputed_time'] = $order['disputed_time'];
-				}
-				if($order['selected_payment_type_time'] !== '') {
-					$tmp['selected_payment_type_time'] = $order['selected_payment_type_time'];
-				}
-				if($order['finalized_time'] !== '') {
-					$tmp['finalized_time'] = $order['finalized_time'];
-				}
-				if($order['received_time'] !== '') {
-					$tmp['received_time'] = $order['received_time'];
-				}
+				// Add extra details to the order.
+				$tmp = $order;
+				$tmp['vendor'] = $this->accounts_model->get(array('user_hash' => $order['vendor_hash']));
+				$tmp['buyer'] = $this->accounts_model->get(array('id' => $order['buyer_id']));
+				$tmp['items'] = $item_array;
+				$tmp['order_price'] = $order_price;
+				$tmp['price_l'] = $price_l;
+				$tmp['currency'] = $currency;
+				$tmp['time_f'] = $this->general->format_time($order['time']);
+				$tmp['created_time_f'] = $this->general->format_time($order['created_time']);		// 0
+				$tmp['confirmed_time_f'] = $this->general->format_time($order['confirmed_time']);	// 2
+				$tmp['paid_time_f'] = $this->general->format_time($order['paid_time']);				// 3
+				$tmp['dispatched_time_f'] = $this->general->format_time($order['dispatched_time']); // 5
+				$tmp['disputed_time_f'] = $this->general->format_time($order['disputed_time']);		// 6
+				$tmp['finalized_time_f'] = $this->general->format_time($order['dispatched_time']);	// 7
+				$tmp['progress_message'] = ($this->current_user->user_role == 'Vendor') ? $vendor_progress_message : $buyer_progress_message;
+				
 				$orders[$i++] = $tmp;
 				unset($item_array);
 				unset($tmp);
@@ -662,6 +973,32 @@ class Order_model extends CI_Model {
 		} else {
 			return FALSE;
 		}
+	}
+
+	public function buyer_cancel($order_id) {
+		$changes = array(	'progress' => '0',
+							'shipping_costs' => 0.00000000,
+							'fees' => 0.00000000,
+							'confirmed_time' => '',
+							'buyer_public_key' => '');
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', $changes) == TRUE) ? TRUE : FALSE;
+	}
+
+	public function vendor_cancel($order_id) {
+		$changes = array(	'progress' => '0',
+							'shipping_costs' => 0.00000000,
+							'fees' => 0.00000000,
+							'extra_fees' => 0.00000000,
+							'selected_payment_type_time' => '',
+							'buyer_public_key' => '',
+							'vendor_public_key' => '',
+							'admin_public_key' => '',
+							'address' => '',
+							'redeemScript' => '',
+							'confirmed_time' => '');
+		$this->db->where('id', $order_id);
+		return ($this->db->update('orders', $changes) == TRUE) ? TRUE : FALSE;
 	}
 
 	/**
@@ -700,6 +1037,32 @@ class Order_model extends CI_Model {
 		$this->db->where('id', "$order_id");
 		return ($this->db->update('orders', array('progress' => $progress)) == TRUE) ? TRUE : FALSE;
 	}
+
+	public function admin_count_orders() {
+		$this->db->select('id');
+		$this->db->from('orders');
+		$this->db->where('progress >','0');
+		return $this->db->count_all_results();
+	}
+	public function admin_order_page($per_page, $start) {
+		$this->db->where('progress >','0');
+		$this->db->limit($per_page, $start);
+		$this->db->order_by('id', 'desc');
+		$get = $this->db->get('orders');
+		return $this->build_array($get->result_array());
+	}
+	public function admin_order_details($order_id) {
+		$this->db->where('progress >','0');
+		$this->db->where('id', "$order_id");
+		$query = $this->db->get('orders');
+		if($query->num_rows() == 0){
+			return FALSE;
+		} else {
+			return $this->build_array($query->result_array());
+		}
+			
+	}
+
 
 };
 

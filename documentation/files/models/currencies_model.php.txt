@@ -40,10 +40,10 @@ class Currencies_model extends CI_Model {
 	public function get($id = NULL) {
 		
 		if($id == NULL) {
-			$this->db->select('id, code, name, symbol');	// Duplicated to avoid a stupid error..
+			$this->db->select('id, code, name, symbol, crypto_magic_byte');	// Duplicated to avoid a stupid error..
 			$query = $this->db->get('currencies');
 		} else {
-			$this->db->select('id, code, name, symbol');
+			$this->db->select('id, code, name, symbol, crypto_magic_byte');
 			$query = $this->db->get_where('currencies', array('id' => "$id"));
 		}
 		

@@ -38,36 +38,6 @@ class General_model extends CI_Model {
 	}
 
 	/**
-	 * Get Stale Users
-	 * 
-	 * Stale users are any user who has not logged in for a defined 
-	 * period of time. If the login time is less than $threshold then
-	 * the user is included in the list. Does not include banned members.
-	 *
-	 * @param	int	$threshold
-	 * @return	array/FALSE
-	 */
-	public function get_stale_users($threshold) {
-		$this->db->where('login_time <', $threshold);
-		$this->db->where('banned !=', '1');
-		$query = $this->db->get('users');
-		if($query->num_rows() > 0) {
-			$array = $query->result_array();
-			$results = array();
-			foreach($array as $user) {
-				if($user['login_time'] == '0') {
-					if($user['register_time'] < $threshold)
-						array_push($results, $user);
-				} else {
-					array_push($results, $user);
-				}
-			}
-			return $results;
-		}
-		return FALSE;
-	}
-
-	/**
 	 * Rows Before Time
 	 * 
 	 * Return rows in $table with a timestamp before $time.
@@ -106,34 +76,6 @@ class General_model extends CI_Model {
 	 */
 	public function count_entries($table) {
 		return $this->db->count_all($table);
-	}
-
-	/**
-	 * Count Transactions 
-	 * 
-	 * Count the total number of bitcoin transactions.
-	 *
-	 * @return	int
-	 */	
-	public function count_transactions() {
-		$this->db->select('id');
-		$this->db->where('address !=', '[payment]');
-		$query = $this->db->get('pending_txns');
-		return $query->num_rows();
-	}
-	
-	/**
-	 * Count Orders
-	 * 
-	 * Count the total number of orders on record.
-	 *
-	 * @return	int
-	 */
-	public function count_orders() {
-		$this->db->select('id');
-		$this->db->where('address', '[payment]');
-		$query = $this->db->get('pending_txns');
-		return $query->num_rows()/2;
 	}
 
 	/**

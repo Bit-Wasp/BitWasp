@@ -24,491 +24,143 @@ class Bitcoin_model extends CI_Model {
 		parent::__construct();
 	}
 	
-	public function reset_a() {
-		$this->db->where('id !=', 1);
-		$this->db->delete('blocks');
-			
-		$this->db->where('user_hash !=', '');
-		$this->db->delete('pending_txns');
-		
-		$this->db->where('user_name', 'asdf');
-		$this->db->update('users', array('bitcoin_balance' => 0.00000000));
-		
-		$this->db->where('user_name', 'buyer');
-		$this->db->update('users', array('bitcoin_balance' => 0.00000000));
-		
-		$this->db->where('user_name', 'buyer1');
-		$this->db->update('users', array('bitcoin_balance' => 0.00000000));
-	}
+	public function get_next_key() {
+		$this->load->library('Electrum');
 
-	/**
-	 * Current Balance
-	 * 
-	 * Will load the current users balance if $user_hash is not set. If
-	 * $user_hash is set, we will load that users balance. Once the 
-	 * required user record is found, return the bitcoin balance. Returns
-	 * FALSE if there is no record.
-	 *
-	 * @access	public
-	 * @param	NULL/string	$user_hash
-	 * @return	int/FALSE
-	 */			
-	public function current_balance($user_hash = NULL ) {
-		$this->db->select('bitcoin_balance');
-		
-		($user_hash == NULL) ? $this->db->where('user_hash', $this->current_user->user_hash) : $this->db->where('user_hash', $user_hash);
-				 
-		$query = $this->db->get('users');
-		if($query->num_rows() >  0) {
-			$row = $query->row_array();
-			return $row['bitcoin_balance'];
-		}
-		
-		return FALSE;
+		$i = $this->bw_config->electrum_iteration;
+		$public_key = Electrum::public_key_from_mpk($this->bw_config->electrum_mpk, $i, 0, FALSE);
+		$this->config_model->update(array('electrum_iteration' => ($i+1)));
+		return array('public_key' => $public_key,
+					 'iteration' => $i);
 	}
 	
 	/**
-	 * Unverified Transactions
+	 * Get Fees Address
 	 * 
-	 * Load the balance of unverified transactions to do with the specified
-	 * user's account.
-	 *
-	 * @access	public	
+	 * This function generates the next fees address from the electrum 
+	 * MPK, logs the usage, and adds the address to the watch address 
+	 * list.
+	 * 
 	 * @param	string	$user_hash
-	 * @return	int
-	 */			
-	public function unverified_transactions($user_hash) {
-		$this->db->select('value')
-				 ->where('user_hash', $user_hash)
-				 ->where('txn_id !=', "Fee's Payment")
-				 ->where('category', 'receive')
-				 ->where('credited', '0');
-				 
-		$query = $this->db->get('pending_txns');
-		if($query->num_rows() == 0) 
-			return 0.00000000;
+	 * @return	string
+	 */
+	public function get_fees_address($user_hash, $magic_byte) {
+		$this->load->library('BitcoinLib');
+		// Take the next electrum key.
+		$key_data = $this->get_next_key();
 		
-		$balance = 0.00000000;
-		foreach($query->result_array() as $row) {
-			$balance += (float)$row['value'];
-		}
-		return $balance;
-	}
-	
-	/**
-	 * User Transactions
-	 * 
-	 * Loads an array of user transactions, by searching for the users hash.
-	 * If there are records, we format this information, and build up the
-	 * results array. Returns an array if successful, returns FALSE on failure.
-	 *
-	 * @access	public
-	 * @param	string	$user_hash
-	 * @return	bool
-	 */			
-	public function user_txns($user_hash) {
-		$this->db->where('user_hash', $user_hash)
-				 ->order_by('time','desc');
-		$query = $this->db->get('pending_txns');
-		if($query->num_rows() > 0) {
-			$res = array();
-			foreach($query->result_array() as $row) {
-				$row['value_f'] = (float)$row['value'];
-				$row['time_f'] = $this->general->format_time($row['time']);
-				$row['txn_id_f'] = substr($row['txn_id'], 0, 16);
-				array_push($res, $row);
-			}
-			return $res;
-		}
-		return FALSE;
-	}
-											 
-	/**
-	 * Get User Address
-	 * 
-	 * Search for the bitcoin topup address for the specified user. Once
-	 * the user exists, check if the bitcoin_topup_address is unset for 
-	 * any reason (maybe bitcoind was down). If so, generate a new one.
-	 * Return a bitcoin topup address if at all possible, otherwise
-	 * return FALSE;
-	 * 
-	 *
-	 * @access	public
-	 * @param	string	$user_hash
-	 * @return	string/FALSE
-	 */			
-	public function get_user_address($user_hash) {
-		$this->db->select('bitcoin_topup_address')
-				 ->where('user_hash', $user_hash);
-		$query = $this->db->get('users');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			if( $this->general->matches_any($row['bitcoin_topup_address'], array('0',''))) {
-				return $this->bw_bitcoin->new_address($user_hash);
-			}
-			return $row['bitcoin_topup_address'];
-		}
+		$address = BitcoinLib::public_key_to_address($key_data['public_key'], $magic_byte);
 		
-		return FALSE;
-	}
-	
-	/**
-	 * Get Cashout Address
-	 * 
-	 * Load the cashout address for the user. If the record exists, then
-	 * return the bitcoin address. Otherwise, return FALSE.
-	 *
-	 * @access	public
-	 * @param	string	$user_hash
-	 * @return	string/FALSE
-	 */			
-	public function get_cashout_address($user_hash) {
-		$this->db->select('bitcoin_cashout_address')
-				 ->where('user_hash', $user_hash);
-		$query = $this->db->get('users');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			return $row['bitcoin_cashout_address'];
-		}
+		// Log electrum usage
+		$this->bitcoin_model->log_key_usage('fees', $this->bw_config->electrum_mpk, $key_data['iteration'], $key_data['public_key'], FALSE, $user_hash);		
+		// Add the address to the watch list.
+		$this->add_watch_address($address, 'fees');
 		
-		return FALSE;
+		return $address;
 	}
-	
-	/**
-	 * Log User Address
-	 * 
-	 * Log the bitcoin address so we can search for it in future. This is
-	 * in case the user tries to top up using one of their old addresses.
-	 * Returns TRUE if the insert was successful, FALSE if it failed.
-	 * 
-	 * @access	public
-	 * @param	string	$user_hash
-	 * @param	string	$address
-	 * @return	bool
-	 */			
-	public function log_user_address($user_hash, $address) {
-		return ($this->db->insert('addresses', array('user_hash' => "$user_hash", 'bitcoin_address' => "$address"))) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Set User Address
-	 * 
-	 * Set the address on the users profile. If the update is successful,
-	 * log the address to the table. If unsuccessful, return FALSE.
-	 *
-	 * @access	public
-	 * @param	string	$user_hash
-	 * @param	string	$address
-	 * @return	bool
-	 */			
-	public function set_user_address($user_hash, $address) {
-		if($address == NULL)
+		
+	public function log_key_usage($usage, $mpk, $iteration, $public_key, $order_id = FALSE, $user_hash = FALSE) {
+		if(!in_array($usage, array('fees','order')))
+			return FALSE;
+		if($usage == 'order' && $order_id == FALSE)
+			return FALSE;
+		if($usage == 'fees' && $user_hash == FALSE)
 			return FALSE;
 			
-		$this->db->where('user_hash', $user_hash);
-		if($this->db->update('users', array('bitcoin_topup_address' => "$address"))) {
-			$this->log_user_address($user_hash, $address);
-			return TRUE;
-		}
+		$this->load->library('BitcoinLib');
+		$this->load->model('currencies_model');
+		$coin = $this->currencies_model->get('0');
+		$address = BitcoinLib::public_key_to_address($public_key, $coin['crypto_magic_byte']);
 		
-		return FALSE;
-	}
-	
-	/**
-	 * Set Cashout Address
-	 * 
-	 * Update the users profile to record their cashout address. Returns
-	 * TRUE if the update was successful. FALSE on failure. 
-	 *
-	 * @access	public
-	 * @param	string	$user_hash
-	 * @param	string	$address
-	 * @return	bool
-	 */			
-	public function set_cashout_address($user_hash, $address) {
-		$this->db->where('user_hash', $user_hash);
-		return ($this->db->update('users', array('bitcoin_cashout_address' => $address))) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Get Address Owner
-	 * 
-	 * Called by Walletnotify, check to see who owns this address.
-	 * Used to associate a transaction with a user_hash. Returns FALSE
-	 * if no record is found, or returns the user_hash if successful.
-	 *
-	 * @access	public
-	 * @param	string	$address
-	 * @return	string/FALSE
-	 */			
-	public function get_address_owner($address) {
-		$this->db->select('user_hash');
-		$this->db->where('bitcoin_address', $address);
-		$query = $this->db->get('addresses');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			return $row['user_hash'];
-		}
+		$order_id = ($usage == 'order') ? $order_id : '';
+		$user_hash = ($usage == 'fees') ? $user_hash : '';
 		
-		return FALSE;
-	}
-	
-	/**
-	 * Get Cashout Address Owner
-	 * 
-	 * Called by Walletnotify, get the owner of the cashout address.
-	 * Used for cashouts. Returns the user_hash if successful, returns
-	 * FALSE on failure.
-	 *
-	 * @access	public
-	 * @param	string	$address
-	 * @return	string/FALSE
-	 */		
-	public function get_cashout_address_owner($address) {
-		$this->db->select('user_hash');
-		$this->db->where('bitcoin_cashout_address', $address);
-		$query = $this->db->get('users');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			return $row['user_hash'];
-		}
+		$log = array(	'usage' => $usage,
+						'mpk' => $mpk,
+						'iteration' => $iteration,
+						'public_key' => $public_key,
+						'address' => $address,
+						'order_id' => $order_id,
+						'fees_user_hash' => $user_hash);
 		
-		return FALSE;
-	}
-	
-	/**
-	 * Add Pending Transaction
-	 * 
-	 * Records a transaction, with indexes of $array as column names.
-	 * Is added once for a bitcoin topup/cashout. Also used to record
-	 * the outcome of an order. Returns TRUE if successful. Returns FALSE
-	 * if unsuccessful.
-	 *
-	 * $array = 
-	 *	array( 'txn_id' => "...",
-	 *		 'user_hash' => "...",
-	 *		 'value' => (float)"...",
-	 *		 'confirmations' => "...",
-	 *		 'address' => "...",
-	 *		 'category' => "...",
-	 *		 'credited' => "...",
-	 *		 'time' => "...");
-	 * 
-	 * @access	public
-	 * @param	array	$array
-	 * @return	bool
-	 */			
-	public function add_pending_txn($array) {
-		// A quick check to prevent code from adding transaction twice.
-		if($this->user_transaction($array['user_hash'], $array['txn_id'], $array['category']) == FALSE) {
-			if($this->db->insert('pending_txns', $array) == TRUE)
-				return TRUE;
-		}
-		return FALSE;
+		return ($this->db->insert('key_usage', $log) == TRUE) ? TRUE : FALSE;
+		
 	}
 
 	/**
-	 * User Transaction
+	 * Count Key Usage
 	 * 
-	 * Check if there is already a record of this transaction. Looks the
-	 * transaction up based on the user's hash, transaction ID, and the
-	 * category. Makes the search more specific, to avoid issues. Returns
-	 * TRUE if the transaction is on record already, FALSE if it's not.
+	 * This function loads the total count of electrum usage logs, for
+	 * use with the pagination functions
 	 *
-	 * @access	public
-	 * @param	string	$user_hash
-	 * @param	string	$txn_hash
-	 * @param	string	$category
-	 * @return	bool
-	 */			
-	public function user_transaction($user_hash, $txn_hash, $category) {
-		$this->db->select('id')
-				 ->where('user_hash', $user_hash)
-				 ->where('txn_id', $txn_hash)
-				 ->where('category', $category);
-				
-		$query = $this->db->get('pending_txns');
-		return ($query->num_rows() > 0) ? TRUE : FALSE;
-	}
-			
-	/**
-	 * Have Transaction
-	 * 
-	 * Checks if we have this transaction ID. Very very bad.
-	 * Should be deprecated in favour of user_transaction()...
-	 * Not specific enough. Returns the transaction if successful, or
-	 * FALSE if it's not found. Wallet Notify callback.
-	 *
-	 * @access	public
-	 * @param	string	$txn_id
-	 * @return	array/FALSE
-	 */		
-	/*public function have_transaction($txn_id) {
-		$this->db->where('txn_id', $txn_id);
-		$query = $this->db->get('pending_txns');
-		if($query->num_rows() > 0)
-			return $query->row_array();
-			
-		return FALSE;
-	}*/
-	
-	/**
-	 * Update Credits 
-	 * 
-	 * Called by Blocknotify when crediting accounts, and by bitcoin::cashout()
-	 * when sending accounts. And by escrow_model::pay() to issue payment. 
-	 * And orders::place() to deduct the buyers account.
-	 * Requires an array, where each update is contained as an entry in that array.
-	 * Often only suppling one update. The value can be negative.
-	 * Called by Wallet Notify when debiting accounts.
-	 * Eg: 
-	 * $updates = array('0' => array('user_hash' => '...',
-	 * 								 'value' => '...'),
-	 * 					'1' => array('user_hash' => '...',
-	 * 								 'value' => '...'));
-	 * @access	public
-	 * @param	array
-	 * @return	bool
-	 */			
-	public function update_credits($updates) {
-		$code = TRUE;
-		// Loop through each update, and update accordingly. 
-		foreach($updates as $update) {
-			
-			// Calculate the new balance. 
-			$balance = $this->current_balance($update['user_hash'])+$update['value'];	
-
-			// Update the users balance.
-			$this->db->where('user_hash', $update['user_hash']);
-			if($this->db->update('users', array('bitcoin_balance' => $balance) ) == FALSE)
-				$code = FALSE;
-		}
-		return $code;
+	 * @return	int
+	 */
+	public function count_key_usage() {
+		$this->db->from('key_usage');
+		return $this->db->count_all_results();
 	}
 	
 	/**
-	 * Set Credited
+	 * Get Key Usage Page
 	 * 
-	 * Records that this transaction HAS been credited to a users balance.
-	 * Called by Blocknotify. 
+	 * This function accepts the parameters $per_page, the number of records
+	 * to display per page, and the index to start at, $start.  Returns an
+	 * array of records.
 	 * 
-	 * @access	public
-	 * @param	string	$txn_id
-	 * @return	bool
-	 */			
-	public function set_credited($txn_id) {
-		$this->db->where('txn_id', "$txn_id");
-		return ($this->db->update('pending_txns', array('credited' => '1'))) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Get Pending Transactions
-	 * 
-	 * Called by Blocknotify, loads the list of pending transactions. 
-	 * Returns an array of the transactions. Returns an empty array if 
-	 * there are no records. Script then checks each of these for updates.
-	 *
-	 * @access	public
+	 * @param	int	$per_page
+	 * @param	int	$start
 	 * @return	array
-	 */			
-	public function get_pending_txns() {
-		$res = array();
-		// add time to the table
-		$this->db->where('confirmations !=', '>50');
-		$this->db->where('address !=', '[payment]');
-		
-		$query = $this->db->get('pending_txns');
-		return ($query->num_rows() > 0) ? $query->result_array() : $res;
+	 */
+	public function get_key_usage_page($per_page, $start) {
+		// Pagination 
+		$this->db->limit($per_page, $start);
+		$query = $this->db->get('key_usage');
+		return $query->result_array();
 	}
 	
 	/**
-	 * Update Confirmations
+	 * Add Watch Address
 	 * 
-	 * An array of updates is supplied, taking the following format. 
-	 * $updates = array('0' => array('txn_id' => '...',
-	 * 								 'confirmations' => '...'),
-	 * 					.	.	.	.	.	.	.	.	.	
-	 *					);
-	 * We update every transaction on record every time there's a new block
-	 * This makes sure a reorg doesn't cause an orphaned transaction to 
-	 * go through. 
-	 * 
-	 * @access	public
-	 * @param	array	$updates
-	 * @return	void
-	 */			
-	public function update_confirmations($updates) {
-		foreach($updates as $update) {
-			$this->db->where('txn_id', $update['txn_id']);
-			$this->db->update('pending_txns', array('confirmations' => $update['confirmations']));
-		}
-	}	
-	
-	/**
-	 * Add Block
-	 * 
-	 * Called by blocknotify to record the block & its height. Returns TRUE
-	 * if the insertion was successful, otherwise returns FALSE.
-	 *
-	 * @access	public
-	 * @param	string	$block_hash
-	 * @param	int	$number
-	 * @return	bool
-	 */			
-	public function add_block($block_hash, $height) {
-		return ($this->db->insert('blocks', array('hash' => "$block_hash", 'number' => "$height")) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Have Block
-	 * 
-	 * Called by Blocknotify. Check if we have a block with that hash.
-	 * Returns TRUE if we do, returns FALSE otherwise.
-	 *
-	 * @access	public
-	 * @param	string	$block_hash
+	 * @param	string	$address
+	 * @param	string	watch_purpose
 	 * @return	boolean
-	 */		
-	public function have_block($block_hash) {
-		$this->db->select('id')
-				 ->where('hash', "$block_hash");
-		$query = $this->db->get('blocks');
-		return ($query->num_rows() > 0) ? TRUE : FALSE;
+	 */
+	public function add_watch_address($address, $purpose) {
+		return ($this->db->insert('watched_addresses', array('address' => "$address", 'purpose' => "$purpose")) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
-	 * Latest Block
+	 * Watch Address List
 	 * 
-	 * Load information about the latest block on record. Not really used
-	 * apart from testing purposes. Could display information on the admin
-	 * panel. Might start storing the block generation time also?
-	 *
-	 * @access	public
-	 * @return	array / FALSE
-	 */			
-	public function latest_block() {
-		$this->db->select('hash, number')
-				 ->order_by('id', 'desc')
-				 ->limit(1);
-		$query = $this->db->get('blocks');
-		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
+	 * 
+	 */
+	public function watch_address_list() {
+		$this->db->select('address');
+		$query = $this->db->get('watched_addresses');
+		$results = array();
+		foreach($query->result_array() as $result) {
+			$results[] = $result['address'];
+		}
+		return $results;
 	}
 	
 	/**
-	 * Block List
+	 * Get Watch Address
 	 * 
-	 * Not really used. 
-	 *
-	 * @access	public
-	 * @return	bool
-	 */			
-	public function block_list() {
-		$this->db->select('hash, number')
-				 ->order_by('id', 'asc');
-		$query = $this->db->get('blocks');
-		return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
+	 * This function accepts an address, and searches for it in the 
+	 * bw_watched_addresses table, to return its purpose, and id.
+	 * 
+	 * @param	string	$address
+	 * @return	array/FALSE
+	 */
+	public function get_watch_address($address) {
+		$this->db->where('address', $address);
+		$this->db->limit(1);
+		$query = $this->db->get('watched_addresses');
+		return ($query->num_rows == 0) ? FALSE : $query->row_array();
 	}
-
+	
+	
 };
 
 

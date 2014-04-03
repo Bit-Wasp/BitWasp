@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                    <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                    </ul>
+                    </li>
+                    <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">913</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-947790384"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-947790384" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/CurveFpInterface.html">CurveFpInterface</a></li>
+                                                    <li class="interface"><a href="../classes/PublicKeyInterface.html">PublicKeyInterface</a></li>
+                                                    <li class="interface"><a href="../classes/PrivateKeyInterface.html">PrivateKeyInterface</a></li>
+                                                    <li class="interface"><a href="../classes/PointInterface.html">PointInterface</a></li>
+                                                    <li class="interface"><a href="../classes/EcDHInterface.html">EcDHInterface</a></li>
+                                                    <li class="interface"><a href="../classes/SignatureInterface.html">SignatureInterface</a></li>
+                                                                                                    <li class="class"><a href="../classes/Users.html">Users</a></li>
+                                                    <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
+                                                    <li class="class"><a href="../classes/Listings.html">Listings</a></li>
+                                                    <li class="class"><a href="../classes/Welcome.html">Welcome</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin.html">Bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/Messages.html">Messages</a></li>
+                                                    <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
+                                                    <li class="class"><a href="../classes/Admin.html">Admin</a></li>
+                                                    <li class="class"><a href="../classes/Reviews.html">Reviews</a></li>
+                                                    <li class="class"><a href="../classes/Callback.html">Callback</a></li>
+                                                    <li class="class"><a href="../classes/Orders.html">Orders</a></li>
+                                                    <li class="class"><a href="../classes/Items.html">Items</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_Test.html">Bitcoin_Test</a></li>
+                                                    <li class="class"><a href="../classes/Bw_captcha.html">Bw_captcha</a></li>
+                                                    <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
+                                                    <li class="class"><a href="../classes/Current_User.html">Current_User</a></li>
+                                                    <li class="class"><a href="../classes/Bw_Transaction.html">Bw_Transaction</a></li>
+                                                    <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
+                                                    <li class="class"><a href="../classes/Delete_Message_History.html">Delete_Message_History</a></li>
+                                                    <li class="class"><a href="../classes/Version_Checker.html">Version_Checker</a></li>
+                                                    <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
+                                                    <li class="class"><a href="../classes/Jsonrpcclient.html">Jsonrpcclient</a></li>
+                                                    <li class="class"><a href="../classes/Raw_transaction.html">Raw_transaction</a></li>
+                                                    <li class="class"><a href="../classes/General.html">General</a></li>
+                                                    <li class="class"><a href="../classes/Openssl.html">Openssl</a></li>
+                                                    <li class="class"><a href="../classes/BitcoinLib.html">BitcoinLib</a></li>
+                                                    <li class="class"><a href="../classes/Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/Bw_curl.html">Bw_curl</a></li>
+                                                    <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
+                                                    <li class="class"><a href="../classes/PrivateKey.html">PrivateKey</a></li>
+                                                    <li class="class"><a href="../classes/TestSuite.html">TestSuite</a></li>
+                                                    <li class="class"><a href="../classes/gmp_Utils.html">gmp_Utils</a></li>
+                                                    <li class="class"><a href="../classes/bcmath_Utils.html">bcmath_Utils</a></li>
+                                                    <li class="class"><a href="../classes/EcDH.html">EcDH</a></li>
+                                                    <li class="class"><a href="../classes/CurveFp.html">CurveFp</a></li>
+                                                    <li class="class"><a href="../classes/Point.html">Point</a></li>
+                                                    <li class="class"><a href="../classes/SECcurve.html">SECcurve</a></li>
+                                                    <li class="class"><a href="../classes/NISTcurve.html">NISTcurve</a></li>
+                                                    <li class="class"><a href="../classes/NumberTheory.html">NumberTheory</a></li>
+                                                    <li class="class"><a href="../classes/Signature.html">Signature</a></li>
+                                                    <li class="class"><a href="../classes/PublicKey.html">PublicKey</a></li>
+                                                    <li class="class"><a href="../classes/Electrum.html">Electrum</a></li>
+                                                    <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
+                                                    <li class="class"><a href="../classes/GPG.html">GPG</a></li>
+                                                    <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/BIP32.html">BIP32</a></li>
+                                                    <li class="class"><a href="../classes/Admin_model.html">Admin_model</a></li>
+                                                    <li class="class"><a href="../classes/Alerts_model.html">Alerts_model</a></li>
+                                                    <li class="class"><a href="../classes/Review_model.html">Review_model</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
+                                                    <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/Location_model.html">Location_model</a></li>
+                                                    <li class="class"><a href="../classes/Images_model.html">Images_model</a></li>
+                                                    <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
+                                                    <li class="class"><a href="../classes/Captchas_model.html">Captchas_model</a></li>
+                                                    <li class="class"><a href="../classes/Messages_model.html">Messages_model</a></li>
+                                                    <li class="class"><a href="../classes/Listings_model.html">Listings_model</a></li>
+                                                    <li class="class"><a href="../classes/Transaction_cache_model.html">Transaction_cache_model</a></li>
+                                                    <li class="class"><a href="../classes/Disputes_model.html">Disputes_model</a></li>
+                                                    <li class="class"><a href="../classes/Review_auth_model.html">Review_auth_model</a></li>
+                                                    <li class="class"><a href="../classes/Order_model.html">Order_model</a></li>
+                                                    <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
+                                                    <li class="class"><a href="../classes/Config_model.html">Config_model</a></li>
+                                                    <li class="class"><a href="../classes/Auth_model.html">Auth_model</a></li>
+                                                    <li class="class"><a href="../classes/Logs_Model.html">Logs_Model</a></li>
+                                                    <li class="class"><a href="../classes/Shipping_costs_model.html">Shipping_costs_model</a></li>
+                                                    <li class="class"><a href="../classes/Categories_model.html">Categories_model</a></li>
+                                                    <li class="class"><a href="../classes/Fees_model.html">Fees_model</a></li>
+                                                    <li class="class"><a href="../classes/Currencies_model.html">Currencies_model</a></li>
+                                                    <li class="class"><a href="../classes/Items_model.html">Items_model</a></li>
+                                                    <li class="class"><a href="../classes/General_model.html">General_model</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\</small>Raw_transaction</h1>
+                    <p><em>Raw Transaction Library</em></p>
+                    <p>This library contains functions used to decode hex-encoded raw transactions
+into an array mirroring bitcoind's decoderawtransaction format.</p>
+<p>Highest level functions are:</p>
+<ul>
+<li>decode    : decodes a raw transaction hex to a bitcoind-like array</li>
+<li>encode    : encodes a bitcoind-like transaction array to a raw transaction hex.</li>
+<li>validate_signed_transaction : takes a raw transaction hex, it's json inputs,
+<pre><code>           and an optional input-specifier, and validates the signature(s).</code></pre>
+</li>
+<li>create_multisig : creates a multisig address from m, and the public keys.</li>
+<li>create_redeem_script - takes a set of public keys, and the number of signatures
+<pre><code>        required to redeem funds.</code></pre>
+</li>
+<li>decode_redeem_script - decodes a redeemScript to obtain the pubkeys, m, and n.</li>
+</ul>
+
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/Raw_transaction.html#method__flip_byte_order" class="">_flip_byte_order()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__return_bytes" class="">_return_bytes()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__dec_to_bytes" class="">_dec_to_bytes()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__get_vint" class="">_get_vint()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__encode_vint" class="">_encode_vint()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__decode_script" class="">_decode_script()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__decode_inputs" class="">_decode_inputs()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__encode_inputs" class="">_encode_inputs()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__decode_scriptPubKey" class="">_decode_scriptPubKey()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__get_transaction_type" class="">_get_transaction_type()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__decode_outputs" class="">_decode_outputs()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__encode_outputs" class="">_encode_outputs()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_decode" class="">decode()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_encode" class="">encode()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__create_txin_signature_hash" class="">_create_txin_signature_hash()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method__check_sig" class="">_check_sig()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_decode_redeem_script" class="">decode_redeem_script()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_create_redeem_script" class="">create_redeem_script()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_create_multisig" class="">create_multisig()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_decode_signature" class="">decode_signature()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_validate_signed_transaction" class="">validate_signed_transaction()</a><br />
+                                                                    <a href="../classes/Raw_transaction.html#method_create" class="">create()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <a href="../classes/Raw_transaction.html#property_op_code" class="">$op_code</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/libraries.Raw_transaction.php.html"><div class="path-wrapper">libraries/Raw_transaction.php</div></a></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                    <div class="namespace-wrapper">\Raw_transaction</div>
+                            </dd>
+
+                        
+                        
+                        
+                        
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                todo
+                            </th>
+                            <td>
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                                    <a id="properties" name="properties"></a>
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <h2>Properties</h2>
+                </div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="property_op_code" name="property_op_code" class="anchor"></a>
+            <article class="property">
+                <h3 class="public ">$op_code</h3>
+                <pre class="signature">$op_code</pre>
+                <p><em>Some of the defined OP CODES available in Bitcoins script.</em></p>
+                <p>None of these are interpetted, apart from PUSHDATA and OP_2-OP_16.</p>
+
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                        <dl>
+                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                            
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__flip_byte_order" name="method__flip_byte_order" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_flip_byte_order()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_flip_byte_order(string <span class="argument">$bytes</span>) : string</pre>
+                <p><em>Flip Byte Order</em></p>
+                <p>This function is used to swap the byte ordering from little to big
+endian, and vice-versa. A byte string, not a reference, is supplied,
+the byte order reversed, and the string returned.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$bytes</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__return_bytes" name="method__return_bytes" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_return_bytes()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_return_bytes(string <span class="argument">$string</span>, int <span class="argument">$byte_count</span>, boolean <span class="argument">$reverse</span>) : string</pre>
+                <p><em>Return Bytes</em></p>
+                <p>This function accepts $string as a reference, and takes the first
+$byte_count bytes of hex (twice the number when dealing with hex
+characters in a string), and returns it to the user.
+Setting the third parameter to TRUE will cause the byte order to flip.
+Note: Because $string is a reference to the original copy, this
+function actually removes the data from the string.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$string</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>int</td>
+                                <td>$byte_count</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$reverse</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__dec_to_bytes" name="method__dec_to_bytes" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_dec_to_bytes()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_dec_to_bytes(int <span class="argument">$decimal</span>, int <span class="argument">$bytes</span>, boolean <span class="argument">$reverse</span>) : string</pre>
+                <p><em>Decimal to Bytes</em></p>
+                <p>This function encodes a $decimal number as a $bytes byte long hex string.
+Byte order can be flipped by setting $reverse to TRUE.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$decimal</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>int</td>
+                                <td>$bytes</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>boolean</td>
+                                <td>$reverse</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_vint" name="method__get_vint" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_get_vint()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_vint(string <span class="argument">$string</span>) : int</pre>
+                <p><em>Get VarInt</em></p>
+                <p><a href="https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_integer">https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_integer</a></p>
+<p>This function is used when dealing with a varint. Because their size
+is variable, the first byte must be checked to learn the true length
+of the encoded number.
+$tx is passed by reference, and the first byte is popped.
+It is compared against a list of bytes, which are used to infer the
+following numbers length.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$string</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    int
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__encode_vint" name="method__encode_vint" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_encode_vint()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_encode_vint(int <span class="argument">$decimal</span>) : \string/FALSE</pre>
+                <p><em>Encode VarInt
+Accepts a $decimal number and attempts to encode it to a VarInt.</em></p>
+                <p><a href="https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_integer">https://en.bitcoin.it/wiki/Protocol_specification#Variable_length_integer</a></p>
+<p>If the number is less than 0xFD/253, then the varint returned
+ is the decimal number, encoded as one hex byte.
+If larger than this number, then the numbers magnitude determines
+a prefix, out of FD, FE, and FF, depending on the number size.
+Returns FALSE if the number is bigger than 64bit.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$decimal</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \string/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__decode_script" name="method__decode_script" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_decode_script()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_decode_script(string <span class="argument">$script</span>) : string</pre>
+                <p><em>Decode Script</em></p>
+                <p>This function accepts a $script (such as scriptSig) and converts it
+into an assembled version. Written based on the pybitcointools
+transaction.deserialize_script() function.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$script</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__decode_inputs" name="method__decode_inputs" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_decode_inputs()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_decode_inputs(string <span class="argument">$raw_transaction</span>, int <span class="argument">$input_count</span>) : array</pre>
+                <p><em>Decode Inputs</em></p>
+                <p>This function accepts a $raw_transaction by reference, and $input_count,
+a decimal number of inputs to extract (learned by calling the get_vint()
+function). Returns an array of the construction [vin] if successful,
+returns FALSE if an error was encountered.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$raw_transaction</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>int</td>
+                                <td>$input_count</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__encode_inputs" name="method__encode_inputs" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_encode_inputs()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_encode_inputs(array <span class="argument">$vin</span>, int <span class="argument">$input_count</span>) : string</pre>
+                <p><em>Encode Inputs</em></p>
+                <p>Accepts a decoded $transaction['vin'] array as input: $vin. Also
+requires $input count.
+This function encodes the txid, vout, and script into hex format.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$vin</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>int</td>
+                                <td>$input_count</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__decode_scriptPubKey" name="method__decode_scriptPubKey" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_decode_scriptPubKey()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_decode_scriptPubKey( <span class="argument">$script</span>) : string</pre>
+                <p><em>Decode scriptPubKey</em></p>
+                <p>This function takes $script (hex) as an argument, and decodes an
+script hex into an assembled human readable string.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$script</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__get_transaction_type" name="method__get_transaction_type" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_get_transaction_type()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_get_transaction_type(string <span class="argument">$data</span>, string <span class="argument">$address_version</span>) : \array/FALSE</pre>
+                <p><em>Get Transaction Type</em></p>
+                <p>This function takes a $data string, from a decoded scriptPubKey,
+explodes it into an array of the operations/data. Returns FALSE if
+the decoded scriptPubKey does not match against the definition of
+any type of transaction.
+Currently identifies pay-to-pubkey-hash and pay-to-script-hash.</p>
+<p>Transaction types are defined using the $define array, and
+corresponding rules are build using the $rule array. The function
+will attempt to create the address based on the transaction type
+and $address_version byte.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$data</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$address_version</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \array/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__decode_outputs" name="method__decode_outputs" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_decode_outputs()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_decode_outputs(string <span class="argument">$tx</span>, int <span class="argument">$output_count</span>, string <span class="argument">$address_version</span>) : \array/FALSE</pre>
+                <p><em>Decode Outputs</em></p>
+                <p>This function accepts $tx - a reference to the raw transaction being
+decoded, and $output_count. Also accepts $address_version for when
+dealing with networks besides bitcoin.
+Returns FALSE if</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$tx</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>int</td>
+                                <td>$output_count</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$address_version</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \array/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__encode_outputs" name="method__encode_outputs" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_encode_outputs()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_encode_outputs( <span class="argument">$vout_arr</span>,  <span class="argument">$output_count</span>) : \string/FALSE</pre>
+                <p><em>Encode Outputs</em></p>
+                <p>This function encodes $tx['vin'] array into hex format. Requires
+the $vout_arr, and also $output_count - the number of outputs
+this transaction has.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$vout_arr</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$output_count</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \string/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_decode" name="method_decode" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">decode()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">decode( <span class="argument">$raw_transaction</span>, string <span class="argument">$address_version</span>)</pre>
+                <p><em>Decode</em></p>
+                <p>A high-level function which takes $raw_transaction hex, and decodes
+it into an array similar to that returned by bitcoind.
+Accepts an optional $address_version for creating the addresses</p>
+<ul>
+<li>defaults to bitcoins version byte.</li>
+</ul>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$raw_transaction</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$address_version</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_encode" name="method_encode" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">encode()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">encode(array <span class="argument">$raw_transaction_array</span>) : string</pre>
+                <p><em>Encode</em></p>
+                <p>This function takes an array in a format similar to bitcoind's
+(and compatible with the output of debug above) and re-encodes it
+into a raw transaction hex string.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$raw_transaction_array</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__create_txin_signature_hash" name="method__create_txin_signature_hash" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_create_txin_signature_hash()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_create_txin_signature_hash(string <span class="argument">$raw_transaction</span>,  <span class="argument">$json_inputs</span>,  <span class="argument">$specific_input</span>) : string</pre>
+                <p><em>Create Signature Hash</em></p>
+                <p>This function accepts a $raw_transaction hex, and generates a hash
+for each input, against which a signature and public key can be
+verified.
+See <a href="https://en.bitcoin.it/w/images/en/7/70/Bitcoin_OpCheckSig_InDetail.png">https://en.bitcoin.it/w/images/en/7/70/Bitcoin_OpCheckSig_InDetail.png</a></p>
+<p>If $specific_input is not set, then a hash will be generated for
+each input, and these values returned as an array for comparison
+during another script.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$raw_transaction</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$json_inputs</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$specific_input</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    string
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__check_sig" name="method__check_sig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_check_sig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_check_sig(string <span class="argument">$sig</span>, string <span class="argument">$hash</span>, string <span class="argument">$key</span>) : boolean</pre>
+                <p><em>Check Sig</em></p>
+                <p>This function will check a provided DER encoded $sig, a digest of
+the message to be signed - $hash (the output of _create_txin_signature_hash()),
+and the $key for the signature to be tested against.
+Returns TRUE if the signature is valid for this $hash and $key,
+otherwise returns FALSE.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$sig</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$hash</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$key</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_decode_redeem_script" name="method_decode_redeem_script" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">decode_redeem_script()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">decode_redeem_script(string <span class="argument">$redeem_script</span>,  <span class="argument">$data</span>) : array</pre>
+                <p><em>Decode Redeem Script</em></p>
+                <p>This recursive function extracts the m and n values for the
+multisignature address, as well as the public keys.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$redeem_script</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$data</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_create_redeem_script" name="method_create_redeem_script" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">create_redeem_script()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">create_redeem_script(int <span class="argument">$m</span>, array <span class="argument">$public_keys</span>) : \string/FALSE</pre>
+                <p><em>Create Redeem Script</em></p>
+                <p>This function creates a hex encoded redeemScript, by setting $m,
+the number of signatures required for redemption, and the public
+keys involved in the address. Returns FALSE if no public keys are
+supplied, or $m is zero. Otherwise returns a string containing
+the redeemScript.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$m</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$public_keys</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \string/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_create_multisig" name="method_create_multisig" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">create_multisig()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">create_multisig(int <span class="argument">$m</span>, array <span class="argument">$public_keys</span>)</pre>
+                <p><em>Create Multisig</em></p>
+                <p>This function mirrors that of Bitcoind's. It creates a redeemScript
+out of keys given in the given order, creates a redeemScript, and
+creates the address from this. $m must be greater than zero, and
+public keys are required.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>int</td>
+                                <td>$m</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$public_keys</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_decode_signature" name="method_decode_signature" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">decode_signature()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">decode_signature(string <span class="argument">$signature</span>) : array</pre>
+                <p><em>Decode Signature</em></p>
+                <p>This function extracts the r and s parameters from a DER encoded
+signature. No checking on the validity of the numbers.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$signature</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    array
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_validate_signed_transaction" name="method_validate_signed_transaction" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">validate_signed_transaction()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">validate_signed_transaction(string <span class="argument">$raw_tx</span>, string <span class="argument">$json_string</span>,  <span class="argument">$address_version</span>)</pre>
+                <p><em>Validate Signed Transaction</em></p>
+                <p>Pass a decoded $transaction, the $raw_tx as a reference and to
+process into a hash when needed, the $json_inputs for the created
+transaction (stored), and the $address_version ('00' for bitcoin
+default)</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$raw_tx</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$json_string</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$address_version</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                            <span class="label label-info">static</span>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_create" name="method_create" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">create()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">create(array <span class="argument">$inputs</span>, array <span class="argument">$outputs</span>,  <span class="argument">$magic_byte</span>) : \string/FALSE</pre>
+                <p><em>Create</em></p>
+                <p>This function creates a raw transaction from an array of inputs,
+and an array of outputs. It takes essentially the same data is
+bitcoind's createrawtransaction function.</p>
+<p>Inputs: Each input is a child array of [txid, vout, and optionally a sequence number.]
+Outputs: Each output is a key in the array: address => $value.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>array</td>
+                                <td>$inputs</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>array</td>
+                                <td>$outputs</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td></td>
+                                <td>$magic_byte</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    \string/FALSE
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">Raw_transaction.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/libraries/Raw_transaction.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on April 3rd, 2014 at 17:48.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

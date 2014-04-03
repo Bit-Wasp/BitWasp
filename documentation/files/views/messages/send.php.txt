@@ -19,7 +19,7 @@
               <div class="control-group">
                 <label class="control-label" for="subject">Subject</label>
                 <div class="controls">
-                  <input type='text' class="span9" name='subject' value="<? if(isset($subject) && $subject !== '[no subject]'){ echo $subject; } ?>" />
+                  <input type='text' class="span9" name='subject' value="<?php if(isset($subject) && $subject !== '[no subject]'){ echo $subject; } ?>" />
                   <span class="help-inline"><?php echo form_error('subject'); ?></span>
                 </div>
               </div>

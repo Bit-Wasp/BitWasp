@@ -31,7 +31,6 @@ class Signature implements SignatureInterface{
         $this->r = $r;
         $this->s = $s;
 
-
     }
 
 

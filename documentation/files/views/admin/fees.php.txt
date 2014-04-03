@@ -25,6 +25,11 @@
 			  <div class='span7'><input type='text' name='default_rate' value='<?php echo $config['default_rate']; ?>' /></div>
 		    </div>
 		    
+		    <div class='row-fluid'>
+			  <div class='span2 offset1'>Escrow Rate</div>
+			  <div class='span7'><input type='text' name='escrow_rate' value='<?php echo $config['escrow_rate']; ?>' /></div>
+		    </div>
+		    
 			<div class='row-fluid'>
 			  <div class='span5 offset3'><input type='submit' name='update_config' value='Update' class='btn' /></div>
 		    </div>

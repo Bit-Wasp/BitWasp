@@ -140,11 +140,11 @@ class Listings extends CI_Controller {
 				$listing = $this->listings_model->get($hash);
 				
 				$this->load->model('shipping_costs_model');
-				$initial_shipping_costs = array(array('destination_id' => 'worldwide',
+				$initial_shipping_costs = array(	'item_id' => $listing['id'],
+													'destination_id' => 'worldwide',
 													'cost' => ($data['local_currency']['id'] == '0') ? '0.003' : '10',
-													'enabled' => '0'));
-				$this->shipping_costs_model->update($listing['id'], $initial_shipping_costs);
-				
+													'enabled' => '1');
+				$this->shipping_costs_model->insert($initial_shipping_costs);
 				
 				$this->session->set_userdata('new_item','true');
 				$this->session->set_flashdata('shipping_returnMessage',json_encode(array('returnMessage' => 'Your item has been created. You must now configure shipping costs for your item.', 'success' => TRUE)));
@@ -293,43 +293,45 @@ class Listings extends CI_Controller {
 		
 		$new_item = $this->session->userdata('new_item');
 		$redirect_to = ($new_item == 'true') ? 'listings/images/'.$data['item']['hash'] : 'listings/shipping/'.$data['item']['hash'];
-		$data['shipping_costs'] = $this->shipping_costs_model->for_item_raw($data['item']['id'], TRUE);
-		
 
-		if($this->input->post('shipping_costs_update') == 'Update') {
-			//if($this->form_validation->run('shipping_costs') == TRUE) {
-				$prices = $this->input->post('price');
-				$country = $this->input->post('country');
-				$enabled = $this->input->post('enabled');
-	
-				$array = array();
-				$i = 0; 
-				foreach($prices as $key => $price) {
-					$new_key = ($key !== 'worldwide') ? $country[$i] : $key;
-					
-					if($country[$i] !== '')
-						$array[] = array('cost' => $price,
-										'destination_id' => $new_key,
-										'enabled' => (isset($enabled[$new_key]) && $enabled[$new_key] == '1') ? '1' : '0');
-					
-					if($key !== 'worldwide')
-						$i++;
-				}
+		if($this->input->post('update_shipping_cost') == 'Update') {
+			$updates = array();
+			foreach($this->input->post('cost') as $cost_id => $cost_array) {
+				$this->form_validation->set_rules("cost[$cost_id][cost]","Cost", "callback_check_is_positive");
+				if($this->form_validation->run() == TRUE) {
+					if(!isset($cost_array['enabled']) || $cost_array['enabled'] !== '1'){
+						$this->shipping_costs_model->delete($cost_id);
+					} else {
+						$t_array = array('cost' => $cost_array['cost'],
+										 'enabled' => $cost_array['enabled']);
+						$this->shipping_costs_model->update($cost_id, $t_array);
+					}
+				} 
+			}
+			redirect($redirect_to);
+		}
+
+		if($this->input->post('add_shipping_cost') == 'Add') {
+			if($this->form_validation->run('add_shipping_cost') == TRUE) {
 				if($new_item == 'true')
 					$this->session->unset_userdata('new_item');
 				
-				if($this->shipping_costs_model->update($data['item']['id'], $array)) {
-					if($new_item == 'true'){
+				$array = array('destination_id' => $this->input->post('add_location'),
+							   'cost' => (float)$this->input->post('add_price'),
+							   'item_id' => $data['item']['id'],
+							   'enabled' => '1');
+				if($this->shipping_costs_model->insert($array)) {
+					if($new_item == 'true') 
 						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
-					}
 					redirect($redirect_to);
 				}
-				
-			//}
+			}
 		}
+
+		$data['shipping_costs'] = $this->shipping_costs_model->for_item_raw($data['item']['id'], TRUE);
 		
 		$this->load->model('location_model');
-		$data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'country[]', 'span5');
+		$data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'add_location', 'span8');
 		$data['current_user'] = $this->current_user->status();
 		$data['account'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
 		

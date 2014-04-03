@@ -1,4 +1,4 @@
-        <div class="span9 mainContent" id="homepage">
+     <div class="span9 mainContent" id="homepage">
  	  <h2>BitWasp</h2>
 						  
 	  <div class='alert alert-danger'>So long as this message remains in the code, the project is NOT production ready, and should only be used with the Bitcoin Testnet. Let ye be warned.</div>
@@ -12,21 +12,6 @@
 	
 	<div class='row-fluid'>
 		<p>Please consider donating to our Bitcoin address, 19EkDTAaGWySZv1QsWxyWwYMZpo7jpvPYe. Donations will go towards hosting, and to provide bounties for bugs.</p>
-		<script src="http://coinwidget.com/widget/lookup.php?data=0_bitcoin_19EkDTAaGWySZv1QsWxyWwYMZpo7jpvPYe"></script>
-<div id="content">
-    <div id="goalleft" class="therm-text"></div>
-    <div id="thermo2" class="thermometer horizontal">
-        <div class="track">
-            <div class="goal">
-                <div class="amount"></div>
-            </div>
-            <div class="progress">
-                <div class="amount"></div>
-            </div>
-        </div>
-    </div>
-</div>
-	</div>
 		 		  
 		    <div class='row-fluid'>
 			  <div class='span4'>

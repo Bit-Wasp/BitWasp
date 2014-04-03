@@ -226,6 +226,31 @@ class Users_model extends CI_Model {
 	}
 	
 	/**
+	 * Increase Order Counter
+	 * 
+	 * This function accepts a $user_id, and increases that users completed
+	 * order count by one.
+	 * 
+	 * @param	int	$id
+	 * @return	boolean
+	 */
+	public function increase_order_count($user_id) {
+		$this->db->select('completed_order_count')
+				 ->where('id', $user_id);
+		$query = $this->db->get('users');
+		if($query->num_rows() > 0) {
+			$row = $query->row_array();
+			
+			$update = array('completed_order_count' => ($row['completed_order_count']+1));
+			$this->db->where('id', $user_id);
+			return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+		} else {
+			return FALSE;
+		}
+			
+	}
+	
+	/**
 	 * Set Login
 	 * 
 	 * Set the users login time (user specified by $id)
@@ -250,12 +275,12 @@ class Users_model extends CI_Model {
 	 * @param	array	info
 	 * @return	boolean
 	 */
-	 public function set_entry_payment($info) {
+	public function set_entry_payment($info) {
 		 $info['time'] = time();
 		 return ($this->db->insert('entry_payment', $info)) ? TRUE : FALSE;
-	 }
-	 
-	/** 
+	}
+	
+	/**
 	 * Set Entry Paid
 	 * 
 	 * This function is run when entry is free or when the user has
@@ -341,6 +366,16 @@ class Users_model extends CI_Model {
 		 return ($this->db->delete('entry_payment') == TRUE) ? TRUE : FALSE;
 	} 
 	
+	
+	/**
+	 * Count User List
+	 * 
+	 * This function returns the total count of users. Additional parameters
+	 * can be supplied to narrow down the request. 
+	 * 
+	 * @param	array	(opt)$params
+	 * @return	int
+	 */
 	public function count_user_list($params) {
 		$this->db->select('id');
 		

@@ -108,23 +108,6 @@ class Bw_config {
 	public $price_index 			= "Disabled";
 	
 	/**
-	 * Ban After Inactivity
-	 * 
-	 * Users can be banned after a certain period of inactivity. This ban
-	 * will trigger an automatic refund of bitcoins to the users cashout address.
-	 * The default is to allow accounts to remain active indefinitely.
-	 */
-	public $refund_after_inactivity	= 0;
-	
-	/**
-	 * Delete Transactions After
-	 * 
-	 * Administrators may chose to clear transaction history after a certain
-	 * period of time. The default setting is to store all transaction history.
-	 */
-	public $delete_transactions_after = 0;
-	
-	/**
 	 * Delete Messages After
 	 * 
 	 * Administrators may chose to clear user messages after a certain period 
@@ -132,28 +115,6 @@ class Bw_config {
 	 */
 	public $delete_messages_after	= 0;
 	
-	/**
-	 * Max Main Balance
-	 * 
-	 * Administrators may chose to send excessive funds in the "main"
-	 * wallet account to a secured, offline wallet. By setting this threshold,
-	 * the script will check daily for a balance in the main account exceding
-	 * this amount. If this is the case, the excess will be sent to the offline
-	 * address. The default setting is to let the funds remain in the wallet.
-	 */
-	public $max_main_balance		= 0.00000000;	
-	
-	/**
-	 * Max Fees Balance
-	 * 
-	 * Administrators may chose to send excessive funds in the "fees"
-	 * wallet account to a secured, offline wallet. By setting this threshold,
-	 * the script will check daily for a balance in the fees account exceding
-	 * this amount. If this is the case, the excess will be sent to the offline
-	 * address. The default setting is to let the funds remain in the wallet.
-	 */
-	public $max_fees_balance		= 0.00000000;
-
 	/**
 	 * Base URL
 	 * 
@@ -199,17 +160,6 @@ class Bw_config {
 	public $entry_payment_buyer		= 0.00000000;
 	
 	/**
-	 * Auto Finalize Threshold
-	 * 
-	 * This setting determines how long an order can go on where:
-	 * (1) the progress=3 but the vendor hasn't logged in for X days.
-	 * (2) the progress=4 and finalized=0 but the buyer hasn't logged in for X days.
-	 * In 1, the buyer will receive a refund, and in 2, the vendor will
-	 * receive the funds for the item.
-	 */
-	public $auto_finalize_threshold	= 0;
-
-	/**
 	 * Default Rate (Fees)
 	 * 
 	 * This is the default rate at which orders are charged. This is used
@@ -220,6 +170,14 @@ class Bw_config {
 	public $default_rate 			= 1;
 	
 	/**
+	 * Escrow Rate (Fees)
+	 * 
+	 * This is the rate which is charged to the vendor from the balance
+	 * they expect to receive if they choose an escrow payment. 
+	 */
+	public $escrow_rate				= 1;
+	
+	/**
 	 * Minimum fee
 	 * 
 	 * This is the minimum fee which an order can have. Usually this 
@@ -228,16 +186,6 @@ class Bw_config {
 	 * BTC.
 	 */
 	public $minimum_fee				= 0.0003;
-	
-	/**
-	 * Balance Backup Method
-	 * 
-	 * This setting determines which way it should back up balances.
-	 * At this moment, it is possible to generate a new private key
-	 * which is securely stored for the admin, or to generate deterministic
-	 * addresses via electrum. Be default, this is disabled.
-	 */
-	public $balance_backup_method 	= '';
 	
 	/**
 	 * Global Proxy Type
@@ -382,15 +330,7 @@ class Bw_config {
 			$result = array('price_index' => $this->price_index,
 							'price_index_config' => $this->price_index_config,
 							'electrum_mpk' => $this->electrum_mpk,
-							'delete_transactions_after' => $this->delete_transactions_after,
-							'balance_backup_method' => $this->balance_backup_method);
-			$accounts = $this->CI->bw_bitcoin->listaccounts();
-			foreach($accounts as $account => $balance) {
-				$var = 'max_'.$account.'_balance';
-				if(isset($this->CI->bw_config->$var))
-					$result[$var] = $this->CI->bw_config->$var;
-			}
-			
+							'electrum_iteration' => $this->electrum_iteration);
 		} else if($panel == 'users') {
 			$result = array('registration_allowed' => $this->registration_allowed,
 							'vendor_registration_allowed' => $this->vendor_registration_allowed,
@@ -398,19 +338,17 @@ class Bw_config {
 							'force_vendor_pgp' => $this->force_vendor_pgp,
 							'login_timeout' => $this->login_timeout/60,
 							'captcha_length' => $this->captcha_length,
-							'refund_after_inactivity' => $this->refund_after_inactivity,
 							'delete_messages_after' => $this->delete_messages_after,
 							'entry_payment_vendor' => $this->entry_payment_vendor,
 							'entry_payment_buyer' => $this->entry_payment_buyer);
 		} else if($panel == 'items') {
-			$result = array('auto_finalize_threshold' => $this->auto_finalize_threshold);
+			$result = array();
 		} else if($panel == 'fees') {
 			$result = array('default_rate' => $this->default_rate,
-							'minimum_fee' => $this->minimum_fee);
+							'minimum_fee' => $this->minimum_fee,
+							'escrow_rate' => $this->escrow_rate);
 		} else if($panel == 'autorun') {
-			$result = array('refund_after_inactivity' => $this->refund_after_inactivity,
-							'delete_messages_after' => $this->delete_messages_after,
-							'delete_transactions_after' => $this->delete_transactions_after,
+			$result = array('delete_messages_after' => $this->delete_messages_after,
 							'price_index' => $this->price_index);
 		}
 		return $result;

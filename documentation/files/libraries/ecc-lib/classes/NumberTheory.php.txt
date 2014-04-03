@@ -231,7 +231,7 @@ class NumberTheory {
                 $jac = self::jacobi($a, $p);
 
                 if ($jac == -1)
-                    throw new SquareRootException($a . " has no square root modulo " . $p);
+                    return FALSE;
 
                 if (gmp_strval(gmp_Utils::gmp_mod2($p, 4)) == 3)
                     return self::modular_exp($a, gmp_strval(gmp_div(gmp_add($p, 1), 4)), $p);

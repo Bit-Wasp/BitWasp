@@ -59,16 +59,11 @@ class Layout {
 
 		if($CI->current_user->logged_in()) { 
 			
-			$CI->load->model('bitcoin_model');		
 			$CI->load->model('currencies_model');
 			$bar['coin'] = $CI->currencies_model->get('0');
 			// If the user is logged in, load their role, and the categories. 
 			$bar['role'] = strtolower($CI->current_user->user_role);			
-			$bar['balance'] = $CI->bitcoin_model->current_balance();
 			$bar['current_user'] = $CI->current_user->status();
-			$balance = $bar['balance']*$CI->current_user->currency['rate'];
-			$balance = ($CI->current_user->currency['id'] == '0') ? round($balance, '8', PHP_ROUND_HALF_UP) : round($balance, '2', PHP_ROUND_HALF_UP);
-			$bar['local_balance'] = $balance;
 			$bar['count_unread_messages'] = $CI->general_model->count_unread_messages();
 			if($bar['role'] == 'vendor')
 				$bar['count_new_orders'] = $CI->general_model->count_new_orders();
@@ -100,7 +95,7 @@ class Layout {
 						'header_meta' => $data['header_meta']);
 		
 		// Load the HTML.
-		$CI->load->view('templates/header',$header);
+		$CI->load->view('templates/header', $header);
 		$CI->load->view('templates/bar/'.$bar['role'], $bar);
 		$CI->load->view('templates/midsection');
         $CI->load->view('templates/sidebar', $category_data);
@@ -137,7 +132,7 @@ class Layout {
 			$content .= ($category['count'] == 0) ? '<span>'.$category['name'].'</span>' : anchor('category/'.$category['hash'], $category['name'].' ('.$category['count'].")\n");
 			// Check if we need to recurse into children.
 			if(isset($category['children']))  
-			$content .= $this->menu($category['children'], $level, $params); 
+				$content .= $this->menu($category['children'], $level, $params); 
 			
 			$content .= "</li>\n";
 		}

@@ -12,6 +12,13 @@
 			  <div class="span3"><strong>Profile URL</strong></div>
 			  <div class="span7"><?php echo anchor('user/'.$user['user_hash']); ?></div>
 			</div>
+
+<?php if($user_role == 'Vendor') { ?>
+			<div class="row-fluid">
+			  <div class="span3"><strong>Bitcoin Public Keys</strong></div>
+			  <div class="span7"><?php echo $public_key_count; ?> available. <?php echo anchor('accounts/public_keys', 'Click here to add more'); ?></div>
+			</div>
+<?php } ?>
 			
 			<div class="row-fluid">
 			  <div class="span3"><strong>Location</strong></div>
