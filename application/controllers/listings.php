@@ -306,13 +306,9 @@ class Listings extends CI_Controller {
 										 'enabled' => $cost_array['enabled']);
 						$this->shipping_costs_model->update($cost_id, $t_array);
 					}
-					if($new_item == 'true') {
-						$this->session->unset_userdata('new_item');
-						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
-					}
-					redirect($redirect_to);
 				} 
 			}
+			redirect($redirect_to);
 		}
 
 		if($this->input->post('add_shipping_cost') == 'Add') {
@@ -325,7 +321,7 @@ class Listings extends CI_Controller {
 							   'item_id' => $data['item']['id'],
 							   'enabled' => '1');
 				if($this->shipping_costs_model->insert($array)) {
-					if($new_item == 'true')
+					if($new_item == 'true') 
 						$this->session->set_flashdata('images_returnMessage',json_encode(array('returnMessage' => 'Shipping costs have been updated. Now add images for your item.')));
 					redirect($redirect_to);
 				}

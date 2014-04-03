@@ -22,6 +22,7 @@ class Items extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('items_model');
+		$this->items_per_page = 20;
 	}
 	
 	/**
@@ -41,9 +42,9 @@ class Items extends CI_Controller {
 			$data['returnMessage'] = $info['message'];		
 		
 		$items_config = array();
-		$items_per_page = 4;
-		$data['links'] = $this->items_model->pagination_links($items_config, site_url('items'), 2);
-		$data['items'] = $this->items_model->get_list_pages($items_config, $page);
+		$per_page = $this->items_per_page;
+		$data['links'] = $this->items_model->pagination_links($items_config, site_url('items'), $per_page, 2);
+		$data['items'] = $this->items_model->get_list_pages($items_config, $page, $per_page);
 		
 		$this->load->library('Layout', $data);
 	}
@@ -65,15 +66,14 @@ class Items extends CI_Controller {
 		if($data['category'] == FALSE)
 			redirect('items');
 
-					
 		$data['title'] = 'Items by Category: '.$data['category']['name'];
 		$data['custom_title'] = 'Category: '.$data['category']['name'];
 		$data['page'] = 'items/index';
 		
-		$items_per_page = 4;
+		$per_page = $this->items_per_page;
 		$items_config = array('category' => $data['category']['id']);
-		$data['links'] = $this->items_model->pagination_links($items_config, site_url("category/$hash"), 3);
-		$data['items'] = $this->items_model->get_list_pages( array('category' => $data['category']['id']), $page );
+		$data['links'] = $this->items_model->pagination_links($items_config, site_url("category/$hash"), $per_page, 3);
+		$data['items'] = $this->items_model->get_list_pages( array('category' => $data['category']['id']), $page, $per_page );
 		
 		$this->load->library('Layout', $data);
 	}
@@ -119,10 +119,9 @@ class Items extends CI_Controller {
 			$items_config = array('ship_from' => $location);
 
 		} else {
-			$location_info = $this->location_model->get_location_info($location);
-			if($location_info == FALSE)
+			$data['location_name'] = $this->location_model->location_by_id($location);
+			if($data['location_name'] == FALSE)
 				redirect('items');
-			$data['location_name'] = $location_info['location'];
 
 			if($source == 'ship-to') {
 				// Load the id's of items which are available in the $location
@@ -133,8 +132,9 @@ class Items extends CI_Controller {
 			}
 		}
 
-		$data['links'] = $this->items_model->pagination_links($items_config, site_url("location/{$source}/{$location}"), 4);
-		$data['items'] = $this->items_model->get_list_pages($items_config, $page);	
+		$per_page = $this->items_per_page;
+		$data['links'] = $this->items_model->pagination_links($items_config, site_url("location/{$source}/{$location}"), $per_page, 4);
+		$data['items'] = $this->items_model->get_list_pages($items_config, $page, $per_page);	
 		
 		// Set the appropriate titles.
 		if($source == 'ship-from') {
@@ -173,7 +173,10 @@ class Items extends CI_Controller {
 		$data['page'] = 'items/get';
 		$data['title'] = $data['item']['name'];
 		$data['user_role'] = $this->current_user->user_role;
-		$data['browsing_currency'] = $this->current_user->currency;
+		$data['local_currency'] = $this->current_user->currency;
+		
+		$this->load->model('currencies_model');
+		$data['coin'] = $this->currencies_model->get('0');
 		
 		$this->load->model('shipping_costs_model');
 		$data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
@@ -186,13 +189,6 @@ class Items extends CI_Controller {
 		$data['average_rating'] = $this->review_model->current_rating('item', $hash);
 		$data['vendor_rating'] = $this->review_model->current_rating('user', $data['item']['vendor']['user_hash']);
 
-		if($data['browsing_currency']['id'] !== '0' && $data['shipping_costs'] !== FALSE){
-			$this->load->model('currencies_model');
-			$currency = $this->currencies_model->get($data['browsing_currency']['id']);
-			foreach($data['shipping_costs'] as &$cost) {
-				$cost['cost'] = round($cost['cost']*$currency['rate'], 3, PHP_ROUND_HALF_UP);
-			}
-		}
 		$this->load->library('Layout', $data);
 	}
 };

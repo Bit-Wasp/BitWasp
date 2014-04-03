@@ -60,6 +60,26 @@ class Accounts extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	public function public_keys() {
+		if($this->current_user->user_role !== 'Vendor')
+			redirect('');
+		
+		if($this->input->post('submit_public_keys') == 'Upload Public Keys') {
+			$this->load->library('BitcoinLib');
+			$keys = explode("\n",$this->input->post('public_key_list'));
+			foreach($keys as $key){
+				if(BitcoinLib::validate_public_key($key) == TRUE)
+					$this->accounts_model->add_bitcoin_public_key($key);
+			}
+			redirect('accounts/public_keys');
+		}
+		
+		$data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
+		$data['page'] = 'accounts/vendor_public_keys';
+		$data['title'] = 'Bitcoin Public Keys';
+		$this->load->library('Layout', $data);
+	}
+
 	/**
 	 * View own user profile
 	 * URI: /account
@@ -76,6 +96,11 @@ class Accounts extends CI_Controller {
 	public function me() {
 		// Load profile from the current_user object. 
 		$data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
+
+		$data['user_role'] = $this->current_user->user_role;
+		if($this->current_user->user_role == 'Vendor')
+			$data['public_key_count'] = count($this->accounts_model->bitcoin_public_keys($this->current_user->user_id));
+			
 
 		$data['page'] = 'accounts/me';
 		$data['title'] = $data['user']['user_name'];

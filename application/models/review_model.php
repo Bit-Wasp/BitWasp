@@ -37,42 +37,7 @@ class Review_model extends CI_Model {
 	public function review_information($order_id, $review_type) {
 		$this->load->model('order_model');
 		$order = $this->order_model->get($order_id);
-		if($order == FALSE)
-			return FALSE;
-			
-		if($review_type == 'buyer') {
-			$review_info = array();
-			$review_info['items'] = $order['items'];
-			$review_info['price'] = $order['price'];
-			$review_info['fees'] = $order['fees'];
-			$review_info['vendor'] = $order['vendor'];
-			$review_info['selected_escrow'] = $order['vendor_selected_escrow'];
-			$review_info['disputed'] = $order['disputed'];
-			
-			$review_info['finalized_time'] = $order['finalized_time'];
-			$review_info['finalized_time_f'] = date('jS F Y h:i:s A', $review_info['finalized_time']);
-			$review_info['dispatched_time'] = $order['dispatched_time'];
-			$review_info['dispatched_time_f'] = date('jS F Y h:i:s A', $review_info['dispatched_time']);
-			$review_info['received_time'] = $order['received_time'];
-			$review_info['received_time_f'] = date('jS F Y h:i:s A', $order['received_time']);
-		} else if($review_type == 'vendor') {
-			$review_info = array();
-			$review_info['items'] = $order['items'];
-			$review_info['price'] = $order['price'];
-			$review_info['fees'] = $order['fees'];
-			$review_info['buyer'] = $order['buyer'];
-			$review_info['selected_escrow'] = $order['vendor_selected_escrow'];
-			$review_info['disputed'] = $order['disputed'];
-			
-			$review_info['finalized_time'] = $order['finalized_time'];
-			$review_info['finalized_time_f'] = date('jS F Y h:i:s A', $review_info['finalized_time']);
-			$review_info['dispatched_time'] = $order['dispatched_time'];
-			$review_info['dispatched_time_f'] = date('jS F Y h:i:s A', $review_info['dispatched_time']);
-			$review_info['received_time'] = $order['received_time'];
-			$review_info['received_time_f'] = date('jS F Y h:i:s A', $order['received_time']);
-		} 
-		// If review_info wasnt set (invalid review_type) fail.
-		return (isset($review_info)) ? $review_info : FALSE;
+		return ($order == FALSE) ? FALSE : $order;
 	}
 	
 	/**

@@ -1,0 +1,88 @@
+        <div class="span9 mainContent" id="my-orders">
+			<h2>Review Order</h2>
+			<?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
+			
+			<div class="row-fluid">	<span class='span10'>Review your order details, and enter your address & public key if you are happy to proceed.</span>	</div>
+			<div class="row-fluid">	<span class='span10'>Once you have confirmed your order, the order price will be updated to reflect the shipping costs and order fee's.</span> </div>
+			
+			<?php echo form_open('purchases/confirm/'.$order['id'], array('name'=>'placeOrderForm','class' => 'form-horizontal')); ?>
+				<fieldset>
+				
+					<div class="row-fluid">
+						<div class='span6'>				
+							<div class="row-fluid">
+								<div class="span5 offset1">Vendor</div>
+								<div class="span6"><?php echo anchor('user/'.$order['vendor']['user_hash'], $order['vendor']['user_name']); ?></div>
+							</div>			
+							<div class="row-fluid">
+								<div class="span5 offset1">Price</div>
+								<div class="span6"><?php if($local_currency['id'] !== '0') {
+									echo $local_currency['symbol'] . number_format($order['price_l'], 2)." / "; 
+								}
+								echo $order['currency']['symbol']." ".number_format($order['price'], 8); ?></div>
+							</div>
+							
+							<div class="row-fluid">
+								<div class="span5 offset1">Shipping Cost</div>
+								<div class="span6"><?php if($local_currency['id'] !== '0') {
+										echo $local_currency['symbol'].number_format($fees['shipping_cost']*$local_currency['rate'], 2)." / ";
+									}
+								echo $order['currency']['symbol']." ".number_format($fees['shipping_cost'],8); ?></div>
+							</div>							
+							
+							<div class="row-fluid">
+								<div class="span5 offset1">Fee</div>
+								<div class="span6"><?php if($local_currency['id'] !== '0') {
+									echo $local_currency['symbol'].number_format($fees['fee']*$local_currency['rate'], 2). " / ";
+								}
+								echo $order['currency']['symbol']." ".number_format($fees['fee'], 8); ?></div>
+							</div>
+
+							<div class="row-fluid">
+								<div class="span5 offset1">Total</div>
+								<div class="span6">
+									<?php if($local_currency['id'] !== '0') {
+										echo "~{$local_currency['symbol']}".number_format($total*$local_currency['rate'], 2)." / ";
+									}
+									echo $order['currency']['symbol']." ".number_format($order['price']+$fees['total'], 8); ?>
+								</div>
+							</div>											
+						</div>
+												
+						<div class='span6'>
+							<strong>Items</strong>
+							<ul><?php foreach($order['items'] as $item) { ?>
+								<li><?php echo $item['quantity'] . ' x ' . anchor('item/'.$item['hash'], $item['name']); ?></li>
+							<?php } ?></ul>	
+						</div>
+					</div>
+					<hr />
+					
+					<div class="row-fluid">
+						<div class="row-fluid">
+							<div class="span10">Generate a fresh private/public keypair, store them somewhere safe, and enter your public key below:</div>
+						</div>
+						<div class="span2">Public Key</div>
+						<div class="span8"><input type='text' name='bitcoin_public_key' class='span10' value='' /></div>
+						<span class="help-inline"><?php echo form_error('public_key'); ?></span>
+					</div>
+					<br />
+					
+					<div class="row-fluid">
+						<div class="row-fluid">
+							<div class="span10">Enter your exact shipping address. <?php if(isset($order['vendor']['pgp'])) echo "It will be encrypted before it leaves your browser if you have javascript enabled."; ?></div>
+						</div>
+						<div class="span2">Address</div>
+						<div class="span8"><textarea name='buyer_address' rows='5' class='span7'></textarea></div>
+						<span class="help-inline"><?php echo form_error('buyer_address'); ?></span>
+					</div>
+			  
+					<?php if(isset($order['vendor']['pgp'])) echo '<textarea style="display:none;" name="public_key">'.$order['vendor']['pgp']['public_key'].'</textarea>';	?>
+
+					<div class="form-actions">
+						<input type='submit' class="btn btn-primary" value='Place Order' onclick='messageEncrypt()' />
+						<?php echo anchor('order/list', 'Cancel', 'title="Cancel" class="btn"');?>
+					</div>
+				</fieldset>
+			</form>
+		</div>

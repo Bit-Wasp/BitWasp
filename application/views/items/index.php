@@ -18,7 +18,7 @@
               </div>
 
               <div class="caption">
-                <?php echo anchor('item/'.$item['hash'], $item['name']);?>
+				<?php echo anchor('item/'.$item['hash'],$item['name']);?>
                 <div class="price">Price: <span class="priceValue"><?php echo $item['price_f'];?></div>
                 <div class="vendor"><?php echo anchor('user/'.$item['vendor']['user_hash'],$item['vendor']['user_name']); ?></div>
               </div>

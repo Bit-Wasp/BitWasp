@@ -39,6 +39,11 @@
 			  <div class="span7"><?php echo $average_rating; ?></div>
 			</div>
 
+			<div class="row-fluid">
+				<div class='span2'><strong>Completed Orders</strong></div>
+				<div class='span7'><?php echo $user['completed_order_count']; ?></div>
+			</div>
+
 <?php if($reviews !== FALSE) { ?>
 			<div class='row-fluid'>
 				<div class='well'><strong>Recent Reviews</strong><br />
@@ -53,7 +58,7 @@
 			</div>
 <?php } ?>
 
-<?php if(isset($items) && $items !== FALSE) { ?>
+<?php if(isset($items) && $items !== FALSE && count($items) > 0) { ?>
 			<div class="row-fluid">
 <div class='well'><strong>Vendor Items</strong><br />
 <?php $c = 0; 

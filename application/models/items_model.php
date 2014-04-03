@@ -55,7 +55,7 @@ class Items_model extends CI_Model {
 	 */
 	public function get_count($opt = array()){
 		$this->db->select('id')
-				 ->where('hidden !=', '1')
+				 ->where('hidden', '0')
 				 ->order_by('add_time DESC');
 				 
 		// Add on extra options.
@@ -92,12 +92,12 @@ class Items_model extends CI_Model {
 	 * @param	string	base_url
 	 * @param	int	
 	 */
-	public function pagination_links($items_config, $base_url, $url_segment){
+	public function pagination_links($items_config, $base_url, $per_page, $url_segment) {
 		$this->load->library('pagination');
 		$pagination = array();
 		$pagination["base_url"] = $base_url;
 		$pagination["total_rows"] = $this->get_count($items_config);
-		$pagination["per_page"] = 16;
+		$pagination["per_page"] = $per_page;
 		$pagination["uri_segment"] = $url_segment;
 		$pagination["num_links"] = round($pagination["total_rows"] / $pagination["per_page"]);
 		$this->pagination->initialize($pagination);
@@ -113,11 +113,11 @@ class Items_model extends CI_Model {
 	 * @param	array	$opt
 	 * @return	bool
 	 */					
-	public function get_list_pages($opt = array(), $start) {
+	public function get_list_pages($opt = array(), $start, $per_page) {
 		$this->load->model('location_model');
 		$results = array();
 		
-		$limit = 16;
+		$limit = $per_page;
 		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, add_time, update_time, description, main_image')
 				 ->where('hidden !=', '1')
 				 ->order_by('add_time DESC')
@@ -165,7 +165,7 @@ class Items_model extends CI_Model {
 				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
 				$row['main_image'] = $this->images_model->get($row['main_image']);
 				$row['currency'] = $this->currencies_model->get($row['currency']);
-				$row['price_b'] = round(($row['price']/$row['currency']['rate']), '8', PHP_ROUND_HALF_UP);
+				$row['price_b'] = number_format(($row['price']/$row['currency']['rate']), 8);
 				$row['add_time_f'] = $this->general->format_time($row['add_time']);
 				
 				$row['update_time_f'] = $this->general->format_time($row['update_time']);

@@ -45,14 +45,14 @@ class Point implements PointInterface {
 
             if (isset($this->curve) && ($this->curve instanceof CurveFp)) {
                 if (!$this->curve->contains($this->x, $this->y)) {
-                    throw new ErrorException("Curve" . print_r($this->curve, true) . " does not contain point ( " . $x . " , " . $y . " )");
+                    return FALSE;
                     
                 }
 
                 if ($this->order != null) {
 
                     if (self::cmp(self::mul($order, $this), self::$infinity) != 0) {
-                        throw new ErrorException("SELF * ORDER MUST EQUAL INFINITY.");
+                        return FALSE;
                     }
                 }
             }

@@ -249,18 +249,6 @@ $config = array('register_form'=>array(
 											  'rules' => ''
 										)
 							),
-				'update_cashout_address' => array(		
-										array('field' => 'cashout_address',
-											  'label' => 'Cashout address',
-											  'rules' => 'alpha_numeric|callback_check_bitcoin_address'
-										)
-							),
-				'cashout_form' => array(
-										array('field' => 'amount',
-											  'label' => 'Amount',
-											  'rules' => 'callback_check_has_sufficient_balance'
-										)
-							),
 				'admin_edit_' => array(
 										array('field' => 'site_title',
 											  'label' => 'Site title',
@@ -312,10 +300,6 @@ $config = array('register_form'=>array(
 											  'label' => '',
 											  'rules' => 'callback_check_bool'
 										),
-										array('field' => 'refund_after_inactivity',
-											  'label' => 'Refund interval',
-											  'rules' => 'max_length[3]|callback_check_is_positive'
-										),
 										array('field' => 'delete_messages_after',
 											  'label' => 'Oldest message age',
 											  'rules' => 'max_length[3]|callback_check_is_positive'
@@ -330,18 +314,14 @@ $config = array('register_form'=>array(
 										)
 							),
 				'admin_edit_bitcoin' => array(
-										array('field' => 'delete_transactions_after',
-											  'label' => 'Oldest transaction age',
-											  'rules' => 'callback_check_is_positive'
-										),
 										array('field' => 'price_index',
 											  'label' => 'Price Index',
 											  'rules' => 'callback_check_price_index'
 										),
-										array('field' => 'balance_backup_method',
-											  'label' => 'balance backup method',
-											  'rules' => 'callback_check_balance_backup_method'
-										)
+										array('field' => 'electrum_mpk',
+											  'label' => 'master public key',
+											  'rules' => 'callback_check_master_public_key'
+										),
 							),
 				'admin_add_category' => array(
 										array('field' => 'create_name',
@@ -391,20 +371,6 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_valid_location_list_source'
 										)
 							),
-				'admin_transfer_bitcoins' => array(
-										array('field' => 'from',
-											  'label' => 'Sending account',
-											  'rules' => 'callback_check_bitcoin_account_exists'
-										),
-										array('field' => 'to',
-											  'label' => 'Receiving account',
-											  'rules' => 'callback_check_bitcoin_account_exists'
-										),
-										array('field' => 'amount',
-											  'label' => 'amount',
-											  'rules' => 'trim|required|numeric'
-										)									
-							),
 				'admin_category_orphans' => array(
 										array('field' => 'category_id',
 											  'label' => 'Category',
@@ -441,16 +407,6 @@ $config = array('register_form'=>array(
 										array('field' => 'jobs[]',
 											  'label' => 'Intervals',
 											  'rules' => 'is_numeric|callback_check_is_positive'
-										)
-							),
-				'admin_wallet_topup' => array(
-										array('field' => 'topup_account',
-											  'label' => 'account',
-											  'rules' => 'required|callback_check_bitcoin_account_exists'
-										),
-										array('field' => 'wif',
-											  'label' => 'private WIF',
-											  'rules' => 'required'
 										)
 							),
 				'admin_dispute_message' => array(
@@ -525,6 +481,12 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_bool'
 										)
 							),
+				'add_dispute_update' => array(
+										array('field' => 'update_message',
+											  'label' => 'dispute response',
+											  'rules' => 'required|htmlentities|min_length[30]'
+										)
+							),
 				'order_dispute' => array(
 										array('field' => 'dispute_message',
 											  'label' => 'Dispute reason',
@@ -536,10 +498,17 @@ $config = array('register_form'=>array(
 											  'label' => 'Address',
 											  'rules' => 'required|htmlentities'
 										),
-										array('field' => 'public_key',
+										array('field' => 'bitcoin_public_key',
 											  'label' => 'Public Key',
-											  'rules' => 'required|callback_check_public_key'
+											  'rules' => 'required|callback_check_bitcoin_public_key'
 										)
+							),
+				'vendor_accept_order' => array(
+										array('field' => 'selected_escrow',
+											  'label' => 'Escrow?',
+											  'rules' => 'callback_check_bool'
+										)
+											  
 							),
 				'vendor_submit_review' => array(
 										array('field' => 'buyer_communication',
@@ -553,6 +522,12 @@ $config = array('register_form'=>array(
 										array('field' => 'buyer_comments_source',
 											  'label' => "buyer comments source",
 											  'rules' => 'callback_check_comments_source'
+										)
+							),
+				'input_transaction' => array(
+										array('field' => 'partially_signed_transaction',
+											  'label' => 'partially signed transaction',
+											  'rules' => 'required'
 										)
 							)
 				

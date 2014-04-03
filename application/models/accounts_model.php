@@ -42,9 +42,9 @@ class Accounts_model extends CI_Model {
 			return FALSE;
 		
 		if(count($opt) == 0) {
-			$this->db->select('id, banned, display_login_time, force_pgp_messages, block_non_pgp, login_time, location, register_time, user_name, user_hash, user_role');
+			$this->db->select('id, banned, completed_order_count, display_login_time, force_pgp_messages, block_non_pgp, login_time, location, register_time, user_name, user_hash, user_role');
 		} else if($opt['own'] == TRUE) {
-			$this->db->select('id, banned, display_login_time, local_currency, block_non_pgp, force_pgp_messages, login_time, location, register_time, two_factor_auth, user_name, user_hash, user_role');
+			$this->db->select('id, banned, completed_order_count, display_login_time, local_currency, block_non_pgp, force_pgp_messages, login_time, location, register_time, two_factor_auth, user_name, user_hash, user_role');
 		}
 
 		if (isset($identifier['user_hash'])) {
@@ -188,6 +188,61 @@ class Accounts_model extends CI_Model {
 		return ($this->db->update('users', $changes)) ? TRUE : FALSE;
 	}
 
+	/**
+	 * Bitcoin Public Keys
+	 * 
+	 * This function accepts a $user_id and returns all the public keys
+	 * on record. Returns an empty array if none exist, otherwise will
+	 * calculate the address for the public key as well.
+	 * 
+	 * @param	int	$user_id
+	 * @return	array
+	 */
+	public function bitcoin_public_keys($user_id) {
+		$this->db->where('user_id', $user_id);
+		$query = $this->db->get('bitcoin_public_keys');
+		$result = $query->result_array();
+		if(count($result) == 0)
+			return $result;
+		
+		$this->load->library('BitcoinLib');
+		$this->load->model('currencies_model');
+		$coin = $this->currencies_model->get('0');
+		
+		foreach($result as &$res) {
+			$res['address'] = BitcoinLib::public_key_to_address($res['public_key'], $coin['crypto_magic_byte']);
+		}
+		return $result;
+	}
+
+	/**
+	 * Add Bitcoin Public Key
+	 * 
+	 * This function records the supplied $public_key and associates it
+	 * with the currently logged in user.
+	 * 
+	 * @param	string	$public_key
+	 * @return	boolean
+	 */
+	public function add_bitcoin_public_key($public_key) {
+		return ($this->db->insert('bitcoin_public_keys', array('user_id' => $this->current_user->user_id, 'public_key' => $public_key)) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Delete Bitcoin Public Key
+	 * 
+	 * Delete public key identified by its $public_key_id in the table,
+	 * restricted to the currently logged in user.
+	 * 
+	 * @param	int	$public_key_id
+	 * @return	boolean
+	 */
+	public function delete_bitcoin_public_key($public_key_id) {
+		$this->db->where('id', "$public_key_id");
+		$this->db->where('user_id', "{$this->current_user->user_id}");
+		return ($this->db->delete('bitcoin_public_keys') == TRUE) ? TRUE : FALSE;
+	}
+	
 };
 
 /* End of file Accounts_model.php */

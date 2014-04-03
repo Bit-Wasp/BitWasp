@@ -1,4 +1,3 @@
-
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /*
 | -------------------------------------------------------------------------
@@ -114,23 +113,22 @@ $route['admin/delete_item/(:any)'] = 'admin/delete_item/$1';
 $route['admin/tokens'] = 'admin/user_tokens';
 $route['admin/tokens/delete/(:any)'] = 'admin/delete_token/$1';
 $route['admin/disputes'] = 'admin/dispute';
-
+$route['admin/order/(:num)'] = 'orders/details/$1';
 $route['order/dispute/(:num)'] = 'orders/dispute/$1';
 $route['orders/dispute/(:num)'] = 'orders/dispute/$1';
 
 // Vendor
-$route['orders'] = 'orders/list_orders';
+$route['orders'] = 'orders/vendor_orders';
 $route['orders/review/(:any)/(:num)'] = 'reviews/form/1/$2';
+$route['orders/accept/(:num)'] = 'orders/vendor_accept/$1';
 
 // Buyer
-$route['order/list'] = 'orders/list_purchases';
-$route['order/recount'] = 'orders/recount_all';
-$route['order/place/(:num)'] = 'orders/place/$1';
-$route['order/finalize/(:num)'] = 'orders/finalize/$1';
-$route['order/cancel/(:num)'] = 'orders/cancel/$1';
-$route['order/received/(:any)'] = 'orders/received_order/$1';
-$route['order/review/(:any)/(:num)'] = 'reviews/form/$1/$2';
-$route['order/(:any)'] = 'orders/purchase_item/$1';
+$route['purchases/details/(:num)'] = 'orders/details/$1';
+$route['purchases'] = 'orders/buyer_orders';
+$route['purchases/confirm/(:num)'] = 'orders/buyer_confirm/$1';
+$route['purchases/dispute/(:num)'] = 'orders/dispute/$1';
+$route['purchases/review/(:any)/(:num)'] = 'reviews/form/$1/$2';
+$route['purchase/(:any)'] = 'orders/purchase_item/$1';
 // Both
 
 

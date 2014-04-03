@@ -10,33 +10,62 @@
 					echo anchor('admin/delete_item/'.$item['hash'], 'Delete', 'class="btn"');
 			} ?>
 			<?php echo $item['name'] ?></h2>
-			<div class="row-fluid">
-		      Vendor: <?php echo anchor('user/'.$item['vendor']['user_hash'],$item['vendor']['user_name']); ?>
-			  <span class="rating">(<?php echo anchor("reviews/view/user/".$item['vendor']['user_hash'], $vendor_rating); ?>)</span><br/>
-			  Added: <?php echo $item['add_time_f']; ?>
+			
+			<div class="well">
+				<div class='row-fluid'>
+					<div class='span1'>Vendor</div>
+					<div class='span5'><?php echo anchor('user/'.$item['vendor']['user_hash'],$item['vendor']['user_name']); ?> 			  <span class="rating">(<?php echo anchor("reviews/view/user/".$item['vendor']['user_hash'], $vendor_rating); ?>)</span></div>
+				</div>
+				<div class='row-fluid'>
+					<div class='span1'>Added:</div>
+					<div class='span5'><?php echo $item['add_time_f']; ?></div>
+				</div>
 			  <?php if($item['update_time'] !== '0') { ?>
-				  <br />Last Updated:<?php echo $item['update_time_f']; ?>
+				<div class='row-fluid'>
+					<div class='span1'>Updated:</div>
+					<div class='span5'><?php echo $item['update_time_f']; ?></div>
+				</div>
 			  <?php } ?>
+				<div class='row-fluid'>
+					<div class='span1'>Price</div>
+					<div class='span2'><?php 
+			  if($local_currency['id'] !== '0') echo $local_currency['symbol'].number_format($item['price_l'],2)." / ";
+			  echo $coin['symbol']." ".number_format($item['price_b'],8); ?></div>
+					<?php if($user_role == 'Buyer') { ?>
+					<div class='span2'><?php echo anchor('purchase/'.$item['hash'], 'Purchase Item', 'class="btn"'); ?></div>
+					<?php } ?>
+				</div>
 			</div>
 			
-			<div class="price">	
-			  Price: <span class="priceValue"><?php echo $item['price_f'];?></span>
+			<div class='well'>
+				<div class='row-fluid'>
+					<div class='span2'>Ship's From:</div>
+					<div class='span6'><?php echo $item['ship_from_f']; ?></div>
+				</div>
+				<?php 
+				if($shipping_costs !== FALSE && count($shipping_costs) > 0) { ?>
+				<div class='row-fluid'>
+					<div class='row-fluid'>
+						<div class='span2'>Ship's To:</div>
+						<div class='span6'>
+						<?php $c = 0; foreach($shipping_costs as $shipping_charge) { ?>
+							<div class='row-fluid'>
+								<div class='span5'><?php echo $shipping_charge['destination_f']; ?></div>
+								<div class='span6'><?php 
+								if($local_currency['id'] !== '0')  echo $local_currency['symbol'].number_format($shipping_charge['cost']*$local_currency['rate'],2)." / "; ?>
+								<?php echo $coin['symbol']; ?> <?php echo number_format($shipping_charge['cost'],8); ?></div>
+							</div>
+						<?php } ?>
+						</div>
+					</div>
+				</div>
+				<?php }	?>
 			</div>
-			Ship's From: <?php echo $item['ship_from_f']; ?><br />
-			
-			<?php 
-			if($shipping_costs !== FALSE && count($shipping_costs) > 0) {
-				echo "Ship's To: <br />";
-				foreach($shipping_costs as $shipping_charge) { 
-					echo " - {$shipping_charge['destination_f']} {$browsing_currency['symbol']} {$shipping_charge['cost']} <br />";
-				} 
-			}
-			?>
-			<div id="main">
+
+			<div class="well">
 			  <?php echo $item['description_f']; ?>
 			</div>
-			
-<?php if(strtolower($user_role) == 'buyer'){ ?><div><?php echo anchor('order/'.$item['hash'], 'Purchase Item', 'class="btn"'); ?></div><?php } ?>
+
 		  </div>
 		  
           <ul id="item_listing" class="thumbnails">

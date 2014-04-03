@@ -12,14 +12,14 @@
 						<b>Order Information</b>
 						<ul>
 							<li>This order was with <?php echo anchor("user/".$review_info['vendor']['user_hash'], $review_info['vendor']['user_name']); ?>.</li>
-							<li><?php if($review_info['selected_escrow'] == '1') { ?>
+							<li><?php if($review_info['vendor_selected_escrow'] == '1') { ?>
 							Escrow Payment.
 							<?php } else { ?>
-							Finalized Early.
+							Paid Up-front.
 							<?php } ?></li>
-							<li>Paid for: <?php echo $review_info['finalized_time_f']; ?>.</li>
+							<li>Paid for: <?php echo $review_info['paid_time_f']; ?>.</li>
 							<li>Dispatched: <?php echo $review_info['dispatched_time_f']; ?>.</li>
-							<li>Received: <?php echo $review_info['received_time_f']; ?>.</li>							
+							<li>Complete: <?php echo $review_info['finalized_time_f']; ?>.</li>							
 							<li>Order cost + Shipping: <?php echo $coin['symbol']; ?> <?php echo $review_info['price']; ?></li>
 							<li>Site Fee's: <?php echo $coin['symbol']; ?> <?php echo $review_info['fees']; ?></li>
 							<?php if($review_info['disputed'] == '1') { ?>
@@ -92,7 +92,7 @@
 						
 						
 						<div class='well' style='background:white;'>
-							<h4><input type='radio' name='review_length' value='short' /> Submit short feedback?</h4>
+							<h4><?php echo ((count($review_info['items']) > 1) ? "<input type='radio' name='review_length' value='short' /> Submit Short Feedback?" : "Item Feedback <input type='hidden' name='review_length' value='short' />"); ?></h4>
 							<div class='row-fluid'>
 								<div class='span3'>Quality</div>
 								<div class='span7'>
@@ -138,9 +138,10 @@
 								</div>
 							</div>
 						</div>
-
+						<?php 	if(count($review_info['items']) > 1) { ?>
 						<div class='well' style='background:white;'>
 							<h4><input type='radio' name='review_length' value='long' /> Submit long review?</h4>
+							
 							<?php $c = 0; foreach($review_info['items'] as $item) { ?>
 							<b><?php echo ($c+1).": ".$item['name']; ?></b>
 							<div class='row-fluid'>
@@ -190,6 +191,7 @@
 							<br />								
 							<?php $c++; } ?>
 						</div>
+						<?php } ?>
 					</div>
 					<div class="form-actions">
 						<input type='submit' name='buyer_submit_review' value='Submit Review' class='btn btn-primary'/>
@@ -205,16 +207,17 @@
 						<b>Order Information</b>
 						<ul>
 							<li>This order was made by <?php echo anchor("user/".$review_info['buyer']['user_hash'], $review_info['buyer']['user_name']); ?>.</li>
-							<li><?php if($review_info['selected_escrow'] == '1') { ?>
+							<li><?php if($review_info['vendor_selected_escrow'] == '1') { ?>
 							Escrow Payment.</li>
 							<li>Dispatched: <?php echo $review_info['dispatched_time_f']; ?>.</li>
-							<li>Paid for: <?php echo $review_info['finalized_time_f']; ?>.</li>
+							<li>Paid for: <?php echo $review_info['paid_time_f']; ?>.</li>
+							<li>Completed: <?php echo $review_info['finalized_time_f']; ?>.</li>
 							<?php } else { ?>
 							Finalized Early.
-							<li>Paid for: <?php echo $review_info['finalized_time_f']; ?>.</li>
+							<li>Paid for: <?php echo $review_info['paid_time_f']; ?>.</li>
 							<li>Dispatched: <?php echo $review_info['dispatched_time_f']; ?>.</li>
+							<li>Completed: <?php echo $review_info['finalized_time_f']; ?>.</li>
 							<?php } ?></li>
-							<li>Received: <?php echo $review_info['received_time_f']; ?>.</li>							
 							<li>Order cost + Shipping: <?php echo $coin['symbol']; ?> <?php echo $review_info['price']; ?></li>
 							<li>Site Fee's: <?php echo $coin['symbol']; ?> <?php echo $review_info['fees']; ?></li>
 							<?php if($review_info['disputed'] == '1') { ?>

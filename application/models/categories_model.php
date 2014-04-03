@@ -200,14 +200,15 @@ class Categories_model extends CI_Model {
 			
 		// Add all categories to $menu[] array.
 		foreach($query->result() as $result) {
-			$items = $this->items_model->get_list(array('category' => $result->id));
+			// Only need the count for this. 
+			$items = $this->items_model->get_count(array('category' => $result->id));
 			
 			$count_child_items = count($this->get_children($result->id));
 			$menu[$result->id] = array(	'id' => $result->id,
 										'name' => $result->name,
 										'description' => $result->description,
 										'hash' => $result->hash,
-										'count' => count($items),
+										'count' => $items,
 										'count_children' => $count_child_items,
 										'parent_id' => $result->parent_id
 									);

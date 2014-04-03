@@ -19,7 +19,7 @@
 			<tbody>
 <?php foreach($disputes as $dispute) { ?>
 			  <tr>
-				<td>#<?php echo $dispute['order_id']; ?></td>
+				<td><?php echo anchor('admin/order/'.$dispute['order_id'], '#'.$dispute['order_id']); ?></td>
 				<td><?php echo anchor('user/'.$dispute['disputing_user']['user_hash'], $dispute['disputing_user']['user_name']); ?></td>
 				<td><?php echo anchor('admin/dispute/'.$dispute['order_id'], substr($dispute['dispute_message'], 0, 100)); ?></td>
 				<td><?php echo anchor('user/'.$dispute['other_user']['user_hash'], $dispute['other_user']['user_name']); ?></td>

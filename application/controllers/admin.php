@@ -149,8 +149,6 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/autorun';
 		$data['title'] = $this->nav['autorun']['heading'];
 
-		$data['transaction_count'] = $this->general_model->count_transactions();
-		$data['order_count'] = $this->general_model->count_orders();
 		$data['messages_count'] = $this->general_model->count_entries('messages');
 
 		$data['jobs'] = $this->autorun_model->load_all();
@@ -242,11 +240,9 @@ class Admin extends CI_Controller {
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');
 		$data['config'] = $this->bw_config->load_admin('bitcoin');
-		$data['latest_block'] = $this->bitcoin_model->latest_block();
-		$data['transaction_count'] = $this->general_model->count_transactions();
-		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		$data['bitcoin_index'] = $this->bw_config->price_index;
 		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
+		$data['key_usage_count'] = $this->bitcoin_model->count_key_usage();
 		$data['coin'] = $this->coin;
 		
 		// If there is any information about a recent transaction, display it.
@@ -268,7 +264,7 @@ class Admin extends CI_Controller {
 	 * URI: /admin/edit/bitcoin
 	 * 
 	 * If the user submitted the Price Index form, we check for updates.
-u	 * If the source specified exists, then update the config setting.
+	 * If the source specified exists, then update the config setting.
 	 * + If the source was previously disabled, re-setup the periodic updates.
 	 * + Trigger a new update from the new price index.
 	 * If the source is set to disabled, then disable the periodic updates.
@@ -294,89 +290,14 @@ u	 * If the source specified exists, then update the config setting.
 		// Load the current selection for the bitcoin price index.
 		$data['price_index'] = $this->bw_config->price_index;
 		// Load the list of accounts in the bitcoin daemon.
-		$data['accounts'] = $this->bw_bitcoin->listaccounts(0);
 		$data['coin'] = $this->coin;
-		
-		// If the WIF Import form was submitted:
-		if($this->input->post('submit_wallet_topup') == 'Topup') {
-			if($this->form_validation->run('admin_wallet_topup') == TRUE) {
-				// Attempt to import the private key
-				$import = $this->bw_bitcoin->importprivkey($this->input->post('wif'), $this->input->post('topup_account'));
-				if(isset($import['code'])){
-					// If there is an error, display it. 
-					$data['import_wallet_error'] = $import['message'];
-				} else if($import == NULL) {
-					$new_accounts = $this->bw_bitcoin->listaccounts();
-					$topup_amount = ($new_accounts[$this->input->post('topup_account')]-$data['accounts'][$this->input->post('topup_account')]);
-					
-					// Successful import, record the data to be displayed.
-					$info = json_encode(array('action' => 'topup',
-											  'topup_amount' => $topup_amount,
-											  'account' => $this->input->post('topup_account')));
-					$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' Wallet Topup',"'".$this->input->post('topup_account')."' has been credited by {$this->coin['symbol']} {$topup_amount}.",'Info');
-	
-					$this->session->set_flashdata("info",$info);
-					redirect('admin/bitcoin');
-				}
-			}
-		}
 		
 		// If the Settings form was submitted:
 		if($this->input->post('submit_edit_bitcoin') == 'Update') {
 			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
-			
-				// Alter the transaction purging period.
-				$changes['delete_transactions_after'] = ($this->input->post('delete_transactions_after') !== $data['config']['delete_transactions_after']) ? $this->input->post('delete_transactions_after') : NULL ;
-				// If we're disabling auto-deleting transactions, set that.
-				if($this->input->post('delete_transactions_after_disabled') == '1') $changes['delete_transactions_after'] = "0";
-
-				// Alter the balance backup method
-				$changes['balance_backup_method'] = ($this->input->post('balance_backup_method') !== $data['config']['balance_backup_method']) ? $this->input->post('balance_backup_method') : NULL;
-				if($this->input->post('balance_backup_method_disabled') == '1') $changes['balance_backup_method'] = 'Disabled';
-
-				// Disable wallet backups if the MPK isn't set up.
-				if($changes['balance_backup_method'] == 'Electrum' && $this->bw_config->electrum_mpk == '')
-					$this->autorun_model->set_interval('backup_wallet', '0');
-
-				// Check if electrum_mpk is being updated with text.
-				if($this->bw_config->balance_backup_method == 'Electrum') {
-					$electrum_mpk = htmlentities($this->input->post('electrum_mpk'));
-					if(strlen($electrum_mpk) > 0)
-						$changes['electrum_mpk'] = ($electrum_mpk !== $data['config']['electrum_mpk']) ? $electrum_mpk : NULL ;
-				}
-
-				// See later for how we set electrum_mpk to ''.
-
-				// Load the array of accounts, and the balance to back up.
-				$backup_balances = $this->input->post('account');
-
-				// Load the array of disabled accounts (value will = 1)
-				$disabled_backups = $this->input->post('backup_disabled');
-				if(is_array($backup_balances)) {
-
-					foreach($backup_balances as $account => $balance) {
-						// Disable access to '' and topup.
-						if($this->general->matches_any($account, array('','topup')) == TRUE)
-							continue;
-						
-						// If the account exists in bitcoind, but not
-						// in the database, try create the entry. 
-						// Skip update if unsuccessful.
-						$var = "max_".$account."_balance";
-						if(!isset($data['config'][$var]) && isset($data['accounts'][$account])) {
-							if(!$this->config_model->create($var, '0.00000000'))
-								continue;
-						}
-						
-						$changes[$var] = ($balance !== $data['config'][$var]) ? $balance: NULL;						
-						
-						if($disabled_backups[$account] == '1')
-							$changes[$var] = ($balance !== '0') ? 0.00000000 : $changes[$var];	
-					}
-				}
-				
+				$changes = array();
 				// Check if the selection exists.
-				if($data['config']['price_index'] !== $this->input->post('price_index')){
+				if($data['config']['price_index'] !== $this->input->post('price_index')) {
 					if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
 					
 						$update = array('price_index' => $this->input->post('price_index'));
@@ -397,15 +318,12 @@ u	 * If the source specified exists, then update the config setting.
 						redirect('admin/bitcoin');
 					}
 				}
-				
+				if($data['config']['electrum_mpk'] !== $this->input->post('electrum_mpk')) 
+					$changes['electrum_mpk'] = $this->input->post('electrum_mpk');
+				if($data['config']['electrum_iteration'] !== $this->input->post('electrum_iteration')) 
+					$changes['electrum_iteration'] = $this->input->post('electrum_iteration');
+
 				$changes = array_filter($changes, 'strlen');
-		
-				// Check if electrum_mpk is being blanked.
-				if($this->bw_config->balance_backup_method == 'Electrum') {
-					$electrum_mpk = htmlentities($this->input->post('electrum_mpk'));
-					if(strlen($electrum_mpk) == 0)
-						$changes['electrum_mpk'] = '';
-				}
 		
 				$log = $this->admin_model->format_config_changes($changes);
 				$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' configuration updated','The '.$this->coin['name'].' configuration of the site has been updated:<br />'.$log,'Info');
@@ -415,27 +333,9 @@ u	 * If the source specified exists, then update the config setting.
 			}
 		}
 		
-		// If the bitcoin transfer form has been completed:
-		if($this->input->post('admin_transfer_bitcoins') == 'Send') {
-			
-			if($this->form_validation->run('admin_transfer_bitcoins') == TRUE) {
-				
-				// Check that the account has the specified available balance.
-				$amount = $this->input->post('amount');
-				if($data['accounts'][$this->input->post('from')] >= (float)$amount) {
-					
-					if($this->bw_bitcoin->move($this->input->post('from'), $this->input->post('to'), (float)$amount) == TRUE)
-						redirect('admin/bitcoin');
-				} else {
-					// Return an error if not redirected.
-					$data['transfer_bitcoins_error'] = 'That account has insufficient funds.';
-				}
-			}
-		}
 		$data['page'] = 'admin/edit_bitcoin';
 		$data['title'] = $this->nav['bitcoin']['heading'];
 		$data['nav'] = $this->generate_nav();
-		$data['use_electrum'] = ($this->bw_config->balance_backup_method == "Electrum") ? TRUE : FALSE;
 		$this->load->library('Layout', $data);
 	}
 	
@@ -492,14 +392,10 @@ u	 * If the source specified exists, then update the config setting.
 			$changes['vendor_registration_allowed'] = ((int)$this->input->post('vendor_registration_allowed') !== $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
 			$changes['encrypt_private_messages'] = ((int)$this->input->post('encrypt_private_messages') !== $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_messages'): NULL;
 			$changes['force_vendor_pgp'] = ((int)$this->input->post('force_vendor_pgp') !== $data['config']['force_vendor_pgp']) ? $this->input->post('force_vendor_pgp') : NULL;
-			$changes['refund_after_inactivity'] = ($this->input->post('refund_after_inactivity') !== $data['config']['refund_after_inactivity']) ? $this->input->post('refund_after_inactivity') : NULL ;			
 			$changes['delete_messages_after'] = ($this->input->post('delete_messages_after') !== $data['config']['delete_messages_after']) ? $this->input->post('delete_messages_after') : NULL ;			
 			$changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
 			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_vendor') !== $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
 			
-			// If we're disabling auto-banning users after inactivity, set that.
-			if($this->input->post('refund_after_inactivity_disabled') == '1') 		$changes['refund_after_inactivity'] = "0";
-
 			// If we're disabling auto-clearing of user messages.
 			if($this->input->post('delete_messages_after_disabled') == '1')		$changes['delete_messages_after'] = "0";				
 			
@@ -516,7 +412,6 @@ u	 * If the source specified exists, then update the config setting.
 			if($this->config_model->update($changes) == TRUE)
 				redirect('admin/users');
 		} 
-		
 		
 		$data['config'] = $this->bw_config->load_admin('users');
 		$data['page'] = 'admin/edit_users';
@@ -566,18 +461,6 @@ u	 * If the source specified exists, then update the config setting.
 				
 		if($this->input->post('admin_edit_items') == 'Update') {
 			if($this->form_validation->run('admin_edit_items') == TRUE) {
-				$changes['auto_finalize_threshold'] = ($data['config']['auto_finalize_threshold'] == $this->input->post('auto_finalize_threshold') ) ? NULL : $this->input->post('auto_finalize_threshold');
-				
-				$changes = array_filter($changes, 'strlen');
-				
-				if(count($changes) > 0)
-					if($this->config_model->update($changes) == TRUE){
-						$log = $this->admin_model->format_config_changes($changes);
-						$this->logs_model->add('Admin: Items Panel','Items configuration updated','The items configuration of the site has been updated:<br />'.$log,'Info');
-
-						redirect('admin/users');
-					}
-				
 			}
 		}	
 			
@@ -891,19 +774,20 @@ u	 * If the source specified exists, then update the config setting.
 	 * This controller shows either the disputes list (if $order_id is unset)
 	 * or a specified disputed order (set by $order_id). 
 	 */
-	public function dispute($order_id = NULL){
+	public function dispute($order_id = NULL) {
 		$this->load->library('form_validation');
 		$this->load->model('order_model');
-		$this->load->model('escrow_model');
+		$this->load->model('disputes_model');
+		$data['coin'] = $this->coin;
 		
 		// If no order is specified, load the list of disputes.
-		if($order_id == NULL){
+		if($order_id == NULL) {
 			$data['page'] = 'admin/disputes_list';
 			$data['title'] = 'Active Disputes';
-			$data['disputes'] = $this->escrow_model->disputes_list();
+			$data['disputes'] = $this->disputes_model->disputes_list();
 			
 		} else {
-			$data['dispute'] = $this->escrow_model->get_dispute($order_id);
+			$data['dispute'] = $this->disputes_model->get_by_order_id($order_id);
 			// If the dispute cannot be found, redirect to the dispute list.
 			if($data['dispute'] == FALSE)
 				redirect('admin/disputes');
@@ -912,20 +796,139 @@ u	 * If the source specified exists, then update the config setting.
 			$data['title'] = "Disputed Order #{$order_id}";
 			// Load the order information.
 			$data['current_order'] = $this->order_model->get($order_id);
+			
 			// Work out whether the vendor or buyer is disputing.
 			$data['disputing_user'] = ($data['dispute']['disputing_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
 			$data['other_user'] = ($data['dispute']['other_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
-			 
+
 			// If the message is updated: 
-			if($this->input->post('update_message') == 'Update') {
-				if($this->form_validation->run('admin_dispute_message') == TRUE) {
+			if($this->input->post('post_dispute_message') == 'Post Message') {
+				if($this->form_validation->run('add_dispute_update') == TRUE) {
 					// Update the dispute record.
-					$update['admin_message'] = $this->input->post('admin_message');
-					if($this->escrow_model->update_dispute($order_id, $update) == TRUE)
-						$data['dispute'] = $this->escrow_model->get_dispute($order_id); 	// Reload the dispute instead of redirecting.					
+					$update = array('posting_user_id' => $this->current_user->user_id,
+									'order_id' => $order_id,
+									'dispute_id' => $data['dispute']['id'],
+									'message' => $this->input->post('update_message'));
+					if($this->disputes_model->post_dispute_update($update) == TRUE)
+						redirect('admin/dispute/'.$order_id);
+				}
+			}
+
+
+			// Resolution:
+			
+			$data['transaction_fee'] = 0.0001;
+			$data['admin_fee'] = $data['current_order']['fees']+$data['current_order']['extra_fees']-$data['transaction_fee'];
+			$data['user_funds'] = (float)($data['current_order']['order_price']-$data['admin_fee']-$data['transaction_fee']);
+			if(in_array($this->input->post('resolve_dispute'), array('Close Dispute','Propose Resolution'))) {
+				// Craft the raw transaction if it was escrow. 
+				// If up-front, just close the dispute.
+				if($data['current_order']['vendor_selected_escrow'] == '1') {
+					$pay_buyer_amount = $this->input->post('pay_buyer');
+					$pay_vendor_amount = $this->input->post('pay_vendor');
+					$sum = $pay_buyer_amount+$pay_vendor_amount;
+					
+					$epsilon = 0.00000001;
+
+					if(abs($sum-$data['user_funds']) < $epsilon) {
+					
+						// Construct new raw transaction!
+						$this->load->model('transaction_cache_model');
+						$this->load->library('bw_bitcoin');
+						$this->load->library('BitcoinLib');
+						$this->load->library('Raw_transaction');
+						
+						// Add the inputs at the multisig address.
+						$payments = $this->transaction_cache_model->payments_to_address($data['current_order']['address']);
+
+						// Create the transaction inputs
+						$tx_ins = array();
+						$value = 0.00000000;
+						foreach($payments as $pmt) {
+							$tx_ins[] = array(	'txid' => $pmt['tx_id'],
+												'vout' => $pmt['vout']);
+							$value += (float)$pmt['value'];
+						}
+						
+						$tx_outs = array();
+						// Add outputs for the sites fee, buyer, and vendor.
+						$admin_address = BitcoinLib::public_key_to_address($data['current_order']['admin_public_key'], $this->coin['crypto_magic_byte']);
+						$tx_outs[$admin_address] = (float)$data['admin_fee'];
+						if($pay_buyer_amount > 0) {
+							$buyer_address = BitcoinLib::public_key_to_address($data['current_order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
+							$tx_outs[$buyer_address] = (float)$pay_buyer_amount;
+						}
+						if($pay_vendor_amount > 0) {
+							$vendor_address = BitcoinLib::public_key_to_address($data['current_order']['vendor_public_key'], $this->coin['crypto_magic_byte']);
+							$tx_outs[$vendor_address] = (float)$pay_vendor_amount;
+						}
+										
+						// Store json inputs.
+						$json = $this->bw_bitcoin->get_inputs_pkscripts($tx_ins);
+						foreach($json as &$ref) {
+							$ref['redeemScript'] = $data['current_order']['redeemScript'];
+						}
+						$json = json_encode($json);
+
+						$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
+						if($raw_transaction == FALSE) {
+							echo 'error :(';
+						} else {
+							$decoded_transaction = Raw_transaction::decode($raw_transaction);
+							$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['current_order']['address'], $data['current_order']['id']);
+							$this->order_model->set_unsigned_transaction($data['current_order']['id'], $raw_transaction." ");
+							$this->order_model->set_json_inputs($data['current_order']['id'], "'$json'");
+							$this->order_model->set_partially_signed_transaction($data['current_order']['id'], '');
+							
+							$this->transaction_cache_model->clear_expected_for_address($data['current_order']['address']);
+							$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['current_order']['address'], $data['current_order']['id']);
+							
+							// Notify users by way of a dispute update
+							$update = array('posting_user_id' => '',
+									'order_id' => $order_id,
+									'dispute_id' => $data['dispute']['id'],
+									'message' => 'New transaction on order page.');
+							$this->disputes_model->post_dispute_update($update);
+							redirect('admin/dispute/'.$order_id);
+						}
+					} else {
+						$data['amount_error'] = 'The User Funds amount must be completely spread between both users.';
+					}
+				} else {
+					if($this->order_model->progress_order($data['current_order']['id'], '6') == TRUE) {
+						$update = array('posting_user_id' => '',
+									'order_id' => $order_id,
+									'dispute_id' => $data['dispute']['id'],
+									'message' => 'Dispute closed by admin.');
+						$this->disputes_model->post_dispute_update($update);
+						$this->disputes_model->set_final_response($data['current_order']['id']);
+						redirect('admin/dispute/'.$order_id);
+					}
 				}
 			}
 		}
+		$this->load->library('Layout', $data);
+	}
+
+	public function key_usage($start = 0) {
+		$this->load->model('bitcoin_model');
+		
+		$data['count'] = $this->bitcoin_model->count_key_usage();
+		
+		$this->load->model('bitcoin_model');
+		$this->load->library('pagination');		
+		$pagination = array();
+		$pagination["base_url"] = site_url("admin/bitcoin/key_usage");
+		$pagination["total_rows"] = $data['count'];
+		$pagination["per_page"] = 40;
+		$pagination["uri_segment"] = 4;
+		$pagination["num_links"] = round($pagination["total_rows"] / $pagination["per_page"]);
+		$this->pagination->initialize($pagination);
+		
+		$data['links'] = $this->pagination->create_links();	
+		$data['records'] = $this->bitcoin_model->get_key_usage_page($pagination['per_page'], $start);
+		$data['page'] = 'admin/key_usage';
+		$data['title'] = 'Key Usage';
 		$this->load->library('Layout', $data);
 	}
 
@@ -945,6 +948,8 @@ u	 * If the source specified exists, then update the config setting.
 			if($this->form_validation->run('admin_update_fee_config') == TRUE) {
 				$changes['minimum_fee'] = ($data['config']['minimum_fee'] !== $this->input->post('minimum_fee')) ? $this->input->post('minimum_fee') : NULL;
 				$changes['default_rate'] = ($data['config']['default_rate'] !== $this->input->post('default_rate')) ? $this->input->post('default_rate') : NULL;
+				$changes['escrow_rate'] = ($data['config']['escrow_rate'] !== $this->input->post('escrow_rate')) ? $this->input->post('escrow_rate') : NULL;
+				
 				$changes = array_filter($changes, 'strlen');
 				if(count($changes) > 0) 
 					if($this->config_model->update($changes) == TRUE){
@@ -997,31 +1002,6 @@ u	 * If the source specified exists, then update the config setting.
 	}
 
 	/**
-	 * Topup Addresses
-	 * 
-	 * This function gathers a list of accounts from the bitcoin daemon
-	 * and finds topup addresses for them. These addresses will not change
-	 * until they finally receive funds.
-	 */
-	public function topup_addresses(){
-		$this->load->library('bw_bitcoin');
-		
-		// Load accounts, and get the topup addresses.
-		$accounts = $this->bw_bitcoin->listaccounts();
-		$data['accounts'] = FALSE;
-		if($accounts !== FALSE){
-			foreach($accounts as $account => $balance) {
-				$data['accounts'][$account] = array('address' => $this->bw_bitcoin->getaccountaddress($account),
-												'balance' => $balance);
-			}
-		}
-		
-		$data['page'] = 'admin/topup_addresses';
-		$data['title'] = 'Topup Addresses';
-		$this->load->library('Layout', $data);
-	}
-
-	/**
 	 * Maintenance
 	 * 
 	 * This controller is used to put the site into maintenance mode.
@@ -1059,6 +1039,30 @@ u	 * If the source specified exists, then update the config setting.
 	}
 
 	/**
+	 * Orders
+	 * 
+	 */
+	public function orders($start = 0) {
+		$this->load->model('order_model');
+		$this->load->model('currencies_model');
+		$this->load->library('pagination');
+		
+		$data['coin'] = $this->currencies_model->get('0');
+		$pagination = array();
+		$pagination["base_url"] = site_url("admin/orders/");
+		$pagination["total_rows"] = $this->order_model->admin_count_orders();
+		$pagination["per_page"] = 50;
+		$pagination["uri_segment"] = 4;
+		$pagination["num_links"] = round($pagination["total_rows"] / $pagination["per_page"]);
+		$this->pagination->initialize($pagination);
+		$data['links'] = $this->pagination->create_links();				
+		$data['orders'] = $this->order_model->admin_order_page($pagination['per_page'], $start);
+		$data['page'] = 'admin/order_list';
+		$data['title'] = 'Order List';
+		$this->load->library('Layout', $data);
+	}
+	
+	/**
 	 * User List
 	 * 
 	 * Used to display a user list for administrator. Includes a search
@@ -1076,7 +1080,7 @@ u	 * If the source specified exists, then update the config setting.
 		$this->load->model('users_model');		
 
 		$user_params = array();
-				
+
 		$pagination = array();
 		$pagination["base_url"] = site_url("admin/users/list");
 		$pagination["total_rows"] = $this->users_model->count_user_list($user_params);
@@ -1305,7 +1309,6 @@ u	 * If the source specified exists, then update the config setting.
 		$this->load->library('Layout', $data);
 	}
 
-
 	/**
 	 * Generate Nav
 	 * 
@@ -1317,7 +1320,7 @@ u	 * If the source specified exists, then update the config setting.
 	 */
 	public function generate_nav() { 
 		$nav = '';
-		if( $this->bw_config->balance_backup_method == 'Electrum' && $this->bw_config->electrum_mpk == '')
+		if($this->bw_config->electrum_mpk == '')
 			$nav.= '<div class="alert">You have not configured an electrum master public key. Please do so now '.anchor('admin/edit/bitcoin','here').'.</div>';
 		
 		$links = '';
@@ -1651,7 +1654,7 @@ u	 * If the source specified exists, then update the config setting.
 	 * @param	string	$param
 	 * @return	boolean
 	 */
-	public function check_custom_location_exists($param){
+	public function check_custom_location_exists($param) {
 		return ($this->location_model->custom_location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 	
@@ -1670,6 +1673,24 @@ u	 * If the source specified exists, then update the config setting.
 		return ($user == FALSE) ? FALSE : TRUE;
 	}
 	
+	/**
+	 * Check Master Public Key
+	 * 
+	 * This function validates a master public key, by pretending that it
+	 * is a regular uncompressed public key ('04'+Xhex+Yhex), by appending
+	 * the $mpk to '04'. This is passed through the BitcoinLib::validate_public_key()
+	 * function, which returns TRUE if it successfully generates a valid
+	 * point from the key.
+	 * The function returns TRUE if the $mpk is empty!
+	 * 
+	 * @param	string	$mpk
+	 * @param	boolean
+	 */
+	public function check_master_public_key($mpk) {
+		$this->load->library('BitcoinLib');
+		return ($mpk == '' || BitcoinLib::validate_public_key('04'.$mpk) == TRUE) ? TRUE : FALSE;
+	}
+		
 };
 
 /* End of file: Admin.php */

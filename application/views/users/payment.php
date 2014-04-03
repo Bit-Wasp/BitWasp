@@ -1,14 +1,9 @@
-          <div class="mainContent span9">
-            <h2>Welcome <?php echo $user['user_name']; ?>!</h2>
-				 <br />
-			  <span class="span6">
-			  <?php echo $returnMessage; 
+		<div class="mainContent span9">
+			<h2>Welcome <?php echo $user['user_name']; ?>!</h2>
+			<?php if(isset($returnMessage)) echo $returnMessage; ?>
+		
+			Please pay an entry fee to <?php echo $entry_payment['bitcoin_address']; ?>.
+			
+			So far you have paid <?php echo $coin['symbol']; ?> <?php echo $paid; ?> of the <?php echo $coin['symbol']; ?> <?php echo $entry_payment['amount']; ?> fee. Once the full amount has one confirmation your account will be activated.
 			  
-			  if(isset($entry_payment['received']) && $entry_payment['received'] > 0) { ?>
-			  So far you have paid BTC <?php echo $entry_payment['received']; ?> towards this fee. 6 confirmations are required before this payment is accepted.<br />
-			  <?php } ?>
-			  <br />
-			  <?php echo anchor('register/payment', 'Refresh', 'class="btn btn-success"'); ?>
-			  </span>
-			<br />
-          </div>
+        </div>

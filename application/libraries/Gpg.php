@@ -105,6 +105,7 @@ class GPG {
 		} else if($this->style == 'proc') {
 			$info = gnupg_import($this->gpg, $key);
 		} 
+		print_r($info);
 		if(isset($info['fingerprint'])) {
 			$info['clean_key'] = htmlentities($key);
 			return $info;

@@ -49,6 +49,7 @@ class Reviews extends CI_Controller {
 		$data['review_type'] = $review_type;
 		$data['subject_hash'] = $subject_hash;
 		$data['disputed'] = $disputed;
+		
 		$data['search_reviews'] = $this->review_model->random_reviews('all', $review_type, $subject_hash, $disputed);
 		$data['review_count']['all'] = $this->review_model->count_reviews($review_type, $subject_hash);
 		$data['review_count']['positive'] = $this->review_model->count_reviews($review_type, $subject_hash, 0);
@@ -57,11 +58,13 @@ class Reviews extends CI_Controller {
 		if($review_type == 'user') {
 			$this->load->model('accounts_model');
 			$account = $this->accounts_model->get(array('user_hash' =>$subject_hash));
-			$data['name'] = $account['user_name'];
+			if($account !== FALSE)
+				$data['name'] = $account['user_name'];
 		} else if($review_type == 'item') {
 			$this->load->model('items_model');
 			$item = $this->items_model->get($subject_hash);
-			$data['name'] = $item['name'];
+			if($item !== FALSE)
+				$data['name'] = $item['name'];
 		}
 		
 		// If the subject/type has some reviews, then load information about it.
@@ -71,7 +74,7 @@ class Reviews extends CI_Controller {
 			$data['title'] = "Reviews for {$data['name']}";
 			$data['page'] = "reviews/view";
 		} else {
-			$data['page'] = 'reviews/no_such_review';
+			$data['page'] = 'reviews/not_found';
 			$data['title'] = 'Error';
 		}
 		$this->load->library('Layout', $data);
@@ -89,7 +92,7 @@ class Reviews extends CI_Controller {
 			redirect('/');
 		
 		$data['action_page'] = "reviews/form/$auth_token/$order_id";
-		$data['cancel_page'] = ($this->current_user->user_role == 'Vendor') ? "orders" : "order/list";
+		$data['cancel_page'] = ($this->current_user->user_role == 'Vendor') ? "orders" : "purchases";
 		$data['review_state'] = $this->review_auth_model->load_review_state($auth_token, $order_id);
 		if($data['review_state'] == FALSE) {
 			$data['page'] = 'reviews/no_review_state';
@@ -100,6 +103,7 @@ class Reviews extends CI_Controller {
 			$data['page'] = 'reviews/form';
 			$data['title'] = 'Review Order #'.$data['review_state']['order_id'];
 			$data['review_info'] = $this->review_model->review_information($order_id, $data['review_state']['review_type']);
+			
 			
 			$all_reviews = array();
 			// Allow access to the buyer_submit_form if the review_state is for a buyer.
@@ -201,7 +205,7 @@ class Reviews extends CI_Controller {
 							$all_reviews[] = $this->review_model->prepare_review_array('user', $data['review_info']['buyer']['user_hash'], $data['review_info']['disputed'], $rating_array, $comments);
 							if($this->review_model->publish_reviews($all_reviews, 'vendor') == TRUE) {
 								$this->review_auth_model->clear_user_auth($data['review_state']['order_id']);
-								$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your feedback for this order has been saved!')));
+								$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your feedback for this user has been saved!')));
 								redirect($data['cancel_page']);
 							} else {
 								$data['returnMessage'] = 'Error publishing review, please try again.';

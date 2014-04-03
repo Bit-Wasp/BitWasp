@@ -54,11 +54,6 @@
 			</div>
 			
 			<div class="row-fluid">
-			  <span class="span3">Refund After Inactivity</span>
-			  <span class="span7"><?php echo ($config['refund_after_inactivity'] == '0') ? 'Disabled' : $config['refund_after_inactivity'].' days'; ?></span>
-			</div>
-			
-			<div class="row-fluid">
 			  <span class="span3">Delete Messages After</span>
 			  <span class="span7"><?php echo ($config['delete_messages_after'] == '0') ? 'Disabled' : $config['delete_messages_after'].' days'; ?></span>
 			</div>

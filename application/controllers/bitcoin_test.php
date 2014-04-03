@@ -1,4 +1,4 @@
-<?php
+<pre><?php
 
 /**
  * Bitcoin Test Controller
@@ -12,28 +12,13 @@ class Bitcoin_Test extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
+		$this->load->library('Raw_transaction');
+		
 	}
-	
-	public function transaction($transaction) {	
-		echo '<pre>';
-			$transaction = $this->bw_bitcoin->gettransaction($transaction);
-			$transaction['time_f'] = $this->general->format_time($transaction['time']);
-			print_r($transaction);
-		echo '</pre><br />';
-	}
-	
-	public function get_block($block) {
-		 echo '<pre>';
-		$info = $this->bw_bitcoin->getblock($block);
-		$info['time_f'] = $this->general->format_time($info['time']);
-		print_r($info);
-		echo '</pre>';
-	}
-
-	public function a(){
-		$this->load->model('order_model');
-		$order = $this->order_model->get('1');
-		print_r($order);
+	public function decode() {
+		$d = Raw_transaction::decode('01000000019ebe8b20374499d7f6324d3b2f878238303424eb80e992839f593c1ddc0e0b0f00000000d40047304402205f39d5ead2fd1872b9f73342ce6340583eb761fd2be01a74cc68b34d9b408c9e02200bf43a08da86d34d7d565c6fc95cd137c0eb95986c268bf8d073dbf751f7fd78014c895221021f966046018c2391c59dc5c8d6f2b07c27d1217e4bb093e22438dab9ba4e6def2103fde420ef4687744cb65cc3db9346c881832ae894a0c96755bd99e8a7e929e6ad4104fbdc5477a1a6ecfdce7e75ed61946ae2965da6611273216b0a33b6f8d8dc55944f1babc6fbbe523cdcfd40ccefbfaf90f0f791576c9985ad9bdb4923e073dfb353aeffffffff02d8270000000000001976a9142ced0b7557a31bde188a7df1b41f772004f3ab2e88ac584d0000000000001976a9148311abe3ff907c47e43258df3acf3e51014489fb88ac00000000');
+		var_dump($d);
+		print_r($d);
 	}
 };
 
