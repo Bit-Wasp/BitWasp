@@ -22,7 +22,7 @@ class Items extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('items_model');
-		$this->items_per_page = 20;
+		$this->items_per_page = 44;
 	}
 	
 	/**
@@ -34,6 +34,8 @@ class Items extends CI_Controller {
 	 * @see		Models/Items_Model
 	 */
 	public function index($page = 0) {
+		if(!is_numeric($page) || $page < 0)
+			$page = 0;
 		$data['title'] = 'Items';
 		$data['page'] = 'items/index';
 		
@@ -61,6 +63,9 @@ class Items extends CI_Controller {
 	 * @return	void
 	 */
 	public function category($hash, $page = 0) {
+		if(!is_numeric($page) || $page < 0)
+			$page = 0;
+			
 		$this->load->model('categories_model');
 		$data['category'] = $this->categories_model->get(array('hash' => "$hash"));
 		if($data['category'] == FALSE)
@@ -97,6 +102,9 @@ class Items extends CI_Controller {
 	 * @return	void
 	 */
 	public function location($source = '', $location = NULL, $page = 0) {
+		if(!is_numeric($page) || $page < 0)
+			$page = 0;
+			
 		// If the $source is invalid, redirect to the items page.
 		if(!$this->general->matches_any($source, array('ship-to','ship-from')))
 			redirect('items');
