@@ -62,13 +62,8 @@ class Items_model extends CI_Model {
 		if(count($opt) > 0) {
 			// If there is a list of item ID's to load..
 			if(isset($opt['item_id_list'])) {
-				$use_id_list = TRUE;
-				$use_id_count = 0;
-				if($opt['item_id_list'] !== FALSE && count($opt['item_id_list']) > 0) {
-					foreach($opt['item_id_list'] as $item_id) {
-						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
-						$use_id_count++;
-					}
+				if(is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
+					$this->db->where_in('id', $opt['item_id_list']);
 				} else {
 					return 0;
 				}
@@ -127,13 +122,8 @@ class Items_model extends CI_Model {
 		if(count($opt) > 0) {
 			// If there is a list of item ID's to load..
 			if(isset($opt['item_id_list'])) {
-				$use_id_list = TRUE;
-				$use_id_count = 0;
-				if($opt['item_id_list'] !== FALSE && count($opt['item_id_list']) !== 0) {
-					foreach($opt['item_id_list'] as $item_id) {
-						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
-						$use_id_count++;
-					}
+				if(is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
+					$this->db->where_in('id', $opt['item_id_list']);
 				}
 				
 				// Remove this option to avoid issues with the next step.
@@ -199,13 +189,8 @@ class Items_model extends CI_Model {
 			
 			// If there is a list of item ID's to load..
 			if(isset($opt['item_id_list'])) {
-				$use_id_list = TRUE;
-				$use_id_count = 0;
-				if($opt['item_id_list'] !== FALSE) {
-					foreach($opt['item_id_list'] as $item_id) {
-						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
-						$use_id_count++;
-					}
+				if(is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
+					$this->db->where_in('id', $opt['item_id_list']);
 				}
 				
 				// Remove this option to avoid issues with the next step.
