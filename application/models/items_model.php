@@ -125,6 +125,9 @@ class Items_model extends CI_Model {
 				if(is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
 					$this->db->where_in('id', $opt['item_id_list']);
 				}
+				else {
+					return FALSE;
+				}
 				
 				// Remove this option to avoid issues with the next step.
 				unset($opt['item_id_list']);
@@ -137,10 +140,6 @@ class Items_model extends CI_Model {
 				 
 		// Get the list of items.
 		$query = $this->db->get('items');
-
-		// Check that if we were meant to load a list that it was successful.
-		if(isset($use_id_list) && $use_id_count == 0)
-			return FALSE;
 		
 		if($query->num_rows() > 0) {
 			foreach($query->result_array() as $row) {
@@ -192,6 +191,9 @@ class Items_model extends CI_Model {
 				if(is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
 					$this->db->where_in('id', $opt['item_id_list']);
 				}
+				else {
+					return FALSE;
+				}
 				
 				// Remove this option to avoid issues with the next step.
 				unset($opt['item_id_list']);
@@ -204,10 +206,6 @@ class Items_model extends CI_Model {
 				 
 		// Get the list of items.
 		$query = $this->db->get('items');
-
-		// Check that if we were meant to load a list that it was successful.
-		if(isset($use_id_list) && $use_id_count == 0)
-			return FALSE;
 		
 		if($query->num_rows() > 0) {
 			foreach($query->result_array() as $row) {
