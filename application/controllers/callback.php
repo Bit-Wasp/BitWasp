@@ -44,11 +44,11 @@ class Callback extends CI_Controller {
 		if($this->bw_bitcoin->getinfo() == NULL){
 			return FALSE;
 		}
-
+echo 'a';
 		// Reject already known blocks.
 		if($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
 			return FALSE;
-		
+	echo 'b';	
 		$block = $this->bw_bitcoin->getblock($block_hash);
 		
 /*		// Check for chain consistency
@@ -70,7 +70,7 @@ class Callback extends CI_Controller {
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
 		if(count($watched_addresses) == 0)
 			return FALSE;
-
+echo 'cfail pass';
 		
 		$txs = array();
 		foreach($block['tx'] as $id => $tx_id) {
@@ -84,7 +84,7 @@ class Callback extends CI_Controller {
 	 * Process
 	 */
 	public function process() {
-		
+
 		// Die if the callback is already running
 		if($this->bw_config->bitcoin_callback_running == 'true') {
 			// Hack to get the script running again if it's been running for over 10 minutes.
@@ -92,35 +92,34 @@ class Callback extends CI_Controller {
 				$this->config_model->update(array('bitcoin_callback_running' => 'false'));
 			} else {
 				// If not over 10 minutes, it might still be working, so just do nothing.
-				echo 'callbackrunning';
 				return FALSE;
 			}
 		}
-		
+
 		// Die if bitcoind is offline
 		$this->load->library('bw_bitcoin');
 		if($this->bw_bitcoin->getinfo() == NULL){
 			echo 'bitcoinoffline';
 			return FALSE;
 		}
-		
+
 		$this->load->model('transaction_cache_model');
-		
+
 		// Load the cached transactions to process. Die if nothing to do.
 		$list = $this->transaction_cache_model->cache_list();
 		if($list == FALSE || count($list) == 0 ) {
 			echo 'nowork';
 			return FALSE;
 		}
-	
+
 		$this->load->library('Raw_transaction');
 		$this->load->model('order_model');
 
 		// No problems, so prevent other instances from running!
 		$this->config_model->update(array('bitcoin_callback_running' => 'true'));
 		$this->config_model->update(array('bitcoin_callback_start_time' => time()));
-					
-		// Load watched addresses, and payments received on addresses.	
+
+		// Load watched addresses, and payments received on addresses.
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
 		$payments_list = $this->transaction_cache_model->payments_list('order');
 		// Try to scrape payments to and from our multisig addresses.
@@ -132,7 +131,7 @@ class Callback extends CI_Controller {
 			// Raw_transaction library is way faster than asking bitcoind.
 			$tx = Raw_transaction::decode($this->bw_bitcoin->getrawtransaction($cached_tx['tx_id']));
 
-			
+
 			if(	count($tx['vin']) > 0 && $payments_list !== FALSE) {
 				$spending_transactions = $this->transaction_cache_model->check_inputs_against_payments($tx['vin'], $payments_list);
 				if(count($spending_transactions) > 0) {
@@ -145,7 +144,7 @@ class Callback extends CI_Controller {
 					}
 				}
 			}
-			
+
 			if( count($tx['vout']) > 0 ) {
 				$output_list = $this->transaction_cache_model->parse_outputs_into_array($cached_tx['tx_id'], $cached_tx['block_height'], $tx['vout']);
 				foreach($output_list as $tmp) {
@@ -171,7 +170,7 @@ class Callback extends CI_Controller {
 		// Delete payments from the block cache.
 		if(count($delete_cache) > 0)
 			$this->transaction_cache_model->delete_cache_list($delete_cache);
-		
+
 		// This could be made into an autorun job:
 		$this->order_model->order_paid_callback();
 

@@ -55,12 +55,12 @@ class Transaction_cache_model extends CI_Model {
 		}
 		return $this->db->delete('transactions_block_cache');
 	}
-	
+
 	/**
 	 * Cache List
-	 * 
+	 *
 	 * This function loads the entire list of cached block transactions.
-	 * 
+	 *
 	 * @return	array
 	 */
 	public function cache_list() {
@@ -68,16 +68,16 @@ class Transaction_cache_model extends CI_Model {
 		$query = $this->db->get('transactions_block_cache');
 		return ($query->num_rows() > 0) ? $query->result_array() : FALSE ;
 	}
-	
+
 	//////////////////////////////////////////////////////////////////
 	// Stored payments obtained through scraping the blockchain
 	//////////////////////////////////////////////////////////////////
-	
+
 	/**
 	 * Add Payments List
-	 * 
+	 *
 	 * Record an array containing payments on addresses we are watching.
-	 * 
+	 *
 	 * @param	array	$tx_array
 	 * @return	boolean
 	 */
@@ -86,33 +86,33 @@ class Transaction_cache_model extends CI_Model {
 		$this->load->model('users_model');
 		$stripped = array();
 		$final = array();
-		
+
 		foreach($tx_array as $payment) {
 			// Check that we have not encountered this before.
 			if($this->check_already_have_payment($payment['tx_id'], $payment['vout']) == FALSE) {
 				// Treat order and fee payments differently!
-				
 				if($payment['purpose'] == 'order') {
 					$order = $this->order_model->get_order_by_address($payment['address']);
 					$payment['order_id'] = $order['id'];
-					
+
 					$total_payment = $payment['value']*1e8;
 					$order_payments = $this->payments_to_address($payment['address']);
 					foreach($order_payments as $record) {
 						$total_payment += $record['value']*1e8;
 					}
-					// Check if the payment means the order is fully paid.
-					if($order['finalized'] == '0' && $total_payment/1e8 >= ($order['price']+$order['shipping_costs']+$order['fees'])) {
+					$order_total = ($order['price']+$order['shipping_costs']+$order['fees']);
+					$epsilon = 0.00000001;
+					if($order['finalized'] == '0' && abs(($total_payment/1e8)-$order_total) < $epsilon) {
 						$this->record_paid_order($order['id']);
 					}
 				}
-				
+
 				if($payment['purpose'] == 'fees') {
 					$user_hash = $this->users_model->get_payment_address_owner($payment['address']);
 					// Set user hash for payment records.
 					$payment['fees_user_hash'] = $user_hash;
 					$entry_payment = $this->users_model->get_entry_payment($user_hash);
-					
+
 					if($entry_payment !== FALSE) {
 						// Get current value, and add the previous ones.
 						$paid_amount = $payment['value']*1e8;
@@ -126,11 +126,10 @@ class Transaction_cache_model extends CI_Model {
 							$this->users_model->set_entry_paid($user_hash);
 						}
 					}
-				} 
+				}
 				$final[] = $payment;
 			}
 		}
-		
 		return (count($final) == 0 || $this->db->insert_batch('transactions_payments_cache', $final) == TRUE) ? TRUE : FALSE;
 	}
 

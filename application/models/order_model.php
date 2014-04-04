@@ -415,6 +415,7 @@ class Order_model extends CI_Model {
 	 * Updates order information where necessary.
 	 */
 	public function order_finalized_callback($array) {
+
 		$this->load->model('disputes_model');
 		foreach($array as $record) {
 			$order = $this->get_order_by_address($record['address']);
