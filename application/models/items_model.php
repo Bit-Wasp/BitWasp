@@ -62,13 +62,8 @@ class Items_model extends CI_Model {
 		if(count($opt) > 0) {
 			// If there is a list of item ID's to load..
 			if(isset($opt['item_id_list'])) {
-				$use_id_list = TRUE;
-				$use_id_count = 0;
-				if($opt['item_id_list'] !== FALSE && count($opt['item_id_list']) > 0) {
-					foreach($opt['item_id_list'] as $item_id) {
-						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
-						$use_id_count++;
-					}
+				if(is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
+					$this->db->where_in('id', $opt['item_id_list']);
 				} else {
 					return 0;
 				}
@@ -114,26 +109,24 @@ class Items_model extends CI_Model {
 	 * @return	bool
 	 */					
 	public function get_list_pages($opt = array(), $start, $per_page) {
-		$this->load->model('location_model');
-		$results = array();
-		
 		$limit = $per_page;
-		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, add_time, update_time, description, main_image')
-				 ->where('hidden !=', '1')
+		$this->db->select('items.id, items.hash, price, vendor_hash, currency, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code')
+				 ->where('hidden', '0')
 				 ->order_by('add_time DESC')
+				 ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
+				 ->join('images', 'images.hash = items.main_image')
+				 ->join('currencies', 'currencies.id = items.currency')
 				 ->limit($limit, $start);
 				 
 		// Add on extra options.
 		if(count($opt) > 0) {
 			// If there is a list of item ID's to load..
 			if(isset($opt['item_id_list'])) {
-				$use_id_list = TRUE;
-				$use_id_count = 0;
-				if($opt['item_id_list'] !== FALSE && count($opt['item_id_list']) !== 0) {
-					foreach($opt['item_id_list'] as $item_id) {
-						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
-						$use_id_count++;
-					}
+				if(is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
+					$this->db->where_in('items.id', $opt['item_id_list']);
+				}
+				else {
+					return FALSE;
 				}
 				
 				// Remove this option to avoid issues with the next step.
@@ -144,119 +137,64 @@ class Items_model extends CI_Model {
 				$this->db->where("$key", "$val");
 			}
 		}
-				 
+
 		// Get the list of items.
 		$query = $this->db->get('items');
-
-		// Check that if we were meant to load a list that it was successful.
-		if(isset($use_id_list) && $use_id_count == 0)
-			return FALSE;
+		$results = array();
 		
 		if($query->num_rows() > 0) {
-			foreach($query->result_array() as $row) {
+			$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
+			$exchange_rates = array();
 
-				// Load vendor information. Skip item if the user is banned.
-				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
-				if($row['vendor']['banned'] == '1')
-					continue;
-					
-				// Load information about the items.
-				$row['description_s'] = substr(strip_tags($row['description']),0,70);
-				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
-				$row['main_image'] = $this->images_model->get($row['main_image']);
-				$row['currency'] = $this->currencies_model->get($row['currency']);
-				$row['price_b'] = number_format(($row['price']/$row['currency']['rate']), 8);
+			foreach($query->result_array() as $row) {
+				// get vendor information
+				$row['vendor'] = array();
+				$row['vendor']['user_name'] = $row['user_name'];
+				$row['vendor']['user_hash'] = $row['user_hash'];
+
+				// get main image information
+				$row['main_image'] = array();
+				$row['main_image']['hash'] = $row['image_hash'];
+				$row['main_image']['encoded'] = $row['image_encoded'];
+				$row['main_image']['height'] = $row['image_height'];
+				$row['main_image']['width'] = $row['image_width'];
+				
+				$row['description_s'] = strip_tags($row['description_s']);
+				$row['description_s'] = strlen($row['description_s']) > 70 ? substr($row['description_s'], 0, 70) . "..." : $row['description_s'];
+
+				$row['currency'] = strtolower($row['currency_code']);
+
+				// save the exchange information so we don't have to call the database more than needed
+				if (!isset($exchange_rates[$row['currency']])) {
+					$rate = $this->currencies_model->get_exchange_rate($row['currency']);
+					$exchange_rates[$row['currency']] = $rate;
+				}
+				else {
+					$rate = $exchange_rates[$row['currency']];
+				}
+
+				$row['price_b'] = number_format(($row['price'] / $rate), 8);
 				$row['add_time_f'] = $this->general->format_time($row['add_time']);
 				
 				$row['update_time_f'] = $this->general->format_time($row['update_time']);
-				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 				$price_l = (float)($row['price_b']*$local_currency['rate']);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? number_format($price_l, 2) : number_format($price_l, 8);
 				$row['price_l'] = $price_l;
 				$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];
 
-				$row['images'] = $this->images_model->by_item($row['id']);
-				array_push($results, $row);
+				// being used anywhere?
+				// $row['images'] = $this->images_model->by_item($row['id']);
+				$results[] = $row;
 				
 			}
-		} else {
-			$results = array();
-		}	
+		}
 		
 		return $results;
 		
 	}
 	
 	public function get_list($opt = array()) {
-		$this->load->model('location_model');
-		$results = array();
-		
-		$this->db->select('id, hash, price, vendor_hash, currency, hidden, category, name, add_time, update_time, description, main_image')
-				 ->where('hidden !=', '1')
-				 ->order_by('add_time DESC');				 
-		// Add on extra options.
-		if(count($opt) > 0) {
-			
-			// If there is a list of item ID's to load..
-			if(isset($opt['item_id_list'])) {
-				$use_id_list = TRUE;
-				$use_id_count = 0;
-				if($opt['item_id_list'] !== FALSE) {
-					foreach($opt['item_id_list'] as $item_id) {
-						($use_id_count == 0) ? $this->db->where('id', $item_id) : $this->db->or_where('id', $item_id);
-						$use_id_count++;
-					}
-				}
-				
-				// Remove this option to avoid issues with the next step.
-				unset($opt['item_id_list']);
-			}
-			
-			foreach($opt as $key => $val) {
-				$this->db->where("$key", "$val");
-			}
-		}
-				 
-		// Get the list of items.
-		$query = $this->db->get('items');
-
-		// Check that if we were meant to load a list that it was successful.
-		if(isset($use_id_list) && $use_id_count == 0)
-			return FALSE;
-		
-		if($query->num_rows() > 0) {
-			foreach($query->result_array() as $row) {
-
-				// Load vendor information. Skip item if the user is banned.
-				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
-				if($row['vendor']['banned'] == '1')
-					continue;
-					
-				// Load information about the items.
-				$row['description_s'] = substr(strip_tags($row['description']),0,70);
-				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
-				$row['main_image'] = $this->images_model->get($row['main_image']);
-				$row['currency'] = $this->currencies_model->get($row['currency']);
-				$row['price_b'] = round(($row['price']/$row['currency']['rate']), '8', PHP_ROUND_HALF_UP);
-				$row['add_time_f'] = $this->general->format_time($row['add_time']);
-				
-				$row['update_time_f'] = $this->general->format_time($row['update_time']);
-				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
-				$price_l = (float)($row['price_b']*$local_currency['rate']);
-				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, '2', PHP_ROUND_HALF_UP) : round($price_l, '8', PHP_ROUND_HALF_UP);
-				$row['price_l'] = $price_l;
-				$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];
-
-				$row['images'] = $this->images_model->by_item($row['id']);
-				array_push($results, $row);
-				
-			}
-		} else {
-			$results = array();
-		}	
-		
-		return $results;
-		
+		return $this->get_list_pages($opt, 0, 10000);
 	}
 	
 	
@@ -320,8 +258,8 @@ class Items_model extends CI_Model {
 			$results = array();
 			foreach($query->result_array() as $row) {
 				
-				$row['description_s'] = substr(strip_tags($row['description']),0,50);
-				if(strlen($row['description']) > 50) $row['description_s'] .= '...';
+				$row['description_s'] = strip_tags($row['description_s']);
+				$row['description_s'] = strlen($row['description_s']) > 50 ? substr($row['description_s'], 0, 50) . "..." : $row['description_s'];
 				
 				$row['main_image'] = $this->images_model->get($row['main_image']);
 				$row['currency'] = $this->currencies_model->get($row['currency']);			
