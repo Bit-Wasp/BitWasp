@@ -428,7 +428,7 @@ class Listings extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_is_positive($param) {
-		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
+		return (is_numeric($param) && $param > 0.00000001) ? TRUE : FALSE;		
 	}
 	
 	/**
