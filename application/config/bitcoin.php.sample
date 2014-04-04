@@ -11,10 +11,10 @@
 // Set whether you have SSL enabled.
 $config['ssl'] = false;
 // Configure the user, password, host and port for the bitcoin daemon.
-$config['user'] = '';
-$config['password'] = '';
+$config['user'] = 'bitcoinrpc';
+$config['password'] = '6Wk1SYL7JmPYoUeWjYRSdqij4xrM5rGBvC4kbJipLVJK';
 $config['host'] = 'localhost';
-$config['port'] = '';
+$config['port'] = '28332';
 
 //$config['ssl'] = false;
 //$config['user'] = 'testuser';
