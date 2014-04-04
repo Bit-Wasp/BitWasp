@@ -924,7 +924,6 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `banned` enum('0','1') NOT NULL DEFAULT '0',
   `block_non_pgp` enum('0','1') DEFAULT '0',
   `entry_paid` enum('0','1') DEFAULT '0',
-  `cashout_address` varchar(50) NOT NULL,
   `force_pgp_messages` enum('0','1') NOT NULL,
   `location` int(3) NOT NULL,
   `login_time` int(20) NOT NULL,
