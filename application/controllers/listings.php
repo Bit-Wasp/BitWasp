@@ -297,7 +297,7 @@ class Listings extends CI_Controller {
 		if($this->input->post('update_shipping_cost') == 'Update') {
 			$updates = array();
 			foreach($this->input->post('cost') as $cost_id => $cost_array) {
-				$this->form_validation->set_rules("cost[$cost_id][cost]","Cost", "callback_check_is_positive");
+				$this->form_validation->set_rules("cost[$cost_id][cost]","Cost", "callback_check_zero_or_greater");
 				if($this->form_validation->run() == TRUE) {
 					if(!isset($cost_array['enabled']) || $cost_array['enabled'] !== '1'){
 						$this->shipping_costs_model->delete($cost_id);
@@ -429,6 +429,19 @@ class Listings extends CI_Controller {
 	 */
 	public function check_is_positive($param) {
 		return (is_numeric($param) && $param > 0.00000001) ? TRUE : FALSE;		
+	}
+	
+	/**
+	 * Check Zero Or Greater
+	 * 
+	 * Checks if the supplied $param is zero or greater. Used to check 
+	 * the shipping price being entered.
+	 * 
+	 * @param	int	$param
+	 * @return	boolean
+	 */
+	public function check_zero_or_greater($param) {
+		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;
 	}
 	
 	/**

@@ -29,6 +29,7 @@ class Location_model extends CI_Model {
 	 */	 
 	public function get_location_heirarchy($child_location_id) {
 		$location_heirarchy[] = $this->get_location_info($child_location_id);
+		
 		do {
 			$previous_position = count($location_heirarchy)-1;
 			$current = $this->get_location_info($location_heirarchy[$previous_position]['parent_id']);	
@@ -99,9 +100,11 @@ class Location_model extends CI_Model {
 	 * @return	boolean
 	 */
 	public function validate_user_child_location($required_parent_id, $user_location_id) {
-		
+		$required_parent_id = (int)$required_parent_id;
+		$user_location_id = (int)$user_location_id;
+		if(($required_parent_id == $user_location_id) == TRUE)
+			return TRUE;
 		$location_heirarchy = $this->get_location_heirarchy($user_location_id);
-		
 		$required_location_found = FALSE;
 		foreach($location_heirarchy as $location) {
 		
@@ -111,7 +114,6 @@ class Location_model extends CI_Model {
 			if($location['parent_id'] == $required_parent_id)
 				$required_location_found = TRUE;
 		} 
-	
 		return $required_location_found;
 	}
 	

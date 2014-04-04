@@ -68,9 +68,10 @@ class Listings_model extends CI_Model {
 				$row['main_image'] = $this->images_model->get($row['main_image']);
 				$row['currency'] = $this->currencies_model->get($row['currency']);			
 							
-				$row['price_b'] = $row['price']/$row['currency']['rate'];
+				$row['price_b'] = number_format(($row['price']/$row['currency']['rate']), 8);
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
-				$row['price_l'] = (float)($row['price_b']*$local_currency['rate']);
+				$price_l = ($row['price_b']*$local_currency['rate']);
+				$row['price_l'] = ($this->current_user->currency['id'] !== '0') ? number_format($price_l, 2) : number_format($price_l, 8);
 				$row['price_f'] = $local_currency['symbol'].''.$row['price_l'];	
 				array_push($results, $row);
 			}

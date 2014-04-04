@@ -229,8 +229,8 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_shipping_location'
 										),
 										array('field' => 'add_price',
-											  'label' => 'Price',
-											  'rules' => 'callback_check_is_positive'
+											  'label' => 'shipping price',
+											  'rules' => 'callback_check_zero_or_greater'
 										)
 							),
 				'authorize' => array(

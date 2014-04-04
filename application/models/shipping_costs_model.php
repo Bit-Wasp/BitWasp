@@ -138,7 +138,9 @@ class Shipping_costs_model extends CI_Model {
 			if($this->location_model->validate_user_child_location($destination_id, $user_location_id) !== FALSE)
 				$btc_cost = $cost_info;
 		}
-		return (isset($worldwide)) ? $worldwide : FALSE;
+		if(!isset($btc_cost) && isset($worldwide))
+			return $worldwide;
+		return (isset($btc_cost)) ? $btc_cost : FALSE;
 	}
 	
 	/**
@@ -155,13 +157,16 @@ class Shipping_costs_model extends CI_Model {
 		 // Work out the cost in bitcoin.
 		 $cost = 0.00000000;
 		 foreach($item_list as $item) {
-			 $costs = $this->for_item($item['id']);
+			 $find_cost = $this->find_location_cost($item['id'], $location);
+			 $cost += $find_cost['cost']*$item['quantity'];
+			 
+			 /*$costs = $this->for_item($item['id']);
 			 // Try the users location_id as the index.. if that's not 
 			 // there, the user must be buying a worldwide item.
 			 $tmp = (isset($costs[$location])) ? $costs[$location]['cost'] : $costs['worldwide']['cost'];
-			 $cost+= $tmp*$item['quantity'];
+			 $cost+= $tmp*$item['quantity'];*/
+			 
 		 }
-		 
 		 return $cost;
 	 }
 

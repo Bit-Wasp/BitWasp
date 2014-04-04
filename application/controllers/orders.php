@@ -195,11 +195,11 @@ class Orders extends CI_Controller {
 		
 		$account = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
 		$shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $account['location']);
-		if($shipping_costs == FALSE && !isset($shipping_costs['worldwide'])) {
+		var_dump($shipping_costs);
+		if($shipping_costs == FALSE) {
 			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'This item is not available in your location. Message the vendor to discuss availability.')));
 			redirect('item/'.$item_info['hash']);
 		}
-
 		$order = $this->order_model->load($item_info['vendor_hash'],'0');
 		if($order == FALSE) {
 			// New order; Need to create
@@ -209,7 +209,6 @@ class Orders extends CI_Controller {
 								'price' => $item_info['price_b'],
 								'currency' => '0');
 			$this->session->set_flashdata('returnMessage', json_encode(array('message' => (($this->order_model->add($new_order) == TRUE) ? 'Your order has been created!' : 'Unable to add your order at this time, please try again later.'))));
-			redirect('purchases');
 		} else {
 			// Already have order, update it
 			if($order['progress'] == '0') {
