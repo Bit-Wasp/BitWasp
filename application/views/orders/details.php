@@ -76,7 +76,7 @@
 					<div class='well'>
 						<?php if($user_role == 'Buyer') { ?>
 						<div class='row-fluid'>
-							<div class='offset4'><a href='bitcoin:<?php echo $order['address']; ?>?amount=<?php echo $order['order_price']; ?>'><img src="data:image/png;base64,<?php echo $qr; ?>"></a></div>
+							<div class='offset4'><a href='<?php echo $payment_url; ?>'><img src='data:image/png;base64,<?php echo $qr; ?>' /></a></div>
 						</div>
 						<?php } ?>
 						<div class='row-fluid'>
