@@ -1,4 +1,6 @@
 ./application/config/database.php
 ./application/config/bitcoin.php
 ./application/logs/*.php
+./application/cache/*.php
 *~ 
+.htaccess
