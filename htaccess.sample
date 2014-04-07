@@ -1,10 +1,10 @@
 RewriteEngine On
-RewriteBase /bitwasp/
+RewriteBase /bitwasp
 
 RewriteCond %{REQUEST_URI} ^system.*
 RewriteRule ^(.*)$ /index.php/$1 [L]
 
-#Checks to see if the user is attempting to access a valid file,
+# Checks to see if the user is attempting to access a valid file,
 #such as an image or css document, if this isn't true it sends the
 #request to index.php
 RewriteCond %{REQUEST_FILENAME} !-f
