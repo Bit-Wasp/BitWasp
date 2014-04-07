@@ -14,8 +14,9 @@
 class Ciqrcode
 {
 	var $cacheable = true;
-	var $cachedir = 'application/cache/';
-	var $errorlog = 'application/logs/';
+	var $usedir = '/tmp/.codeigniter_qr/';
+	var $cachedir = 'cache/';
+	var $errorlog = 'logs/';
 	var $quality = true;
 	var $size = 1024;
 	
@@ -25,8 +26,19 @@ class Ciqrcode
 	
 	public function initialize($config = array()) {
 		$this->cacheable = (isset($config['cacheable'])) ? $config['cacheable'] : $this->cacheable;
-		$this->cachedir = (isset($config['cachedir'])) ? $config['cachedir'] : FCPATH.$this->cachedir;
-		$this->errorlog = (isset($config['errorlog'])) ? $config['errorlog'] : FCPATH.$this->errorlog;
+
+		if(!file_exists($this->usedir))
+			mkdir($this->usedir, 0700);
+
+		$this->cachedir = (isset($config['cachedir'])) ? $config['cachedir'] : $this->usedir.$this->cachedir;
+		$this->errorlog = (isset($config['errorlog'])) ? $config['errorlog'] : $this->usedir.$this->errorlog;
+
+		if(!file_exists($this->cachedir)) 
+			mkdir($this->cachedir, 0700);
+
+		if(!file_exists($this->errorlog))
+			mkdir($this->errorlog, 0700);
+
 		$this->quality = (isset($config['quality'])) ? $config['quality'] : $this->quality;
 		$this->size = (isset($config['size'])) ? $config['size'] : $this->size;
 		
