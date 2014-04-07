@@ -100,9 +100,9 @@ class Transaction_cache_model extends CI_Model {
 					foreach($order_payments as $record) {
 						$total_payment += $record['value']*1e8;
 					}
-					$order_total = ($order['price']+$order['shipping_costs']+$order['fees']);
-					$epsilon = 0.00000001;
-					if($order['finalized'] == '0' && abs(($total_payment/1e8)-$order_total) < $epsilon) {
+					$order_total = ($order['price']+$order['shipping_costs']+$order['fees'])*1e8;
+
+					if($order['finalized'] == '0' && $order_total-$total_payment <= 0) {
 						$this->record_paid_order($order['id']);
 					}
 				}

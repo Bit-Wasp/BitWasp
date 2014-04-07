@@ -44,11 +44,9 @@ class Callback extends CI_Controller {
 		if($this->bw_bitcoin->getinfo() == NULL){
 			return FALSE;
 		}
-echo 'a';
 		// Reject already known blocks.
 		if($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
 			return FALSE;
-	echo 'b';	
 		$block = $this->bw_bitcoin->getblock($block_hash);
 		
 /*		// Check for chain consistency
@@ -70,12 +68,11 @@ echo 'a';
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
 		if(count($watched_addresses) == 0)
 			return FALSE;
-echo 'cfail pass';
 		
 		$txs = array();
 		foreach($block['tx'] as $id => $tx_id) {
 			array_push($txs, array(	'tx_id' => $tx_id,
-									'block_height' => $block['height']));
+				'block_height' => $block['height']));
 		}
 		$this->transaction_cache_model->add_cache_list($txs);
 	}	
@@ -89,8 +86,10 @@ echo 'cfail pass';
 		if($this->bw_config->bitcoin_callback_running == 'true') {
 			// Hack to get the script running again if it's been running for over 10 minutes.
 			if((time()-$this->bw_config->bitcoin_callback_start_time) > 10*60) {
+				echo "Reset callback running\n";
 				$this->config_model->update(array('bitcoin_callback_running' => 'false'));
 			} else {
+				echo "Fail, as still running\n";
 				// If not over 10 minutes, it might still be working, so just do nothing.
 				return FALSE;
 			}
@@ -131,7 +130,6 @@ echo 'cfail pass';
 			// Raw_transaction library is way faster than asking bitcoind.
 			$tx = Raw_transaction::decode($this->bw_bitcoin->getrawtransaction($cached_tx['tx_id']));
 
-
 			if(	count($tx['vin']) > 0 && $payments_list !== FALSE) {
 				$spending_transactions = $this->transaction_cache_model->check_inputs_against_payments($tx['vin'], $payments_list);
 				if(count($spending_transactions) > 0) {
@@ -160,13 +158,17 @@ echo 'cfail pass';
 		}
 
 		// Log all incoming payments.
-		if(count($received_payments) > 0)
+		if(count($received_payments) > 0){
+		//	echo "Handling ".count($received_payments)." received_payments\n";
 			$this->transaction_cache_model->add_payments_list($received_payments);
+		}
+
 
 		// Log all outgoing payments: orders being finalized.
-		if(count($order_finalized) > 0)
+		if(count($order_finalized) > 0){
+		//	echo "Handling ".count($order_finalized)." order_finalized\n";
 			$this->order_model->order_finalized_callback($order_finalized);
-
+		}
 		// Delete payments from the block cache.
 		if(count($delete_cache) > 0)
 			$this->transaction_cache_model->delete_cache_list($delete_cache);
