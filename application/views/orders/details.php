@@ -57,7 +57,7 @@
 								<?php if($local_currency['id'] !== '0') {
 									echo $local_currency['symbol'].number_format($order['order_price']*$local_currency['rate'], 2)." / ";
 								}
-								echo $order['currency']['symbol']." ".number_format($order['order_price'], 8); ?>
+								echo $order['currency']['symbol']." ".$order['order_price']; ?>
 							</div>
 						</div>	
 						
@@ -74,9 +74,14 @@
 				<?php if($order['address'] !== '') { ?>
 				<div class='row-fluid'>
 					<div class='well'>
+						<?php if($user_role == 'Buyer') { ?>
+						<div class='row-fluid'>
+							<div class='offset4'><a href='bitcoin:<?php echo $order['address']; ?>?amount=<?php echo $order['order_price']; ?>'><img src="data:image/png;base64,<?php echo $qr; ?>"></a></div>
+						</div>
+						<?php } ?>
 						<div class='row-fluid'>
 							<div class='span3'>Order Address</div>
-							<div class='span5'><?php echo $order['address']; ?></div>
+							<div class='span4'><?php echo $order['address']; ?></div>
 						</div>
 						<div class='row-fluid'>
 							<div class='span3'>Redeem Script</div>

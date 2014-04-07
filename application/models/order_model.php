@@ -940,13 +940,14 @@ class Order_model extends CI_Model {
 
 				// Work out what price to display for the current user.
 				($this->current_user->user_role == 'Vendor') ? $order_price = ($order['price']+$order['shipping_costs']-$order['extra_fees']) : $order_price = ($order['price']+$order['shipping_costs']+$order['fees']);
-				$order_price = ($currency !== '0') ? $order_price/$currency['rate'] : $order_price;
+				
+				$order_price = ($currency['id'] !== '0') ? $order_price/$currency['rate'] : number_format($order_price,8);
 				
 				// Load the users local currency.
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);
 				// Convert the order's price into the users own currency.
 				$price_l = ($order_price*$local_currency['rate']);
-				$price_l = ($this->current_user->currency['id'] !== '0') ? round($price_l, 2, PHP_ROUND_HALF_UP) : round($price_l, 8, PHP_ROUND_HALF_UP);
+				$price_l = ($this->current_user->currency['id'] !== '0') ? number_format($price_l, 2) : number_format($price_l, 8);
 				
 				// Add extra details to the order.
 				$tmp = $order;
