@@ -54,6 +54,10 @@ class Accounts extends CI_Controller {
 		// Load information for the view.
 		$data['logged_in'] = $this->current_user->logged_in();
 		$data['user_role'] = $this->current_user->user_role;
+
+		$info = (array)json_decode($this->session->flashdata('returnMessage'));
+		if(count($info) !== 0)
+			$data['returnMessage'] = $info['message'];		
 		
 		$data['page'] = 'accounts/view';
 		$data['title'] = $data['user']['user_name'];

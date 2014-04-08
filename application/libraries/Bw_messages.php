@@ -105,7 +105,7 @@ class Bw_messages {
 
 		// JSON encode the content array, and encrypt it if able.
 		$content = json_encode($content);
-		if($this->encrypt_private_messages)
+		if($this->encrypt_private_messages && function_exists('openssl_public_encrypt'))
 			$content = $this->CI->openssl->encrypt($content, $to['public_key']);
 		
 		// Encode the data before insertion.
@@ -155,7 +155,8 @@ class Bw_messages {
 		foreach($messages as $message) {
 
 			$tmp = base64_decode($message['content']);
-			$content = ($this->encrypt_private_messages == TRUE) ? $this->CI->openssl->decrypt($tmp, $this->private_key, $this->current_user->message_password) : $tmp;
+			$content = ($this->encrypt_private_messages == TRUE && function_exists('openssl_private_decrypt')) ? $this->CI->openssl->decrypt($tmp, $this->private_key, $this->current_user->message_password) : $tmp;
+			
 			$content = json_decode($content);
 
 			$res = array('encrypted' => $message['encrypted'],

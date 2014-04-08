@@ -2,7 +2,7 @@
 
 /**
  * Listings Controller
- *
+ * 
  * This class handles management of a vendors listings.
  * 
  * @package		BitWasp
