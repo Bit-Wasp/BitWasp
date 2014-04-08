@@ -54,6 +54,7 @@ class Accounts_model extends CI_Model {
 		} elseif (isset($identifier['user_name'])) {
 			$query = $this->db->get_where('users', array('user_name' => $identifier['user_name']));
 		} else {
+			$this->db->_reset_select();
 			return FALSE; //No suitable field found.
 		}
 		
