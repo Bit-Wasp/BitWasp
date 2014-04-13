@@ -125,6 +125,19 @@ class BitcoinLib {
 	}
 
 	/**
+	 * Base58 Decode Checksum
+	 * 
+	 * Returns the original hex data that was encoded in base58 check format.
+	 * 
+	 * @param	string	$base58
+	 * @return	string
+	 */
+	public static function base58_decode_checksum($base58) {
+		$hex = self::base58_decode($base58);
+		return substr($hex, 2, strlen($hex)-10);
+	}
+
+	/**
 	 * Hash256
 	 * 
 	 * Takes a sha256(sha256()) hash of the $string. Intended only for
@@ -249,6 +262,29 @@ class BitcoinLib {
 		return self::public_key_to_address($public_key, $address_version);
 	}
 
+	public static function private_keys_to_receive($wifs, $magic_byte = '00') {
+		$results = array();
+		foreach($wifs as $wif) {
+			$key = self::WIF_to_private_key($wif);
+			$pubkey = self::private_key_to_public_key($key['key'], $key['is_compressed']);
+			
+			$pk_hash = self::hash160($pubkey);
+			
+			if($key['is_compressed'] == TRUE) {
+				$uncompressed_key = self::decompress_public_key($pubkey);
+				$uncompressed_key = $uncompressed_key['public_key'];
+			} else {
+				$uncompressed_key = $pubkey;
+			}
+			$results[$pk_hash] = array(	'private_key' => $key['key'],
+										'public_key' => $pubkey,
+										'uncompressed_key' => $uncompressed_key,
+										'is_compressed' => $key['is_compressed'],
+										'address' => self::hash160_to_address($pk_hash, $magic_byte));
+		}
+		return $results;
+	}
+
 	/**
 	 * Get New Key Pair
 	 * 
@@ -328,7 +364,9 @@ class BitcoinLib {
 	 * @return	string
 	 */
 	public static function WIF_to_private_key($WIF) {
-		return self::address_to_hash160($WIF);
+		$decode = self::base58_decode($WIF);
+		return array('key' => substr($decode, 2, 64),
+					 'is_compressed' => (( (strlen($decode)-10) == 66 && substr($decode, 66, 2) == '01') ? TRUE : FALSE));		
 	}
 	
 	/**
