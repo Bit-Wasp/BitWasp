@@ -28,10 +28,12 @@ $order_str = 'My Orders'; if($count_new_orders > 0)	$order_str .= " ($count_new_
 			  
 			  <div class='row-fluid'>
 				<?php echo form_open('location/ship-to'); ?>
+				
 				  <div class='span4'>Ship To</div>
 				  <div class='span5'>
 				    <?php echo $locations_w_select; ?>
 				  </div>
+				  <?php if(isset($ship_to_error)) echo $ship_to_error; ?>
 				  <div class='span2'><input type='submit' name='ship_to_submit' class='btn' value='Go' /></div>
 				</form>
 			  </div>
@@ -42,6 +44,7 @@ $order_str = 'My Orders'; if($count_new_orders > 0)	$order_str .= " ($count_new_
 				  <div class='span5'>
 				    <?php echo $locations_select; ?>
 				  </div>
+				  <?php if(isset($ship_from_error)) echo $ship_from_error; ?>
 				  <div class='span2'><input type='submit' name='ship_from_submit' class='btn' value='Go' /></div>
 				</form>
 			  </div>

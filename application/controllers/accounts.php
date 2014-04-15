@@ -163,7 +163,6 @@ class Accounts extends CI_Controller {
 
 		// If form validation is successful, update the changes.
 		if($this->form_validation->run($form_rules) == TRUE) {
-			
 			$changes = array();
 			
 			// Compare POSTed values to the original, remove any NULL entries.
@@ -184,7 +183,6 @@ class Accounts extends CI_Controller {
 				$data['returnMessage'] = 'Unable to save your changes, please try again later.';
 				if($this->accounts_model->update($changes) == TRUE) 
 					redirect('account');
-				
 			}
 		}
 		
@@ -265,11 +263,9 @@ class Accounts extends CI_Controller {
 		
 		if($this->form_validation->run('add_pgp') === TRUE) {
 			// Import the PGP key. 
-			$public_key = $this->input->post('public_key');
-			$import = $this->gpg->import($public_key);
+			$import = $this->gpg->import($this->input->post('public_key'));
 			
 			if($import !== FALSE) {
-			
 				$config = array('fingerprint' => $import['fingerprint'],
 								'public_key' => $import['clean_key']);				
 				
@@ -372,7 +368,7 @@ class Accounts extends CI_Controller {
 	 */
 	public function check_location($param) {
 		$this->load->model('location_model');
-		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
+		return (is_numeric($param) && $param >= 0 && $this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
 	}
 		
 	/**
@@ -389,7 +385,7 @@ class Accounts extends CI_Controller {
 	 */
 	public function check_valid_currency($param) {
 		$this->load->model('currencies_model');
-		return ($this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
+		return (is_numeric($param) && $param >= 0 && $this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
 	}
 };
 

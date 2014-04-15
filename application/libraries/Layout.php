@@ -47,6 +47,10 @@ class Layout {
 		$category_data['cats'] 		= '';
 		$category_data['block'] 	= FALSE;
 		$category_data['locations_w_select'] = $CI->location_model->generate_select_list($CI->bw_config->location_list_source, 'location', 'span12', FALSE, array('worldwide' => TRUE));
+		if(isset($data['ship_from_error']))
+			$category_data['ship_from_error'] = $data['ship_from_error'];
+		if(isset($data['ship_to_error']))
+			$category_data['ship_to_error'] = $data['ship_to_error'];
 		$category_data['locations_select'] = $CI->location_model->generate_select_list($CI->bw_config->location_list_source, 'location', 'span12');
 		
 		$data['site_title'] 		= $CI->bw_config->site_title;
@@ -86,7 +90,7 @@ class Layout {
 				if($CI->general->matches_any($CI->current_user->URI[0], array('login','register')))
 					$category_data['block'] = TRUE;
 			}
-		}	
+		}
 		
 		$header = array('title' => $data['title'],
 						'site_title' => $data['site_title'],

@@ -34,8 +34,9 @@ class Items extends CI_Controller {
 	 * @see		Models/Items_Model
 	 */
 	public function index($page = 0) {
-		if(!is_numeric($page) || $page < 0)
+		if(!(is_numeric($page) && $page >= 0))
 			$page = 0;
+			
 		$data['title'] = 'Items';
 		$data['page'] = 'items/index';
 		
@@ -63,9 +64,9 @@ class Items extends CI_Controller {
 	 * @return	void
 	 */
 	public function category($hash, $page = 0) {
-		if(!is_numeric($page) || $page < 0)
+		if(!(is_numeric($page) && $page >= 0))
 			$page = 0;
-			
+						
 		$this->load->model('categories_model');
 		$data['category'] = $this->categories_model->get(array('hash' => "$hash"));
 		if($data['category'] == FALSE)
@@ -102,30 +103,41 @@ class Items extends CI_Controller {
 	 * @return	void
 	 */
 	public function location($source = '', $location = NULL, $page = 0) {
-		if(!is_numeric($page) || $page < 0)
+		if(!(is_numeric($page) && $page >= 0))
 			$page = 0;
 			
+		if(!(is_numeric($location) && $location >= 0))
+			$location = NULL;
+				
 		// If the $source is invalid, redirect to the items page.
 		if(!$this->general->matches_any($source, array('ship-to','ship-from')))
 			redirect('items');
 
+		$this->load->library('form_validation');
 		$this->load->model('location_model');
 		$this->load->model('shipping_costs_model');
 
 		// Load any posted location information.
 		if($this->input->post('ship_to_submit') == 'Go') {
-			$location = $this->input->post('location');
-			$data['location_name'] = $this->location_model->location_by_id($location);
-			if($data['location_name'] == FALSE)
-				redirect('items');
-			$items_config = array('item_id_list' => $this->shipping_costs_model->list_IDs_by_location($location));
+			if($this->form_validation->run('ship_to_submit') == TRUE) {
+				$location = $this->input->post('location');
+				$data['location_name'] = $this->location_model->location_by_id($location);
+				if($data['location_name'] == FALSE)
+					redirect('items');
+				$items_config = array('item_id_list' => $this->shipping_costs_model->list_IDs_by_location($location));
+			} else {
+				$data['ship_to_error'] = 'Please make a valid selection.';
+			}
 		} else if($this->input->post('ship_from_submit') == 'Go') {
-			$location = $this->input->post('location');
-			$data['location_name'] = $this->location_model->location_by_id($location);
-			if($data['location_name'] == FALSE)
-				redirect('items');
-			$items_config = array('ship_from' => $location);
-
+			if($this->form_validation->run('ship_from_submit') == TRUE) {
+				$location = $this->input->post('location');
+				$data['location_name'] = $this->location_model->location_by_id($location);
+				if($data['location_name'] == FALSE)
+					redirect('items');
+				$items_config = array('ship_from' => $location);
+			} else {
+				$data['ship_from_error'] = 'Please make a valid selection.';
+			}
 		} else {
 			$data['location_name'] = $this->location_model->location_by_id($location);
 			if($data['location_name'] == FALSE)
@@ -140,23 +152,26 @@ class Items extends CI_Controller {
 			}
 		}
 
-		$per_page = $this->items_per_page;
-		$data['links'] = $this->items_model->pagination_links($items_config, site_url("location/{$source}/{$location}"), $per_page, 4);
-		$data['items'] = $this->items_model->get_list_pages($items_config, $page, $per_page);	
-		
-		// Set the appropriate titles.
-		if($source == 'ship-from') {
-			$data['title'] = 'Items shipped from '.$data['location_name'];
-			$data['custom_title'] = 'Shipping From: '.$data['location_name'];
-		} else if($source == 'ship-to') {
-			$data['title'] = 'Items shipped to '.$data['location_name'];
-			$data['custom_title'] = 'Shipping To: '.$data['location_name'];
+		if(isset($items_config)) {
+			$per_page = $this->items_per_page;
+			$data['links'] = $this->items_model->pagination_links($items_config, site_url("location/{$source}/{$location}"), $per_page, 4);
+			$data['items'] = $this->items_model->get_list_pages($items_config, $page, $per_page);	
+			
+			// Set the appropriate titles.
+			if($source == 'ship-from') {
+				$data['title'] = 'Items shipped from '.$data['location_name'];
+				$data['custom_title'] = 'Shipping From: '.$data['location_name'];
+			} else if($source == 'ship-to') {
+				$data['title'] = 'Items shipped to '.$data['location_name'];
+				$data['custom_title'] = 'Shipping To: '.$data['location_name'];
+			}
+			
+			$data['page'] = 'items/index';
+		} else {
+			$data['page'] = 'welcome_message';
 		}
-		
-		$data['page'] = 'items/index';
 		$this->load->library('Layout', $data);
 	}
-
 
 	/**
 	 * Load a specific item
@@ -198,6 +213,35 @@ class Items extends CI_Controller {
 		$data['vendor_rating'] = $this->review_model->current_rating('user', $data['item']['vendor']['user_hash']);
 
 		$this->load->library('Layout', $data);
+	}
+	
+	// Callback functions
+	
+	/**
+	 * Check Ship From
+	 * 
+	 * This function checks that the ship-from form is submitted correctly,
+	 * and input only contains a positive natural number.
+	 * 
+	 * @param	int	$param	
+	 * @return boolean
+	 */
+	public function check_ship_from($param) {
+		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Check Ship To
+	 * 
+	 * This function checks that the ship-to form is submitted correctly,
+	 * such that the input is either 'worldwide' or a natural positive 
+	 * number.
+	 * 
+	 * @param	int	$param
+	 * @return	boolean
+	 */
+	public function check_ship_to($param) {
+		return ($param == 'worldwide' || $this->check_ship_from($param) == TRUE) ? TRUE : FALSE;
 	}
 };
 
