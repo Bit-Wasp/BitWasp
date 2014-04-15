@@ -110,7 +110,7 @@ class Items_model extends CI_Model {
 	 */					
 	public function get_list_pages($opt = array(), $start, $per_page) {
 		$limit = $per_page;
-		$this->db->select('items.id, items.hash, price, vendor_hash, currency, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code')
+		$this->db->select('items.id, items.hash, price, vendor_hash, currency, description, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code')
 				 ->where('hidden', '0')
 				 ->order_by('add_time DESC')
 				 ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
@@ -159,7 +159,7 @@ class Items_model extends CI_Model {
 				$row['main_image']['height'] = $row['image_height'];
 				$row['main_image']['width'] = $row['image_width'];
 				
-				$row['description_s'] = strip_tags($row['description_s']);
+				$row['description_s'] = strip_tags($row['description']);
 				$row['description_s'] = strlen($row['description_s']) > 70 ? substr($row['description_s'], 0, 70) . "..." : $row['description_s'];
 
 				$row['currency'] = strtolower($row['currency_code']);
@@ -173,7 +173,6 @@ class Items_model extends CI_Model {
 					$rate = $exchange_rates[$row['currency']];
 				}
 
-<<<<<<< HEAD
 				// Load vendor information. Skip item if the user is banned.
 				$row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
 				if($row['vendor']['banned'] == '1')
@@ -182,12 +181,7 @@ class Items_model extends CI_Model {
 				// Load information about the items.
 				$row['description_s'] = substr(strip_tags($row['description']),0,70);
 				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
-				$row['main_image'] = $this->images_model->get($row['main_image']);
-				$row['currency'] = $this->currencies_model->get($row['currency']);
-				$row['price_b'] = number_format(($row['price']/$row['currency']['rate']), 8);
-=======
-				$row['price_b'] = number_format(($row['price'] / $rate), 8);
->>>>>>> 7076e60a554b07152b95b334f1d1c6a6b572ff1a
+				$row['price_b'] = number_format(($row['price']/$rate), 8);
 				$row['add_time_f'] = $this->general->format_time($row['add_time']);
 				
 				$row['update_time_f'] = $this->general->format_time($row['update_time']);
