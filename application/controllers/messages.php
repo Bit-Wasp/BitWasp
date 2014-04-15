@@ -33,8 +33,10 @@ class Messages extends CI_Controller {
 		// Automatically check if a PIN is required.
 		if($this->bw_config->encrypt_private_messages == TRUE) {
 			// If not set, redirect so the user can enter their pin.
-			if($this->current_user->message_password == NULL && uri_string() !== 'message/pin')
+			if($this->current_user->message_password == NULL && uri_string() !== 'message/pin'){
+				$this->session->set_userdata('before_msg_pin',uri_string());
 				redirect('message/pin');
+			} 
 		}			
 	}
 	 
@@ -290,7 +292,9 @@ class Messages extends CI_Controller {
 			if($answer == $solution) {
 				$this->current_user->set_message_password($message_password);
 				unset($message_password);
-				redirect('inbox');
+				$to_location = $this->session->userdata('before_msg_pin');
+				$this->session->unset_userdata('before_msg_pin');
+				redirect($to_location);
 			} else {
 				$data['returnMessage'] = 'The PIN you entered was incorrect. Please try again';
 			}

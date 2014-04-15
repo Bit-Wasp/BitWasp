@@ -131,6 +131,7 @@ class Reviews extends CI_Controller {
 						// Short review. Apply item feedback to each item.
 						if($this->input->post('review_length') == 'short') {
 							$this->form_validation->set_rules('short_item_quality', 'Item Quality', 'callback_check_numeric_rating');
+
 							$this->form_validation->set_rules('short_item_matches_desc', 'Item Matches Description', 'callback_check_numeric_rating');
 							$this->form_validation->set_rules('short_item_comments_source', 'Item Comments Source', 'callback_check_comments_source');
 							// Is the comment prepared:

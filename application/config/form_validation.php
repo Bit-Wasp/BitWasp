@@ -527,8 +527,20 @@ $config = array('register_form'=>array(
 				'input_transaction' => array(
 										array('field' => 'partially_signed_transaction',
 											  'label' => 'partially signed transaction',
-											  'rules' => 'required'
+											  'rules' => 'required|callback_check_hex'
 										)
-							)
+							),
+				'ship_from_submit' => array(
+										array('field' => 'location',
+											  'label' => 'Origin location',
+											  'rules' => 'callback_check_ship_from'
+										)
+							),
+				'ship_to_submit' => array(
+										array('field' => 'location',
+											  'label' => 'Destination location',
+											  'rules' => 'callback_check_ship_to'
+										)
+							),							
 				
 			);

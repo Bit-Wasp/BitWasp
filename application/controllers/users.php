@@ -88,7 +88,6 @@ class Users extends CI_Controller {
 			$data['returnMessage'] = "Your details were incorrect, try again.";
 			
 			if($user_info !== FALSE) {
-				
 				$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
 				$password = $this->general->password($password, $user_info['salt']);
 				
@@ -190,9 +189,6 @@ class Users extends CI_Controller {
 		$register_page = ($data['encrypt_private_messages'] == TRUE) ? 'users/register' : 'users/register_no_pin';
 		$register_validation = ($data['encrypt_private_messages'] == TRUE) ? 'register_form' : 'register_no_pin_form';
 		
-		$data['role'] = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['txt'];
-		
-		
 		// If there is any information about a recent transaction, display it.
 		$info = (array)json_decode($this->session->flashdata('info'));
 		if(count($info) !== 0){
@@ -200,7 +196,6 @@ class Users extends CI_Controller {
 			if($info['action'] == 'tos_fail')
 				$data['returnMessage'] = "You must agree to the terms of service to register an account.";
 		}
-
 		
 		// Check if we need the message_pin form, or the other one!
 		if ($this->form_validation->run($register_validation) == FALSE) {
@@ -211,6 +206,8 @@ class Users extends CI_Controller {
 			$data['captcha'] = $this->bw_captcha->generate();
 			
 		} else {
+			$data['role'] = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['txt'];
+			
 			// Display an error if the user has not agreed to the terms of service.
 			if($data['terms_of_service'] !== FALSE && $this->input->post('tos_agree') !== '1') {
 				$info = json_encode(array('action' => 'tos_fail'));
@@ -345,11 +342,9 @@ class Users extends CI_Controller {
 		if($this->form_validation->run('add_pgp') == TRUE) {
 			// Import the key, this will perform HTML entities and 
 			// extract the content between the two PGP headers.
-			$public_key = $this->input->post('public_key');
-			$key = $this->gpg->import($public_key);
+			$key = $this->gpg->import($this->input->post('public_key'));
 			
-			if($key !== FALSE) {
-				
+			if($key !== FALSE) {				
 				$key = array('user_id' => $this->current_user->user_id,
 							 'fingerprint' => $key['fingerprint'],
 							 'public_key' => $key['clean_key']);
@@ -512,7 +507,7 @@ class Users extends CI_Controller {
 	 */
 	public function check_valid_currency($param) {
 		$this->load->model('currencies_model');
-		return ($this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
+		return (is_numeric($param) && $param >= 0 && $this->currencies_model->get($param) !== FALSE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -524,6 +519,6 @@ class Users extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_location($param) {
-		return ($this->location_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
+		return (is_numeric($param) && $param >= 0 && $this->location_model->location_by_id($param) == TRUE) ? TRUE : FALSE;
 	}
 };

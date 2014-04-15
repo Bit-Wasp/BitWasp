@@ -32,7 +32,6 @@ class Orders extends CI_Controller {
 	 */
 	public function __construct() {
 		parent::__construct();
-		$this->load->library('bw_bitcoin');
 		$this->load->library('bw_messages');
 		$this->load->model('order_model');
 		$this->load->model('items_model');
@@ -61,9 +60,10 @@ class Orders extends CI_Controller {
 		if(count($info) !== 0)
 			$data['returnMessage'] = $info['message'];			
 		
-		$cancel = $this->input->post('cancel');
-		if(is_array($cancel)) {
-			$id = array_keys($cancel); $id = $id[0];
+		/*$cancel = $this->input->post('cancel');
+		if(is_array($cancel) ) {
+			
+			$id = array_keys($cancel);
 			$current_order = $this->order_model->load_order($id, array('2'));
 			if($current_order == FALSE)
 				redirect('purchases');
@@ -76,7 +76,7 @@ class Orders extends CI_Controller {
 				
 			if($this->order_model->buyer_cancel($id) == TRUE) 
 				$data['returnMessage'] = 'This order has been cancelled.';
-		}
+		}*/
 			
 		$this->load->library('form_validation');
 		$data['coin'] = $this->coin;
@@ -103,6 +103,9 @@ class Orders extends CI_Controller {
 	 * @param	int	$id
 	 */
 	public function vendor_accept($id) {
+		if( !(is_numeric($id) && $id >= 0) )
+			redirect('orders');
+			
 		$data['order'] = $this->order_model->load_order($id, array('1'));
 		if($data['order'] == FALSE)
 			redirect('orders');
@@ -302,6 +305,8 @@ class Orders extends CI_Controller {
 		if(is_array($place_order) || is_array($recount)) {
 			// Load the ID of the order.
 			$id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount); $id = $id[0];
+			if(!(is_numeric($id) && $id >= 0))
+				redirect('purchases');
 			
 			// If the order cannot be loaded (progress == 0), redirect to Purchases page.
 			$current_order = $this->order_model->load_order($id, array('0'));
@@ -327,6 +332,9 @@ class Orders extends CI_Controller {
 		$cancel = $this->input->post('cancel');
 		if(is_array($cancel)) {
 			$id = array_keys($cancel); $id = $id[0];
+			if(!(is_numeric($param) && $param >= 0))
+				redirect('purchases');
+				
 			$current_order = $this->order_model->load_order($id, array('1'));
 			if($current_order == FALSE)
 				redirect('purchases');
@@ -339,6 +347,9 @@ class Orders extends CI_Controller {
 		$received = $this->input->post('received');
 		if(is_array($received)) {
 			$id = array_keys($received); $id = $id[0];
+			if(!(is_numeric($param) && $param >= 0))
+				redirect('purchases');
+				
 			$current_order = $this->order_model->load_order($id, array('5'));
 			if($current_order == FALSE)
 				redirect('purchases');
@@ -397,6 +408,9 @@ class Orders extends CI_Controller {
 		$list_page = ($this->current_user->user_role == 'Vendor') ? 'purchases' : 'orders';
 		$data['dispute_page'] = ($this->current_user->user_role == 'Vendor') ? 'orders/dispute/'.$id : 'purchases/dispute/'.$id;
 		$data['cancel_page'] = ($this->current_user->user_role == 'Vendor') ? 'orders' : 'purchases';
+		
+		if(!(is_numeric($id) && $id >= 0))
+			redirect($data['cancel_page']);
 		
 		$data['current_order'] = $this->order_model->load_order($id, array('7','6','5','4'));
 		if($data['current_order'] == FALSE)
@@ -470,6 +484,8 @@ class Orders extends CI_Controller {
 	}
 
 	public function details($order_id) {
+		if(!(is_numeric($order_id) && $order_id >= 0))
+			redirect('');
 		$data['order'] = $this->order_model->get($order_id); // no restriction on buyer/vendor
 		if($data['order'] == FALSE)
 			redirect('');
@@ -492,7 +508,6 @@ class Orders extends CI_Controller {
 		} 
 		
 		$this->load->library('form_validation');
-		$this->load->library('bw_bitcoin');
 		$this->load->library('Raw_transaction');
 		
 		$data['display_form'] = FALSE;
@@ -540,7 +555,6 @@ class Orders extends CI_Controller {
 							$this->order_model->set_partially_signed_transaction($order_id, $this->input->post('partially_signed_transaction'));
 							// Nothing happens. Progressed when payment is broadcast.
 						}
-						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your partially signed transaction has been saved!')));
 						redirect($data['action_page']);
 					} else {
 						$data['invalid_transaction_error'] = 'This transaction is invalid.';
@@ -549,16 +563,17 @@ class Orders extends CI_Controller {
 			}
 		}
 		
-		$addrs = array(	BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']) => 'buyer',
-						BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->coin['crypto_magic_byte']) => 'vendor',
-						BitcoinLib::public_key_to_address($data['order']['admin_public_key'], $this->coin['crypto_magic_byte']) => 'admin');
+		$data['addrs'] = array(	BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']) => 'buyer',
+								BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->coin['crypto_magic_byte']) => 'vendor',
+								BitcoinLib::public_key_to_address($data['order']['admin_public_key'], $this->coin['crypto_magic_byte']) => 'admin');
 		$data['paying_to'] = array();
 		if(strlen($data['order']['partially_signed_transaction']) > 0) {
-			$disp_tx = Raw_transaction::decode($data['order']['partially_signed_transaction']);
-			foreach($disp_tx['vout'] as $out) { 	$data['paying_to'][] = array('address' => $out['scriptPubKey']['addresses'][0], 'value' => $out['value'], 'user' => $addrs[$out['scriptPubKey']['addresses'][0]]); 		}
+			$data['raw_tx'] = Raw_transaction::decode($data['order']['partially_signed_transaction']);
+			
 		} else if(strlen($data['order']['unsigned_transaction']) > 0) {
-			$disp_tx = Raw_transaction::decode($data['order']['unsigned_transaction']);
-			foreach($disp_tx['vout'] as $out) { 	$data['paying_to'][] = array('address' => $out['scriptPubKey']['addresses'][0], 'value' => $out['value'], 'user' => $addrs[$out['scriptPubKey']['addresses'][0]]);  	}
+			$data['raw_tx'] = Raw_transaction::decode($data['order']['unsigned_transaction']);
+			//$disp_tx = Raw_transaction::decode($data['order']['unsigned_transaction']);
+			//foreach($disp_tx['vout'] as $out) { 	$data['paying_to'][] = array('address' => $out['scriptPubKey']['addresses'][0], 'value' => $out['value'], 'user' => $addrs[$out['scriptPubKey']['addresses'][0]]);  	}
 		}
 		$data['fees']['shipping_cost'] = $data['order']['shipping_costs'];
 		$data['fees']['fee'] = $data['order']['fees'];
@@ -566,10 +581,6 @@ class Orders extends CI_Controller {
 		$data['fees']['total'] = $data['order']['shipping_costs']+$data['order']['fees'];
 		$data['user_role'] = $this->current_user->user_role;
 		$data['local_currency'] = $this->current_user->currency;		
-		
-		$info = (array)json_decode($this->session->flashdata('returnMessage'));
-		if(count($info) !== 0)
-			$data['returnMessage'] = $info['message'];			
 		
 		$this->load->library('ciqrcode');
 		$data['payment_url'] = "bitcoin:{$data['order']['address']}?amount={$data['order']['order_price']}&message=Order+{$data['order']['id']}&label=Order+{$data['order']['id']}";
@@ -585,7 +596,8 @@ class Orders extends CI_Controller {
 	/**
 	 * Check Public Key
 	 * 
-	 * Checks if 
+	 * Checks if the public key corresponds to a valid point on the 
+	 * secp256k1 curve.
 	 * 
 	 * @param	string	$public_key
 	 * @return	boolean
@@ -595,6 +607,18 @@ class Orders extends CI_Controller {
 		return (BitcoinLib::validate_public_key($public_key) == TRUE) ? TRUE : FALSE;
 	}
 		
+	/**
+	 * Check Hex
+	 * 
+	 * Checks if the supplied parameter is a valid hex string.
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_hex($param) {
+		return (bool)preg_match("/#[a-fA-F0-9]/", $param);
+	}
 };
 
-/* End of File: Order.php */
+/* End of File: orders.php */
+/* Location: application/controllers/orders.php */
