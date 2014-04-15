@@ -74,7 +74,7 @@
 				<?php if($order['address'] !== '') { ?>
 				<div class='row-fluid'>
 					<div class='well'>
-						<?php if($user_role == 'Buyer') { ?>
+						<?php if($user_role == 'Buyer'  && !($order['paid_time'] !== '')) { ?>
 						<div class='row-fluid'>
 							<div class='offset4'><a href='<?php echo $payment_url; ?>'><img src='data:image/png;base64,<?php echo $qr; ?>' /></a></div>
 						</div>
