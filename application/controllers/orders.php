@@ -555,6 +555,7 @@ class Orders extends CI_Controller {
 							$this->order_model->set_partially_signed_transaction($order_id, $this->input->post('partially_signed_transaction'));
 							// Nothing happens. Progressed when payment is broadcast.
 						}
+						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your partially signed transaction has been saved!')));
 						redirect($data['action_page']);
 					} else {
 						$data['invalid_transaction_error'] = 'This transaction is invalid.';
@@ -581,6 +582,10 @@ class Orders extends CI_Controller {
 		$data['fees']['total'] = $data['order']['shipping_costs']+$data['order']['fees'];
 		$data['user_role'] = $this->current_user->user_role;
 		$data['local_currency'] = $this->current_user->currency;		
+		
+		$info = (array)json_decode($this->session->flashdata('returnMessage'));
+		if(count($info) !== 0)
+			$data['returnMessage'] = $info['message'];			
 		
 		$this->load->library('ciqrcode');
 		$data['payment_url'] = "bitcoin:{$data['order']['address']}?amount={$data['order']['order_price']}&message=Order+{$data['order']['id']}&label=Order+{$data['order']['id']}";
