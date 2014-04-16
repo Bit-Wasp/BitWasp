@@ -31,19 +31,6 @@
                   <span class="help-inline"><?php echo form_error('message'); ?></span>
                 </div>
               </div>
-
-<?php if($public_key !== '') { ?>
-	          <noscript>
-	            <div class="control-group">
-                  <label class="control-label" for="pgp_encrypt">PGP Encryption?</label>
-                  <div class="controls">
-                    <label class="checkbox inline">
-	                  <input type='checkbox' name='pgp_encrypt' value='1' /> 
-                    </label>
-	              </div>
-                </div>
-              </noscript>
-<?php } ?>
 	
 			  <div class="control-group">
 				<label class="control-label" for="delete_on_read">Delete After Reading?</label>

@@ -77,7 +77,6 @@ class Bw_messages {
 			$remove_on_read = '0';
 		} 
 		
-		
 		$from = $data['from'];
 		
 		// Load the account the message is being sentto.
@@ -87,39 +86,38 @@ class Bw_messages {
 						'subject' => $subject,
 						'message' => $message);
 						
-		// Check if the message is encrypted.
-		$encrypted = ((stripos($message, '-----BEGIN PGP MESSAGE-----') !== FALSE) && (stripos($message, '-----END PGP MESSAGE-----') !== FALSE)) ? '1' : '0' ;
+		$encrypted = $this->check_pgp_encrypted($content['message']);
 		
 		// If the message isn't already encrypted with PGP..
-		if($encrypted == '0') {
-			// If the sender has requested it, or the recipient has forced it,
+		if($encrypted == FALSE) {
+			// If the recipient has forced it,
 			// encrypt the message with the recipients public key.
-			if( ($this->CI->input->post('pgp_encrypt') == '1') ||
-			    ($to['force_pgp_messages'] == '1') ) {
-					$this->CI->load->model('accounts_model');
-					$pgp = $this->CI->accounts_model->get_pgp_key($to['id']);
-					$content['message'] = $this->CI->gpg->encrypt($pgp['fingerprint'], $content['message']);
-					$encrypted = '1';
-			}		
+			// This only happens if the recipient has NOT blocked non-pgp messages. 
+			if( $to['force_pgp_messages'] == '1' ) {
+				$this->CI->load->model('accounts_model');
+				$pgp = $this->CI->accounts_model->get_pgp_key($to['id']);
+				$content['message'] = $this->CI->gpg->encrypt($pgp['fingerprint'], $content['message']);
+				$encrypted = TRUE;
+			}
 		}
 
 		// JSON encode the content array, and encrypt it if able.
 		$content = json_encode($content);
 		if($this->encrypt_private_messages && function_exists('openssl_public_encrypt'))
 			$content = $this->CI->openssl->encrypt($content, $to['public_key']);
-		
+
 		// Encode the data before insertion.
 		$content = base64_encode($content);
 		$hash = $this->CI->general->unique_hash('messages','hash');
-	
+
 		$results = array('to' => $to['id'],
 						 'content' => $content,
 						 'hash' => $hash,
 						 'remove_on_read' => $remove_on_read,
-						 'encrypted' => $encrypted,
+						 'encrypted' => ($encrypted == TRUE) ? '1' : '0',
 						 'time' => time()
-						 );
-						 
+					 );
+ 
 		return $results;
 	}
 	
@@ -176,6 +174,33 @@ class Bw_messages {
 			unset($res);
 		}
 		return $results;
+	}
+
+	/**
+	 * Check PGP Encrypted
+	 * 
+	 * This function extracts the base64 encoded message from a PGP message,
+	 * and checks the data against a regex. Returns TRUE if the input was
+	 * a valid PGP encrypted message (ie, headers match, and encoding is
+	 * correct. Maybe using a php library rather than extension would 
+	 * allow us to verify this further?)
+	 * 
+	 * @param	string	$message
+	 * @return boolean
+	 */
+	public function check_pgp_encrypted($message) {
+		$spos = stripos($message, '-----BEGIN PGP MESSAGE-----');
+		$spos = ($spos !== FALSE) ? $spos+27 : FALSE;
+		
+		$epos = stripos($message, '-----END PGP MESSAGE-----');
+		$epos = ($epos !== FALSE) ? $epos-s27 : FALSE;
+		
+		if($spos == FALSE || $spos == FALSE) 
+			return FALSE;
+
+		// Extract the ciphertext, and check against a regex.
+		$cipher_text = preg_replace('/\s+/', '', substr($message, $spos, $epos));
+		return (preg_match('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$^', $cipher_text)) ? TRUE : FALSE;
 	}
 	
 };

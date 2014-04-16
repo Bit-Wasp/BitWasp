@@ -29,6 +29,7 @@ $lang['check_master_public_key'] = 'Enter a valid Electrum master public key!';
 $lang['check_numeric_rating'] = 'Rate %s with a number from 1 to 5.';
 $lang['check_pin_required'] = "You must enter a message PIN.";
 $lang['check_pgp_is_required'] = "The recipient user has blocked messages which are not PGP encrypted.";
+$lang['check_pgp_encrypted'] = "%s must be an ASCII armored PGP message.";
 $lang['check_price_positive'] = 'You must enter a positive number for the price.';
 $lang['check_review_length'] = 'Choose either short or long review length.';
 $lang['check_role'] = "The %s field must be for a buyer, or vendor.";
@@ -49,6 +50,7 @@ $lang['check_user_search_with_property'] = 'You must select a valid specifier';
 $lang['check_user_search_list'] = 'You must select a valid order for the list';
 $lang['check_user_search_order_by'] = 'You must select a valid column to order the list by.';
 $lang['check_zero_or_greater'] = 'The %s field must be a number, zero or greater.';
+
 // CodeIgniter callback errors
 $lang['alpha_dash'] = "The %s field must only contain letters, numbers, and dashes (-).";
 $lang['required'] = "You must enter the %s.";

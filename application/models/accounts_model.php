@@ -88,7 +88,7 @@ class Accounts_model extends CI_Model {
 	 * @access	public
 	 * @param	int
 	 * @return	array / FALSE
-	 */		
+	 */
 	public function get_pgp_key($user_id) {
 		$this->db->select('fingerprint, public_key');
 		$query = $this->db->get_where('pgp_keys', array('user_id' => $user_id));
@@ -244,6 +244,22 @@ class Accounts_model extends CI_Model {
 		return ($this->db->delete('bitcoin_public_keys') == TRUE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * User Forces PGP Messages 
+	 * 
+	 * Return a boolean indicating if the user forces incoming messages
+	 * to be encrypted.
+	 * 
+	 * @param	string	$user_name
+	 * @return	boolean
+	 */
+	public function user_requires_pgp_messages($user_name) {
+		$this->db->where('user_name', $user_name);
+		$this->db->select('block_non_pgp');
+		$query = $this->db->get('users');
+		$row = $query->row_array();
+		return ($row['block_non_pgp'] == 1) ? TRUE : FALSE;
+	}
 };
 
 /* End of file Accounts_model.php */
