@@ -940,7 +940,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `completed_order_count` int(9) NOT NULL DEFAULT '0',
   `totp_secret` varchar(25),
   `totp_two_factor` enum('0','1') DEFAULT '0',
-  `pgp_two_factor` enum('0','1') NOT NULL,
+  `pgp_two_factor` enum('0','1') DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_hash` (`user_hash`,`user_name`),
   KEY `user_name` (`user_name`,`user_hash`,`banned`,`entry_paid`,`register_time`,`user_role`)

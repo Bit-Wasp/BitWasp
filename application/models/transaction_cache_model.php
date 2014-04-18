@@ -36,6 +36,7 @@ class Transaction_cache_model extends CI_Model {
 	 * @return	boolean
 	 */
 	public function add_cache_list($array) {
+		var_dump($array);
 		return ($this->db->insert_batch('transactions_block_cache', $array) == TRUE) ? TRUE : FALSE;
 	}
 	
@@ -64,7 +65,7 @@ class Transaction_cache_model extends CI_Model {
 	 * @return	array
 	 */
 	public function cache_list() {
-		$this->db->limit(2000);
+		$this->db->limit(800);
 		$query = $this->db->get('transactions_block_cache');
 		return ($query->num_rows() > 0) ? $query->result_array() : FALSE ;
 	}

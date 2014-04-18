@@ -21,6 +21,10 @@ class Callback extends CI_Controller {
 	 */
 	public function __construct() {
 		parent::__construct();
+		
+		// Prevent access via web. Uncomment when enough people have changed.
+		//if(!$this->input->is_cli_request())
+			//die("Not Allowed");
 	}
 	
 	/**
@@ -48,6 +52,9 @@ class Callback extends CI_Controller {
 		if($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
 			return FALSE;
 		$block = $this->bw_bitcoin->getblock($block_hash);
+		
+		if(!is_array($block))
+			return FALSE;
 		
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
 		if(count($watched_addresses) == 0)
@@ -109,9 +116,8 @@ class Callback extends CI_Controller {
 		$order_finalized = array();
 		$received_payments = array();
 		$fee_payments = array();
-$kc = 0; 
+
 		foreach($list as $cached_tx) {
-			echo $kc++."\n";
 			// Raw_transaction library is way faster than asking bitcoind.
 			$tx = Raw_transaction::decode($this->bw_bitcoin->getrawtransaction($cached_tx['tx_id']));
 
