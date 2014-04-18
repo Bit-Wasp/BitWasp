@@ -45,17 +45,17 @@
 	          <div class="span7"><?php echo $user['login_time_f']; ?></div>
 	        </div>
 
+			<div class="row-fluid">
+				<div class="span3"><strong>Two Factor Authentication</strong></div>
+				<div class="span7"><?php echo ($two_factor_setting == TRUE) ? ( ($two_factor['totp'] == TRUE) ? 'Enabled (Mobile App)' : 'Enabled (PGP)') : 'Disabled' ; ?> <?php echo anchor('account/two_factor','Configure'); ?></div>
+			</div>
+
 <?php if(isset($user['pgp']['public_key'])) { ?>
             <div class="row-fluid">
               <div class="span3"><strong>PGP Fingerprint</strong></div>
               <div class="span7"><?php echo $user['pgp']['fingerprint_f']; ?></div>
             </div>
-            
-			<div class="row-fluid">
-			  <div class="span3"><strong>Two Factor Authentication</strong></div>
-			  <div class="span7"><?php echo ($user['two_factor_auth'] == '1') ? 'Enabled':'Disabled'; ?></div>
-			</div>
-            
+                        
             <div class="row-fluid">
 			  <div class="span3"><strong>Force PGP Messages?</strong></div>
 			  <div class="span7"><?php echo ($user['force_pgp_messages'] == '1') ? 'Enabled':'Disabled'; ?></div>

@@ -1,11 +1,11 @@
           <div class="mainContent span7">
 			<div class='row-fluid'>
-				<h2>Two Factor Authentication</h2>
-				  <?php echo form_open('login/two_factor', array('class' => 'form-horizontal')); ?>
+				<h2>Disable Two Factor Authentication</h2>
+				  <?php echo form_open('account/disable_2fa', array('class' => 'form-horizontal')); ?>
 				  <fieldset>
 					<div class="alert">
 	<?php if(isset($returnMessage)) { echo $returnMessage; } else { ?>
-					Decrypt the following PGP text and enter it below:
+Decrypt the following PGP message to remove two factor challenge on login:
 	<?php } ?>
 					</div>
 					<div class="control-group">
@@ -21,8 +21,8 @@
 					</div>
 
 					<div class="form-actions">
-					  <button type='submit' class="btn btn-primary">Continue</button>
-					  <?php echo anchor('logout', 'Cancel', 'title="Cancel" class="btn"');?>
+						<input type='submit' class='btn btn-primary' name='disable_pgp' value='Continue' />
+						<?php echo anchor('account/two_factor', 'Cancel', 'title="Cancel" class="btn"');?>
 					</div>
 				  <fieldset>
 				</form>

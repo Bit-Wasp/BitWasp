@@ -48,15 +48,6 @@
               </div>
           
               <div class="control-group">
-			    <label class="control-label" for="two_factor_auth">Two Factor Authentication</label>
-			    <div class="controls">
-			      <label class="radio inline"><input type='radio' name='two_factor_auth' value='0' <?php echo ($user['two_factor_auth'] == '0') ? 'checked' : ''; ?> /> Disabled</label>
-			      <label class="radio inline"><input type='radio' name='two_factor_auth' value='1' <?php echo ($user['two_factor_auth'] == '1') ? 'checked' : ''; ?> /> Enabled</label>
-			      <span class="help-inline"><?php echo form_error('two_factor_auth'); ?></span>
-			    </div>
-              </div>
-          
-              <div class="control-group">
 			    <label class="control-label" for="force_pgp_messages">Force PGP Messages</label>
 			    <div class="controls">
 			      <label class="radio inline"><input type='radio' name='force_pgp_messages' value='0' <?php echo ($user['force_pgp_messages'] == '0') ? 'checked' : ''; ?> /> Disabled</label>

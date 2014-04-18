@@ -134,21 +134,24 @@ class Orders extends CI_Controller {
 					$public_keys = array($data['order']['buyer_public_key'], $vendor_public_key['public_key'], $admin_public_key['public_key']);
 					$multisig_details = Raw_transaction::create_multisig('2', $public_keys);
 					
-					// If no errors, we're good!
+					// If no errors, we're good to create the order!
 					if($multisig_details !== FALSE) {
 						$this->bitcoin_model->log_key_usage('order', $this->bw_config->electrum_mpk, $admin_public_key['iteration'], $admin_public_key['public_key'], $data['order']['id']);
 						$this->accounts_model->delete_bitcoin_public_key($vendor_public_key['id']);
-						if($this->order_model->progress_order($data['order']['id'], '1') == TRUE) {
-							
+						
+						$update = array('vendor_public_key' => $vendor_public_key['public_key'],
+										'admin_public_key' => $admin_public_key['public_key'],
+										'address' => $multisig_details['address'],
+										'redeemScript' => $multisig_details['redeemScript'],
+										'selected_payment_type_time' => time());
+						
+						if($this->input->post('selected_escrow') == '1') {
+							$update['vendor_selected_escrow'] = '1';
+							$update['extra_fees'] = ((($data['order']['price']+$data['order']['shipping_costs'])/100)*$this->bw_config->escrow_rate);
+						}
+						
+						if($this->order_model->progress_order($data['order']['id'], '1', '2', $update) == TRUE) {
 							$this->bitcoin_model->add_watch_address($multisig_details['address'], 'order');
-							$this->order_model->set_user_public_key($data['order']['id'], 'vendor', $vendor_public_key['public_key']);
-							$this->order_model->set_user_public_key($data['order']['id'], 'admin', $admin_public_key['public_key']);
-							if($this->input->post('selected_escrow') == '1') {
-								$this->order_model->set_selected_escrow($data['order']['id']);
-								$extra = ((($data['order']['price']+$data['order']['shipping_costs'])/100)*$this->bw_config->escrow_rate);
-								$this->order_model->set_extra_fees($data['order']['id'], $extra);
-							}
-							$this->order_model->set_address_details($data['order']['id'], $multisig_details);
 							
 							$subject = 'Vendor has confirmed order #'.$data['order']['id'];
 							$message = 'Your order with '.$data['order']['vendor']['user_name'].' has been confirmed.\n'.(($this->input->post('selected_escrow') == '1') ? 'Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You do not need to sign before you receive the goods. You can raise a dispute if you have any issues.' : 'You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.' );
@@ -156,7 +159,6 @@ class Orders extends CI_Controller {
 							$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You have accepted this order! Visit the orders page to see the bitcoin address!')));
 														
 							redirect('orders');
-							
 						} else {
 							$data['returnMessage'] = 'There was an error creating your order.';
 						}
@@ -198,11 +200,12 @@ class Orders extends CI_Controller {
 		
 		$account = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
 		$shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $account['location']);
-		var_dump($shipping_costs);
+
 		if($shipping_costs == FALSE) {
 			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'This item is not available in your location. Message the vendor to discuss availability.')));
 			redirect('item/'.$item_info['hash']);
 		}
+		
 		$order = $this->order_model->load($item_info['vendor_hash'],'0');
 		if($order == FALSE) {
 			// New order; Need to create
@@ -253,26 +256,39 @@ class Orders extends CI_Controller {
 		$data['fees']['fee'] = $this->fees_model->calculate(($data['order']['price']+$data['fees']['shipping_cost']));
 		$data['fees']['total'] = $data['fees']['shipping_cost']+$data['fees']['fee'];
 		$data['total'] = $data['order']['price']+$data['fees']['total'];
-	
-		if($this->form_validation->run('order_place') == TRUE) {
-			if($this->order_model->set_user_public_key($id, 'buyer', $this->input->post('bitcoin_public_key')) == TRUE) {
-				if($this->order_model->progress_order($data['order']['id'], '0') == FALSE) {
-					$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
-				} else {
-					$this->order_model->set_price($data['order']['id'], $data['order']['price']);
-					$this->order_model->set_fees($data['order']['id'], $data['fees']['fee']);
-					$this->order_model->set_shipping_costs($data['order']['id'], $data['fees']['shipping_cost']);
-					// Send message to vendor						
-					$subject = "New Order #{$data['order']['id']} from ".$this->current_user->user_name;
-					$message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
-					for($i = 0; $i < count($data['order']['items']); $i++) {
-						$message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
-					}
-					$message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n".$this->input->post('buyer_address');
-					$this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
 
-					$this->session->set_userdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address')));
-					redirect('purchases');
+		if($this->form_validation->run('order_place') == TRUE) {
+			$continue = FALSE;
+			if($data['order']['vendor']['block_non_pgp'] == '1') {
+				$this->form_validation->set_rules("buyer_address", "Your address", 'callback_check_pgp_encrypted');
+				if($this->form_validation->run() == TRUE) 
+					$continue = TRUE;
+			} else {
+				$continue = TRUE;
+			}
+			
+			if($continue == TRUE) {
+				if($this->order_model->set_user_public_key($id, 'buyer', $this->input->post('bitcoin_public_key')) == TRUE) {
+					$update = array('price' => $data['order']['price'],
+									'fees' => $data['fees']['fee'],
+									'confirmed_time' => time(),
+									'shipping_costs' => $data['fees']['shipping_cost']);
+
+					if($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE) {
+						$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
+					} else {
+						// Send message to vendor						
+						$subject = "New Order #{$data['order']['id']} from ".$this->current_user->user_name;
+						$message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
+						for($i = 0; $i < count($data['order']['items']); $i++) {
+							$message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+						}
+						$message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n".$this->input->post('buyer_address');
+						$this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
+
+						$this->session->set_userdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address')));
+						redirect('purchases');
+					}
 				}
 			}
 		} 			
@@ -360,8 +376,7 @@ class Orders extends CI_Controller {
 				redirect('purchases');
 			}
 			
-			if($this->order_model->progress_order($id, '5', '7') == TRUE) {
-				$this->order_model->set_received_time($id);
+			if($this->order_model->progress_order($id, '5', '7', array('received_time' => time())) == TRUE) {
 				$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been marked as received. Please leave feedback for this user!')));
 				redirect('purchases');
 			}
@@ -444,7 +459,7 @@ class Orders extends CI_Controller {
 				// Need to force the new_progress to 6 if the order is at 3 or 4.
 				$new_progress = (in_array($data['current_order']['progress'], array('4','3'))) ? '6' : '0';// 0 means unset, default value.
 				
-				if($this->disputes_model->create($dispute) == TRUE && $this->order_model->progress_order($id, $data['current_order']['progress'], $new_progress) == TRUE) {
+				if($this->disputes_model->create($dispute) == TRUE && $this->order_model->progress_order($id, $data['current_order']['progress'], $new_progress, array('disputed' => '1', 'disputed_time' => time())) == TRUE) {
 					// Send message to vendor
 					$info['from'] = $this->current_user->user_id;
 					$details = array('username' => $data['current_order'][$data['other_role']]['user_name'],
@@ -541,19 +556,23 @@ class Orders extends CI_Controller {
 					// $check will contain the order address if the vouts
 					// lead to the same unique hash we store when generating the transaction.
 					if($check == $data['order']['address']) {
+						$complete = FALSE;
 						if($data['order']['progress'] == '3') {
 							// Buyer must sign early before vendor dispatches.
-							if($this->order_model->progress_order($order_id, '3') == TRUE) 
-								$this->order_model->set_partially_signed_transaction($order_id, $this->input->post('partially_signed_transaction'));
-						
+							$update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+												'partially_signing_user_id' => $this->current_user->user_id);
+							$this->order_model->progress_order($order_id, '3', '4', $update);
 						} else if($data['order']['progress'] == '4') {
 							// Vendor indicates they have dispatched.
-							if($this->order_model->progress_order($order_id, '4') == TRUE) 
-								$this->order_model->set_partially_signed_transaction($order_id, $this->input->post('partially_signed_transaction'));
-						
+							$update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+												'partially_signing_user_id' => $this->current_user->user_id,
+												'dispatched_time' => time(),
+												'dispatched' => '1');
+							$this->order_model->progress_order($order_id, '4', '5', $update);
 						} else if($data['order']['progress'] == '6') {
-							$this->order_model->set_partially_signed_transaction($order_id, $this->input->post('partially_signed_transaction'));
-							// Nothing happens. Progressed when payment is broadcast.
+							$update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+											'partially_signing_user_id' => $this->current_user->user_id);
+							$this->order_model->update_order($order_id, $update);
 						}
 						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your partially signed transaction has been saved!')));
 						redirect($data['action_page']);
@@ -567,15 +586,13 @@ class Orders extends CI_Controller {
 		$data['addrs'] = array(	BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']) => 'buyer',
 								BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->coin['crypto_magic_byte']) => 'vendor',
 								BitcoinLib::public_key_to_address($data['order']['admin_public_key'], $this->coin['crypto_magic_byte']) => 'admin');
-		$data['paying_to'] = array();
+
 		if(strlen($data['order']['partially_signed_transaction']) > 0) {
 			$data['raw_tx'] = Raw_transaction::decode($data['order']['partially_signed_transaction']);
-			
 		} else if(strlen($data['order']['unsigned_transaction']) > 0) {
 			$data['raw_tx'] = Raw_transaction::decode($data['order']['unsigned_transaction']);
-			//$disp_tx = Raw_transaction::decode($data['order']['unsigned_transaction']);
-			//foreach($disp_tx['vout'] as $out) { 	$data['paying_to'][] = array('address' => $out['scriptPubKey']['addresses'][0], 'value' => $out['value'], 'user' => $addrs[$out['scriptPubKey']['addresses'][0]]);  	}
 		}
+
 		$data['fees']['shipping_cost'] = $data['order']['shipping_costs'];
 		$data['fees']['fee'] = $data['order']['fees'];
 		$data['fees']['escrow_fees'] = $data['order']['extra_fees'];
@@ -587,10 +604,11 @@ class Orders extends CI_Controller {
 		if(count($info) !== 0)
 			$data['returnMessage'] = $info['message'];			
 		
-		$this->load->library('ciqrcode');
-		$data['payment_url'] = "bitcoin:{$data['order']['address']}?amount={$data['order']['order_price']}&message=Order+{$data['order']['id']}&label=Order+{$data['order']['id']}";
-		$data['qr'] = $this->ciqrcode->generate_base64(array('data' => $data['payment_url']));
-
+		if($this->current_user->user_role == 'Buyer') {
+			$this->load->library('ciqrcode');
+			$data['payment_url'] = "bitcoin:{$data['order']['address']}?amount={$data['order']['order_price']}&message=Order+{$data['order']['id']}&label=Order+{$data['order']['id']}";
+			$data['qr'] = $this->ciqrcode->generate_base64(array('data' => $data['payment_url']));
+		}
 		$data['page'] = 'orders/details';
 		$data['title'] = 'Order Details: #'.$data['order']['id'];
 		$this->load->library('Layout', $data);
@@ -621,8 +639,21 @@ class Orders extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_hex($param) {
-		return (bool)preg_match("/#[a-fA-F0-9]/", $param);
+		return (bool)preg_match("^[a-fA-F0-9]^", trim($param));
 	}
+	
+	/**
+	 * Check PGP Encrypted
+	 * 
+	 * See Bw_messages/check_pgp_encrypted();
+	 * 
+	 * @param	string	$param
+	 * @return	boolean
+	 */
+	public function check_pgp_encrypted($param) {
+		return ($this->bw_messages->check_pgp_encrypted($param) == TRUE) ? TRUE : FALSE;
+	}
+
 };
 
 /* End of File: orders.php */

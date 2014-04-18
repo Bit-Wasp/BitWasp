@@ -64,6 +64,13 @@ class Accounts extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	/**
+	 * Public Keys
+	 * URI: /account/public_keys
+	 * 
+	 * This page allows vendors to add a list of public keys for use in 
+	 * orders.
+	 */
 	public function public_keys() {
 		if($this->current_user->user_role !== 'Vendor')
 			redirect('');
@@ -71,7 +78,7 @@ class Accounts extends CI_Controller {
 		if($this->input->post('submit_public_keys') == 'Upload Public Keys') {
 			$this->load->library('BitcoinLib');
 			$keys = explode("\n",$this->input->post('public_key_list'));
-			foreach($keys as $key){
+			foreach($keys as $key) {
 				if(BitcoinLib::validate_public_key($key) == TRUE)
 					$this->accounts_model->add_bitcoin_public_key($key);
 			}
@@ -105,6 +112,14 @@ class Accounts extends CI_Controller {
 		if($this->current_user->user_role == 'Vendor')
 			$data['public_key_count'] = count($this->accounts_model->bitcoin_public_keys($this->current_user->user_id));
 			
+		$data['two_factor']['totp'] = ($data['user']['totp_two_factor'] == '1') ? TRUE : FALSE;
+		if(isset($data['user']['pgp'])) 
+			$data['two_factor']['pgp'] = ($data['user']['pgp_two_factor'] == '1') ? TRUE : FALSE;
+		// Work out 2FA is enabled at all.
+		$data['two_factor_setting'] = FALSE;
+		foreach($data['two_factor'] as $factor) {
+			$data['two_factor_setting'] = $data['two_factor_setting'] || $factor;
+		}
 
 		$data['page'] = 'accounts/me';
 		$data['title'] = $data['user']['user_name'];
@@ -160,7 +175,7 @@ class Accounts extends CI_Controller {
 			
 		// Different form validation rules depending on if the user has a PGP key uploaded.
 		$form_rules = (isset($data['user']['pgp']) == TRUE) ? 'account_edit' : 'account_edit_no_pgp';
-
+		
 		// If form validation is successful, update the changes.
 		if($this->form_validation->run($form_rules) == TRUE) {
 			$changes = array();
@@ -172,7 +187,7 @@ class Accounts extends CI_Controller {
 			
 			// Only consider these if the user has a PGP key uploaded.
 			if(isset($data['user']['pgp'])) {
-				$changes['two_factor_auth'] = ($data['user']['two_factor_auth'] == $this->input->post('two_factor_auth')) ? NULL : $this->input->post('two_factor_auth');
+				
 				$changes['force_pgp_messages'] = ($data['user']['force_pgp_messages'] == $this->input->post('force_pgp_messages')) ? NULL : $this->input->post('force_pgp_messages');
 				$changes['block_non_pgp'] = ($data['user']['block_non_pgp'] == $this->input->post('block_non_pgp')) ? NULL : $this->input->post('block_non_pgp');
 			}
@@ -188,7 +203,201 @@ class Accounts extends CI_Controller {
 		
 		$this->load->library('Layout', $data);
 	}
+
+	/**
+	 * Disable 2FA
+	 * URI: /account/disable_2fa
+	 * 
+	 * This page allows users to disable the current two factor setting
+	 * on their account after passing the correct challenge.
+	 */
+	public function disable_2fa() {
+		$this->load->library('form_validation');
+		
+		$data = array();
+		$data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
+		$data['two_factor']['totp'] = ($data['user']['totp_two_factor'] == '1') ? TRUE : FALSE;
+		if(isset($data['user']['pgp'])) 
+			$data['two_factor']['pgp'] = ($data['user']['pgp_two_factor'] == '1') ? TRUE : FALSE;
+		// Work out 2FA is enabled at all.
+		$data['two_factor_setting'] = FALSE;
+		foreach($data['two_factor'] as $factor) {
+			$data['two_factor_setting'] = $data['two_factor_setting'] || $factor;
+		}
+
+		if($data['two_factor_setting'] == FALSE) 
+			redirect('account/two_factor');
+		
+		if($data['two_factor']['totp'] == TRUE) {
+			$this->load->library('totp');
+			if($this->input->post('disable_totp') == 'Continue') {
+				if($this->form_validation->run('submit_totp_token') == TRUE) {
+					$check = $this->totp->verifyCode($data['user']['totp_secret'], $this->input->post('totp_token'), 2);
+					if($check) {
+						$this->accounts_model->disable_2fa_totp();
+						$this->session->userdata('message', json_encode(array('message' => 'App-based two factor authentication has been <b>disabled</b>.')));
+						redirect('account/two_factor');
+					} else {
+						$data['returnMessage'] = 'You entered an invalid token!';
+						$new_qr = FALSE;
+					}
+				}
+
+			}
+			
+			$data['page'] = 'accounts/disable_totp_factor';
+			
+		} else {
+			$this->load->library('gpg');
+			$this->load->library('bw_auth');
+			$this->load->model('auth_model');
+			if($this->input->post('disable_pgp') == 'Continue') {
+				if($this->form_validation->run('submit_pgp_token') == TRUE) {
+					// Check the answer to what we have on record as the solution.
+					if($this->auth_model->check_two_factor_token($this->input->post('answer')) == TRUE) {
+						$this->accounts_model->disable_2fa_pgp();
+						$this->session->set_userdata('returnMessage', json_encode(array('message' => 'PGP two factor authentication has been <b>disabled</b>.')));
+						redirect('accounts/two_factor');
+					} else {
+						// Leave an error if the user has not been redirected.
+						$data['returnMessage'] = "Your token did not match. Please remove any whitespaces and enter only the token. A new challenge has been generated.";
+					}			
+				} 
+			}
+			
+			$data['challenge'] = $this->bw_auth->generate_two_factor_token();
+			if($data['challenge'] == FALSE)
+				$this->logs_model->add('Two Factor Auth','Unable to generate two factor challenge','Unable to generate two factor authentication token.','Error');
+
+			
+			$data['page'] = 'accounts/disable_pgp_factor';
+		}
+		
+		$data['title'] = 'Disable Two Factor Authentication';
+		$this->load->library('Layout', $data);
+		
+	}
+
+	/**
+	 * Enable PGP Factor
+	 * 
+	 * This page generates an encrypted challenge for the user to decrypt
+	 * and paste to the site before enabling PGP 2fa. 
+	 */
+	public function enable_pgp_factor() {
+		$this->load->library('form_validation');
+		$this->load->library('gpg');
+		$this->load->library('bw_auth');
+		$this->load->model('auth_model');
+
+		$data['title'] = 'Enable PGP Two Factor Authentication';
+		$data['page'] = 'accounts/enable_pgp_factor';
+		$data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
+
+		if($this->input->post('submit_pgp_token') == 'Continue') { 
+			if($this->form_validation->run('submit_pgp_token') == TRUE) {
+				// Check the answer to what we have on record as the solution.
+				if($this->auth_model->check_two_factor_token($this->input->post('answer')) == TRUE) {
+					$this->accounts_model->enable_2fa_pgp();
+					$this->session->set_userdata('returnMessage', json_encode(array('message' => 'PGP two factor authentication has been enabled.')));
+					redirect('accounts/two_factor');
+				} else {
+					// Leave an error if the user has not been redirected.
+					$data['returnMessage'] = "Your token did not match. Please remove any whitespaces and enter only the token. A new challenge has been generated.";
+				}			
+			}
+		}
+
+		$data['challenge'] = $this->bw_auth->generate_two_factor_token();
+		if($data['challenge'] == FALSE)
+			$this->logs_model->add('Two Factor Auth','Unable to generate two factor challenge','Unable to generate two factor authentication token.','Error');
+
+		$this->load->library('Layout', $data);
+	}
 	
+
+	/**
+	 * Two Factor Panel
+	 * 
+	 * Allow users to set up TOTP or PGP two factor authentication.
+	 * 
+	 */
+	public function two_factor() {
+		$this->load->library('form_validation');
+		$this->load->library('totp');
+		$this->load->model('users_model');
+		
+		$data['page'] = 'accounts/two_factor';
+		$data['title'] = 'Two Factor Authentication';
+		$data['header_meta'] = $this->load->view('accounts/password_hash_header', NULL, true);
+		$data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
+		$data['two_factor']['totp'] = ($data['user']['totp_two_factor'] == '1') ? TRUE : FALSE;
+		if(isset($data['user']['pgp'])) 
+			$data['two_factor']['pgp'] = ($data['user']['pgp_two_factor'] == '1') ? TRUE : FALSE;
+
+		$new_qr = TRUE;
+
+		// Process TOTP - PGP is done in enabe_pgp_factor.
+		if($this->input->post('submit_totp_token') == 'Setup') {
+			// If PGP is enabled, they can't enable TOTP. 
+			if($data['two_factor']['pgp'] == TRUE) {
+				$data['returnMessage'] = 'You must disable PGP authentication before enabling app-based two factor authentication.';
+			} else {
+				$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));	
+				
+				$this->form_validation->set_rules("password", "your password", "required");
+				if($this->form_validation->run() == TRUE) {
+					// Work out if submitted password has been hashed by javascript already
+					$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
+					$password = $this->general->password($password, $user_info['salt']);
+					
+					$check_login = $this->users_model->check_password($this->current_user->user_name, $password);
+					if( ($check_login !== FALSE) && ($check_login['id'] == $data['user']['id']) ) {
+					
+						if($this->form_validation->run('submit_totp_token') == TRUE) {
+							$check = $this->totp->verifyCode($this->session->userdata('otp_secret'), $this->input->post('totp_token'), 2);
+							if($check) {
+								$this->accounts_model->enable_2fa_totp($this->session->userdata('otp_secret'));
+								$this->session->unset_userdata('otp_secret');
+								$this->session->userdata('message', json_encode(array('message' => 'App-based two factor authentication has been enabled.')));
+								redirect('account/two_factor');
+							} else {
+								$data['returnMessage'] = 'You entered an invalid token. Try again, or '.anchor('accounts/two_factor','click here to load a new secret.');
+								$new_qr = FALSE;
+							}
+						}
+					} else {
+						$data['returnMessage'] = 'Your password was incorrect.';
+						$new_qr = FALSE;
+					}
+				}
+			}
+		}
+
+		// If TOTP is disabled, show a QR to set up.
+		if($data['two_factor']['totp'] == FALSE) {
+			$this->load->library('ciqrcode', array('cacheable' => FALSE));
+			if($new_qr == FALSE) {
+				$data['secret'] = $this->session->userdata('otp_secret');
+			} else {
+				$data['secret'] = $this->totp->createSecret();
+				$this->session->set_userdata('otp_secret', $data['secret']);
+			}
+			$url = $this->totp->getOTPLink("{$this->current_user->user_name} @ Bitwasp", $data['secret']);
+			$data['qr'] = $this->ciqrcode->generate_base64(array('data' => $url));
+			
+		}
+		
+		// Work out if it's on at all.
+		$data['two_factor_setting'] = FALSE;
+		foreach($data['two_factor'] as $factor) {
+			$data['two_factor_setting'] = $data['two_factor_setting'] || $factor;
+		}
+
+		$this->load->library('Layout', $data);
+		
+	}
+
 	/**
 	 * Delete PGP key from account.
 	 * URI: /pgp/delete
@@ -315,7 +524,6 @@ class Accounts extends CI_Controller {
 		if($pgp !== FALSE)
 			redirect('account');
 		
-		$this->load->library('gpg');
 		$this->load->library('form_validation');
 		
 		$data['page'] = 'accounts/add_pgp';

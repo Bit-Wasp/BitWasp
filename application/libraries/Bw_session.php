@@ -76,10 +76,13 @@ class Bw_session {
 		if($params == 'force_pgp') {
 			$userdata = array(	'user_id' => $user['id'],
 								'force_pgp' => 'true' );
-		} else if($params == 'two_factor') {
+		} else if($params == 'totp_factor') {
+			$userdata = array(	'user_id' => $user['id'],
+								'totp_factor' => 'true');
+		} else if($params == 'pgp_factor') {
 			$this->CI->session->unset_userdata('entry_payment');
 			$userdata = array(	'user_id' => $user['id'],
-								'two_factor' => 'true' );
+								'pgp_factor' => 'true' );
 		} else if($params == 'entry_payment') {
 			$userdata = array(	'user_id' => $user['id'],
 								'entry_payment' => 'true');
@@ -148,8 +151,11 @@ class Bw_session {
 		if($this->auth_level == FALSE)
 			return TRUE;
 		
-		if( $this->CI->current_user->two_factor == TRUE && !$this->CI->general->matches_any(uri_string(), array('login/two_factor', 'logout')) )
-			redirect('login/two_factor');
+		if( $this->CI->current_user->pgp_factor == TRUE && !$this->CI->general->matches_any(uri_string(), array('login/pgp_factor', 'logout')) )
+			redirect('login/pgp_factor');
+		
+		if( $this->CI->current_user->totp_factor == TRUE && !$this->CI->general->matches_any(uri_string(), array('login/totp_factor', 'logout')) )
+			redirect('login/totp_factor');
 		
 		if( $this->CI->current_user->force_pgp == TRUE && !$this->CI->general->matches_any(uri_string(), array('register/pgp', 'logout')) )
 			redirect('register/pgp');

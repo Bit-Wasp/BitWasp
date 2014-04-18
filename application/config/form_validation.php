@@ -146,10 +146,6 @@ $config = array('register_form'=>array(
 												'label' => 'forced PGP messages',
 												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
 										),
-										array(	'field' => 'two_factor_auth',
-												'label' => 'two-factor authentication.',
-												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
-										),
 										array(	'field' => 'block_non_pgp',
 												'label' => 'blocking non PGP messages.',
 												'rules' => 'callback_check_bool'
@@ -167,12 +163,6 @@ $config = array('register_form'=>array(
 										array(	'field' => 'display_login_time',
 												'label' => '',
 												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
-										)
-							),
-				'two_factor' => array(	
-										array('field' => 'answer',
-											  'label' => 'solution',
-											  'rules' => 'required'
 										)
 							),
 				'add_listing' => array(
@@ -527,7 +517,7 @@ $config = array('register_form'=>array(
 				'input_transaction' => array(
 										array('field' => 'partially_signed_transaction',
 											  'label' => 'partially signed transaction',
-											  'rules' => 'required|callback_check_hex'
+											  'rules' => 'required'
 										)
 							),
 				'ship_from_submit' => array(
@@ -542,5 +532,17 @@ $config = array('register_form'=>array(
 											  'rules' => 'callback_check_ship_to'
 										)
 							),							
-				
+				'submit_totp_token' => array(
+										array('field' => 'totp_token',
+											  'label' => 'Auth token',
+											  'rules' => 'exact_length[6]|is_natural'
+										)
+							),
+				'submit_pgp_token' => array(	
+										array('field' => 'answer',
+											  'label' => 'solution',
+											  'rules' => 'required'
+										)
+							)
 			);
+

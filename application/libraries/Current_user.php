@@ -25,7 +25,8 @@ class Current_User {
 	public $user_name;
 	public $message_password;
 	public $message_password_granted;
-	public $two_factor;
+	public $totp_factor;
+	public $pgp_factor;
 	public $user_role;
 	public $session_id;
 	public $URI;
@@ -73,8 +74,11 @@ class Current_User {
 			if(is_numeric($id) && $id !== NULL) {
 				$this->user_id = $id;
 			
-				if($this->CI->session->userdata('two_factor') == 'true')
-					$this->two_factor = TRUE;
+				if($this->CI->session->userdata('pgp_factor') == 'true')
+					$this->pgp_factor = TRUE;
+					
+				if($this->CI->session->userdata('totp_factor') == 'true')
+					$this->totp_factor = TRUE;
 			
 				if($this->CI->session->userdata('force_pgp') == 'true')
 					$this->force_pgp = TRUE;

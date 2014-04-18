@@ -193,7 +193,7 @@ class Bw_messages {
 		$spos = ($spos !== FALSE) ? $spos+27 : FALSE;
 		
 		$epos = stripos($message, '-----END PGP MESSAGE-----');
-		$epos = ($epos !== FALSE) ? $epos-s27 : FALSE;
+		$epos = ($epos !== FALSE) ? $epos-27 : FALSE;
 		
 		if($spos == FALSE || $spos == FALSE) 
 			return FALSE;

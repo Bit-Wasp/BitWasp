@@ -71,7 +71,6 @@ class Auth_model extends CI_Model {
 	 */			
 	public function check_two_factor_token($token) {
 		$result = FALSE;
-		
 		$this->db->select('id')
 				 ->where('user_id', $this->current_user->user_id)
 				 ->where('solution', $token);

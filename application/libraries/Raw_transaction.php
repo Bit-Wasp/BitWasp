@@ -775,6 +775,7 @@ class Raw_transaction {
 			
 				$public_key = $scripts[1];
 				$o = self::_check_sig($signature, $message_hash[$i], $public_key);
+				var_dump($o);
 				$outcome = $outcome && $o;
 				
 			} else if($type_info['type'] == 'scripthash') {

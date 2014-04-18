@@ -96,7 +96,7 @@ class Bw_auth {
 	 * 
 	 * @return		void
 	 */
-	public function new_auth(){
+	public function new_auth() {
 		$config = array('current_auth_req' => uri_string());
 		$this->CI->session->set_userdata($config);
 			
@@ -137,7 +137,7 @@ class Bw_auth {
 	 * @param		array $array
 	 * @return		void
 	 */
-	public function set_data(array $auth_reqs) {
+	public function set_data(array $auth_reqs = array()) {
 		$this->CI->session->set_userdata('auth_reqs', json_encode($auth_reqs));
 	}
 	

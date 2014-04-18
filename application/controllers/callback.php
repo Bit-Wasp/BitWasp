@@ -41,29 +41,13 @@ class Callback extends CI_Controller {
 		$this->load->model('transaction_cache_model');
 
 		// Die if bitcoind is actually offline.
-		if($this->bw_bitcoin->getinfo() == NULL){
+		if($this->bw_bitcoin->getinfo() == NULL) {
 			return FALSE;
 		}
 		// Reject already known blocks.
 		if($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
 			return FALSE;
 		$block = $this->bw_bitcoin->getblock($block_hash);
-		
-/*		// Check for chain consistency
-		if($this->transaction_cache_model->check_block_height_set($block['height']) == TRUE) {
-			
-			// Load the block before this, and check if it's in our list.  
-			$prev_block = $this->bw_bitcoin->getblock($block['previousblockhash']);  
-			// This loops backwards from the new latest block and attempts 
-			// to find the common ancestor.
-			while($this->transaction_cache_model->block_info( array('block' => $prev_block['hash']) ) == FALSE ) {
-				$prev_block = $this->bw_bitcoin->getblock($block['previousblockhash']);
-			}
-			
-			// $prev_block contains common ancestor. 
-			// Delete ll 
-			
-		}	*/
 		
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
 		if(count($watched_addresses) == 0)
@@ -72,7 +56,7 @@ class Callback extends CI_Controller {
 		$txs = array();
 		foreach($block['tx'] as $id => $tx_id) {
 			array_push($txs, array(	'tx_id' => $tx_id,
-				'block_height' => $block['height']));
+									'block_height' => $block['height']));
 		}
 		$this->transaction_cache_model->add_cache_list($txs);
 	}	
@@ -115,8 +99,8 @@ class Callback extends CI_Controller {
 		$this->load->model('order_model');
 
 		// No problems, so prevent other instances from running!
-		$this->config_model->update(array('bitcoin_callback_running' => 'true'));
-		$this->config_model->update(array('bitcoin_callback_start_time' => time()));
+		$this->config_model->update(array(	'bitcoin_callback_running' => 'true',
+											'bitcoin_callback_start_time' => time()));
 
 		// Load watched addresses, and payments received on addresses.
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
@@ -125,8 +109,9 @@ class Callback extends CI_Controller {
 		$order_finalized = array();
 		$received_payments = array();
 		$fee_payments = array();
-
+$kc = 0; 
 		foreach($list as $cached_tx) {
+			echo $kc++."\n";
 			// Raw_transaction library is way faster than asking bitcoind.
 			$tx = Raw_transaction::decode($this->bw_bitcoin->getrawtransaction($cached_tx['tx_id']));
 

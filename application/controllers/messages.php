@@ -347,8 +347,7 @@ class Messages extends CI_Controller {
 		$this->load->model('accounts_model');
 		$encrypted = ($this->check_pgp_encrypted($param) == TRUE) ? TRUE : FALSE ;
 		$block_non_pgp = $this->accounts_model->user_requires_pgp_messages($this->input->post('user_name'));
-		$o = ($block_non_pgp == FALSE || $block_non_pgp == TRUE && $encrypted == TRUE) ? TRUE : FALSE;
-		return $o;
+		return ($block_non_pgp == FALSE || $block_non_pgp == TRUE && $encrypted == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -360,8 +359,7 @@ class Messages extends CI_Controller {
 	 * @return	boolean
 	 */
 	public function check_pgp_encrypted($param) {
-		$o = ($this->bw_messages->check_pgp_encrypted($param) == TRUE) ? TRUE : FALSE;
-		return $o;
+		return ($this->bw_messages->check_pgp_encrypted($param) == TRUE) ? TRUE : FALSE;
 	}
 };
 

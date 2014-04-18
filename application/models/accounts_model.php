@@ -44,7 +44,7 @@ class Accounts_model extends CI_Model {
 		if(count($opt) == 0) {
 			$this->db->select('id, banned, completed_order_count, display_login_time, force_pgp_messages, block_non_pgp, login_time, location, register_time, user_name, user_hash, user_role');
 		} else if($opt['own'] == TRUE) {
-			$this->db->select('id, banned, completed_order_count, display_login_time, local_currency, block_non_pgp, force_pgp_messages, login_time, location, register_time, two_factor_auth, user_name, user_hash, user_role');
+			$this->db->select('id, banned, completed_order_count, display_login_time, local_currency, block_non_pgp, force_pgp_messages, login_time, location, register_time, totp_secret, totp_two_factor, pgp_two_factor, user_name, user_hash, user_role');
 		}
 
 		if (isset($identifier['user_hash'])) {
@@ -132,7 +132,7 @@ class Accounts_model extends CI_Model {
 		
 		if($this->db->delete('pgp_keys') == TRUE) {
 			// When deleting the PGP key, 
-			$changes = array('two_factor_auth' => '0',
+			$changes = array('pgp_two_factor' => '0',
 							 'force_pgp_messages' => '0',
 							 'block_non_pgp' => '0');
 			$this->update($changes);
@@ -158,6 +158,68 @@ class Accounts_model extends CI_Model {
 												    'fingerprint' => $data['fingerprint'])) == TRUE) ? TRUE : FALSE;
 	}
 	
+	/**
+	 * Disable TOTP
+	 * 
+	 * This function removes the TOTP secret and disables two factor
+	 * authentication.
+	 * 
+	 * @return	boolean
+	 */
+	public function disable_2fa_totp() {
+		$this->db->where('id', $this->current_user->user_id);
+		$update = array('totp_secret' => '',
+						'totp_two_factor' => '0');
+		return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Disable PGP 2FA
+	 * 
+	 * This function turns off PGP two factor authentication.
+	 * 
+	 * @return	boolean
+	 */
+	public function disable_2fa_pgp() {
+		$this->db->where('id', $this->current_user->user_id);
+		$update = array('pgp_two_factor' => '0');
+		return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+	}
+	
+	
+	/**
+	 * Enable TOTP
+	 * 
+	 * Adds a totp secret to the users account and enables TOTP. It also
+	 * ensures that the PGP two factor setting is turned off.
+	 * 
+	 * @param	string	$secret
+	 * @return	boolean
+	 */
+	public function enable_2fa_totp($secret) {
+		$this->db->where('id', $this->current_user->user_id);
+		$update = array('totp_secret' => $secret,
+						'totp_two_factor' => '1',
+						'pgp_two_factor' => '0');
+		return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+	}
+	
+	/**
+	 * Enable 2FA PGP
+	 * 
+	 * Sets up PGP two factor authentication for the users account and 
+	 * disables TOTP 2FA.
+	 * 
+	 * @return	boolean
+	 */
+	public function enable_2fa_pgp() {
+		$this->db->where('id', $this->current_user->user_id);
+		$update = array('pgp_two_factor' => '1',
+						'totp_two_factor' => '0',
+						'totp_secret' => ''
+					);
+		return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+	}
 	/**
 	 * Toggle Ban
 	 * 

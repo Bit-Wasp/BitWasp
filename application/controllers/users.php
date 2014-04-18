@@ -108,11 +108,15 @@ class Users extends CI_Controller {
 						// Redirect to payment details.
 						$this->bw_session->create($user_info, 'entry_payment');
 						redirect('register/payment');
+					} else if($user_info['totp_two_factor'] == '1') {
+						// Redirect to TOTP two factor page.
+						$this->bw_session->create($user_info, 'totp_factor');
+						redirect('login/totp_factor');
 						
-					} else if($user_info['two_factor_auth'] == '1') {
+					} else if($user_info['pgp_two_factor'] == '1') {
 						// Redirect for two-factor authentication.
-						$this->bw_session->create($user_info, 'two_factor');	// TRUE, enables a half-session for two factor auth
-						redirect('login/two_factor');
+						$this->bw_session->create($user_info, 'pgp_factor');	// TRUE, enables a half-session for two factor auth
+						redirect('login/pgp_factor');
 						
 					} elseif ($user_info['user_role'] == 'Vendor' 
 						&& $this->bw_config->force_vendor_pgp == TRUE
@@ -416,7 +420,7 @@ class Users extends CI_Controller {
 	 }
 	
 	/**
-	 * Two Factor
+	 * PGP Factor
 	 * 
 	 * Process a two factor PGP authentication. A user is prompted to decrypt
 	 * a PGP encrypted challenge string. They must enter it correctly on
@@ -432,9 +436,9 @@ class Users extends CI_Controller {
 	 * 
 	 * @return	void
 	 */
-	public function two_factor() {
+	public function pgp_factor() {
 		// Abort if there is no two factor request.
-		if($this->current_user->two_factor !== TRUE) 
+		if($this->current_user->pgp_factor !== TRUE) 
 			redirect('');
 				
 		$this->load->library('form_validation');
@@ -444,22 +448,24 @@ class Users extends CI_Controller {
 		$this->load->model('auth_model');
 		
 		$data['title'] = 'Two Factor Authentication';
-		$data['page'] = 'users/two_factor';
+		$data['page'] = 'users/pgp_factor';
 		
-		if($this->form_validation->run('two_factor') == TRUE) {
-			// Check the answer to what we have on record as the solution.
-			$answer = $this->input->post('answer');
-			
-			if($this->auth_model->check_two_factor_token($answer) == TRUE) {
-				// If successful, create a full session and redirect to the homepage.
-				$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
-				$this->bw_session->create($user_info);
-				redirect('');
-			} else {
-				// Leave an error if the user has not been redirected.
-				$data['returnMessage'] = "Your token did not match. Please remove any whitespaces and enter only the token. A new challenge has been generated.";
-			}			
-		} 
+		if($this->input->post('submit_pgp_token') == 'Continue') {
+			if($this->form_validation->run('submit_pgp_token') == TRUE) {
+				// Check the answer to what we have on record as the solution.
+				$answer = $this->input->post('answer');
+				
+				if($this->auth_model->check_two_factor_token($answer) == TRUE) {
+					// If successful, create a full session and redirect to the homepage.
+					$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+					$this->bw_session->create($user_info);
+					redirect('');
+				} else {
+					// Leave an error if the user has not been redirected.
+					$data['returnMessage'] = "Your token did not match. Please remove any whitespaces and enter only the token. A new challenge has been generated.";
+				}			
+			} 
+		}
 		
 		// Generate a new challenge for new requests, or if a user 
 		// has failed one.
@@ -467,6 +473,42 @@ class Users extends CI_Controller {
 		if($data['challenge'] == FALSE)
 			$this->logs_model->add('Two Factor Auth','Unable to generate two factor challenge','Unable to generate two factor authentication token.','Error');
 		
+		$this->load->library('Layout', $data);
+	}
+	
+	/**
+	 * TOTP Factor
+	 * URI: /login/totp_factor
+	 * 
+	 * Display a page for users to enter a TOTP token from their app.
+	 */
+	public function totp_factor() {
+		// Abort if there is no two factor request.
+		if($this->current_user->totp_factor !== TRUE) 
+			redirect('');
+
+		$this->load->model('accounts_model');
+		$this->load->library('form_validation');
+		$this->load->library('totp');
+		
+		$data['user'] = $this->accounts_model->get(array('id' => $this->current_user->user_id), array('own' => TRUE));
+		
+		if($this->input->post('submit_totp_token')) { 
+			if($this->form_validation->run('submit_totp_token') == TRUE) {
+				$check = $this->totp->verifyCode($data['user']['totp_secret'], $this->input->post('totp_token'), 2);
+				if($check) {
+					$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+					$this->bw_session->create($user_info);
+					redirect('');
+				} else {
+					$data['returnMessage'] = 'You entered an invalid token.';
+				}
+			}
+		}
+
+		$data['title'] = 'Two Factor Authentication';
+		$data['page'] = 'users/totp_factor';
+
 		$this->load->library('Layout', $data);
 	}
 	

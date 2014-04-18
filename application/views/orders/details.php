@@ -116,16 +116,17 @@
 						<div class='row-fluid'>
 							<div class='span3'>Paying:</div>
 							<div class='span8'>
-							<?php foreach($paying_to as $arr) { 
-								if($arr['user'] !== 'admin') { ?>
+							<?php foreach($raw_tx['vout'] as $arr) { 
+								$addr = $arr['scriptPubKey']['addresses'][0];
+								if($addrs[$addr] !== 'admin') { ?>
 								<div class='row-fluid'>
-								<div class='span2'><?php echo anchor('user/'.$order[$arr['user']]['user_hash'], $order[$arr['user']]['user_name']); ?></div>
-								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $arr['address']; ?></div>
+								<div class='span2'><?php echo anchor('user/'.$order[$addrs[$addr]]['user_hash'], $order[$addrs[$addr]]['user_name']); ?></div>
+								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $addr; ?></div>
 								</div>
 								<?php } else { ?>
 								<div class='row-fluid'>
 								<div class='span2'>Fees</div>
-								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $arr['address']; ?></div>
+								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $addr; ?></div>
 								</div>
 								<?php } ?>
 							<?php } ?>

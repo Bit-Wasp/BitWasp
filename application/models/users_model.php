@@ -56,16 +56,11 @@ class Users_model extends CI_Model {
 	 */					
 	public function get(array $user) {
 
-		if (isset($user['user_hash'])) {
+		$key = array_keys($user); $key = $key[0];
+		if(in_array($key, array('user_hash', 'id', 'user_name'))) {
 			// Duplicate the select statement to prevent weird errors later on.
-			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth, entry_paid');			
-			$query = $this->db->get_where('users', array('user_hash' => $user['user_hash']));
-		} elseif (isset($user['id'])) {
-			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth, entry_paid');
-			$query = $this->db->get_where('users', array('id' => $user['id']));
-		} elseif (isset($user['user_name'])) {
-			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, two_factor_auth, entry_paid');			
-			$query = $this->db->get_where('users', array('user_name' => $user['user_name']));
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, pgp_two_factor, totp_two_factor, entry_paid');
+			$query = $this->db->get_where('users', array($key => $user[$key]));
 		} else {
 			return FALSE; //No suitable field found.
 		}
