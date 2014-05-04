@@ -304,7 +304,7 @@ rpcconnect=127.0.0.1</pre><br />
 			<input type='radio' name='encrypt_private_messages' value='0' > No
 			<br /><br />
 		  If you choose to enable this option, provide a password to protect your message keys:
-		    <input type='text' id='hostname' class='input_text' name='admin_pm_password' value='bullsh1t' /><br /><br />
+		    <input type='text' id='hostname' class='input_text' name='admin_pm_password'  /><br /><br />
 		  
 		  <label for="allow_guests">Allow Guests to Browse?</label><br />
 		  Turning this setting on will force users to register and login before they can see items.<br />
