@@ -321,8 +321,7 @@ class Accounts extends CI_Controller {
 		$data['header_meta'] = $this->load->view('accounts/password_hash_header', NULL, true);
 		$data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
 		$data['two_factor']['totp'] = ($data['user']['totp_two_factor'] == '1') ? TRUE : FALSE;
-		if(isset($data['user']['pgp'])) 
-			$data['two_factor']['pgp'] = ($data['user']['pgp_two_factor'] == '1') ? TRUE : FALSE;
+		$data['two_factor']['pgp'] = ($data['user']['pgp_two_factor'] == '1') ? TRUE : FALSE;
 
 		$new_qr = TRUE;
 
