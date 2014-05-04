@@ -121,38 +121,14 @@ class Location_model extends CI_Model {
 		return $required_location_found;
 	}
 	
-	/**
-	 * Get List
-	 * 
-	 * Loads a multidimensional array of locations, depending on the 
-	 * supplied list specifier: Default, or Custom. 
-	 * 
-	 * @param	string	$list
-	 * @return	array/FALSE
-	 */
-	public function get_list($list) {
-		if($list == 'Default') {
-			//Load all categories and sort by parent category
-			$this->db->order_by("parent_id asc, location asc");
-			$query = $this->db->get('locations_default_list');
-
-			if($query->num_rows() == 0)
-				return array();
-		} else if($list == 'Custom') {
-			//Load all categories and sort by parent category
-			$this->db->order_by("parent_id asc, location asc");
-			$query = $this->db->get('locations_custom_list');
-			
-			if($query->num_rows() == 0) 
-				return array();
-		}
+	public function to_multi_dimensional_array($list) {
 		
 		// Add all categories to $menu[] array.
-		foreach($query->result() as $result) {				
-			$menu[$result->id] = array(	'id' => $result->id,
-										'location' => $result->location,
-										'hash' => $result->hash,
-										'parent_id' => $result->parent_id
+		foreach($list as $result) {				
+			$menu[$result['id']] = array(	'id' => $result['id'],
+										'location' => $result['location'],
+										'hash' => $result['hash'],
+										'parent_id' => $result['parent_id']
 									);
 		}
 		
@@ -169,6 +145,40 @@ class Location_model extends CI_Model {
 		}
 		// Return constructed menu.
 		return $menu;
+		
+	}
+	
+	/**
+	 * Get List
+	 * 
+	 * Loads a multidimensional array of locations, depending on the 
+	 * supplied list specifier: Default, or Custom. 
+	 * 
+	 * @param	string	$list
+	 * @return	array/FALSE
+	 */
+	public function get_list($list, $menu = TRUE) {
+		if($list == 'Default') {
+			//Load all categories and sort by parent category
+			$this->db->order_by("parent_id asc, location asc");
+			$query = $this->db->get('locations_default_list');
+
+			if($query->num_rows() == 0)
+				return array();
+		} else if($list == 'Custom') {
+			//Load all categories and sort by parent category
+			$this->db->order_by("parent_id asc, location asc");
+			$query = $this->db->get('locations_custom_list');
+			
+			if($query->num_rows() == 0) 
+				return array();
+		}
+		$results = array();
+		foreach($query->result_array() as $res) {
+			$results[$res['id']] = $res;
+		}
+
+		return ($menu == FALSE) ?  $results : $this->to_multi_dimensional_array($results);
 	}
 
 	/**
@@ -197,6 +207,10 @@ class Location_model extends CI_Model {
 	 */
 	public function generate_select_list($list_type, $param_name, $class, $selected = FALSE, $extras = array()) {
 		$locations = ($list_type == $this->bw_config->location_list_source) ? $this->bw_config->locations : $this->get_list($list_type);
+		
+		if($list_type == 'Custom')
+			$locations = $this->to_multi_dimensional_array($locations);
+		
 		$select = "<select name=\"{$param_name}\" class='{$class}' autocomplete=\"off\">\n";
 		$select.= "<option value=\"\"></option>\n";
 		if(isset($extras['root']) && $extras['root'] == TRUE)

@@ -1280,7 +1280,7 @@ class Admin extends CI_Controller {
 		
 		$data['list_source'] 		= $this->bw_config->location_list_source;
 		$data['locations_parent']	= $this->location_model->generate_select_list('Custom', 'location', 'span8', FALSE, array('root'=>TRUE));
-		$custom_locations_array 	= $this->location_model->get_list('Custom');
+		$custom_locations_array 	= $this->location_model->get_list('Custom', TRUE);
 		$data['locations_human_readable'] = $this->location_model->menu_human_readable($custom_locations_array, 0, '');
 		$data['locations_delete'] 	= $this->location_model->generate_select_list('Custom', 'location_delete', 'span8');
 		$data['page'] 				= 'admin/locations';
