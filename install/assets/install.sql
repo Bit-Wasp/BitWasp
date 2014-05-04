@@ -695,6 +695,7 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
   `json_inputs` text NOT NULL,
   `partially_signed_transaction` text NOT NULL,
   `partially_signing_user_id` int(9) NOT NULL,
+  `partially_signed_time` varchar(20),
   `final_transaction_id` varchar(64) NOT NULL,
   `paid_time` varchar(20) NOT NULL,
   `finalized_correctly` enum('0','1') NOT NULL DEFAULT '0',
