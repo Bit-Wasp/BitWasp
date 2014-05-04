@@ -2,5 +2,6 @@
 ./application/config/bitcoin.php
 ./application/logs/*.php
 ./application/cache/*.php
+./application/storage/.gnupg
 *~ 
 .htaccess
