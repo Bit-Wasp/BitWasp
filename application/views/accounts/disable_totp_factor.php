@@ -4,9 +4,9 @@
 				  <?php echo form_open('account/disable_2fa', array('class' => 'form-horizontal')); ?>
 				  <fieldset>
 					<div class="alert">
-	<?php if(isset($returnMessage)) { echo $returnMessage; } else { ?>
+					<?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; } else { ?>
 To disable two factor authentication, enter the token as displayed on your app:
-	<?php } ?>
+					<?php } ?>
 					</div>
 					
 					

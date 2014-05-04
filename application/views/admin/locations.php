@@ -1,6 +1,8 @@
 		  <div class="span9 mainContent" id="admin-dispute-form">
 			<h2><?php echo anchor('admin', 'Back', 'class="btn"'); ?> Locations</h2>
 
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
+
 			<div class="row-fluid">
 			  <div class="span8">When users are entering locations on the site, they can use the
 		default country list, or you can configure the site to a specific

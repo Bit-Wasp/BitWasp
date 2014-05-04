@@ -1,5 +1,7 @@
         <div class="span9 mainContent" id="own-account">
           <div class="container-fluid">
+
+			<?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-success' : '').'">'.$returnMessage.'</div>'; } ?>
 			  
             <div class="row-fluid">
               <div class="span9 btn-group">
@@ -13,7 +15,7 @@
 			  <div class="span7"><?php echo anchor('user/'.$user['user_hash']); ?></div>
 			</div>
 
-<?php if($user_role == 'Vendor') { ?>
+<?php if($user['user_role'] == 'Vendor') { ?>
 			<div class="row-fluid">
 			  <div class="span3"><strong>Bitcoin Public Keys</strong></div>
 			  <div class="span7"><?php echo $public_key_count; ?> available. <?php echo anchor('accounts/public_keys', 'Click here to add more'); ?></div>
@@ -53,7 +55,7 @@
 <?php if(isset($user['pgp']['public_key'])) { ?>
             <div class="row-fluid">
               <div class="span3"><strong>PGP Fingerprint</strong></div>
-              <div class="span7"><?php echo $user['pgp']['fingerprint_f']; ?></div>
+			  <div class="span7"><?php echo substr($user['pgp']['fingerprint'], 0, -8).'<b>'.substr($user['pgp']['fingerprint'],-8).'</b>'; ?></div>
             </div>
                         
             <div class="row-fluid">

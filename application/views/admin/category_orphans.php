@@ -1,6 +1,8 @@
         <div class="span9 mainContent" id="admin_edit_bitcoin">
 		  <h2>Fix Orphans</h2>
 		  
+		  <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
+		  
 		  <p>Deleting this category will orphan <?php echo $list; ?>, please select another category to contain them.</p>
 		  
 		  <?php echo form_open('admin/category/orphans/'.$category['hash'], array('class' => 'form-horizontal') ); ?>

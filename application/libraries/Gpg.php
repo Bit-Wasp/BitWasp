@@ -1,5 +1,4 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
-
 /**
  * GPG Library
  * 
@@ -51,10 +50,11 @@ class GPG {
 	 * Loads the current version of the GPG extension if it's available.
 	 */
 	public function __construct() {
-		if(!file_exists('/tmp/.gnupg')) 
-			mkdir("/tmp/.gnupg", 0700);
+		$home = dirname(__FILE__).'/../storage/.gnupg';
+		if(!file_exists($home)) 
+			mkdir($home, 0700);
 			
-		putenv("GNUPGHOME=/tmp/.gnupg");
+		putenv("GNUPGHOME={$home}");
 			
 		if(class_exists('gnupg')) {
 			

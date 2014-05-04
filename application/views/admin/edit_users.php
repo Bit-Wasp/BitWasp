@@ -2,6 +2,8 @@
 
 		  <?php echo $nav; ?>
 
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
+
 		  <?php echo form_open('admin/edit/users', array('class' => 'form-horizontal')); ?>
   		    <fieldset>
 			
@@ -76,16 +78,6 @@
 			    </div>
 			  </div>
 			  <span class="help-inline offset2"><?php echo form_error('force_vendor_pgp'); ?></span>			
-			
-			  <div class="row-fluid">
-				<div class="span3">Delete Messages After</div>
-				<div class="span7">
-				  <label class="inline"><input type='text' class='span2' name='delete_messages_after' value='<?php echo $config['delete_messages_after']; ?>' /> days</label>
-				  <label class="inline"><input type='checkbox' name='delete_messages_after_disabled' <?php echo ($config['delete_messages_after'] == '0') ? 'checked ' : NULL; ?> value='1' /> Disabled</label>
-				</div>
-			  </div>
-			  <span class="help-inline offset2"><?php echo form_error('delete_messages_after'); ?></span>
-			
 			
               <div class="form-actions">
 		        <input type='submit' value='Update' class='btn btn-primary' />

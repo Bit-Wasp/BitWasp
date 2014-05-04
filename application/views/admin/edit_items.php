@@ -1,16 +1,7 @@
         <div class="span9 mainContent" id="admin_edit_items">
 
-		  <?php echo $nav; ?>
-
-<!--		  <?php echo form_open('admin/edit/items', array('class' => 'form-horizontal')); ?>
-			
-            <div class="form-actions">
-		      <input type='submit' name='admin_edit_items' value='Update' class='btn btn-primary' />
-              <?php echo anchor('account','Cancel', array('class'=>'returnLink btn'));?>
-		    </div>
-			
-		  </form> -->
-
+			<?php echo $nav; ?>
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 
 		  <?php echo form_open('admin/edit/items', array('class' => 'form-horizontal')); ?>
 				

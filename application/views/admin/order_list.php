@@ -1,5 +1,7 @@
 	    <div class="span9 mainContent" id="admin-order-list">
 			<h2><?php echo anchor('admin', 'Back', 'class="btn"'); ?> Order List</h2>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 			
 			<?php if($orders == FALSE) { ?>
 			There are no orders at this time.

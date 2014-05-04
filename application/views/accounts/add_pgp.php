@@ -3,7 +3,7 @@
             <h2>Add PGP Public Key</h2>	
             
             <div class="alert">            
-				<?php if(isset($returnMessage)){ echo $returnMessage; } else { ?>
+				<?php if(isset($returnMessage)) { echo $returnMessage; } else { ?>
 				Enter your public key to continue.
 				<?php } ?>
 			</div>

@@ -208,7 +208,6 @@ class Bw_auth {
 	 * @return		string / FALSE
 	 */
 	public function generate_two_factor_token() {
-		$this->CI->load->library('gpg');
 		$this->CI->load->model('accounts_model');
 		
 		// Load the users PGP key. 
@@ -218,9 +217,8 @@ class Bw_auth {
 			
 		// Generate a solution.
 		$solution = $this->CI->general->generate_salt();
-		$text = "Login Token: $solution\n";
 		// Encrypt the challenge.
-		$challenge = $this->CI->gpg->encrypt($key['fingerprint'], $text);
+		$challenge = $this->CI->gpg->encrypt($key['fingerprint'], "Login Token: $solution\n");
 		
 		if($challenge == FALSE)		// Abort if unsuccessful.
 			return FALSE;

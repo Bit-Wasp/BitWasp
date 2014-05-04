@@ -501,12 +501,14 @@ class BitcoinLib {
 	 */
 	public static function validate_public_key($public_key) {
 		if(strlen($public_key) == '66') {
+			echo 'a';
 			// Compressed key
 			// Attempt to decompress the public key. If the point is not
 			// generated, or the function fails, then the key is invalid.
 			$decompressed = self::decompress_public_key($public_key);
 			return ($decompressed == FALSE || $decompressed['point'] == FALSE) ? FALSE : TRUE;
 		} else if(strlen($public_key) == '130') {
+			echo 'b';
 			// Uncompressed key, try to create the point
 			$curve = SECcurve::curve_secp256k1();
 			$generator = SECcurve::generator_secp256k1();
@@ -518,6 +520,7 @@ class BitcoinLib {
 			$point = new Point($curve, gmp_init($x, 16), gmp_init($y, 16), $generator->getOrder());
 			return ($point == FALSE) ? FALSE : TRUE;
 		} else {
+			echo 'c';
 			return FALSE;
 		}
 	}

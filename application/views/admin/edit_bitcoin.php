@@ -1,6 +1,7 @@
         <div class="span9 mainContent" id="admin_edit_bitcoin">
 
 		  <?php echo $nav; ?>
+		  <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 
   		  <fieldset>
 			

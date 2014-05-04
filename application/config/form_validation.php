@@ -43,9 +43,9 @@ $config = array('register_form'=>array(
 											  'label' => 'Local currency',
 											  'rules' => 'callback_check_valid_currency'
 										),
-										array('field' => 'captcha',
-                                              'label' => 'captcha',
-                                              'rules' => 'trim|required|callback_check_captcha'
+										array(	'field' => 'captcha',
+												'label' => 'captcha',
+												'rules' => 'trim|required|callback_check_captcha'
                                         )
 							),
 				'register_no_pin_form'=>array(
@@ -72,11 +72,11 @@ $config = array('register_form'=>array(
 										array(	'field' => 'local_currency',
 												'label' => 'Local currency',
 												'rules' => 'callback_check_valid_currency'
-										),
-										array( 'field' => 'captcha',
-                                               'label' => 'captcha',
-                                               'rules' => 'trim|required|callback_check_captcha'
-                                        )
+										)
+//										array( 'field' => 'captcha',
+  //                                             'label' => 'captcha',
+    //                                           'rules' => 'trim|required|callback_check_captcha'
+      //                                  )
 							),
 				'login_form'	=>	array(
 										array(	'field' => 'user_name',
@@ -86,11 +86,7 @@ $config = array('register_form'=>array(
 										array(	'field' => 'password',
 												'label' => 'password',
 												'rules' => 'required'
-										),
-										array(	'field' => 'captcha',
-												'label' => 'captcha text',
-												'rules' => 'required|callback_check_captcha'
-										 )
+										)
 							),
 				'message_pin_form' => array(
 										array(	'field' => 'pin',
@@ -496,7 +492,7 @@ $config = array('register_form'=>array(
 				'vendor_accept_order' => array(
 										array('field' => 'selected_escrow',
 											  'label' => 'Escrow?',
-											  'rules' => 'callback_check_bool'
+											  'rules' => 'callback_check_escrow_choice'
 										)
 											  
 							),

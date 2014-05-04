@@ -265,6 +265,7 @@ class Bw_config {
 		
 		$this->CI->load->model('config_model');
 		$this->CI->load->model('currencies_model');
+		$this->CI->load->model('location_model');
 		$this->CI->config->load('bitcoin_index', TRUE);
 		
 		$this->reload();
@@ -296,7 +297,10 @@ class Bw_config {
 		$this->terms_of_service_toggle = ($this->terms_of_service_toggle == '1') ? TRUE : FALSE;
 		
 		// Load the currencies and exchange rates.
-		$this->currencies = $this->CI->currencies_model->get_exchange_rates();
+		$this->currencies = $this->CI->currencies_model->get();
+		$this->exchange_rates = $this->CI->currencies_model->get_rates($this->currencies);
+		$this->locations = $this->CI->location_model->get_list($this->location_list_source);
+		
 		// Load the configuration of the bitcoin_index options.
 		$this->price_index_config = $this->CI->config->item('bitcoin_index');	
 		

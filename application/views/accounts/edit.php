@@ -1,10 +1,11 @@
         <div class="span9 mainContent" id="edit-account">
           <h2>Edit Account</h2>
 		  <br />
+
+			<?php if(isset($returnMessage)) echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; ?>
 		  
           <?php echo form_open('account/edit', array('class' => 'form-horizontal')); ?>
   		    <fieldset>
-				<?php echo validation_errors(); ?>
 	  
     	      <div class="control-group">
   		        <label class="control-label" for="location">Location</label>
@@ -39,7 +40,7 @@
               <div class="control-group">
                 <label class="control-label" for="pgp_key">PGP Fingerprint</label>
                 <div class="controls">
-                  <label class="control-label" for="pgp_key_fingerprint"><?php echo $user['pgp']['fingerprint_f']; ?></label>
+                  <label class="control-label" for="pgp_key_fingerprint"><?php echo $user['pgp']['fingerprint']; ?></label>
                   <label class="control-label">
                   <?php if($option_replace_pgp == TRUE) { echo anchor('pgp/replace', 'Replace', 'class="btn btn-danger btn-small"'); }
                   else { echo anchor('pgp/delete', 'Delete', 'class="btn btn-danger btn-small"'); } ?>

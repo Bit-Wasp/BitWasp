@@ -33,9 +33,7 @@ class Layout {
 	public function __construct($data) {
 
 		$CI = &get_instance();
-		$CI->load->model('currencies_model');
 		$CI->load->model('categories_model');
-		$CI->load->model('location_model');
 		$CI->load->library('form_validation');
 		
 		// Header data; used to include clientside PGP.
@@ -46,25 +44,24 @@ class Layout {
 		$bar['allow_guests'] 		= $CI->bw_config->allow_guests;
 		$category_data['cats'] 		= '';
 		$category_data['block'] 	= FALSE;
-		$category_data['locations_w_select'] = $CI->location_model->generate_select_list($CI->bw_config->location_list_source, 'location', 'span12', FALSE, array('worldwide' => TRUE));
-		if(isset($data['ship_from_error']))
-			$category_data['ship_from_error'] = $data['ship_from_error'];
-		if(isset($data['ship_to_error']))
-			$category_data['ship_to_error'] = $data['ship_to_error'];
-		$category_data['locations_select'] = $CI->location_model->generate_select_list($CI->bw_config->location_list_source, 'location', 'span12');
-		
+
+		$info = (array)json_decode($CI->session->flashdata('returnMessage'));
+		if(count($info) !== 0 && !isset($data['returnMessage'])){
+			$data['returnMessage'] = $info['message'];			
+			if(isset($info['success']) && $info['success'] == TRUE) $data['success'] == TRUE;
+		}
+
 		$data['site_title'] 		= $CI->bw_config->site_title;
 		$data['site_description']	= $CI->bw_config->site_description;
 		$footer['price_index']		= $CI->bw_config->price_index;
-		$footer['exchange_rates']	= $CI->currencies_model->get_exchange_rates();
+		$footer['exchange_rates']	= $CI->bw_config->currencies;
 		
 		//Check if there are categories to display
 		if(!isset($data['currentCat'])) $data['currentCat'] = array(); 
 
 		if($CI->current_user->logged_in()) { 
 			
-			$CI->load->model('currencies_model');
-			$bar['coin'] = $CI->currencies_model->get('0');
+			$bar['coin'] = $CI->bw_config->currencies[0];
 			// If the user is logged in, load their role, and the categories. 
 			$bar['role'] = strtolower($CI->current_user->user_role);			
 			$bar['current_user'] = $CI->current_user->status();
@@ -74,6 +71,13 @@ class Layout {
 				
 			$categories = $CI->categories_model->menu();		
 			$category_data['cats'] = (empty($categories)) ? 'No Categories' : $this->menu($categories , 0, $data['currentCat']); 
+			$category_data['locations_w_select'] = $CI->location_model->generate_select_list($CI->bw_config->location_list_source, 'location', 'span12', FALSE, array('worldwide' => TRUE));
+			$category_data['locations_select'] = $CI->location_model->generate_select_list($CI->bw_config->location_list_source, 'location', 'span12');
+			if(isset($data['ship_from_error']))
+				$category_data['ship_from_error'] = $data['ship_from_error'];
+			if(isset($data['ship_to_error']))
+				$category_data['ship_to_error'] = $data['ship_to_error'];
+			
 		} else {
 			// If a numeric user_id is set and two_factor or force_pgp flags are set, choose the required bar.
 			if(isset($CI->current_user->user_id) && is_numeric($CI->current_user->user_id) 

@@ -1,9 +1,12 @@
 		<div class="span9 mainContent" id="vendor_public_keys">
 			<h2>Accept Order <?php echo $order['id']; ?></h2>
-			<?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
+			<?php if(isset($returnMessage)) { ?>
+			<div class='alert<?php echo (isset($success)) ? ' alert-success' : ''; ?>'><?php echo $returnMessage; ?></div>			
+			<?php } ?>
 
-			<?php $count = count($available_public_keys);
-			if($count == 0) { 
+			<?php
+			
+			if($available_public_keys == FALSE) { 
 				echo 'You have no public keys available to complete this order. '.anchor('accounts/public_keys','Click here to add some.');  
 			} else {
 				echo "A public key will automatically be used to create the order address.";

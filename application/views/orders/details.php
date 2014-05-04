@@ -1,6 +1,8 @@
 		<div class="span9 mainContent" id="vendor_public_keys">
 			<h2>Order Details: #<?php echo $order['id']; ?></h2>
-			<?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
+			<?php if(isset($returnMessage)) { ?>
+			<div class='alert<?php echo (isset($success)) ? ' alert-success' : ''; ?>'><?php echo $returnMessage; ?></div>			
+			<?php } ?>
 
 				<div class="row-fluid">
 					<div class='span6'>				
@@ -74,11 +76,13 @@
 				<?php if($order['address'] !== '') { ?>
 				<div class='row-fluid'>
 					<div class='well'>
-						<?php if($user_role == 'Buyer'  && !($order['paid_time'] !== '')) { ?>
+						<?php // payment QR code
+						if(isset($qr)) { ?>
 						<div class='row-fluid'>
 							<div class='offset4'><a href='<?php echo $payment_url; ?>'><img src='data:image/png;base64,<?php echo $qr; ?>' /></a></div>
 						</div>
 						<?php } ?>
+						
 						<div class='row-fluid'>
 							<div class='span3'>Order Address</div>
 							<div class='span4'><?php echo $order['address']; ?></div>
@@ -113,6 +117,13 @@
 								<textarea class='span12'><?php echo ($order['partially_signed_transaction'] !== '') ? $order['partially_signed_transaction'] : $order['unsigned_transaction'].$order['json_inputs']; ?></textarea>
 							</div>
 						</div>
+						<?php if($order['partially_signed_transaction'] !== '') { ?>
+						<div class='row-fluid'>
+							<div class='span8 offset3'>
+								Signed by <?php echo anchor('view/'.$signer['user_hash'], $signer['user_name']); ?> <?php echo $order['partially_signed_time_f']; ?>. Sign and broadcast to complete payment.
+							</div>
+						</div>
+						<?php } ?>
 						<div class='row-fluid'>
 							<div class='span3'>Paying:</div>
 							<div class='span8'>
@@ -134,7 +145,6 @@
 						</div>
 						<?php if($display_form == TRUE) { ?>
 						<?php echo form_open($action_page, 'class="form-horizontal"'); ?>
-						<?php echo validation_errors(); ?>
 							<div class='row-fluid'>
 								<div class='span3'>Paste Signed Transaction</div>
 								<div class='span8'>
@@ -145,7 +155,7 @@
 							<?php echo form_error('partially_signed_transaction'); ?>
 							<div class="form-actions">
 								<input type='submit' name='submit_signed_transaction' class="btn btn-primary" value='Submit Transaction' />
-								<?php echo anchor('order/list', 'Cancel', 'title="Cancel" class="btn"');?>
+								<?php echo anchor($cancel_page, 'Cancel', 'title="Cancel" class="btn"');?>
 							</div>
 						</form>
 						<?php } ?>
@@ -154,4 +164,3 @@
 				<?php } ?>
 			</form>
 		</div>
-r

@@ -1,6 +1,8 @@
         <div class="span9 mainContent" id="admin-items-panel">
 		  
 		  <?php echo $nav; ?>
+
+		<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 			
 		  <div class="container-fluid">
 

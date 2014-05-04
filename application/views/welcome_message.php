@@ -1,6 +1,6 @@
      <div class="span9 mainContent" id="homepage">
  	  <h2>BitWasp</h2>
-						  
+		<?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; } ?>						  
 	  <div class='alert alert-danger'>So long as this message remains in the code, the project is NOT production ready, and should only be used with the Bitcoin Testnet. Let ye be warned.</div>
 			  
 	    <p>Set up your own Bitcoin marketplace, independant of other payment processing services.</p>  

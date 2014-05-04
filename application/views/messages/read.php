@@ -1,5 +1,7 @@
         <div class="span9 mainContent" id="read-message">
           <h2>View Message</h2>
+
+		<?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; } ?>
           
           <div class="container-fluid">
 			  

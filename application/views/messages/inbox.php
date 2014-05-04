@@ -1,6 +1,8 @@
         <div class="span9 mainContent" id="inbox">
 		<h2>Inbox</h2>		
 		
+		<?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; } ?>		
+		
 		<?php if(is_array($messages)){ ?>
           <table class="table">
             <thead>

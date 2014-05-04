@@ -31,7 +31,7 @@ class Electrum {
 	 * @param	string	$seed
 	 * @return	string
 	 */
-	public function stretch_seed($seed) {
+	public static function stretch_seed($seed) {
 		$oldseed = $seed;
 		
 		// Perform sha256 hash 5 times per iteration
@@ -56,7 +56,7 @@ class Electrum {
 	 * @param	string	$seed
 	 * @return	string
 	 */
-	public function generate_mpk($seed) {
+	public static function generate_mpk($seed) {
 		if(strlen($seed) == 32) {
 			$seed = self::stretch_seed($seed);
 			$seed = $seed['seed'];
@@ -84,7 +84,7 @@ class Electrum {
 	 * @param	int	$iteration
 	 * @param	int	$change(optional)
 	 */
-	public function generate_private_key($seed, $iteration, $change = 0) {
+	public static function generate_private_key($seed, $iteration, $change = 0) {
 		$change = ($change == 0) ? '0' : '1';
 		if(strlen($seed) == 32) {
 			$seed = self::stretch_seed($seed);
@@ -122,7 +122,7 @@ class Electrum {
 	 * @param	int	$iteration
 	 * @return	string
 	 */
-	public function public_key_from_mpk($mpk, $iteration, $change = 0, $compressed = FALSE) {
+	public static function public_key_from_mpk($mpk, $iteration, $change = 0, $compressed = FALSE) {
 		$change = ($change == 0) ? '0' : '1';
 		
 		// Generate the curve, and the generator point.
@@ -158,7 +158,7 @@ class Electrum {
 	 * @param	int	$iteration
 	 * @return	string
 	 */
-	public function address_from_mpk($mpk, $iteration, $magic_byte, $change = 0, $compressed = FALSE) {
+	public static function address_from_mpk($mpk, $iteration, $magic_byte, $change = 0, $compressed = FALSE) {
 		$change = ($change == 0) ? 0 : 1;
 		$public_key = self::public_key_from_mpk($mpk, $iteration, $change, $compressed);
 		$address = BitcoinLib::public_key_to_address($public_key, $magic_byte);
@@ -175,7 +175,7 @@ class Electrum {
 	 * @param	string	$words
 	 * @return	string
 	 */
-	public function decode_mnemonic($words) {		
+	public static function decode_mnemonic($words) {		
 		$words = explode(" ", $words);
 		$out = '';
 		$n = 1626;

@@ -3,11 +3,10 @@
 				<h2>Two Factor Authentication</h2>
 				  <?php echo form_open('account/pgp_factor', array('class' => 'form-horizontal')); ?>
 				  <fieldset>
-					<div class="alert">
-	<?php if(isset($returnMessage)) { echo $returnMessage; } else { ?>
+					<?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; } else { ?>
 To activate two factor authentication, decrypt the following challenge and paste it in the box below:
 	<?php } ?>
-					</div>
+
 					<div class="control-group">
 					<pre class="well span10"><?php echo $challenge;?></pre>
 					</div>

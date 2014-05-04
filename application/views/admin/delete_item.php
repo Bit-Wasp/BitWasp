@@ -1,6 +1,8 @@
         <div class="span9 mainContent" id="admin_edit_">
 		  <h2>Delete Item</h2>
 		  
+		  <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
+		  
 		  <?php echo form_open('admin/delete_item/'.$item['hash'], array('class' => 'form-horizontal')); ?>
 		  
 		    <p>Complete the following form to inform <?php echo $item['vendor']['user_name']; ?> why this listing is going to be removed.</p>

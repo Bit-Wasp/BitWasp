@@ -41,11 +41,8 @@ class Bw_captcha {
 		$this->CI = &get_instance();
 		
 		$this->CI->load->helper('captcha');
-		$this->CI->load->model('captchas_model');
 		$this->CI->load->library('image');
 		
-		$expired_time = time()-$this->captcha_timeout;
-		$this->CI->captchas_model->purge_expired($expired_time);
 	}
 		
 	/**
@@ -58,23 +55,9 @@ class Bw_captcha {
 	 * @return		bool
 	 */
 	public function check($answer) { 
-		// Load captcha identifier from session.
-		
-		$key = $this->CI->session->userdata('captcha_key');
-		
-		if(isset($answer) && isset($key)) {
-			$test = $this->CI->captchas_model->get($key);
-			
-			if($test == NULL)
-				return FALSE;
-
-			// Unset the current challenge from the users session.
-			$this->CI->session->unset_userdata('captcha_key');
-	
-			return ($test['solution'] == $answer) ? TRUE : FALSE;
-		} else {
-			return FALSE;
-		}
+		$success = ($answer == $this->CI->session->userdata('captha_sol')) ? TRUE : FALSE;
+		$this->CI->session->unset_userdata('captha_sol');
+		return $success;
 	}
 	
 	/**
@@ -92,12 +75,7 @@ class Bw_captcha {
 	public function generate() {
 		// Check if there is a challenge set for this user. Delete old and create a new one.
 		// Either way, the timed removal of old captchas will fix this sort of thing.
-		$old_challenge = $this->CI->session->userdata('captcha_key');
-		if(!empty($old_challenge) && is_string($old_challenge)) {
-			$old_captcha = $this->CI->captchas_model->get($old_challenge);
-			$this->CI->captchas_model->delete($old_captcha['id']);
-		}
-				
+
 		// list all possible characters, similar looking characters and vowels have been removed 
 		$possible = '23456789bcdfghjkmnpqrstvwxyz';
 		$characters = ''; 
@@ -114,7 +92,8 @@ class Bw_captcha {
 							'img_path' => '/tmp/',
 							'img_url' => base_url().'',
 							'font_path' => 'assets/font.ttf',
-							'img_width' => '218'
+							'img_width' => '218',
+							'base64' => TRUE
 					);
 					
 		// Create captcha from the config data.
@@ -123,13 +102,7 @@ class Bw_captcha {
 		// Load the base64 image into memory and then erase the file.
 		$image = $captcha['image'];
 		
-		// Create a unique key for the captcha and set it in the session.
-		$key = $this->CI->general->unique_hash('captchas','key');
-			
-		// Add the solution to the captcha to the database.
-		$this->CI->captchas_model->set($key, $characters);
-		
-		$this->CI->session->set_userdata('captcha_key',$key);
+		$this->CI->session->set_userdata('captha_sol',$characters);
 		
 		return $image;
 	}

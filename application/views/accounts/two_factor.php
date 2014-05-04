@@ -3,7 +3,7 @@
 				<h2>Two Factor Authentication</h2>
 				
 				<div class='well'>
-					<?php if(isset($returnMessage)) echo "<div class=\"alert\">$returnMessage</div>"; ?>
+					<?php if(isset($returnMessage)) echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; ?>					
 					
 					<div class='row-fluid'>
 						<div class='span2'><strong>Current Setting</strong></div>

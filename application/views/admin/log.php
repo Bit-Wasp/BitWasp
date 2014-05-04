@@ -1,5 +1,7 @@
 	    <div class="span9 mainContent" id="admin-dispute-form">
 		  <h2><?php echo anchor('admin/logs', 'Back', 'class="btn"'); ?> Log Record: <?php echo $log['id']; ?></h2>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 			
 		  <div class='container-fluid'>	
 		  

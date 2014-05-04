@@ -1,6 +1,8 @@
 	    <div class="span9 mainContent" id="admin-panel">
 		  
 		  <?php echo $nav; ?>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 			
 		  <div class="container-fluid">
 			<div class="row-fluid">
@@ -51,11 +53,6 @@
 			<div class="row-fluid">
 			  <span class='span3'>Force Vendor PGP?</span>
 			  <span class='span7'><?php echo ($config['force_vendor_pgp'] == TRUE) ? 'Enabled' : 'Disabled'; ?></span>
-			</div>
-			
-			<div class="row-fluid">
-			  <span class="span3">Delete Messages After</span>
-			  <span class="span7"><?php echo ($config['delete_messages_after'] == '0') ? 'Disabled' : $config['delete_messages_after'].' days'; ?></span>
 			</div>
 			  
 		  </div>

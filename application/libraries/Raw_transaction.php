@@ -29,16 +29,9 @@ class Raw_transaction {
 	public static $op_code = array(	
 			'00' => 'OP_FALSE', 	'61' => 'OP_NOP',			'6a' => 'OP_RETURN',
 			'76' => 'OP_DUP',		'87' => 'OP_EQUAL',			'88' => 'OP_EQUALVERIFY',
-			'51' => 'OP_TRUE',		
-			/*'52' => 'OP_2',				'53' => 'OP_3',
-			'54' => 'OP_4',			'55' => 'OP_5',				'56' => 'OP_6',
-			'57' => 'OP_7',			'58' => 'OP_8',				'59' => 'OP_9',
-			'5a' => 'OP_10',		'5b' => 'OP_11',			'5c' => 'OP_12',
-			'5d' => 'OP_13',		'5e' => 'OP_14',			'5f' => 'OP_15',
-			'60' => 'OP_16',	*/	'61' => 'OP_IF',			
-			'a6' => 'OP_RIPEMD160',	'a7' => 'OP_SHA1',			'a8' => 'OP_SHA256',
-			'a9' => 'OP_HASH160',	'aa' => 'OP_HASH256',	'ac' => 'OP_CHECKSIG',	
-			'ae' => 'OP_CHECKMULTISIG'	);
+			'51' => 'OP_TRUE',		'a6' => 'OP_RIPEMD160',		'a7' => 'OP_SHA1',
+			'a8' => 'OP_SHA256',	'a9' => 'OP_HASH160',		'aa' => 'OP_HASH256',
+			'ac' => 'OP_CHECKSIG',	'ae' => 'OP_CHECKMULTISIG'	);
 
 	/**
 	 * Flip Byte Order
@@ -77,7 +70,7 @@ class Raw_transaction {
 		// Flip byte order if requested.
 		return ($reverse == FALSE) ? $requested_bytes : self::_flip_byte_order($requested_bytes);
 	}
-	
+
 	/**
 	 * Decimal to Bytes
 	 * 
@@ -90,10 +83,10 @@ class Raw_transaction {
 	 * @return	string
 	 */
 	public static function _dec_to_bytes($decimal, $bytes, $reverse = FALSE) {
-		
 		$hex = base_convert($decimal, 10, 16);
 		if(strlen($hex) %2 != 0) 
 			$hex = "0".$hex;
+
 		$hex = str_pad($hex, $bytes*2, "0", STR_PAD_LEFT);
 		
 		return ($reverse == TRUE) ? self::_flip_byte_order($hex) : $hex;
@@ -117,11 +110,9 @@ class Raw_transaction {
 	public static function _get_vint(&$string) {
 		// Load the next byte, convert to decimal.
 		$decimal = hexdec(self::_return_bytes($string, 1));
-		
 		// Less than 253: Not encoding extra bytes.
 		// More than 253, work out the $number of bytes using the 2^(offset)
 		$num_bytes = ( $decimal < 253 ) ? 0 : 2^($decimal-253);
-			
 		// Num_bytes is 0: Just return the decimal
 		// Otherwise, return $num_bytes bytes (order flipped) and converted to decimal
 		return ($num_bytes == 0) ? $decimal : hexdec(self::_return_bytes($string, $num_bytes, TRUE));
@@ -142,7 +133,7 @@ class Raw_transaction {
 	 * @param	int	$decimal
 	 * @return	string/FALSE
 	 */
-	public function _encode_vint($decimal) {
+	public static function _encode_vint($decimal) {
 		$hex = dechex($decimal);
 		if($hex < 0xFD) {
 			$hint = self::_dec_to_bytes($decimal, 1);
@@ -225,14 +216,20 @@ class Raw_transaction {
 		// Loop until $input count is reached, sequentially removing the
 		// leading data from $raw_transaction reference.
 		for($i = 0; $i < $input_count; $i++) {
+			// Check that the variable has at least 36 bytes, and that the 
+			// required length for this input is less than the length of the raw_transaction string.
+			if( strlen($raw_transaction) < 74
+			||	!((hexdec(substr($raw_transaction, 72, 2))+74+8) < strlen($raw_transaction))
+				)
+				return FALSE;
+
 			// Load the TxID (32bytes) and vout (4bytes)
 			$txid = self::_return_bytes($raw_transaction, 32, TRUE);
 			$vout = self::_return_bytes($raw_transaction, 4, TRUE);
-			
+
 			// Script is prefixed with a varint that must be decoded.
 			$script_length = self::_get_vint($raw_transaction); 		// decimal number of bytes.
 			$script = self::_return_bytes($raw_transaction, $script_length);
-		
 			// Build input body depending on whether the TxIn is coinbase.
 			$input_body = array();
 			if($txid == '0000000000000000000000000000000000000000000000000000000000000000') 	// coinbase
@@ -248,6 +245,7 @@ class Raw_transaction {
 			
 			$inputs[$i] = $input_body;
 		}
+		
 		return $inputs;
 	}
 
@@ -351,19 +349,18 @@ class Raw_transaction {
 		// Standard: pay to pubkey hash
 		$define['p2ph'] = array('type' => 'pubkeyhash',
 								'reqSigs' => 1,
-								'data_index_for_hash' => 2);
-		// Pay to script hash
-		$define['p2sh'] = array('type' => 'scripthash',
-								'reqSigs' => 1,
-								'data_index_for_hash' => 1);		
-		
+								'data_index_for_hash' => 2);		
 		$rule['p2ph'] = array(
 				'0' => '/^OP_DUP/',
 				'1' => '/^OP_HASH160/',
 				'2' => '/^[0-9a-f]{40}$/i', // 2
 				'3' => '/^OP_EQUALVERIFY/',
 				'4' => '/^OP_CHECKSIG/' );
-		
+								
+		// Pay to script hash
+		$define['p2sh'] = array('type' => 'scripthash',
+								'reqSigs' => 1,
+								'data_index_for_hash' => 1);		
 		$rule['p2sh'] = array(
 				'0' => '/^OP_HASH160/',
 				'1' => '/^[0-9a-f]{40}$/i', // pos 1
@@ -422,6 +419,12 @@ class Raw_transaction {
 			
 		$outputs = array();
 		for($i = 0; $i < $output_count; $i++) { 
+			// Check the $tx has sufficient length to cover this input.
+			if( strlen($tx) < 8
+			||	!((hexdec(substr($tx, 8, 2))+8+2) < strlen($tx))
+				)
+				return FALSE;
+			
 			// Pop 8 bytes (flipped) from the $tx string, convert to decimal,
 			// and then convert to Satoshis.
 			$satoshis = base_convert(self::_return_bytes($tx, 8, TRUE), 16, 10);
@@ -494,16 +497,32 @@ class Raw_transaction {
 	 * @param	string	$raw_tranasction
 	 * @param	string	$address_version
 	 */
-	public function decode($raw_transaction, $address_version = '00') {
+	public static function decode($raw_transaction, $address_version = '00') {
+		$raw_transaction = trim($raw_transaction);
+		if( ((bool)preg_match('/^[0-9a-fA-F]{2,}$/i', $raw_transaction) !== TRUE)
+		||	(strlen($raw_transaction))%2 !== 0)
+			return false;
+			
 		$txid = hash('sha256', hash('sha256', pack("H*",trim($raw_transaction)), TRUE));
 		
 		$info = array();
-		$info['version'] = gmp_strval(gmp_init(self::_return_bytes($raw_transaction, 4, TRUE), 16), 10);
 		$info['txid'] = $txid;
+		$info['version'] = gmp_strval(gmp_init(self::_return_bytes($raw_transaction, 4, TRUE), 16), 10);
+		if(!in_array($info['version'], array('1')))
+			return FALSE;
+		
 		$input_count = self::_get_vint($raw_transaction);
+		if( !($input_count >= 0 && $input_count <= 4294967296))
+			return FALSE;
+		
 		$info['vin'] = self::_decode_inputs($raw_transaction, $input_count);
+		if($info['vin'] == FALSE)
+			return FALSE;
 
 		$output_count = self::_get_vint($raw_transaction);
+		if( !($output_count >= 0 && $output_count <= 4294967296))
+			return FALSE;
+			
 		$info['vout'] = self::_decode_outputs($raw_transaction, $output_count, $address_version);
 			
 		$info['locktime'] = hexdec(self::_return_bytes($raw_transaction, 4));
@@ -520,7 +539,7 @@ class Raw_transaction {
 	 * @param	array	$raw_transaction_array
 	 * @return	string
 	 */
-	public function encode($raw_transaction_array) {
+	public static function encode($raw_transaction_array) {
 		// $encoded_version
 		$encoded_version = $bytes = self::_dec_to_bytes($raw_transaction_array['version'], 4, TRUE); // TRUE - get little endian
 
@@ -554,10 +573,9 @@ class Raw_transaction {
 	 * @param	string	$raw_transaction
 	 * @return	string
 	 */
-	public function _create_txin_signature_hash($raw_transaction, $json_inputs, $specific_input = -1) {
-		$decode = self::decode($raw_transaction);
+	public static function _create_txin_signature_hash($raw_transaction, $json_inputs, $specific_input = -1, $e = NULL) {
+		$decode = ($e == NULL) ? self::decode($raw_transaction) : $e;
 		$inputs = (array)json_decode($json_inputs);
-
 		if($specific_input !== -1 && !is_numeric($specific_input))
 			return FALSE;
 			
@@ -611,7 +629,7 @@ class Raw_transaction {
 	 * @param	string	$key
 	 * @return	boolean
 	 */
-	public function _check_sig($sig, $hash, $key) {
+	public static function _check_sig($sig, $hash, $key) {
 		$signature = self::decode_signature($sig);
 		$test_signature = new Signature(gmp_init($signature['r'],16), gmp_init($signature['s'],16));
 		$generator = SECcurve::generator_secp256k1();
@@ -642,7 +660,7 @@ class Raw_transaction {
 	 * @param	array	$data(should not be set!)
 	 * @return	array
 	 */
-	public function decode_redeem_script($redeem_script, $data = array()) {
+	public static function decode_redeem_script($redeem_script, $data = array()) {
 		// If there is no more work to be done (script is fully parsed, 
 		// return the array)
 		if(strlen($redeem_script) == 0)
@@ -760,6 +778,9 @@ class Raw_transaction {
 	 */
 	public static function validate_signed_transaction( $raw_tx, $json_string, $address_version = '00' ) {
 		$decode = self::decode($raw_tx, $address_version);
+		if($decode == FALSE)
+			return FALSE;
+			
 		$json_arr = (array) json_decode($json_string);
 
 		$message_hash = self::_create_txin_signature_hash($raw_tx, $json_string);		
@@ -775,7 +796,6 @@ class Raw_transaction {
 			
 				$public_key = $scripts[1];
 				$o = self::_check_sig($signature, $message_hash[$i], $public_key);
-				var_dump($o);
 				$outcome = $outcome && $o;
 				
 			} else if($type_info['type'] == 'scripthash') {
@@ -823,7 +843,7 @@ class Raw_transaction {
 	 * @param	array	$outputs
 	 * @return	string/FALSE
 	 */
-	public function create($inputs, $outputs, $magic_byte = '00') {
+	public static function create($inputs, $outputs, $magic_byte = '00') {
 
 		// Generate the p2sh byte from the regular byte.
 		$regular_byte = $magic_byte;

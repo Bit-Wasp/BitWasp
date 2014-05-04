@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 // BitWasp callback errors
 $lang['block_access_to_parent_category'] = 'Categories in bold are parent categories, and cannot be selected. Please choose a subcategory for your item.';
@@ -20,6 +20,7 @@ $lang['check_currency_exists'] = "Please select a valid currency.";
 $lang['check_custom_location_exists'] = 'You must enter a valid location.';
 $lang['check_custom_parent_location_exists'] = 'You must select a valid parent location';
 $lang['check_delete_on_read'] = 'Delete on read should be set or unset.';
+$lang['check_escrow_choice'] = 'You must select Escrow or Up-front.';
 $lang['check_has_sufficient_balance'] = 'You have insufficient funds to carry out this transaction.';	
 $lang['check_hex'] = 'The %s must be a valid hex string.';
 $lang['check_is_positive'] = '%s must be a positive number.';

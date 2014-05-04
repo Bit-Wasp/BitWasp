@@ -60,15 +60,12 @@ class Current_User {
 
 			$this->CI->load->model('accounts_model');
 			$user = $this->CI->accounts_model->get(array('user_hash' => $this->user_hash), array('own' => TRUE));
+			$this->currency = ($this->CI->bw_config->price_index == 'Disabled' || !is_array($this->CI->bw_config->currencies)) ? $this->CI->bw_config->currencies[0] : $this->CI->bw_config->currencies[$user['local_currency']];
 			
-			$tmp = $this->CI->currencies_model->get($user['local_currency']);
-			// Determine which currency the user has set for themselves.
-			$this->currency = ($tmp == FALSE || $this->CI->bw_config->price_index == 'Disabled') ? $this->CI->currencies_model->get('0') :  $tmp;
-
 		} else {
 			$id = $this->CI->session->userdata('user_id');
 
-			$this->currency = $this->CI->currencies_model->get('0');
+			$this->currency = $this->CI->bw_config->currencies[0];
 			
 			// If an ID is set, user is in a half session.
 			if(is_numeric($id) && $id !== NULL) {
