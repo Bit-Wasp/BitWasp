@@ -166,6 +166,82 @@ class Orders extends CI_Controller {
 		$data['local_currency'] = $this->current_user->currency;	
 		$this->load->library('Layout', $data);
 	}
+
+	public function vendor_refund($order_id) {
+		$data['order'] = $this->order_model->load_order($order_id, array('3','4'));
+		if($data['order'] == FALSE)
+			redirect('orders');
+			
+		if($data['order']['refund'] == '1') { 
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'This order was already refunded!')));
+			redirect('orders');
+		}
+			
+		$this->load->model('transaction_cache_model');			
+		$this->load->library('BitcoinLib');
+		$this->load->library('Raw_transaction');
+		
+		$this->form_validation->set_rules('refund', '', 'callback_check_refund_choice');
+		
+		if($this->input->post('issue_refund') == 'Issue Refund') {
+			if($this->form_validation->run() == TRUE)
+			{
+				// Construct new raw transaction!
+				
+				// Add the inputs at the multisig address.
+				$payments = $this->transaction_cache_model->payments_to_address($data['order']['address']);
+
+				// Create the transaction inputs
+				$tx_ins = array();
+				$value = 0.00000000;
+				foreach($payments as $pmt) {
+					$tx_ins[] = array(	'txid' => $pmt['tx_id'],
+										'vout' => $pmt['vout']);
+					$value += (float)$pmt['value'];
+					$tx_pkScripts[] = array(	'txid' => $pmt['tx_id'],	'vout' => (int)$pmt['vout'], 	'scriptPubKey' => $pmt['pkScript'], 'redeemScript' => $data['order']['redeemScript']);
+				}
+				
+				$json = json_encode($tx_pkScripts);
+				
+				$tx_outs = array();
+				// Add outputs for the sites fee, buyer, and vendor.
+				$buyer_address = BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
+				$tx_outs[$buyer_address] = (float)$data['order']['total_paid']-0.0001;
+
+				$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
+				if($raw_transaction == FALSE) {
+					echo 'error :(';
+				} else {
+					$decoded_transaction = Raw_transaction::decode($raw_transaction);
+					$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
+					
+					$update = array('unsigned_transaction' => $raw_transaction." ",
+									'json_inputs' => "'$json'",
+									'partially_signed_transaction' => '',
+									'partially_signed_time' => '',
+									'partially_signing_user_id' => '',
+									'progress' => '8',
+									'refund_time' => time());
+					
+					$this->order_model->update_order($data['order']['id'], $update);
+					$this->transaction_cache_model->clear_expected_for_address($data['order']['address']);
+					$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
+				}
+			} else {
+				echo 'form error';
+			}
+		}
+			
+		$data['page'] = 'orders/vendor_refund';
+		$data['title'] = 'Issue Refund';
+		$data['coin'] = $this->coin;
+		$data['local_currency'] = $this->current_user->currency;
+		$this->load->library('Layout', $data);
+	}
+	
+	public function check_refund_choice($param) {
+		return (is_numeric($param) && in_array($param, array('0','1'))) ? TRUE : FALSE;
+	}
 	
 	// Buyer pages
 	
@@ -500,13 +576,13 @@ class Orders extends CI_Controller {
 		if($data['order']['progress'] == '0')
 			redirect('');
 		
-		if($this->current_user->user_role == 'Buyer'){
+		if($this->current_user->user_role == 'Buyer') {
 			$data['action_page'] = 'purchases/details/'.$order_id;
 			$data['cancel_page'] = 'purchases';
-		} else if($this->current_user->user_role == 'Vendor'){
+		} else if($this->current_user->user_role == 'Vendor') {
 			$data['action_page'] = 'orders/details/'.$order_id;
 			$data['cancel_page'] = 'orders';
-		} else if($this->current_user->user_role == 'Admin'){
+		} else if($this->current_user->user_role == 'Admin') {
 			$data['action_page'] = 'admin/order/'.$order_id;
 			$data['cancel_page'] = 'admin/orders';
 		} 
@@ -525,7 +601,8 @@ class Orders extends CI_Controller {
 		if($data['order']['partially_signed_transaction'] == '' && $data['order']['unsigned_transaction'] !== '') 
 			if($data['order']['progress'] == '3' && $this->current_user->user_role == 'Buyer'
 			|| $data['order']['progress'] == '4' && $data['order']['vendor_selected_escrow'] == '1' && $this->current_user->user_role == 'Vendor'
-			|| $data['order']['progress'] == '6') 
+			|| $data['order']['progress'] == '6'
+			|| $data['order']['progress'] == '8') 
 				$data['display_form'] = TRUE;
 
 		// Only allow access to the form handling script if the form is allowed to be displayed.
@@ -562,6 +639,11 @@ class Orders extends CI_Controller {
 											'partially_signing_user_id' => $this->current_user->user_id,
 											'partially_signed_time' => time());
 							$this->order_model->update_order($order_id, $update);
+						} else if($data['order']['progress'] == '8') {
+							$update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+											'partially_signing_user_id' => $this->current_user->user_id,
+											'partially_signed_time' => time());
+							$this->order_model->update_order($order_id, $update);
 						}
 						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your partially signed transaction has been saved!')));
 						redirect($data['action_page']);
@@ -571,6 +653,11 @@ class Orders extends CI_Controller {
 				}
 			}
 		}
+		
+		$data['can_refund'] = FALSE;
+		if ($this->current_user->user_role == 'Vendor'
+		 && in_array($data['order']['progress'], array('3','4')) )
+			$data['can_refund'] = TRUE;
 		
 		$data['addrs'] = array(	BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']) => 'buyer',
 								BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->coin['crypto_magic_byte']) => 'vendor',

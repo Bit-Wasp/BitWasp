@@ -32,6 +32,7 @@ $lang['check_pin_required'] = "You must enter a message PIN.";
 $lang['check_pgp_is_required'] = "The recipient user has blocked messages which are not PGP encrypted.";
 $lang['check_pgp_encrypted'] = "%s must be an ASCII armored PGP message.";
 $lang['check_price_positive'] = 'You must enter a positive number for the price.';
+$lang['check_refund_choice'] = 'Select Yes or No to continue.';
 $lang['check_review_length'] = 'Choose either short or long review length.';
 $lang['check_role'] = "The %s field must be for a buyer, or vendor.";
 $lang['check_session_timeout'] = 'Session timeout must be a number, and at least 5 minutes.';

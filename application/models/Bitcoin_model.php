@@ -173,7 +173,21 @@ class Bitcoin_model extends CI_Model {
 		$query = $this->db->get('watched_addresses');
 		return ($query->num_rows() == 0) ? FALSE : $query->row_array();
 	}
-	
+
+	/**
+	 * Delete Watch Address 
+	 * 
+	 * This function removes the entry for $address from the watched_addresses
+	 * table. This means that no more payments to this address will be 
+	 * recorded.
+	 * 
+	 * @param		string	$address
+	 * @return		boolean
+	 */
+	public function delete_watch_address($address) {
+		$this->db->where('address', $address);
+		return ($this->db->delete('watched_addresses') == TRUE) ? TRUE : FALSE;
+	} 
 	
 };
 

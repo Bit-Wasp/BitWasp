@@ -42,7 +42,7 @@
 								<div class="span5 offset1">Total</div>
 								<div class="span6">
 									<?php if($local_currency['id'] !== '0') {
-										echo "~{$local_currency['symbol']}".number_format($total*$local_currency['rate'], 2)." / ";
+										echo "~{$local_currency['symbol']}".number_format(($order['price']+$fees['total'])*$local_currency['rate'], 2)." / ";
 									}
 									echo $order['currency']['symbol']." ".number_format($order['price']+$fees['total'], 8); ?>
 								</div>

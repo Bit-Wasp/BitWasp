@@ -407,14 +407,28 @@ class Order_model extends CI_Model {
 	public function order_finalized_callback($array) {
 
 		$this->load->model('disputes_model');
-		foreach($array as $record) {
+		$this->load->model('bitcoin_model');
+		
+		foreach ($array as $record)
+		{
 			$order = $this->get_order_by_address($record['address']);
 			
 			$complete = false;
 			// If progress is 6, then a disputed order is completed.
-			if($order['progress'] == '6') {
+			
+			if ($order['progress'] == '8')
+			{
+				$update = array('progress' => '7',
+								'refund_completed_time' => time());
+				if($this->update_order($order['id'], $update) == TRUE)
+					$complete = TRUE;
+				
+			} elseif ($order['progress'] == '6')
+			{
 				$dispute = $this->disputes_model->get_by_order_id($order['id']);
-				if($this->progress_order($order['id'], '6', '7') == TRUE) {
+				
+				if ($this->progress_order($order['id'], '6', '7') == TRUE)
+				{
 					$dispute_update = array('posting_user_id' => '',
 											'order_id' => $order['id'],
 											'dispute_id' => $dispute['id'],
@@ -428,18 +442,19 @@ class Order_model extends CI_Model {
 					$complete = true;
 				}
 				
-			}  else {
+			} 
+			else 
+			{
 				// Otherwise, progress depending on whether the transaction is escrow, or upfront.
 				
 				// Escrow
-				if($order['vendor_selected_escrow'] == '1') {
-					$update = array('received_time' => time());
-					if($this->progress_order($order['id'], '5', '7', $update) == TRUE)
+				if($order['vendor_selected_escrow'] == '1')
+					if($this->progress_order($order['id'], '5', '7', array('received_time' => time())) == TRUE)
 						$complete = true;
-				}
 				
 				// Upfront payment. Vendor takes money to confirm dispatch.
-				if($order['vendor_selected_escrow'] == '0') {
+				if($order['vendor_selected_escrow'] == '0')
+				{
 					$update = array('dispatched_time' => time(),
 									'dispatched' => '1');
 					if($this->progress_order($order['id'], '4', '5', $update) == TRUE)
@@ -448,13 +463,15 @@ class Order_model extends CI_Model {
 			}
 			
 			// If complete, then record the details.
-			if($complete) {
+			if($complete)
+			{
 				$update = array('finalized' => '1',
 								'finalized_time' => time(),
-								'final_transaction_id' => $record['final_id']);
-				if($record['valid'] == TRUE)
-					$update['finalized_correctly'] = '1';
+								'final_transaction_id' => $record['final_id'],
+								'finalized_correctly' => (($record['valid'] == TRUE) ? '1' : '0'));
+			
 				$this->update_order($order['id'], $update);
+				$this->bitcoin_model->delete_watch_address($order['address']);
 			}
 		}
 	}
@@ -603,12 +620,15 @@ class Order_model extends CI_Model {
 						$vendor_progress_message = "Disputed transaction. ".anchor('orders/dispute/'.$order['id'], 'View Dispute', 'class="btn btn-mini"');
 						break;
 					case '7':
-						$buyer_progress_message = "Purchase complete.";
-						$vendor_progress_message = "Order complete.";
+						$buyer_progress_message = ($order['refund_time'] !== '') ? "Payment refunded." : "Purchase complete.";
+						$vendor_progress_message = ($order['refund_time'] !== '') ? "Order refunded." : "Order complete.";
 						break;
+					case '8':
+						$buyer_progress_message = "Awaiting refund.";
+						$vendor_progress_message = "Awaiting refund.";
 				}
 				$currency = $this->bw_config->currencies[$order['currency']];
-			
+
 				// Work out what price to display for the current user.
 				$order_price = ($this->current_user->user_role == 'Vendor') ? ($order['price']+$order['shipping_costs']-$order['extra_fees']) : ($order['price']+$order['shipping_costs']+$order['fees']);
 				
@@ -626,6 +646,7 @@ class Order_model extends CI_Model {
 				$tmp['buyer'] = $this->accounts_model->get(array('id' => $order['buyer_id']));
 				$tmp['items'] = $item_array;
 				$tmp['order_price'] = $order_price;
+				$tmp['total_paid'] = number_format($order['price']+$order['shipping_costs']+$order['fees'], 8);
 				$tmp['price_l'] = $price_l;
 				$tmp['currency'] = $currency;
 				$tmp['time_f'] = $this->general->format_time($order['time']);
