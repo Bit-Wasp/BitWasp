@@ -679,6 +679,8 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
   `finalized` enum('0','1') NOT NULL,
   `confirmed_time` varchar(20) NOT NULL,
   `vendor_selected_escrow` enum('0','1') NOT NULL DEFAULT '0',
+  `vendor_selected_upfront` enum('0','1') NOT NULL DEFAULT '0',
+  `vendor_selected_upfront_time` varchar(20),
   `dispatched_time` varchar(20) NOT NULL,
   `dispatched` enum('0','1') NOT NULL DEFAULT '0',
   `disputed_time` varchar(20) NOT NULL,

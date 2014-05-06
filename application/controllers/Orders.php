@@ -733,7 +733,7 @@ class Orders extends CI_Controller {
 				
 			if ($data['order']['vendor']['completed_order_count'] > 5
 			 && $data['order']['progress'] == '4'
-			 && $data['order']['vendor_selected_escrow' !== '0'
+			 && $data['order']['vendor_selected_escrow'] !== '0'
 			 && $data['order']['vendor_selected_upfront'] == '0')
 				$data['can_finalize_early'] = TRUE;
 		}
