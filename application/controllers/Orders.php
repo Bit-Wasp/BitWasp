@@ -99,12 +99,17 @@ class Orders extends CI_Controller {
 	 * @param	int	$id
 	 */
 	public function vendor_accept($id) {
-		if( !(is_numeric($id) && $id >= 0) )
+		if ( !(is_numeric($id) && $id >= 0) ) {
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Invalid order ID.')));	
 			redirect('orders');
+		}
 			
 		$data['order'] = $this->order_model->load_order($id, array('1'));
-		if($data['order'] == FALSE)
+		if ($data['order'] == FALSE)
+		{
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Invalid order ID.')));
 			redirect('orders');
+		}
 
 		$this->load->model('bitcoin_model');
 		$data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
@@ -167,13 +172,67 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	public function vendor_finalize_early($order_id) {
+		$data['order'] = $this->order_model->load_order($order_id, array('4'));
+		if ($data['order'] == FALSE) 
+			redirect('orders');
+
+		if ( !($data['order']['vendor']['completed_order_count'] > 5
+			 && $data['order']['progress'] == '4'
+			 && $data['order']['vendor_selected_upfront'] == '0'))
+		{
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to finalize this order early!')));
+			redirect('orders/details/'.$data['order']['id']);
+		}
+
+		$this->form_validation->set_rules('upfront', '', 'callback_check_refund_choice');
+		
+		if ($this->input->post('request_FE') == 'Continue') 
+		{
+			if ($this->form_validation->run() == TRUE)
+			{
+				if ($this->input->post('upfront') == '0')
+				{
+					redirect('orders/details/'.$data['order']['id']);
+				}
+				else 
+				{
+					$update = array('progress' => '3',
+									'vendor_selected_upfront_time' => time(),
+									'vendor_selected_upfront' => '1',
+									'partially_signed_transaction' => '',
+									'partially_signed_time' => '',
+									'partially_signing_user_id' => '');
+					if ($this->order_model->update_order($data['order']['id'], $update) == TRUE)
+					{
+						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You have requested to finalize the order early.')));
+						redirect('orders/details/'.$data['order']['id']);
+					}
+					else 
+					{
+						$data['returnMessage'] = 'An error occured processing your request.';
+					}
+				}
+			}
+		}
+		
+		$data['page'] = 'orders/vendor_finalize_early';
+		$data['title'] = 'Request Early Finalization';
+		$data['local_currency'] = $this->current_user->currency;	
+		$this->load->library('Layout', $data);
+	}
+
 	public function vendor_refund($order_id) {
 		$data['order'] = $this->order_model->load_order($order_id, array('3','4'));
-		if($data['order'] == FALSE)
+		if ($data['order'] == FALSE)
+		{
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to refund this order.')));
 			redirect('orders');
-			
-		if($data['order']['refund'] == '1') { 
-			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'This order was already refunded!')));
+		}
+		
+		if ( ! in_array($data['order']['progress'], array('3','4') ))
+		{
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to refund this order.')));
 			redirect('orders');
 		}
 			
@@ -183,52 +242,62 @@ class Orders extends CI_Controller {
 		
 		$this->form_validation->set_rules('refund', '', 'callback_check_refund_choice');
 		
-		if($this->input->post('issue_refund') == 'Issue Refund') {
+		if($this->input->post('issue_refund') == 'Issue Refund')
+		{
 			if($this->form_validation->run() == TRUE)
 			{
-				// Construct new raw transaction!
-				
-				// Add the inputs at the multisig address.
-				$payments = $this->transaction_cache_model->payments_to_address($data['order']['address']);
-
-				// Create the transaction inputs
-				$tx_ins = array();
-				$value = 0.00000000;
-				foreach($payments as $pmt) {
-					$tx_ins[] = array(	'txid' => $pmt['tx_id'],
-										'vout' => $pmt['vout']);
-					$value += (float)$pmt['value'];
-					$tx_pkScripts[] = array(	'txid' => $pmt['tx_id'],	'vout' => (int)$pmt['vout'], 	'scriptPubKey' => $pmt['pkScript'], 'redeemScript' => $data['order']['redeemScript']);
-				}
-				
-				$json = json_encode($tx_pkScripts);
-				
-				$tx_outs = array();
-				// Add outputs for the sites fee, buyer, and vendor.
-				$buyer_address = BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
-				$tx_outs[$buyer_address] = (float)$data['order']['total_paid']-0.0001;
-
-				$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
-				if($raw_transaction == FALSE) {
-					echo 'error :(';
+				if($this->input->post('refund') == '0') {
+					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You have chosen not to refund this order.')));
+					redirect('orders/details/'.$data['order']['id']);
 				} else {
-					$decoded_transaction = Raw_transaction::decode($raw_transaction);
-					$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
 					
-					$update = array('unsigned_transaction' => $raw_transaction." ",
-									'json_inputs' => "'$json'",
-									'partially_signed_transaction' => '',
-									'partially_signed_time' => '',
-									'partially_signing_user_id' => '',
-									'progress' => '8',
-									'refund_time' => time());
+					// Construct new raw transaction!
 					
-					$this->order_model->update_order($data['order']['id'], $update);
-					$this->transaction_cache_model->clear_expected_for_address($data['order']['address']);
-					$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
+					// Add the inputs at the multisig address.
+					$payments = $this->transaction_cache_model->payments_to_address($data['order']['address']);
+
+					// Create the transaction inputs
+					$tx_ins = array();
+					$value = 0.00000000;
+					foreach($payments as $pmt) {
+						$tx_ins[] = array(	'txid' => $pmt['tx_id'],
+											'vout' => $pmt['vout']);
+						$value += (float)$pmt['value'];
+						$tx_pkScripts[] = array(	'txid' => $pmt['tx_id'],	'vout' => (int)$pmt['vout'], 	'scriptPubKey' => $pmt['pkScript'], 'redeemScript' => $data['order']['redeemScript']);
+					}
+					
+					$json = json_encode($tx_pkScripts);
+					
+					$tx_outs = array();
+					// Add outputs for the sites fee, buyer, and vendor.
+					$buyer_address = BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
+					$tx_outs[$buyer_address] = (float)$data['order']['total_paid']-0.0001;
+
+					$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
+					if($raw_transaction == FALSE) {
+						$data['returnMessage'] = 'Error creating transaction!';
+					} else {
+						$decoded_transaction = Raw_transaction::decode($raw_transaction);
+						$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
+						
+						$update = array('unsigned_transaction' => $raw_transaction." ",
+										'json_inputs' => "'$json'",
+										'partially_signed_transaction' => '',
+										'partially_signed_time' => '',
+										'partially_signing_user_id' => '',
+										'progress' => '8',
+										'refund_time' => time());
+						
+						if($this->order_model->update_order($data['order']['id'], $update) == TRUE) {
+							$this->transaction_cache_model->clear_expected_for_address($data['order']['address']);
+							$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
+							$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'A refund has been issued for this order. Please sign to ensure the funds can be claimed ASAP.')));
+							redirect('orders/details/'.$data['order']['id']);
+						} else {
+							$data['returnMessage'] = 'An error occured processing the refund.';
+						}
+					}
 				}
-			} else {
-				echo 'form error';
 			}
 		}
 			
@@ -433,7 +502,7 @@ class Orders extends CI_Controller {
 				redirect('purchases');
 
 			// Prevent escrow orders from being marked as 'received'.
-			if($current_order['vendor_selected_escrow'] == '1') {
+			if($current_order['vendor_selected_upfront'] == '0') {
 				$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You must sign & broadcast this transaction!')));
 				redirect('purchases');
 			}
@@ -489,7 +558,7 @@ class Orders extends CI_Controller {
 		if(!(is_numeric($id) && $id >= 0))
 			redirect($data['cancel_page']);
 		
-		$data['current_order'] = $this->order_model->load_order($id, array('7','6','5','4'));
+		$data['current_order'] = $this->order_model->load_order($id, array('7','6','5','4','3'));
 		if($data['current_order'] == FALSE)
 			redirect($list_page);
 
@@ -655,9 +724,19 @@ class Orders extends CI_Controller {
 		}
 		
 		$data['can_refund'] = FALSE;
-		if ($this->current_user->user_role == 'Vendor'
-		 && in_array($data['order']['progress'], array('3','4')) )
-			$data['can_refund'] = TRUE;
+		$data['can_finalize_early'] = FALSE;
+		
+		if ($this->current_user->user_role == 'Vendor')
+		{
+			if (in_array($data['order']['progress'], array('3','4') ))
+				$data['can_refund'] = TRUE;
+				
+			if ($data['order']['vendor']['completed_order_count'] > 5
+			 && $data['order']['progress'] == '4'
+			 && $data['order']['vendor_selected_escrow' !== '0'
+			 && $data['order']['vendor_selected_upfront'] == '0')
+				$data['can_finalize_early'] = TRUE;
+		}
 		
 		$data['addrs'] = array(	BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']) => 'buyer',
 								BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->coin['crypto_magic_byte']) => 'vendor',

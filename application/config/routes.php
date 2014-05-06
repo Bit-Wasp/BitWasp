@@ -145,15 +145,15 @@ $route['orders/dispute/(:num)'] = 'orders/dispute/$1';
 
 // Vendor
 $route['orders'] = 'orders/vendor_orders';
-$route['orders/review/(:any)/(:num)'] = 'reviews/form/1/$2';
 $route['orders/accept/(:num)'] = 'orders/vendor_accept/$1';
+$route['orders/finalize_early/(:num)'] = 'orders/vendor_finalize_early/$1';
+$route['orders/refund/(:num)'] = 'orders/vendor_refund/$1';
 
 // Buyer
 $route['purchases/details/(:num)'] = 'orders/details/$1';
 $route['purchases'] = 'orders/buyer_orders';
 $route['purchases/confirm/(:num)'] = 'orders/buyer_confirm/$1';
 $route['purchases/dispute/(:num)'] = 'orders/dispute/$1';
-$route['purchases/review/(:any)/(:num)'] = 'reviews/form/$1/$2';
 $route['purchase/(:any)'] = 'orders/purchase_item/$1';
 // Both
 

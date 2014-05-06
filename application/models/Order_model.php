@@ -416,6 +416,8 @@ class Order_model extends CI_Model {
 			$complete = false;
 			// If progress is 6, then a disputed order is completed.
 			
+			echo "Progrses: ".$order['progress']."\n";
+			
 			if ($order['progress'] == '8')
 			{
 				$update = array('progress' => '7',
@@ -423,7 +425,8 @@ class Order_model extends CI_Model {
 				if($this->update_order($order['id'], $update) == TRUE)
 					$complete = TRUE;
 				
-			} elseif ($order['progress'] == '6')
+			} 
+			elseif ($order['progress'] == '6')
 			{
 				$dispute = $this->disputes_model->get_by_order_id($order['id']);
 				
@@ -441,19 +444,17 @@ class Order_model extends CI_Model {
 					
 					$complete = true;
 				}
-				
 			} 
 			else 
 			{
 				// Otherwise, progress depending on whether the transaction is escrow, or upfront.
-				
 				// Escrow
-				if($order['vendor_selected_escrow'] == '1')
+				if($order['vendor_selected_upfront'] == '0')
 					if($this->progress_order($order['id'], '5', '7', array('received_time' => time())) == TRUE)
 						$complete = true;
 				
 				// Upfront payment. Vendor takes money to confirm dispatch.
-				if($order['vendor_selected_escrow'] == '0')
+				if($order['vendor_selected_upfront'] == '1')
 				{
 					$update = array('dispatched_time' => time(),
 									'dispatched' => '1');
@@ -603,16 +604,16 @@ class Order_model extends CI_Model {
 						$vendor_progress_message = 'Waiting for buyer to pay to the order address. <input type="submit" class="btn btn-mini" name="cancel['.$order['id'].']" value="Cancel" /> ';
 						break;
 					case '3':	// An up-front payment. Buyer signs first.
-						$buyer_progress_message = "Up-front payment: Please sign transaction.";
+						$buyer_progress_message = (($order['vendor_selected_upfront'] == '1') ? 'Vendor requested up-front payment.' : '' )." Please sign transaction. ".anchor('purchases/dispute/'.$order['id'], 'Raise Dispute', 'class="btn btn-mini"');;
 						$vendor_progress_message = "Waiting on buyer to sign. ";
 						break;
 					case '4':	// Awaiting dispatch. Vendor must sign to indicate dispatch. (5)
 						$buyer_progress_message = "Awaiting Dispatch. ".anchor('purchases/dispute/'.$order['id'], 'Raise Dispute', 'class="btn btn-mini"');
-						$vendor_progress_message= "Sign ".(($order['vendor_selected_escrow'] == '0') ? ' & broadcast':'' )." the transaction to confirm the items dispatch. "; 	
+						$vendor_progress_message= "Sign ".(($order['vendor_selected_upfront'] == '1') ? ' & broadcast':'' )." the transaction to confirm the items dispatch. "; 	
 						break;
 					case '5':	// Awaiting delivery. Escrow: buyer finalizes or disputes. 
 								// Upfront: buyer can dispute or mark received.
-						$buyer_progress_message = 'Order dispatched. '.(($order['vendor_selected_escrow'] == '0') ? '<input type="submit" name="received['.$order['id'].']" value="Confirm Receipt" class="btn btn-mini" /> or ' : 'Sign & broadcast once received, or ').anchor('purchases/dispute/'.$order['id'], 'Raise Dispute', 'class="btn btn-mini"');
+						$buyer_progress_message = 'Order dispatched. '.(($order['vendor_selected_upfront'] == '1') ? '<input type="submit" name="received['.$order['id'].']" value="Confirm Receipt" class="btn btn-mini" /> or ' : 'Sign & broadcast once received, or ').anchor('purchases/dispute/'.$order['id'], 'Raise Dispute', 'class="btn btn-mini"');
 						$vendor_progress_message = 'Buyer awaiting delivery. '.anchor('orders/dispute/'.$order['id'], 'Raise Dispute', 'class="btn btn-mini"');
 						break;
 					case '6':	// Disputed transaction.

@@ -1,14 +1,14 @@
 		<div class="span9 mainContent" id="issue_refund">
-			<h2>Issue Refund: Order <?php echo $order['id']; ?></h2>
+			<h2>Request Early Finalization: Order <?php echo $order['id']; ?></h2>
 			
 			<?php if(isset($returnMessage)) { ?>
 			<div class='alert<?php echo (isset($success)) ? ' alert-success' : ''; ?>'><?php echo $returnMessage; ?></div>			
 			<?php } ?>
+
 			
-			
-			<?php echo form_open('orders/vendor_refund/'.$order['id'], array('class' => 'form-horizontal')); ?>
+			<?php echo form_open('orders/finalize_early/'.$order['id'], array('class' => 'form-horizontal')); ?>
 			<div class='well span9' >
-				Once you issue a refund, the Order Details page will display a new unsigned transaction which refunds the buyer the full amount.<Br /><br />
+				If you need to, you can request early finalization for this order. <?php echo anchor('user/'.$order['buyer']['user_hash'], $order['buyer']['user_name']); ?> will be asked to sign the transaction immediately. Once this is done, you can sign and broadcast to claim the funds. <br /><br />
 				<div class='row-fluid'>
 					<div class='span5'>
 						<ul>
@@ -37,15 +37,15 @@
 					<div class='span4'>Are you sure?</div>
 					<div class='span6'>
 						<div class='row-fluid'>
-							<input type='radio' name='refund' value='0'>  No<br />
-							<input type='radio' name='refund' value='1'>  Yes
+							<input type='radio' name='upfront' value='0'>  No<br />
+							<input type='radio' name='upfront' value='1'>  Yes
 						</div>
 					</div>
 					<?php echo form_error('refund'); ?>
 				</div>
 				
 				<div class="form-actions">
-					<input type='submit' class="btn btn-primary" name='issue_refund' value='Issue Refund' />
+					<input type='submit' class="btn btn-primary" name='request_FE' value='Continue' />
 					<?php echo anchor('orders', 'Cancel', 'title="Cancel" class="btn"');?>
 				</div>
 			</div>

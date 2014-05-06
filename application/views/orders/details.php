@@ -1,5 +1,6 @@
 		<div class="span9 mainContent" id="vendor_public_keys">
 			<h2>Order Details: #<?php echo $order['id']; ?></h2>
+
 			<?php if(isset($returnMessage)) { ?>
 			<div class='alert<?php echo (isset($success)) ? ' alert-success' : ''; ?>'><?php echo $returnMessage; ?></div>			
 			<?php } ?>
@@ -143,8 +144,9 @@
 							<?php } ?>
 							</div>
 						</div>
-						<?php if($display_form == TRUE) { ?>
 						<?php echo form_open($action_page, 'class="form-horizontal"'); ?>
+						<?php if($display_form == TRUE) { ?>
+
 							<div class='row-fluid'>
 								<div class='span3'>Paste Signed Transaction</div>
 								<div class='span8'>
@@ -153,12 +155,16 @@
 							</div>
 							<?php if(isset($invalid_transaction_error)) echo '<span class="help-inline">'.$invalid_transaction_error.'</span>'; ?>
 							<?php echo form_error('partially_signed_transaction'); ?>
+						
+						<?php } ?>
+						
 							<div class="form-actions">
-								<input type='submit' name='submit_signed_transaction' class="btn btn-primary" value='Submit Transaction' />
-								<?php echo anchor($cancel_page, 'Cancel', 'title="Cancel" class="btn"');?>
+								<?php if($display_form == TRUE) { ?><input type='submit' name='submit_signed_transaction' class="btn btn-primary" value='Submit Transaction' /><?php } ?>
+								<?php if($can_finalize_early) { ?><?php echo anchor('orders/finalize_early/'.$order['id'], 'Finalize Early?', 'title="Request early finalization" class="btn"');?><?php } ?>
+								<?php if($can_refund) { ?><?php echo anchor('orders/refund/'.$order['id'], 'Issue Refund?', 'title="Request early finalization" class="btn"');?><?php } ?>
+								<?php echo anchor($cancel_page, 'Back', 'title="Bac" class="btn"');?>								
 							</div>
 						</form>
-						<?php } ?>
 					</div>
 				</div>
 				<?php } ?>
