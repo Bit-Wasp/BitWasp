@@ -158,6 +158,7 @@ class Bitcoin_model extends CI_Model {
 	 * 
 	 */
 	public function watch_address_list() {
+		$query = $this->db->get('watch_addresses');
 		$query_array = $query->result_array();
 		
 		$results = array(	'data' => array(),
