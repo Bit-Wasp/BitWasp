@@ -271,6 +271,9 @@ class MY_Form_validation extends CI_Form_validation {
 	 */
 	public function check_is_parent_category($str)
 	{
+		if($str == '0')
+			return TRUE;
+			
 		$found = FALSE;
 		foreach ($this->CI->bw_config->categories as $cat)
 		{
