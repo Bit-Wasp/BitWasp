@@ -1,6 +1,9 @@
 		<div class="span9 mainContent" id="vendor_public_keys">
 			<h2>Order Details: #<?php echo $order['id']; ?></h2>
-			<?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
+
+			<?php if(isset($returnMessage)) { ?>
+			<div class='alert<?php echo (isset($success)) ? ' alert-success' : ''; ?>'><?php echo $returnMessage; ?></div>			
+			<?php } ?>
 
 				<div class="row-fluid">
 					<div class='span6'>				
@@ -14,33 +17,33 @@
 						</div>			
 						<div class="row-fluid">
 							<div class="span5 offset1">Items Cost</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-								echo $local_currency['symbol'] . number_format($order['price']*$local_currency['rate'], 2)." / "; 
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+								echo $current_user['currency']['symbol'] . number_format($order['price']*$current_user['currency']['rate'], 2)." / "; 
 							}
 							echo $order['currency']['symbol']." ".number_format($order['price'], 8); ?></div>
 						</div>
 						
 						<div class="row-fluid">
 							<div class="span5 offset1">Shipping Cost</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-									echo $local_currency['symbol'].number_format($fees['shipping_cost']*$local_currency['rate'], 2)." / ";
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+									echo $current_user['currency']['symbol'].number_format($fees['shipping_cost']*$current_user['currency']['rate'], 2)." / ";
 								}
 							echo $order['currency']['symbol']." ".number_format($fees['shipping_cost'], 8); ?></div>
 						</div>
 						
 						<div class="row-fluid">
 							<div class="span5 offset1">Site's Fee</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-								echo $local_currency['symbol'].number_format($fees['fee']*$local_currency['rate'], 2). " / ";
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+								echo $current_user['currency']['symbol'].number_format($fees['fee']*$current_user['currency']['rate'], 2). " / ";
 							}
 							echo $order['currency']['symbol']." ".number_format($fees['fee'], 8); ?></div>
 						</div>
 						
 						<?php if($user_role !== 'Buyer' ) { ?>
 						<div class="row-fluid">
-							<div class="span5 offset1">Escrow Fees</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-								echo $local_currency['symbol'].number_format($fees['escrow_fees']*$local_currency['rate'], 2). " / ";
+							<div class="span5 offset1">Extra Fees</div>
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+								echo $current_user['currency']['symbol'].number_format($fees['escrow_fees']*$current_user['currency']['rate'], 2). " / ";
 							}
 							echo $order['currency']['symbol']." ".number_format($fees['escrow_fees'], 8); ?></div>
 						</div>
@@ -54,10 +57,10 @@
 								echo 'Total Cost';
 							} ?></div>
 							<div class="span6">
-								<?php if($local_currency['id'] !== '0') {
-									echo $local_currency['symbol'].number_format($order['order_price']*$local_currency['rate'], 2)." / ";
+								<?php if($current_user['currency']['id'] !== '0') {
+									echo $current_user['currency']['symbol'].number_format($order['order_price']*$current_user['currency']['rate'], 2)." / ";
 								}
-								echo $order['currency']['symbol']." ".number_format($order['order_price'], 8); ?>
+								echo $order['currency']['symbol']." ".$order['order_price']; ?>
 							</div>
 						</div>	
 						
@@ -74,9 +77,16 @@
 				<?php if($order['address'] !== '') { ?>
 				<div class='row-fluid'>
 					<div class='well'>
+						<?php // payment QR code
+						if(isset($qr)) { ?>
+						<div class='row-fluid'>
+							<div class='offset4'><a href='<?php echo $payment_url; ?>'><img src='data:image/png;base64,<?php echo $qr; ?>' /></a></div>
+						</div>
+						<?php } ?>
+						
 						<div class='row-fluid'>
 							<div class='span3'>Order Address</div>
-							<div class='span5'><?php echo $order['address']; ?></div>
+							<div class='span4'><?php echo $order['address']; ?></div>
 						</div>
 						<div class='row-fluid'>
 							<div class='span3'>Redeem Script</div>
@@ -108,27 +118,35 @@
 								<textarea class='span12'><?php echo ($order['partially_signed_transaction'] !== '') ? $order['partially_signed_transaction'] : $order['unsigned_transaction'].$order['json_inputs']; ?></textarea>
 							</div>
 						</div>
+						<?php if($order['partially_signed_transaction'] !== '') { ?>
+						<div class='row-fluid'>
+							<div class='span8 offset3'>
+								Signed by <?php echo anchor('view/'.$signer['user_hash'], $signer['user_name']); ?> <?php echo $order['partially_signed_time_f']; ?>. Sign and broadcast to complete payment.
+							</div>
+						</div>
+						<?php } ?>
 						<div class='row-fluid'>
 							<div class='span3'>Paying:</div>
 							<div class='span8'>
-							<?php foreach($paying_to as $arr) { 
-								if($arr['user'] !== 'admin') { ?>
+							<?php foreach($raw_tx['vout'] as $arr) { 
+								$addr = $arr['scriptPubKey']['addresses'][0];
+								if($addrs[$addr] !== 'admin') { ?>
 								<div class='row-fluid'>
-								<div class='span2'><?php echo anchor('user/'.$order[$arr['user']]['user_hash'], $order[$arr['user']]['user_name']); ?></div>
-								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $arr['address']; ?></div>
+								<div class='span2'><?php echo anchor('user/'.$order[$addrs[$addr]]['user_hash'], $order[$addrs[$addr]]['user_name']); ?></div>
+								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $addr; ?></div>
 								</div>
 								<?php } else { ?>
 								<div class='row-fluid'>
 								<div class='span2'>Fees</div>
-								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $arr['address']; ?></div>
+								<div class='span2'><?php echo $coin['symbol'] . $arr['value'] . " ". $addr; ?></div>
 								</div>
 								<?php } ?>
 							<?php } ?>
 							</div>
 						</div>
-						<?php if($display_form == TRUE) { ?>
 						<?php echo form_open($action_page, 'class="form-horizontal"'); ?>
-						<?php echo validation_errors(); ?>
+						<?php if($display_form == TRUE) { ?>
+
 							<div class='row-fluid'>
 								<div class='span3'>Paste Signed Transaction</div>
 								<div class='span8'>
@@ -137,16 +155,19 @@
 							</div>
 							<?php if(isset($invalid_transaction_error)) echo '<span class="help-inline">'.$invalid_transaction_error.'</span>'; ?>
 							<?php echo form_error('partially_signed_transaction'); ?>
+						
+						<?php } ?>
+						
 							<div class="form-actions">
-								<input type='submit' name='submit_signed_transaction' class="btn btn-primary" value='Submit Transaction' />
-								<?php echo anchor('order/list', 'Cancel', 'title="Cancel" class="btn"');?>
+								<?php if($display_form == TRUE) { ?><input type='submit' name='submit_signed_transaction' class="btn btn-primary" value='Submit Transaction' /><?php } ?>
+								<?php if($can_finalize_early) { ?><?php echo anchor('orders/finalize_early/'.$order['id'], 'Finalize Early?', 'title="Request early finalization" class="btn"');?><?php } ?>
+								<?php if($can_refund) { ?><?php echo anchor('orders/refund/'.$order['id'], 'Issue Refund?', 'title="Request early finalization" class="btn"');?><?php } ?>
+								<?php echo anchor($cancel_page, 'Back', 'title="Bac" class="btn"');?>								
 							</div>
 						</form>
-						<?php } ?>
 					</div>
 				</div>
 				<?php } ?>
 			</form>
 		</div>
-r
 

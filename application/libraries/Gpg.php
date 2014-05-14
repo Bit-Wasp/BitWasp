@@ -10,7 +10,6 @@
  * @category	GPG
  * @author		BitWasp
  */
-
 class GPG {
 
 	/**
@@ -92,7 +91,7 @@ class GPG {
 	 * Returns FALSE on failure.
 	 * 
 	 * @param	string	$ascii
-	 * @return	string / FALSE
+	 * @return	string/FALSE
 	 */
 	public function import($ascii) {
 		$start = strpos($ascii, '-----BEGIN PGP PUBLIC KEY BLOCK-----');

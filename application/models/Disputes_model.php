@@ -29,7 +29,7 @@ class Disputes_model extends CI_Model {
 	 * This function gets a dispute array, or returns FALSE. Loads by 
 	 * the $dispute_id.
 	 * 
-	 * @param	int	$id
+	 * @param	int	$dispute_id
 	 * @return	array/FALSE
 	 */
 	public function get($dispute_id) {
@@ -88,6 +88,13 @@ class Disputes_model extends CI_Model {
 		return $row;
 	}
 	
+	/**
+	 * Disputes List
+	 * 
+	 * Loads a list of disputes for an administrator
+	 * 
+	 * @return array
+	 */
 	public function disputes_list() {
 		$this->db->order_by('id', 'DESC');
 		$query = $this->db->get('disputes');
@@ -123,7 +130,7 @@ class Disputes_model extends CI_Model {
 	 * This will be called in order_finalized_callback for escrow disputed
 	 * orders, or will be triggered by the admin 
 	 * 
-	 * @param	int	$dispute_id
+	 * @param	int	$order_id
 	 * @return	boolean
 	 */
 	public function set_final_response($order_id) {

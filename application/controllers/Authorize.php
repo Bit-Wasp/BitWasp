@@ -79,20 +79,7 @@ class Authorize extends CI_Controller
 		$this->load->library('Layout', $data);
 
 	}
-	
-	// Callback functions for form validation.
-	
-	/**
-	 * Check the supplied answer to the Captcha is correct..
-	 *
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_captcha($param)
-	{
-		return $this->bw_captcha->check($param);
-	}
-	
 };
 
- /* End of file Authorize.php */
+/* End of file Authorize.php */
+/* Location: application/controllers/Authorize.php */

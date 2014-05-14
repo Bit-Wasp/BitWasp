@@ -24,6 +24,14 @@ class Bitcoin_model extends CI_Model {
 		parent::__construct();
 	}
 	
+	/**
+	 * Get Next Key
+	 * 
+	 * Loads the next electrum public key from the MPK, and updates the
+	 * config details.
+	 * 
+	 * @return	$array
+	 */
 	public function get_next_key() {
 		$this->load->library('Electrum');
 
@@ -45,6 +53,7 @@ class Bitcoin_model extends CI_Model {
 	 * list.
 	 * 
 	 * @param	string	$user_hash
+	 * @param	string	$magic_byte
 	 * @return	string
 	 */
 	public function get_fees_address($user_hash, $magic_byte) {
@@ -62,6 +71,17 @@ class Bitcoin_model extends CI_Model {
 		return $address;
 	}
 		
+	/**
+	 * Log Key Usage
+	 * 
+	 * @param	string	$usage
+	 * @param	string	$mpk
+	 * @param	int		$iteration
+	 * @param	string	$public_key
+	 * @param	int		$order_id
+	 * @param	string	$user_hash
+	 * @return	boolean
+	 */
 	public function log_key_usage($usage, $mpk, $iteration, $public_key, $order_id = FALSE, $user_hash = FALSE) {
 		if(!in_array($usage, array('fees','order')))
 			return FALSE;
@@ -126,7 +146,7 @@ class Bitcoin_model extends CI_Model {
 	 * Add Watch Address
 	 * 
 	 * @param	string	$address
-	 * @param	string	watch_purpose
+	 * @param	string	$purpose
 	 * @return	boolean
 	 */
 	public function add_watch_address($address, $purpose) {
@@ -136,16 +156,8 @@ class Bitcoin_model extends CI_Model {
 	/**
 	 * Watch Address List
 	 * 
-	 * 
 	 */
 	public function watch_address_list() {
-/*		$this->db->select('address');
-		$query = $this->db->get('watched_addresses');
-		$results = array();
-		foreach($query->result_array() as $result) {
-			$results[] = $result['address'];
-		}*/
-		$query = $this->db->get('watched_addresses');
 		$query_array = $query->result_array();
 		
 		$results = array(	'data' => array(),

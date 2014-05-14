@@ -27,7 +27,7 @@ class Config_model extends CI_Model {
 	 * Loads the current config into $this->config. Can specify different
 	 * config rows, but yet to be implemented.
 	 */
-	public function __construct($config = 1) {
+	public function __construct() {
 		$query = $this->db->get('config');
 		if($query->num_rows() > 0) {
 			$this->config = $query->result_array();

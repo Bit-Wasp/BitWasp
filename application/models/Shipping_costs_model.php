@@ -56,7 +56,7 @@ class Shipping_costs_model extends CI_Model {
 	 * function.
 	 * 
 	 * @param	int	$item_id
-	 * @param	boolean(optional) 
+	 * @param	boolean(optional) $all
 	 * @return	array/FALSE
 	 */
 	public function for_item_raw($item_id, $all = FALSE) {
@@ -78,6 +78,7 @@ class Shipping_costs_model extends CI_Model {
 	 * Returns an array if successful, or FALSE if no entries exist.
 	 * 
 	 * @param	int	$item_id
+	 * @param	boolean(opt)	$all
 	 * @return	array/FALSE
 	 */
 	public function for_item($item_id, $all = FALSE) {
@@ -86,13 +87,13 @@ class Shipping_costs_model extends CI_Model {
 		if($query !== FALSE) { 
 			
 			$item_hash = $this->get_item_hash($item_id);
-			$item = $this->items_model->get($item_hash);
+			$item = $this->items_model->get($item_hash, FALSE);
 			
 			$output = array();
 			foreach($query as $res) {
-				if($item['currency'] !== '0'){
+				if($item['currency'] !== '0') {
 					$currency = $this->bw_config->currencies[$item['currency']];
-					$btc_cost = $res['cost']/$this->bw_config->exchange_rates[$currency['symbol']];
+					$btc_cost = $res['cost']/$this->bw_config->exchange_rates[strtolower($currency['code'])];
 				} else {
 					$currency = $this->bw_config->currencies[0];
 					$btc_cost = $res['cost'];
@@ -144,7 +145,7 @@ class Shipping_costs_model extends CI_Model {
 	 * This function calculates the shipping cost for an array of items.
 	 * It requires the users location.
 	 * 
-	 * @param	array	$items
+	 * @param	array	$item_list
 	 * @param	int	$location
 	 * @return	float
 	 */
@@ -194,7 +195,7 @@ class Shipping_costs_model extends CI_Model {
 	 * item. This function will delete any costs currenty held, and 
 	 * replace them with the current information.
 	 * 
-	 * @param	int	$item_id
+	 * @param	int		$cost_id
 	 * @param	array	$costs_array
 	 * @return	boolean
 	 */ 
@@ -203,11 +204,28 @@ class Shipping_costs_model extends CI_Model {
 		return ($this->db->update('shipping_costs', $cost_array) == TRUE) ? TRUE : FALSE;
 	}
 		
+	/**
+	 * Insert
+	 * 
+	 * Inserts a new shipping cost into the table.
+	 * 
+	 * @param	array	$array
+	 * @return	boolean
+	 */
 	public function insert($array){
 		return ($this->db->insert('shipping_costs', $array) == TRUE) ? TRUE : FALSE;
 	}
 	
-	public function delete($id){
+	/**
+	 * Delete
+	 * 
+	 * Deletes shipping cost $id.
+	 * 
+	 * @param		int	$id
+	 * @return		boolean
+	 */
+	public function delete($id) 
+	{
 		$this->db->where('id', $id);
 		return ($this->db->delete('shipping_costs') == TRUE ) ? TRUE : FALSE;
 	}

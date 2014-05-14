@@ -19,8 +19,8 @@
 						<div class='row-fluid'>
 							<div class='span4'>Order Amount</div>
 							<div class='span8'>							
-							<?php if($local_currency['id'] !== '0') {
-										echo "~{$local_currency['symbol']}".number_format($order['total_paid']*$local_currency['rate'], 2)." / ";
+							<?php if($current_user['currency']['id'] !== '0') {
+										echo "~{$current_user['currency']['symbol']}".number_format($order['total_paid']*$current_user['currency']['rate'], 2)." / ";
 									}
 									echo $order['currency']['symbol']." ".number_format($order['total_paid'], 8); ?>
 							</div>

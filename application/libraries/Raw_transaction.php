@@ -333,7 +333,6 @@ class Raw_transaction {
 	 * will attempt to create the address based on the transaction type
 	 * and $address_version byte.
 	 * 
-	 * 
 	 * @param	string	$data
 	 * @param	string	$address_version
 	 * @return	array/FALSE
@@ -409,7 +408,7 @@ class Raw_transaction {
 	 * This function accepts $tx - a reference to the raw transaction being
 	 * decoded, and $output_count. Also accepts $address_version for when
 	 * dealing with networks besides bitcoin.
-	 * Returns FALSE if 
+
 	 * @param	string	$tx
 	 * @param	int		$output_count
 	 * @param	string	$address_version

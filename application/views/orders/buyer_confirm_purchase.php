@@ -16,24 +16,24 @@
 							</div>			
 							<div class="row-fluid">
 								<div class="span5 offset1">Price</div>
-								<div class="span6"><?php if($local_currency['id'] !== '0') {
-									echo $local_currency['symbol'] . number_format($order['price_l'], 2)." / "; 
+								<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+									echo $current_user['currency']['symbol'] . number_format($order['price_l'], 2)." / "; 
 								}
 								echo $order['currency']['symbol']." ".number_format($order['price'], 8); ?></div>
 							</div>
 							
 							<div class="row-fluid">
 								<div class="span5 offset1">Shipping Cost</div>
-								<div class="span6"><?php if($local_currency['id'] !== '0') {
-										echo $local_currency['symbol'].number_format($fees['shipping_cost']*$local_currency['rate'], 2)." / ";
+								<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+										echo $current_user['currency']['symbol'].number_format($fees['shipping_cost']*$current_user['currency']['rate'], 2)." / ";
 									}
 								echo $order['currency']['symbol']." ".number_format($fees['shipping_cost'],8); ?></div>
 							</div>							
 							
 							<div class="row-fluid">
 								<div class="span5 offset1">Fee</div>
-								<div class="span6"><?php if($local_currency['id'] !== '0') {
-									echo $local_currency['symbol'].number_format($fees['fee']*$local_currency['rate'], 2). " / ";
+								<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+									echo $current_user['currency']['symbol'].number_format($fees['fee']*$current_user['currency']['rate'], 2). " / ";
 								}
 								echo $order['currency']['symbol']." ".number_format($fees['fee'], 8); ?></div>
 							</div>
@@ -41,12 +41,13 @@
 							<div class="row-fluid">
 								<div class="span5 offset1">Total</div>
 								<div class="span6">
-									<?php if($local_currency['id'] !== '0') {
-										echo "~{$local_currency['symbol']}".number_format(($order['price']+$fees['total'])*$local_currency['rate'], 2)." / ";
+									<?php if($current_user['currency']['id'] !== '0') {
+										echo "~{$current_user['currency']['symbol']}".number_format(($order['price']+$fees['total'])*$current_user['currency']['rate'], 2)." / ";
 									}
 									echo $order['currency']['symbol']." ".number_format($order['price']+$fees['total'], 8); ?>
 								</div>
 							</div>											
+							
 						</div>
 												
 						<div class='span6'>
@@ -56,6 +57,13 @@
 							<?php } ?></ul>	
 						</div>
 					</div>
+					<div class='row-fluid'>
+						<?php if($order_type == 'upfront') { ?>
+						<div class='row-fluid span10'>
+							<br /><?php echo anchor('user/'.$order['vendor']['user_hash'],$order['vendor']['user_name']); ?> has requested this order be <strong>paid up-front</strong>, due to one of it's items. If you proceed you will be asked to sign release of the funds immediately after paying to the address.
+						</div>
+						<?php } ?>
+					</div>
 					<hr />
 					
 					<div class="row-fluid">
@@ -64,7 +72,7 @@
 						</div>
 						<div class="span2">Public Key</div>
 						<div class="span8"><input type='text' name='bitcoin_public_key' class='span10' value='' /></div>
-						<span class="help-inline"><?php echo form_error('public_key'); ?></span>
+						<span class="help-inline"><?php echo form_error('bitcoin_public_key'); ?></span>
 					</div>
 					<br />
 					

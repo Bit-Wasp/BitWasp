@@ -14,6 +14,9 @@
  */
 class Autorun {
 
+	/**
+	 * CI
+	 */
 	public $CI; 
 	
 	/**
@@ -52,6 +55,8 @@ class Autorun {
 	 * All jobs are stored to an array, where they can be accessed through
 	 * the rest of the application (if any changes are being updated, we
 	 * should re-run the job).
+	 * 
+	 * @param		boolean		$run_jobs
 	 */	
 	public function __construct($run_jobs = TRUE) { 
 		$this->CI = &get_instance();

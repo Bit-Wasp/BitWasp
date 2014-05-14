@@ -32,9 +32,9 @@ class Accounts_model extends CI_Model {
 	 * add that to the returned array if successful. If there's no record, return false.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	array optional
-	 * @return	array / FALSE
+	 * @param	string	$identifier
+	 * @param	array(optional) $opt
+	 * @return	array/FALSE
 	 */	
 	public function get($identifier, $opt = array()) {
 		if($identifier == NULL || !is_array($identifier)) 
@@ -81,8 +81,8 @@ class Accounts_model extends CI_Model {
 	 * returned as an array. If not, return FALSE;
 	 * 
 	 * @access	public
-	 * @param	int
-	 * @return	array / FALSE
+	 * @param	int	$user_id
+	 * @return	array/FALSE
 	 */
 	public function get_pgp_key($user_id) {
 		$this->db->select('fingerprint, public_key');
@@ -106,7 +106,7 @@ class Accounts_model extends CI_Model {
 	 * 					'fingerprint' => '...',
 	 * 					'public_key' => '...');
 	 * @access	public
-	 * @param	array
+	 * @param	array	$config
 	 * @return	bool
 	 */	
 	public function add_pgp_key($config) {
@@ -119,7 +119,7 @@ class Accounts_model extends CI_Model {
 	 * Delete a PGP public key for $user_id.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int	$user_id
 	 * @return	bool
 	 */		
 	public function delete_pgp_key($user_id) {
@@ -144,7 +144,8 @@ class Accounts_model extends CI_Model {
 	 * FALSE on failure.
 	 *
 	 * @access	public
-	 * @param	int
+	 * @param	int		$user_id
+	 * @param	array	$data
 	 * @return	bool
 	 */		
 	public function replace_pgp_key($user_id, $data) {
@@ -223,7 +224,8 @@ class Accounts_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	int
-	 * @param	int
+	 * @param	int	$user_id
+	 * @param	int	$value
 	 * @return	bool
 	 */	
 	public function toggle_ban($user_id, $value) {
@@ -238,7 +240,7 @@ class Accounts_model extends CI_Model {
 	 * the changes to the table.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	array	$changes
 	 * @return	bool
 	 */		
 	public function update($changes) {
@@ -292,11 +294,14 @@ class Accounts_model extends CI_Model {
 	 * restricted to the currently logged in user.
 	 * 
 	 * @param	int	$public_key_id
+	 * @param	int	$user_id
 	 * @return	boolean
 	 */
-	public function delete_bitcoin_public_key($public_key_id) {
+	public function delete_bitcoin_public_key($public_key_id, $user_id = FALSE) {
 		$this->db->where('id', "$public_key_id");
-		$this->db->where('user_id', "{$this->current_user->user_id}");
+		
+		($user_id == FALSE) ? $this->db->where('user_id', "{$this->current_user->user_id}") : $this->db->where('user_id', $user_id);
+		
 		return ($this->db->delete('bitcoin_public_keys') == TRUE) ? TRUE : FALSE;
 	}
 	

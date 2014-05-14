@@ -1,5 +1,7 @@
         <div class="span9 mainContent" id="admin_maintenance">
 		  <h2>Maintenance Settings</h2>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 		  
 		  <div class='row-fluid'>
 			<div class='span8'>You can use this panel to put the website into maintenance mode. Guests will not be able to view the site, and non-administrative users will be logged out. User wallet related features will be disabled. Once reenabled, your previous settings will be restored.</div>

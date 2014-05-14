@@ -1,5 +1,7 @@
         <div class="span9 mainContent" id="admin-tos">
 		  <h2>Terms Of Service</h2>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 		  
 		  <div class='row-fluid'>
 			<div class='span8'>Here you can set whether a terms of service must be agreed to before

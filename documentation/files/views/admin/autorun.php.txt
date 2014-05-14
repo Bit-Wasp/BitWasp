@@ -1,6 +1,8 @@
         <div class="span9 mainContent" id="admin-panel">
 		  
-		  <?php echo $nav; ?>
+			<?php echo $nav; ?>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 			
 <?php if($jobs == FALSE) { ?>
 There are no autorun jobs. These are stored in ./application/libraries/Autorun. Either

@@ -25,19 +25,9 @@ class Messages extends CI_Controller {
 	 */
 	public function __construct() {
 		parent::__construct();
-	
 		$this->load->model('messages_model');
 		$this->load->library('bw_messages');
 		$this->load->library('openssl');
-	
-		// Automatically check if a PIN is required.
-		if($this->bw_config->encrypt_private_messages == TRUE) {
-			// If not set, redirect so the user can enter their pin.
-			if($this->current_user->message_password == NULL && uri_string() !== 'message/pin'){
-				$this->session->set_userdata('before_msg_pin',uri_string());
-				redirect('message/pin');
-			} 
-		}			
 	}
 	 
 	/**
@@ -48,8 +38,7 @@ class Messages extends CI_Controller {
 	 * @see		Models/Messages_Model
 	 * @see		Libraries/Bw_Messages
 	 * 
-	 * @return	void
-	 * @param
+	 * @param		string	$hash
 	 */
 	public function read($hash) {
 		$data['page'] = 'messages/read';
@@ -82,11 +71,6 @@ class Messages extends CI_Controller {
 	 * Load a Users Inbox.
 	 * URI: /listings/edit/$hash
 	 * 
-	 * @access	public
-	 * @see		Models/Messages_Model
-	 * @see		Libraries/Bw_Messages
-	 * 
-	 * @return	void
 	 */
 	public function inbox() {
 		// Load inbox and pass through preparation function.
@@ -105,7 +89,7 @@ class Messages extends CI_Controller {
 	 * @see		Libraries/Bw_Messages
 	 * @see		Models/Messages_Model
 	 * 
-	 * @param	string
+	 * @param	string	$hash
 	 * @return	void
 	 */
 	public function delete($hash) {	
@@ -177,7 +161,7 @@ class Messages extends CI_Controller {
 	 * @see		Libraries/Bw_Messages
 	 * @see		Models/Messages_Model
 	 * 
-	 * @param	string
+	 * @param	string	$identifier
 	 * @return	void
 	 */
 	public function send($identifier = NULL) {
@@ -287,7 +271,6 @@ class Messages extends CI_Controller {
 			$solution = $this->general->generate_salt();
 			$challenge = $this->openssl->encrypt($solution, $user['public_key']);
 			$answer = $this->openssl->decrypt($challenge, $user['private_key'], $message_password);
-			
 			if($answer == $solution) {
 				$this->current_user->set_message_password($message_password);
 				unset($message_password);
@@ -303,63 +286,8 @@ class Messages extends CI_Controller {
 		
 		$this->load->library('Layout',$data);
 	}
-			   
-	// Callback functions for form validation.
 	
-	/**
-	 * Check delete on read. 
-	 * 
-	 * Check that the delete on read function is set appropriately.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */	
-	public function check_delete_on_read($param) {
-		return ($this->general->matches_any($param, array(NULL,'1')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * User Exists
-	 * 
-	 * This function checks if the supplied username exists. Used to 
-	 * verify a recipient exists.
-	 *
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_user_exists($param) {
-		$this->load->model('users_model');
-		return ($this->users_model->get(array('user_name' => $param)) !== FALSE) ? TRUE : FALSE;
-	}
-		
-	/**
-	 * Check PGP is required.
-	 * 
-	 * This function checks that if the recipient has requested all 
-	 * messages are encrypted on the clientside, the sent message has 
-	 * in fact been encrypted with PGP.
-	 * 
-	 * @param	string	$param (the message body)
-	 * @return	boolean
-	 */
-	public function check_pgp_is_required($param) {
-		$this->load->model('accounts_model');
-		$encrypted = ($this->check_pgp_encrypted($param) == TRUE) ? TRUE : FALSE ;
-		$block_non_pgp = $this->accounts_model->user_requires_pgp_messages($this->input->post('user_name'));
-		return ($block_non_pgp == FALSE || $block_non_pgp == TRUE && $encrypted == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check PGP Encrypted
-	 * 
-	 * See Bw_messages/check_pgp_encrypted();
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_pgp_encrypted($param) {
-		return ($this->bw_messages->check_pgp_encrypted($param) == TRUE) ? TRUE : FALSE;
-	}
 };
 
-/* End of file Messages.php */
+/* End of file: Messages.php */
+/* Location: application/controllers/Messages.php */

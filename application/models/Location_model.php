@@ -15,7 +15,11 @@
  */
 class Location_model extends CI_Model {
 
-	public function __construct() {
+	/**
+	 * Construct
+	 */
+	public function __construct()
+	{
 		parent::__construct();
 	}
 
@@ -25,20 +29,22 @@ class Location_model extends CI_Model {
 	 * Loads a sequence of locations, going from $child_location_id to it's
 	 * parent location, and so on, until it hits the root category.
 	 * 
+	 * @param	int	$child_location_id
 	 * @return boolean
 	 */	 
 	public function get_location_heirarchy($child_location_id) {
 		$location_heirarchy[] = $this->bw_config->locations[$child_location_id];
+		
 		do {
 			$previous_position = count($location_heirarchy)-1;
 			
 			// Break if you reach in invalid point in the chain.
-			if(!isset($this->bw_config->locations[$location_heirarchy[$previous_position]['parent_id']]))
+			if( ! isset($this->bw_config->locations[$location_heirarchy[$previous_position]['parent_id']]))
 				break;
 				
 			$current = $this->bw_config->locations[$location_heirarchy[$previous_position]['parent_id']];
-			
 			$location_heirarchy[] = $current;
+			
 		} while($location_heirarchy[($previous_position)]['parent_id'] !== '0' && $current['parent_id'] !== '0');
 	
 		return $location_heirarchy;
@@ -51,19 +57,25 @@ class Location_model extends CI_Model {
 	 * specified by it's ID. Returns FALSE on failure, otherwise the 
 	 * database record for the location.
 	 * 
-	 * @param	string/int	id
+	 * @param	string/int	$id
 	 * @return	string/FALSE
 	 */
 	public function get_location_info($id) {
-		if($this->bw_config->location_list_source == 'Default') {
+		if ($this->bw_config->location_list_source == 'Default')
+		{
 			$this->db->where('id', $id);
 			$query = $this->db->get('locations_default_list');
-		} else if($this->bw_config->location_list_source == 'Custom') {
+		}
+		else if($this->bw_config->location_list_source == 'Custom')
+		{
 			$this->db->where('id', $id);
 			$query = $this->db->get('locations_custom_list');
-		} else {
+		}
+		else
+		{
 			return FALSE;
 		}
+		
 		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 
@@ -74,9 +86,8 @@ class Location_model extends CI_Model {
 	 * locations) 
 	 * 
 	 * @param	array	$array
-	 * @param	int	$int
+	 * @param	int		$id
 	 * @return  array/FALSE
-	 * 
 	 */
 	public function get_child_locations($array, $id) {
 		$results = array();
@@ -103,14 +114,19 @@ class Location_model extends CI_Model {
 	 * @param	id	$user_location_id
 	 * @return	boolean
 	 */
-	public function validate_user_child_location($required_parent_id, $user_location_id) {
+	public function validate_user_child_location($required_parent_id, $user_location_id) 
+	{
 		$required_parent_id = (int)$required_parent_id;
 		$user_location_id = (int)$user_location_id;
+		
 		if(($required_parent_id == $user_location_id) == TRUE)
 			return TRUE;
+			
 		$location_heirarchy = $this->get_location_heirarchy($user_location_id);
 		$required_location_found = FALSE;
-		foreach($location_heirarchy as $location) {
+		
+		foreach ($location_heirarchy as $location)
+		{
 		
 			if($location['id'] == $required_parent_id)
 				$required_location_found = TRUE;
@@ -121,28 +137,42 @@ class Location_model extends CI_Model {
 		return $required_location_found;
 	}
 	
+	/**
+	 * To Multi-Dimensional Array
+	 * 
+	 * This function is called after using get_list(), or on the data
+	 * stored in bw_config->locations.
+	 * 
+	 * @param	array	$list
+	 * @return	array
+	 */
 	public function to_multi_dimensional_array($list) {
 		
 		// Add all categories to $menu[] array.
-		foreach($list as $result) {				
-			$menu[$result['id']] = array(	'id' => $result['id'],
-										'location' => $result['location'],
-										'hash' => $result['hash'],
-										'parent_id' => $result['parent_id']
-									);
+		foreach($list as $result)
+		{	
+			$menu[$result['id']] = array(
+				'id' => $result['id'],
+				'location' => $result['location'],
+				'hash' => $result['hash'],
+				'parent_id' => $result['parent_id']
+			);
 		}
 		
 		// Store all child categories as an array $menu[parentID]['children']
-		foreach($menu as $ID => &$menuItem) {
-			if($menuItem['parent_id'] !== '0')	
+		foreach ($menu as $ID => &$menuItem)
+		{
+			if ($menuItem['parent_id'] !== '0')	
 				$menu[$menuItem['parent_id']]['children'][$ID] = &$menuItem;
 		}
 
 		// Remove child categories from the first level of the $menu[] array.
-		foreach(array_keys($menu) as $ID) {
-			if($menu[$ID]['parent_id'] != "0")
+		foreach (array_keys($menu) as $ID)
+		{
+		 	if ($menu[$ID]['parent_id'] != "0")
 				unset($menu[$ID]);
 		}
+		
 		// Return constructed menu.
 		return $menu;
 		
@@ -155,26 +185,33 @@ class Location_model extends CI_Model {
 	 * supplied list specifier: Default, or Custom. 
 	 * 
 	 * @param	string	$list
+	 * @param	boolean	$menu
 	 * @return	array/FALSE
 	 */
-	public function get_list($list, $menu = TRUE) {
-		if($list == 'Default') {
+	public function get_list($list, $menu = TRUE)
+	{
+		if ($list == 'Default')
+		{
 			//Load all categories and sort by parent category
 			$this->db->order_by("parent_id asc, location asc");
 			$query = $this->db->get('locations_default_list');
 
 			if($query->num_rows() == 0)
 				return array();
-		} else if($list == 'Custom') {
+		}
+		else if($list == 'Custom')
+		{
 			//Load all categories and sort by parent category
 			$this->db->order_by("parent_id asc, location asc");
 			$query = $this->db->get('locations_custom_list');
 			
-			if($query->num_rows() == 0) 
+			if ($query->num_rows() == 0) 
 				return array();
 		}
+		
 		$results = array();
-		foreach($query->result_array() as $res) {
+		foreach ($query->result_array() as $res)
+		{
 			$results[$res['id']] = $res;
 		}
 
@@ -235,9 +272,10 @@ class Location_model extends CI_Model {
 	 * is not altered.
 	 * 
 	 * @param	array	$array
+	 * @param	FALSE/int	$selected
 	 * @return	string
 	 */
-	public function generate_select_list_recurse($array, $selected) {
+	public function generate_select_list_recurse($array, $selected= FALSE) {
 		
 		if(isset($array['children']) && is_array($array['children'])) {
 			$select_txt = '';
@@ -266,7 +304,7 @@ class Location_model extends CI_Model {
 	 * Returns a boolean TRUE on successful insert, else returns FALSE.
 	 *
 	 * @access	public
-	 * @param	array	$category
+	 * @param	array	$location
 	 * @return	bool
 	 */			
 	public function add_custom_location($location) {
@@ -292,7 +330,10 @@ class Location_model extends CI_Model {
 	 * Load the name of the location specified by $id. Returns a string
 	 * if successful or FALSE on failure.
 	 *
+	 * need to review this disallow worldwide option...
+	 * 
 	 * @param	int	$id
+	 * @param	boolean	$disallow_worldwide
 	 * @return	string/FALSE
 	 */
 	public function location_by_id($id, $disallow_worldwide = FALSE) {
@@ -326,7 +367,13 @@ class Location_model extends CI_Model {
 	 * Menu Human Readable
 	 * 
 	 * This is a recursive function which displays a heirarchy of locations
-	 * in the custom location list.
+	 * in the custom location list. Function returns a HTML string containig
+	 * a nested structure.
+	 * 
+	 * @param	array	$locations
+	 * @param	int		$level
+	 * @param	array	$params
+	 * @return	string
 	 */
 	public function menu_human_readable($locations, $level, $params) {
 		$content = ''; 

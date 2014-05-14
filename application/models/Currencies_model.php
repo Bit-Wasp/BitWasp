@@ -11,7 +11,6 @@
  * @author		BitWasp
  * 
  */
-
 class Currencies_model extends CI_Model {
 
 	/**
@@ -38,91 +37,57 @@ class Currencies_model extends CI_Model {
 	 * @return	array/FALSE
 	 */				
 	public function get($id = NULL) {
-		
-		if($id == NULL) {
+		if($id == NULL)
+		{
 			$this->db->select('id, code, name, symbol, crypto_magic_byte');	// Duplicated to avoid a stupid error..
 			$query = $this->db->get('currencies');
-		} else {
+		}
+		else
+		{
 			$this->db->select('id, code, name, symbol, crypto_magic_byte');
 			$query = $this->db->get_where('currencies', array('id' => "$id"));
 		}
 		
 		$results = array();
-		if($query->num_rows() > 0) {
-			if($id == NULL)
+		if ($query->num_rows() > 0)
+		{
+			if ($id == NULL)
 				return $query->result_array();
-			
+				
 			$row = $query->row_array();
-			$row['rate'] = $this->get_exchange_rate(strtolower($row['code']));
+			$row['rate'] = $this->bw_config->exchange_rates[(strtolower($row['code']))];
 			return $row;
 		}
 		
 		return FALSE;
 	}
 
+	/**
+	 * Get Rates
+	 * 
+	 * Loads the exchange rates for the currencies in memory, but accepts
+	 * an $override array containing currency codes 'USD'/'EUR', etc. 
+	 * 
+	 * @param		array	$override
+	 * @return		array
+	 */
 	public function get_rates($override = NULL) {
 		$currencies = ($override == NULL) ? $this->bw_config->currencies : $override ;
 		
 		$this->db->select('time');
-		foreach($currencies as $currency) {
+		foreach ($currencies as $currency) 
+		{
 			$this->db->select(strtolower($currency['code']));
 		}
-		$this->db->order_by('id desc');
-		$this->db->limit('1');
-		$query = $this->db->get('exchange_rates');
-		if($query->num_rows() > 0) {
+		
+		$query = $this->db->order_by('id desc')->limit('1')->get('exchange_rates');
+		
+		if ($query->num_rows() > 0)
+		{
 			$row = $query->row_array();
 			$row['time_f'] = $this->general->format_time($row['time']);
 			return $row;
 		}
-	}
-	
-	/**
-	 * Get all Exchange Rates
-	 * 
-	 * Load the latest set of exchange rates from the exchange_rates table.
-	 * Formats the timestamp into a nicer looking format. Returns an array
-	 * on a successful run, otherwise, returns FALSE.
-	 *
-	 * @access	public
-	 * @return	boolean/array
-	 */				
-	public function get_exchange_rates() {
-		$this->db->order_by('id desc');
-		$this->db->limit('1');
-		
-		$query = $this->db->get('exchange_rates');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			
-			$result = array('bpi' => array('usd' => number_format($row['usd'],4,".",","),
-											'eur' => number_format($row['eur'],4,".",","),
-											'gbp' => number_format($row['gbp'],4,".",",") ),
-							'time' => $row['time'],
-							'time_f' => $this->general->format_time($row['time']));
-			
-			return $result;
-		}
-		return FALSE;
-	}
-
-	public function exchange_rates() {
-		$this->db->order_by('id desc');
-		$this->db->limit('1');
-		$query = $this->db->get('exchange_rates');
-		if($query->num_rows() > 0) {
-			$row = $query->row_array();
-			
-			$result = array('bpi' => array('usd' => number_format($row['usd'],4,".",","),
-											'eur' => number_format($row['eur'],4,".",","),
-											'gbp' => number_format($row['gbp'],4,".",",") ),
-							'time' => $row['time'],
-							'time_f' => $this->general->format_time($row['time']));
-			
-			return $result;
-		}
-		return FALSE;
-		
 	}
 	
 	/**
@@ -154,7 +119,7 @@ class Currencies_model extends CI_Model {
 	 * if the insert was successful, FALSE if it failed.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	array	$update
 	 * @return	bool
 	 */					
 	public function update_exchange_rates($update) {

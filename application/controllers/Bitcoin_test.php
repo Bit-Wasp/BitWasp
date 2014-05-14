@@ -15,6 +15,6 @@ class Bitcoin_Test extends CI_Controller {
 		$this->load->library('Raw_transaction');
 		
 	}
-	
+
 };
 

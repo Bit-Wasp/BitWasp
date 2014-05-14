@@ -67,6 +67,7 @@
 				<div class="span3">Global Proxy</div>
 				<div class="span7">
 				  <select name="global_proxy_type" class="span3" autocomplete="off">
+					<option value=''></option>
 					<option value='HTTP' <?php echo ($config['global_proxy_type'] == 'HTTP') ? 'selected="selected"' : NULL ; ?>>HTTP</option>
 					<option value='SOCKS5' <?php echo ($config['global_proxy_type'] == 'SOCKS5') ? 'selected="selected"' : NULL ; ?>>SOCKS5</option>
 				  </select>

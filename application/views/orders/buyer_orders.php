@@ -38,7 +38,7 @@
 			}
 	} ?></div>
 						<div class="span2"><?php echo $coin['symbol']." ".number_format($order['order_price'], 8);
-						if($local_currency['id'] !== '0') echo '<br />'.$local_currency['symbol'].$order['price_l']; ?></div>
+						if($current_user['currency']['id'] !== '0') echo '<br />'.$current_user['currency']['symbol'].$order['price_l']; ?></div>
 						<div class="span2"><?php echo $order['progress_message']; 
 						if(isset($review_auth[$order['id']]))
 							echo '<br />'.anchor("reviews/form/{$review_auth[$order['id']]}/{$order['id']}",'Please review this order.');  ?></div>

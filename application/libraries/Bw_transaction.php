@@ -1,5 +1,15 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Bw Transaction 
+ * 
+ * This library is to create raw transactions against bitcoind.
+ * 
+ * @package		BitWasp
+ * @subpackage	Libraries
+ * @category	Bw_transaction
+ * @author		BitWasp
+ */
 class Bw_Transaction {
 
 	/**
@@ -66,8 +76,8 @@ class Bw_Transaction {
 	 * objects $input_count variable.
 	 * 
 	 * @param	string	$transaction_id
-	 * @param	int	$vout
-	 * @param	array	$extras(opt)
+	 * @param	int		$vout
+	 * @param	array(opt)	$extras
 	 * @return	void
 	 */
 	public function add_input($transaction_id, $vout, $extras = array()) {

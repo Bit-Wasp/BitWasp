@@ -30,7 +30,7 @@ class Autorun_model extends CI_Model {
 	 * job is found in the table, or created by the admin.
 	 *
 	 * @access	public
-	 * @param	array
+	 * @param	array	$config
 	 * @return	bool
 	 */			
 	public function add($config) {
@@ -83,7 +83,7 @@ class Autorun_model extends CI_Model {
 	 * Update the last_update entry for the task.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$index
 	 * @return	bool
 	 */					
 	public function set_updated($index) {
@@ -98,8 +98,8 @@ class Autorun_model extends CI_Model {
 	 * Set the interval for a particular job.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @param	int
+	 * @param	string	$index
+	 * @param	int		$interval
 	 * @return	bool
 	 */				
 	public function set_interval($index, $interval) {

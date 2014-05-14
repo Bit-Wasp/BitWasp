@@ -265,12 +265,15 @@ class Bw_config {
 		
 		$this->CI->load->model('config_model');
 		$this->CI->load->model('currencies_model');
+		$this->CI->load->model('categories_model');
+		$this->CI->load->model('location_model');
 		$this->CI->config->load('bitcoin_index', TRUE);
 		
 		$this->reload();
 	}
 
 	public function reload() {
+		$this->CI->benchmark->mark('p1');
 		// Pull from the DB. See phpmyadmin. 
 		$config = $this->CI->config_model->get();
 		if($config == FALSE)
@@ -281,22 +284,18 @@ class Bw_config {
 			$this->$key = $value;
 		}
 
-		// Convert numeric boolean representations to boolean.
-		$this->registration_allowed_num = $this->registration_allowed;
-		$this->registration_allowed = ($this->registration_allowed == '1') ? TRUE : FALSE;
-		$this->vendor_registration_allowed_num = $this->vendor_registration_allowed;
-		$this->vendor_registration_allowed = ($this->vendor_registration_allowed == '1') ? TRUE : FALSE;
-		$this->encrypt_private_messages_num = $this->encrypt_private_messages;
-		$this->encrypt_private_messages = ($this->encrypt_private_messages == '1') ? TRUE : FALSE;
-		$this->force_vendor_pgp_num = $this->force_vendor_pgp;
-		$this->force_vendor_pgp = ($this->force_vendor_pgp == '1') ? TRUE : FALSE;
-		$this->maintenance_mode_num = $this->maintenance_mode;
-		$this->maintenance_mode = ($this->maintenance_mode == '1') ? TRUE : FALSE;
-		$this->terms_of_service_toggle_num = $this->terms_of_service_toggle;
-		$this->terms_of_service_toggle = ($this->terms_of_service_toggle == '1') ? TRUE : FALSE;
-		
+		$this->vendor_registration_allowed = (bool)$this->vendor_registration_allowed;
+		$this->encrypt_private_messages = (bool)$this->encrypt_private_messages;
+		$this->force_vendor_pgp = (bool)$this->force_vendor_pgp;
+		$this->maintenance_mode = (bool)$this->maintenance_mode;
+		$this->terms_of_service_toggle = (bool)$this->terms_of_service_toggle;
+
 		// Load the currencies and exchange rates.
-		$this->currencies = $this->CI->currencies_model->get_exchange_rates();
+		$this->currencies = $this->CI->currencies_model->get();
+		$this->exchange_rates = $this->CI->currencies_model->get_rates($this->currencies);
+		$this->locations = $this->CI->location_model->get_list($this->location_list_source, FALSE);
+		$this->categories = $this->CI->categories_model->list_all();
+				
 		// Load the configuration of the bitcoin_index options.
 		$this->price_index_config = $this->CI->config->item('bitcoin_index');	
 		
@@ -342,7 +341,9 @@ class Bw_config {
 							'entry_payment_vendor' => $this->entry_payment_vendor,
 							'entry_payment_buyer' => $this->entry_payment_buyer);
 		} else if($panel == 'items') {
-			$result = array();
+			$result = array('trusted_user_review_count' => $this->trusted_user_review_count,
+							'trusted_user_order_count' => $this->trusted_user_order_count,
+							'trusted_user_rating' => $this->trusted_user_rating);
 		} else if($panel == 'fees') {
 			$result = array('default_rate' => $this->default_rate,
 							'minimum_fee' => $this->minimum_fee,

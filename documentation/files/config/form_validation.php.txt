@@ -3,11 +3,6 @@
 /**
  * Form Validation Rules
  * 
- * This file contains the form validation rules to be used throughout
- * the application. All rules are centralized here, never hard coded to
- * a form. For custom callbacks (rules prefixed with callback_) which
- * call functions in the controller performing the validation,
- * the corresponding error messages are found in ./application/language/english/form_validation_lang.php.
  */
 
 $config = array('register_form'=>array(
@@ -25,7 +20,7 @@ $config = array('register_form'=>array(
 										),
 										array(	'field' => 'user_type',
 												'label' => 'role',
-												'rules' => 'numeric|callback_check_role'
+												'rules' => 'numeric|check_valid_registration_role'
 										),
 										array(	'field' => 'message_pin0',
 												'label' => 'message PIN',
@@ -37,15 +32,15 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'location',
 											  'label' => 'location',
-											  'rules' => 'callback_check_location'
+											  'rules' => 'check_valid_location'
 										),
 										array('field' => 'local_currency',
 											  'label' => 'Local currency',
-											  'rules' => 'callback_check_valid_currency'
+											  'rules' => 'check_valid_currency'
 										),
-										array('field' => 'captcha',
-                                              'label' => 'captcha',
-                                              'rules' => 'trim|required|callback_check_captcha'
+										array(	'field' => 'captcha',
+												'label' => 'captcha',
+												'rules' => 'trim|required|check_captcha'
                                         )
 							),
 				'register_no_pin_form'=>array(
@@ -63,20 +58,20 @@ $config = array('register_form'=>array(
 										),
 										array(	'field' => 'user_type',
 												'label' => 'role',
-												'rules' => 'numeric|callback_check_role'
+												'rules' => 'numeric|check_valid_registration_role'
 										),
 										array(	'field' => 'location',
 												'label' => 'location',
-												'rules' => 'callback_check_location'
+												'rules' => 'check_valid_location'
 										),
 										array(	'field' => 'local_currency',
 												'label' => 'Local currency',
-												'rules' => 'callback_check_valid_currency'
+												'rules' => 'check_valid_currency'
 										),
-										array( 'field' => 'captcha',
-                                               'label' => 'captcha',
-                                               'rules' => 'trim|required|callback_check_captcha'
-                                        )
+										array(	'field' => 'captcha',
+												'label' => 'captcha',
+												'rules' => 'trim|required|check_captcha'
+										)
 							),
 				'login_form'	=>	array(
 										array(	'field' => 'user_name',
@@ -86,11 +81,7 @@ $config = array('register_form'=>array(
 										array(	'field' => 'password',
 												'label' => 'password',
 												'rules' => 'required'
-										),
-										array(	'field' => 'captcha',
-												'label' => 'captcha text',
-												'rules' => 'required|callback_check_captcha'
-										 )
+										)
 							),
 				'message_pin_form' => array(
 										array(	'field' => 'pin',
@@ -101,7 +92,7 @@ $config = array('register_form'=>array(
 				'send_message' =>	array(
 										array(	'field' => 'recipient',
 												'label' => 'recipient.',
-												'rules' => 'trim|required|callback_check_user_exists'		// check user exists.
+												'rules' => 'trim|required|htmlspecialchars|check_user_exists'		// check user exists.
 										),
 										array(	'field' => 'subject',
 												'label' => 'subject',
@@ -109,13 +100,12 @@ $config = array('register_form'=>array(
 										),
 										array(	'field' => 'message',
 												'label' => 'message',
-												'rules' => 'trim|required|htmlspecialchars|xss_clean|nl2br|callback_check_pgp_is_required'
+												'rules' => 'trim|required|htmlspecialchars|xss_clean|nl2br|check_pgp_required_for_user[recipient]'
 										),
 										array(	'field' => 'delete_on_read',
 												'label' => 'Delete After Reading?',
-												'rules' => 'callback_check_delete_on_read'			// callback for NULL or 1.
+												'rules' => 'check_delete_on_read'			// NULL or 1.
 										)
-									
 							),
 				'add_pgp' =>		array(
 										array(	'field' => 'public_key',
@@ -126,53 +116,43 @@ $config = array('register_form'=>array(
 				'delete_pgp' => 	array(
 										array(	'field' => 'delete',
 												'label' => '',
-												'rules' => 'callback_check_bool'		// callback for 0 or 1
+												'rules' => 'check_bool_areyousure'		// callback for 0 or 1
 										)
 							),
 				'account_edit' =>	array(
 										array(	'field' => 'location',
 												'label' => 'location',
-												'rules' => 'required|callback_check_location'	// Error will detail incorrect location.
+												'rules' => 'required|check_valid_location'	// Error will detail incorrect location.
 										),
 										array(	'field' => 'local_currency',
 												'label' => 'Local currency',
-												'rules' => 'callback_check_valid_currency'
+												'rules' => 'check_valid_currency'
 										),
 										array(	'field' => 'display_login_time',
-												'label' => '',
-												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
+												'label' => 'displaying login time',
+												'rules' => 'check_bool_enabled'		// Error will show enabled/disabled
 										),
 										array(	'field' => 'force_pgp_messages',
 												'label' => 'forced PGP messages',
-												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
-										),
-										array(	'field' => 'two_factor_auth',
-												'label' => 'two-factor authentication.',
-												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
+												'rules' => 'check_bool_enabled'		// Error will show enabled/disabled
 										),
 										array(	'field' => 'block_non_pgp',
 												'label' => 'blocking non PGP messages.',
-												'rules' => 'callback_check_bool'
+												'rules' => 'check_bool_enabled'
 										)
 							),
 				'account_edit_no_pgp'=>	array(
 										array(	'field' => 'location',
 												'label' => 'location',
-												'rules' => 'required|callback_check_location'	// Error will detail incorrect location.
+												'rules' => 'required|check_valid_location'	// Error will detail incorrect location.
 										),
 										array(	'field' => 'local_currency',
 												'label' => 'Local currency',
-												'rules' => 'callback_check_valid_currency'
+												'rules' => 'check_valid_currency'
 										),
 										array(	'field' => 'display_login_time',
-												'label' => '',
-												'rules' => 'callback_check_bool'		// Error will show enabled/disabled
-										)
-							),
-				'two_factor' => array(	
-										array('field' => 'answer',
-											  'label' => 'solution',
-											  'rules' => 'required'
+												'label' => 'displaying login time',
+												'rules' => 'check_bool_enabled'		// Error will show enabled/disabled
 										)
 							),
 				'add_listing' => array(
@@ -186,15 +166,15 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'category',
 											  'label' => 'Category',
-											  'rules' => 'required|callback_check_category_exists|callback_block_access_to_parent_category',
+											  'rules' => 'required|check_valid_category|check_not_parent_category',
 										),
 										array('field' => 'ship_from',
 											  'label' => 'Ship from',
-											  'rules' => 'callback_check_location'
+											  'rules' => 'check_valid_location'
 										),
 										array('field' => 'price',
-											  'label' => 'Price',
-											  'rules' => 'callback_check_is_positive',
+											  'label' => 'listing price',
+											  'rules' => 'check_bitcoin_amount',
 										)
 							),
 				'edit_listing' => array(
@@ -208,29 +188,29 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'category',
 											  'label' => 'Category',
-											  'rules' => 'required|callback_check_category_exists|callback_block_access_to_parent_category',
+											  'rules' => 'required|check_valid_category|check_not_parent_category',
 										),
 										array('field' => 'price',
-											  'label' => 'Price',
-											  'rules' => 'callback_check_is_positive',
+											  'label' => 'item price',
+											  'rules' => 'check_bitcoin_amount',
 										),
 										array('field' => 'currency',
-											  'label' => 'Currency',
-											  'rules' => 'callback_check_currency_exists',
+											  'label' => '',
+											  'rules' => 'check_valid_currency',
 										),
 										array('field' => 'ship_from',
-											  'label' => 'Ship from',
-											  'rules' => 'callback_check_location'
+											  'label' => '',
+											  'rules' => 'check_valid_location_shipfrom'
 										)
 							),
 				'add_shipping_cost' => array(
 										array('field' => 'add_location',
 											  'label' => 'Location',
-											  'rules' => 'callback_check_shipping_location'
+											  'rules' => 'check_valid_location_shipfrom'
 										),
 										array('field' => 'add_price',
-											  'label' => 'Price',
-											  'rules' => 'callback_check_is_positive'
+											  'label' => 'shipping price',
+											  'rules' => 'check_bitcoin_amount_free'
 										)
 							),
 				'authorize' => array(
@@ -240,203 +220,225 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'captcha',
 											  'label' => 'captcha',
-											  'rules' => 'callback_check_captcha'
-										) // This one's going to be annoying..
+											  'rules' => 'check_captcha'
+										) 
 							),
 				'add_image' => array(
 										array('field' => 'userfile',
 											  'label' => 'file',
-											  'rules' => ''
+											  'rules' => 'strip_image_tags'
 										)
 							),
 				'admin_edit_' => array(
 										array('field' => 'site_title',
 											  'label' => 'Site title',
-											  'rules' => 'required|htmlentities'
+											  'rules' => 'required|htmlspecialchars'
 										),
 										array('field' => 'site_description',
 											  'label' => 'Site description',
-											  'rules' => 'htmlentities'
+											  'rules' => 'htmlspecialchars'
 										),
 										array('field' => 'openssl_keysize',
 											  'label' => 'keysize',
-											  'rules' => 'numeric'
+											  'rules' => 'check_rsa_keysize'
 										),
 										array('field' => 'allow_guests',
 											  'label' => '',
-											  'rules' => 'callback_check_bool'
+											  'rules' => 'check_bool_enabled'
 										),
 										array('field' => 'global_proxy_type',
 											  'label' => '',
-											  'rules' => 'callback_check_proxy_type'
+											  'rules' => 'check_proxy_type'
 										),
 										array('field' => 'global_proxy_url',
 											  'label' => '',
-											  'rules' => 'callback_check_proxy_url'
+											  'rules' => 'check_proxy_url'
 										)
 							),
 				'admin_edit_users' => array(
 										array('field' => 'login_timeout',
 											  'label' => 'Session timeout',
-											  'rules' => 'trim|required|callback_check_session_timeout'
+											  'rules' => 'trim|required|greater_than_equal_to[5]'
 										),
 										array('field' => 'captcha_length',
-											  'label' => 'Captcha length',
-											  'rules' => 'trim|required|callback_check_captcha_length'
+											  'label' => 'captcha',
+											  'rules' => 'trim|required|greater_than[0]|less_than_equal_to[16]'
 										),
 										array('field' => 'registration_allowed',
-											  'label' => '',
-											  'rules' => 'callback_check_bool'
+											  'label' => 'registration allowed?',
+											  'rules' => 'check_bool_enabled'
 										),
 										array('field' => 'vendor_registration_allowed',
-											  'label' => '',
-											  'rules' => 'callback_check_bool'
+											  'label' => 'vendor registration allowed?',
+											  'rules' => 'check_bool_enabled'
 										),
 										array('field' => 'encrypt_private_messages',
-											  'label' => '',
-											  'rules' => 'callback_check_bool'
+											  'label' => 'encrypted private messages',
+											  'rules' => 'check_bool_enabled'
 										),
 										array('field' => 'force_vendor_pgp',
-											  'label' => '',
-											  'rules' => 'callback_check_bool'
-										),
-										array('field' => 'delete_messages_after',
-											  'label' => 'Oldest message age',
-											  'rules' => 'max_length[3]|callback_check_is_positive'
+											  'label' => 'force vendors using PGP',
+											  'rules' => 'check_bool_enabled'
 										),
 										array('field' => 'entry_payment_vendor',
 											  'label' => 'Vendor registration fee',
-											  'rules' => 'callback_check_is_postive'
+											  'rules' => 'check_bitcoin_amount_free'
 										),
 										array('field' => 'entry_payment_buyer',
 											  'label' => 'Buyer registration fee',
-											  'rules' => 'callback_check_is_positive'
+											  'rules' => 'check_bitcoin_amount_free'
 										)
 							),
 				'admin_edit_bitcoin' => array(
 										array('field' => 'price_index',
 											  'label' => 'Price Index',
-											  'rules' => 'callback_check_price_index'
+											  'rules' => 'check_price_index'
 										),
 										array('field' => 'electrum_mpk',
 											  'label' => 'master public key',
-											  'rules' => 'callback_check_master_public_key'
+											  'rules' => 'check_master_public_key'
 										),
+										array('field' => 'electrum_iteration',
+											  'label' => 'electrum address index',
+											  'rules' => 'required|is_natural_no_zero'
+										)
 							),
 				'admin_add_category' => array(
 										array('field' => 'create_name',
 											  'label' => 'category name',
-											  'rules' => 'required|htmlentities'
+											  'rules' => 'required|htmlspecialchars'
 										),
 										array('field' => 'category_parent',
 											  'label' => 'Parent category',
-											  'rules' => 'callback_check_category_exists'
+											  'rules' => 'check_is_parent_category'
 										)
 							),
 				'admin_rename_category' => array(
 										array('field' => 'rename_id',
 											  'label' => 'Category',
-											  'rules' => 'callback_check_can_delete_category'
+											  'rules' => 'check_valid_category'
 										),
 										array('field' => 'category_name',
 											  'label' => 'New name',
-											  'rules' => 'required|htmlentities'
+											  'rules' => 'required|htmlspecialchars'
 										)
 							),
 				'admin_delete_category' => array(
 										array('field' => 'delete_id',
 											  'label' => 'Category',
-											  'rules' => 'callback_check_can_delete_category'
+											  'rules' => 'check_valid_category'
 										)
 							),
 				'admin_add_custom_location' => array(
 										array('field' => 'create_location',
 											  'label' => 'Location name',
-											  'rules' => 'required|htmlentities'
+											  'rules' => 'required|htmlspecialchars'
 										),
 										array('field' => 'location',
 											  'label' => 'Parent location',
-											  'rules' => 'callback_check_custom_parent_location_exists'
+											  'rules' => 'check_custom_parent_location_exists'
 										)
 							),
 				'admin_delete_custom_location' => array(
 										array('field' => 'location_delete',
 											  'label' => 'Location',
-											  'rules' => 'callback_check_custom_location_exists'
+											  'rules' => 'check_custom_location_exists'
 										)
 							),
 				'admin_update_location_list_source' => array(
 										array('field' => 'location_source',
 											  'label' => 'List',
-											  'rules' => 'callback_check_valid_location_list_source'
+											  'rules' => 'check_valid_location_list_source'
 										)
 							),
 				'admin_category_orphans' => array(
 										array('field' => 'category_id',
 											  'label' => 'Category',
-											  'rules' => 'callback_check_category_exists'
+											  'rules' => 'check_category_exists|check_is_parent_category'
 										)
 							),
 				'admin_create_token' => array(
 										array('field' => 'user_role',
 											  'label' => 'User role',
-											  'rules' => 'required|callback_check_admin_roles'
+											  'rules' => 'required|check_role_any'
 										),
 										array('field' => 'token_comment',
 											  'label' => 'Comment (optional)',
-											  'rules' => 'htmlentities'
+											  'rules' => 'htmlspecialchars'
 										),
 										array('field' => 'entry_payment',
 											  'label' => 'Registration Fee',
-											  'rules' => 'callback_check_registration_token_fee'
+											  'rules' => 'check_registration_token_charge'
 										)
 							),
 				'admin_delete_item' => array(
 										array('field' => 'reason_for_removal',
 											  'label' => 'reason for removal.',
-											  'rules' => 'required|htmlentities'
+											  'rules' => 'required|htmlspecialchars'
 										)
 							),
 				'admin_ban_user' => array(
 										array('field' => 'ban_user',
 											  'label' => '',
-											  'rules' => 'callback_check_bool'
+											  'rules' => 'check_bool_areyousure'
 										)
 							),
 				'admin_edit_autorun' => array(
 										array('field' => 'jobs[]',
 											  'label' => 'Intervals',
-											  'rules' => 'is_numeric|callback_check_is_positive'
+											  'rules' => 'check_autorun_interval'
 										)
 							),
 				'admin_dispute_message' => array(
 										array('field' => 'admin_message',
 											  'label' => 'dispute response',
-											  'rules' => 'required|htmlentities'
+											  'rules' => 'required|htmlspecialchars'
+										)
+							),
+				'admin_trusted_user_update' => array(
+										array(	'field' => 'trusted_user_review_count',
+												'label' => 'review count',
+												'rules' => 'is_natural'
+										),
+										array(	'field' => 'trusted_user_rating',
+												'label' => 'rating',
+												'rules' => 'check_user_rating_input'
+										),
+										array(	'field' => 'trusted_user_order_count',
+												'label' => 'order count',
+												'rules' => 'is_natural'
 										)
 							),
 				'admin_update_fee_config' => array(
 										array('field' => 'default_rate',
 											  'label' => 'Default fee rate',
-											  'rules' => 'callback_check_is_positve'
+											  'rules' => 'greater_than_equal_to[0]'
 										),
 										array('field' => 'minimum_fee',
 											  'label' => 'Minimum fee',
-											  'rules' => 'callback_check_is_positive'
-										)	  
+											  'rules' => 'greater_than_equal_to[0.0001]'
+										),
+										array('field' => 'escrow_rate',
+											  'label' => 'additonal escrow rate',
+											  'rules' => 'greater_than_equal_to[0]',
+										),
+										array('field' => 'upfront_rate',
+											  'label' => 'additional upfront rate',
+											  'rules' => 'greater_than_equal_to[0]',
+										)
 							),
 				'admin_add_fee' => array(
 										array('field' => 'lower_limit',
-											  'label' => 'Lower limit',
-											  'rules' => 'callback_check_is_positve'
+											  'label' => 'range lower limit',
+											  'rules' => 'check_bitcoin_amount_free'
 										),
 										array('field' => 'upper_limit',
-											  'label' => 'Upper limit',
-											  'rules' => 'callback_check_is_positive'
+											  'label' => 'range upper limit',
+											  'rules' => 'check_bitcoin_amount|greater_than[lower_limit]'
 										),
 										array('field' => 'percentage_fee',
-											  'label' => 'Percentage fee',
-											  'rules' => 'callback_check_is_positive'
+											  'label' => 'percentage fee',
+											  'rules' => 'greater_than[0]'
 										)	  
 							),
 				'admin_search_username' => array(
@@ -448,67 +450,62 @@ $config = array('register_form'=>array(
 				'admin_search_user_list' => array(
 										array('field' => 'search_for',
 											  'label' => '',
-											  'rules' => 'callback_check_user_search_for'
+											  'rules' => 'check_user_search_for'
 										),
 										array('field' => 'with_property',
 											  'label' => '',
-											  'rules' => 'callback_check_user_search_with_property'
+											  'rules' => 'check_user_search_with_property'
 										),
 										array('field' => 'order_by',
 											  'label' => '',
-											  'rules' => 'callback_check_user_search_order_by'
+											  'rules' => 'check_user_search_order_by'
 										),
 										array('field' => 'list',
 											  'label' => '',
-											  'rules' => 'callback_check_user_search_list'
+											  'rules' => 'check_user_search_list'
 										)
 							),
 				'admin_delete_user' => array(
 										array('field' => 'user_delete',
 											  'label' => '',
-											  'rules' => 'callback_check_bool'
+											  'rules' => 'check_bool_areyousure'
 										)
 							),
 				'admin_maintenance_mode' => array(
 										array('field' => 'maintenance_mode',
 											  'label' => 'Maintenance mode',
-											  'rules' => 'callback_check_bool'
+											  'rules' => 'check_bool_areyousure'
 										)
 							),
 				'admin_tos' => array(
 										array('field' => 'terms_of_service_toggle',
 											  'label' => 'Terms of Service',
-											  'rules' => 'callback_check_bool'
+											  'rules' => 'check_bool_areyousure'
 										)
 							),
 				'add_dispute_update' => array(
 										array('field' => 'update_message',
 											  'label' => 'dispute response',
-											  'rules' => 'required|htmlentities|min_length[30]'
+											  'rules' => 'required|htmlspecialchars|min_length[30]'
 										)
 							),
 				'order_dispute' => array(
 										array('field' => 'dispute_message',
 											  'label' => 'Dispute reason',
-											  'rules' => 'required|min_length[30]|htmlentities'
+											  'rules' => 'required|min_length[30]|htmlspecialchars'
 										)
 							),
 				'order_place' => array(
+									
 										array('field' => 'buyer_address',
 											  'label' => 'Address',
-											  'rules' => 'required|htmlentities'
+											  'rules' => 'required|htmlspecialchars'
 										),
+										// PHP checking done in controller.
 										array('field' => 'bitcoin_public_key',
 											  'label' => 'Public Key',
-											  'rules' => 'required|callback_check_bitcoin_public_key'
+											  'rules' => 'required|check_bitcoin_public_key'
 										)
-							),
-				'vendor_accept_order' => array(
-										array('field' => 'selected_escrow',
-											  'label' => 'Escrow?',
-											  'rules' => 'callback_check_bool'
-										)
-											  
 							),
 				'vendor_submit_review' => array(
 										array('field' => 'buyer_communication',
@@ -529,7 +526,31 @@ $config = array('register_form'=>array(
 											  'label' => 'partially signed transaction',
 											  'rules' => 'required'
 										)
+							),
+				'ship_from_submit' => array(
+										array('field' => 'location',
+											  'label' => 'Origin location',
+											  'rules' => 'check_valid_location_shipto'
+										)
+							),
+				'ship_to_submit' => array(
+										array('field' => 'location',
+											  'label' => 'Destination location',
+											  'rules' => 'check_valid_location_shipto'
+										)
+							),							
+				'submit_totp_token' => array(
+										array('field' => 'totp_token',
+											  'label' => 'Auth token',
+											  'rules' => 'exact_length[6]|is_natural'
+										)
+							),
+				'submit_pgp_token' => array(	
+										array('field' => 'answer',
+											  'label' => 'solution',
+											  'rules' => 'required'
+										)
 							)
-				
 			);
+
 

@@ -31,7 +31,7 @@ class Items extends CI_Controller {
 	 * URI: /items
 	 * 
 	 * @access	public
-	 * @see		Models/Items_Model
+	 * @param		int		$page
 	 */
 	public function index($page = 0) {
 		if(!(is_numeric($page) && $page >= 0))
@@ -56,7 +56,8 @@ class Items extends CI_Controller {
 	 * @see		Models/Items_Model
 	 * @see		Models/Categories_Model
 	 * 
-	 * @param	string
+	 * @param	string	$hash
+	 * @param	int		$page
 	 * @return	void
 	 */
 	public function category($hash, $page = 0) {
@@ -94,9 +95,9 @@ class Items extends CI_Controller {
 	 * @see		Models/Items_Model
 	 * @see		Models/Categories_Model
 	 * 
-	 * @param	string	$source(optional)
+	 * @param	string	$source
 	 * @param	string	$location 
-	 * @return	void
+	 * @param	int		$page
 	 */
 	public function location($source = '', $location = NULL, $page = 0) {
 		if(!(is_numeric($page) && $page >= 0))
@@ -178,14 +179,10 @@ class Items extends CI_Controller {
 	 * @return	void
 	 */	
 	public function get($hash) {
-		$data['item'] = $this->items_model->get($hash);
-		if($data['item'] == FALSE) 
-			redirect('items');
-
 		$this->load->model('shipping_costs_model');
 		$this->load->model('review_model');
-			
-		$data['logged_in'] = $this->current_user->logged_in();
+		
+		$data['item'] = $this->items_model->get($hash, FALSE);
 		$data['page'] = 'items/get';
 		$data['title'] = $data['item']['name'];
 		$data['user_role'] = $this->current_user->user_role;
@@ -203,34 +200,7 @@ class Items extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	// Callback functions
-	
-	/**
-	 * Check Ship From
-	 * 
-	 * This function checks that the ship-from form is submitted correctly,
-	 * and input only contains a positive natural number.
-	 * 
-	 * @param	int	$param	
-	 * @return boolean
-	 */
-	public function check_ship_from($param) {
-		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Ship To
-	 * 
-	 * This function checks that the ship-to form is submitted correctly,
-	 * such that the input is either 'worldwide' or a natural positive 
-	 * number.
-	 * 
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_ship_to($param) {
-		return ($param == 'worldwide' || $this->check_ship_from($param) == TRUE) ? TRUE : FALSE;
-	}
 };
 
 /* End of File: Items.php */
+/* Location: application/controllers/Items.php */

@@ -1,5 +1,7 @@
 		<div class="span9 mainContent" id="vendor_public_keys">
 			<h2>Bitcoin Public Keys</h2>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; ?>
 		  
 			<?php echo form_open('accounts/public_keys', array('class' => 'form-horizontal')); ?>
 				<div class='row-fluid'>
@@ -18,7 +20,7 @@
           
           
 			<?php echo form_open('accounts/public_keys', array('class' => 'form-horizontal')); ?>
-				<?php if(count($available_public_keys) > 0 ) { ?>
+				<?php if($available_public_keys !== FALSE && count($available_public_keys) > 0 ) { ?>
 				<h2>Current Public Keys</h2>
 				<div class='row-fluid'>
 					<span class='span10'>You have <?php echo count($available_public_keys); ?> public keys available.</span>

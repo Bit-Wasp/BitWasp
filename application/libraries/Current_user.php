@@ -14,39 +14,103 @@
  */
 class Current_User {
 	
+	/**
+	 * CI
+	 */
 	protected $CI;
+	
+	/**
+	 * Auth Reqs
+	 * 
+	 * Stores an array of the authentications for a restricted pages.
+	 */
 	public $auth_reqs = array();
+	
+	/**
+	 * Current Auth Req
+	 * 
+	 * Store the desired, but restricted page
+	 */
 	public $current_auth_req;
+	
+	/**
+	 * Force PGP
+	 */
 	public $force_pgp;
+	
+	/**
+	 * Logged In
+	 * 
+	 * Determine whether the user is logged in.
+	 */
 	public $logged_in = FALSE;
+	
+	/**
+	 * Last Activity
+	 */
 	public $last_activity;
+	
+	/**
+	 * User ID
+	 */
 	public $user_id;
+	
+	/**
+	 * User Hash
+	 */
 	public $user_hash;
+	
+	/**
+	 * User Name
+	 */
 	public $user_name;
+	
+	/**
+	 * Message Password
+	 */
 	public $message_password;
+	
+	/**
+	 * Message Password Granted
+	 */
 	public $message_password_granted;
+	
+	/**
+	 * TOTP factor
+	 */
 	public $totp_factor;
+	/**
+	 * PGP Factor
+	 */
 	public $pgp_factor;
+	/**
+	 * User Role
+	 */
 	public $user_role;
+	/**
+	 * Session ID
+	 */
 	public $session_id;
+	/**
+	 * URI
+	 */
 	public $URI;
+	/**
+	 * Entry Payment
+	 */
 	public $entry_payment = FALSE;
 
 	/**
-	 * Constructor
+	 * Construct
 	 * 
-	 * This function generates all the information we want to provide
-	 * using this library.
+	 * This function stores all the user user data in an accessible object.
 	 */
 	public function __construct() {
 		$this->CI = &get_instance();
 			
 		$this->URI = explode("/", uri_string());
 			
-		$this->CI->load->model('currencies_model');			
-		
 		if($this->CI->session->userdata('logged_in') == 'true') {
-			$this->CI->load->model('messages_model');
 			$this->logged_in = TRUE;
 			$this->user_id = $this->CI->session->userdata('user_id');
 			$this->user_hash = $this->CI->session->userdata('user_hash');
@@ -59,13 +123,16 @@ class Current_User {
 			$this->current_auth_req = $this->CI->session->userdata('current_auth_req');
 
 			$this->CI->load->model('accounts_model');
-			$user = $this->CI->accounts_model->get(array('user_hash' => $this->user_hash), array('own' => TRUE));
-			$this->currency = ($this->CI->bw_config->price_index == 'Disabled' || !is_array($this->CI->bw_config->currencies)) ? $this->CI->bw_config->currencies[0] : $this->CI->bw_config->currencies[$user['local_currency']];
+			$this->user = $this->CI->accounts_model->get(array('user_hash' => $this->user_hash), array('own' => TRUE));
 			
+			$this->currency = ($this->CI->bw_config->price_index == 'Disabled' || !is_array($this->CI->bw_config->currencies)) ? $this->CI->bw_config->currencies[0] : $this->CI->bw_config->currencies[$this->user['local_currency']];
+			$this->currency['rate'] = $this->CI->bw_config->exchange_rates[(strtolower($this->currency['code']))];
 		} else {
 			$id = $this->CI->session->userdata('user_id');
 
+			// Default currency for non-logged in user is bitcoin.
 			$this->currency = $this->CI->bw_config->currencies[0];
+			$this->currency['rate'] = $this->CI->bw_config->exchange_rates[(strtolower($this->currency['code']))];
 			
 			// If an ID is set, user is in a half session.
 			if(is_numeric($id) && $id !== NULL) {
@@ -83,6 +150,8 @@ class Current_User {
 				if($this->CI->session->userdata('entry_payment') == 'true')
 					$this->entry_payment = TRUE;
 			}
+			
+			
 		}	
 	}
 	
@@ -104,7 +173,7 @@ class Current_User {
 	 * 
 	 * Function to check if this user is logged in.
 	 *
-	 * @return 		bool
+	 * @return 		boolean
 	 */
 	public function logged_in() {
 		return $this->logged_in;
@@ -116,7 +185,7 @@ class Current_User {
 	 * Sets up the message password in the users session along with the
 	 * time it was set (to allow it to expire)
 	 * 
-	 * @param		string
+	 * @param		string	$password
 	 * @return		void
 	 */
 	public function set_message_password($password) {

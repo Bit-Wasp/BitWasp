@@ -53,7 +53,7 @@ class Listings extends CI_Controller
 	 * @see		Models/Items_Model
 	 * @see		Models/Categories_Model
 	 * 
-	 * @param	string
+	 * @param	string	$item_hash
 	 * @return	void
 	 */
 	public function edit($item_hash)
@@ -76,18 +76,22 @@ class Listings extends CI_Controller
 			$changes['name'] = ($data['item']['name'] == $this->input->post('name')) ? NULL : $this->input->post('name');
 			$changes['description'] = ($data['item']['description'] == $this->input->post('description')) ? NULL : $this->input->post('description');
 			$changes['category'] = ($data['item']['category'] == $this->input->post('category')) ? NULL : $this->input->post('category');
+			$changes['hidden'] = ($data['item']['hidden'] == $this->input->post('hidden')) ? NULL : $this->input->post('hidden');
+			$changes['prefer_upfront'] = ($data['item']['prefer_upfront'] == $this->input->post('prefer_upfront')) ? NULL : $this->input->post('prefer_upfront');
+			if( ! in_array($changes['hidden'], array(NULL, '0','1'))) 
+				unset($changes['hidden']);
+			if( ! in_array($changes['prefer_upfront'], array(NULL, '0','1'))) 
+				unset($changes['prefer_upfront	']);
+					
 			$changes['ship_from'] = ($data['item']['ship_from'] == $this->input->post('ship_from')) ? NULL : $this->input->post('ship_from');
 			$changes = array_filter($changes, 'strlen');
 			
-			if (count($changes) > 0) 
-			{
-				$data['returnMessage'] = 'Unable to save your changes at this time.';
-				if ($this->listings_model->update($item_hash, $changes) == TRUE) 
-					$data['returnMessage'] = 'Your changes have been saved.';
-			}
+			$message = (count($changes) > 0 && $this->listings_model->update($item_hash, $changes)) 
+									? 'Your changes have been saved.' 
+									: 'No changes were made to that listing.';
+			$this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+			redirect('listings/edit/'.$item_hash);
 				
-			// Refresh any changes.
-			$data['item'] = $this->listings_model->get($item_hash);
 		}
 
 		$this->load->model('categories_model');
@@ -97,6 +101,7 @@ class Listings extends CI_Controller
 		$data['title'] = 'Edit '.$data['item']['name'];
 		$data['categories'] = $this->categories_model->generate_select_list('category', 'span5', $data['item']['category']);
 		$data['currencies'] = $this->bw_config->currencies;
+		
 		$data['item_location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'span5', $data['item']['ship_from']);
 		$this->load->library('Layout', $data);
 	}
@@ -122,7 +127,6 @@ class Listings extends CI_Controller
 		
 		$data['page'] = 'listings/add';
 		$data['title'] = 'Add a Listing';
-		$data['local_currency'] = $this->bw_config->currencies[$this->current_user->currency['id']];
 		$data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'span5');
 		
 		if ($this->form_validation->run('add_listing') == TRUE) 
@@ -139,6 +143,7 @@ class Listings extends CI_Controller
 								'name' => $this->input->post('name'),
 								'price' => $this->input->post('price'),
 								'vendor_hash' => $this->current_user->user_hash,
+								'prefer_upfront' => ($this->input->post('prefer_upfront') == '1') ? '1' : '0',
 								'ship_from' => $this->input->post('ship_from')
 						);
 			// Add the listing
@@ -180,7 +185,7 @@ class Listings extends CI_Controller
 	 * @see		Models/Listings_Model
 	 * @see		Models/Images_Model
 	 * 
-	 * @param	string
+	 * @param	string	$hash
 	 * @return	void
 	 */
 	public function delete($hash)
@@ -215,7 +220,7 @@ class Listings extends CI_Controller
 	 * @see		Models/Images_Model
 	 * @see		Libraries/Form_Validation
 	 * 
-	 * @param	string
+	 * @param	string	$item_hash
 	 * @return	void
 	 */
 	public function images($item_hash)
@@ -243,40 +248,42 @@ class Listings extends CI_Controller
 		$data['page'] = 'listings/images';
 		
 		// If the Add Image form has been submitted:
-		if($this->input->post('add_image') == 'Create') {
-			
-			if (!$this->upload->do_upload())
+		if ($this->input->post('add_image') == 'Create')
+		{
+			if($this->form_validation->run('add_image') == TRUE)
 			{
-				// If there is an error with the file, display the errors.
-				$data['returnMessage'] = $this->upload->display_errors();
-			} else {
-				// Process the upload.
-				
-				$upload_data = $this->upload->data();
-				$upload_data['upload_path'] = $config['upload_path'];
+				if (!$this->upload->do_upload())
+				{
+					// If there is an error with the file, display the errors.
+					$data['returnMessage'] = $this->upload->display_errors();
+				} else {
+					// Process the upload.
+					$upload_data = $this->upload->data();
+					$upload_data['upload_path'] = $config['upload_path'];
 
-				$this->image->import($upload_data);			// Should be error checking here
+					$this->image->import($upload_data);			// Should be error checking here
 
-				// Prepare the normal image's encoded string
-				$normal_encoded_string = $this->image->encode($upload_data['file_name']);
-				// Resize the image to smaller sizes. Image is base64 encoded in output array.
-				$small = $this->image->resize('200','150',$upload_data['raw_name']."_s");
-				//$thumb = $this->image->resize('100','75', $upload_data['raw_name']."_thumb");
-				
-				$main_image = FALSE;
-				if ($data['item']['main_image'] == 'default'
-				|| $this->input->post('main_image') == 'true')
-					$main_image = TRUE;
-				
-				$hash = $this->general->unique_hash('images','hash'); 
-				
-				// If resizing fails, use the normal image.
-				$add_small = ($small !== FALSE) ? $this->images_model->add_to_item($hash, $small['encoded_string'], $item_hash, $main_image) : $this->images_model->add_to_item($hash, $normal_encoded_string, $item_hash, $main_image);
-				$add_normal = $this->images_model->add($hash."_l", $normal_encoded_string);
-				//$add_thumb = $this->images_model->add_to_item($thumb['file_name'], $item_hash);
+					// Prepare the normal image's encoded string
+					$normal_encoded_string = $this->image->encode($upload_data['file_name']);
+					// Resize the image to smaller sizes. Image is base64 encoded in output array.
+					$small = $this->image->resize('200','150',$upload_data['raw_name']."_s");
+					//$thumb = $this->image->resize('100','75', $upload_data['raw_name']."_thumb");
 					
-				// Remove the uploaded file.
-				unlink($upload_data['full_path']);
+					$main_image = FALSE;
+					if ($data['item']['main_image'] == 'default'
+					|| $this->input->post('main_image') == 'true')
+						$main_image = TRUE;
+					
+					$hash = $this->general->unique_hash('images','hash'); 
+					
+					// If resizing fails, use the normal image.
+					$add_small = ($small !== FALSE) ? $this->images_model->add_to_item($hash, $small['encoded_string'], $item_hash, $main_image) : $this->images_model->add_to_item($hash, $normal_encoded_string, $item_hash, $main_image);
+					$add_normal = $this->images_model->add($hash."_l", $normal_encoded_string);
+					//$add_thumb = $this->images_model->add_to_item($thumb['file_name'], $item_hash);
+						
+					// Remove the uploaded file.
+					unlink($upload_data['full_path']);
+				}
 			}
 		}
 		// Reload images after adding new ones.
@@ -291,6 +298,8 @@ class Listings extends CI_Controller
 	 * This function is used to configure the shipping charges for a
 	 * listing. Redirects to listings page if the requested item is invalid.
 	 * URI: /listings/shipping/$hash
+	 * 
+	 * @param		string	$item_hash
 	 */
 	public function shipping($item_hash) {
 		$data['item'] = $this->listings_model->get($item_hash);
@@ -317,7 +326,7 @@ class Listings extends CI_Controller
 			$updates = array();
 			foreach ($this->input->post('cost') as $cost_id => $cost_array)
 			{
-				$this->form_validation->set_rules("cost[$cost_id][cost]","Cost", "callback_check_zero_or_greater");
+				$this->form_validation->set_rules("cost[$cost_id][cost]","Cost", "check_bitcoin_amount_free");
 				if ($this->form_validation->run() == TRUE)
 				{
 					if (!isset($cost_array['enabled']) || $cost_array['enabled'] !== '1')
@@ -374,7 +383,7 @@ class Listings extends CI_Controller
 	 * @see		Models/Listings_Model
 	 * @see		Models/Images_Model
 	 * 
-	 * @param	string
+	 * @param	string	$image_hash
 	 * @return	void
 	 */
 	public function delete_image($image_hash)
@@ -398,7 +407,7 @@ class Listings extends CI_Controller
 	 * @see		Models/Listings_Model
 	 * @see		Models/Images_Model
 	 * 
-	 * @param	string
+	 * @param	string	$image_hash
 	 * @return	void
 	 */
 	public function main_image($image_hash)
@@ -412,124 +421,7 @@ class Listings extends CI_Controller
 		redirect('listings/images/'.$item_hash);
 	}
 
-	// Callback functions for form validation.
-	
-	/**
-	 * Check the supplied category ID exists.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_category_exists($param) 
-	{
-		$this->load->model('categories_model');
-		$categories = $this->categories_model->list_all();
-		$cat_id[] = array();
-		foreach($categories as $category) {
-			$cat_id[] = $category['id'];
-		}
-		return $this->general->matches_any($param, $cat_id);
-	}
-	
-	/**
-	 * Check Currency Exists
-	 * 
-	 * Check the supplied currency ID ($param) exists.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_currency_exists($param) {
-		$currencies = $this->currencies_model->get();
-		$c_id = array();
-		foreach($currencies as $currency) { 
-			$c_id[] = $currency['id'];
-		}
-		return $this->general->matches_any($param, $c_id);
-	}
-	
-	/**
-	 * Check Is Positive
-	 * 
-	 * Check the supplied parameter is a positive number.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_is_positive($param) {
-		return (is_numeric($param) && $param > 0.00000001) ? TRUE : FALSE;		
-	}
-	
-	/**
-	 * Check Zero Or Greater
-	 * 
-	 * Checks if the supplied $param is zero or greater. Used to check 
-	 * the shipping price being entered.
-	 * 
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_zero_or_greater($param) {
-		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Location
-	 * 
-	 * Check the supplied location ID ($param) exists.
-	 *
-	 * @param	id	$param
-	 * @return	boolean
-	 */
-	public function check_location($param) {
-		$this->load->model('location_model');
-		return ($this->location_model->location_by_id($param) !== FALSE) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Check Shipping Location
-	 * 
-	 * Check the supplied location ID for the shipping destination exists.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_shipping_location($param) {
-		$this->load->model('location_model');
-		return ($param == 'worldwide' || ($this->location_model->location_by_id($param) !== FALSE)) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Check Bool
-	 * 
-	 * Check the supplied parameter is for a boolean..
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_bool($param) {
-		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Block Access To Parent Category
-	 * 
-	 * This function blocks form submission when a user selects a category
-	 * which has child categories in it. If it has child categories,
-	 * it returns FALSE, to block form submission. Otherwise it returns
-	 * TRUE, allowing the submission.
-	 * 
-	 * @param	int	$category_id
-	 * @return	boolean
-	 */
-	public function block_access_to_parent_category($category_id){
-		$info = $this->categories_model->get_children($category_id);
-		// If it has children, return FALSE, as they are not allowed
-		// to post there.
-		return ($info['count'] > 0) ? FALSE : TRUE;
-	}
-
-
 };
 
 /* End of file Listings.php */
+/* Location: application/controllers/Listings.php */

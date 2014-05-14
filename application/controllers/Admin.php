@@ -10,8 +10,19 @@
  */
 class Admin extends CI_Controller {
 
-	public $nav;
+	/**
+	 * Coin
+	 * 
+	 * Stores the cryptocurrency the market is set up for
+	 */
 	public $coin;
+
+	/**
+	 * Nav
+	 * 
+	 * Stores the admin navigation bar
+	 */
+	public $nav;
 	
 	/**
 	 * Constructor
@@ -22,6 +33,7 @@ class Admin extends CI_Controller {
 		parent::__construct();
 		$this->load->library('form_validation');
 		$this->load->model('admin_model');
+
 		$this->coin = $this->bw_config->currencies[0];
 		
 		// Define information for the navigation panel.
@@ -86,46 +98,69 @@ class Admin extends CI_Controller {
 	 * @see 	Libraries/Bw_Config
 	 * @return	void
 	 */
-	public function edit_general() {
+	public function edit_general()
+	{
 		$data['config'] = $this->bw_config->load_admin('');
 		
-		if($this->form_validation->run('admin_edit_') == TRUE) {
+		if ($this->form_validation->run('admin_edit_') == TRUE)
+		{
 			// Determine which settings have changed. Filter unchanged.
-			$changes['global_proxy_type'] = ($this->input->post('global_proxy_type') !== $data['config']['global_proxy_type']) ? $this->input->post('global_proxy_type') : NULL ;
-			$changes['global_proxy_url'] = ($this->input->post('global_proxy_url') !== $data['config']['global_proxy_url']) ? $this->input->post('global_proxy_url') : NULL ;
-			$changes['site_description'] = ($this->input->post('site_descrpition') !== $data['config']['site_description']) ? $this->input->post('site_description') : NULL;
-			$changes['site_title'] = ($this->input->post('site_title') !== $data['config']['site_title']) ? $this->input->post('site_title') : NULL;
-			$changes['openssl_keysize'] = ($this->input->post('openssl_keysize') !== $data['config']['openssl_keysize']) ? $this->input->post('openssl_keysize') : NULL;
-			$changes['allow_guests'] = ($this->input->post('allow_guests') !== $data['config']['allow_guests']) ? $this->input->post('allow_guests') : NULL;
+			$changes = array();
+			$changes['global_proxy_type'] = ($this->input->post('global_proxy_type') != $data['config']['global_proxy_type']) ? $this->input->post('global_proxy_type') : NULL ;
+			$changes['global_proxy_url'] = ($this->input->post('global_proxy_url') != $data['config']['global_proxy_url']) ? $this->input->post('global_proxy_url') : NULL ;
+			$changes['site_description'] = ($this->input->post('site_description') != $data['config']['site_description']) ? $this->input->post('site_description') : NULL;
+			$changes['site_title'] = ($this->input->post('site_title') != $data['config']['site_title']) ? $this->input->post('site_title') : NULL;
+			$changes['openssl_keysize'] = ($this->input->post('openssl_keysize') != $data['config']['openssl_keysize']) ? $this->input->post('openssl_keysize') : NULL;
+			$changes['allow_guests'] = ($this->input->post('allow_guests') != $data['config']['allow_guests']) ? $this->input->post('allow_guests') : NULL;
 			$changes = array_filter($changes, 'strlen');
 	
 			// If the global proxy is disabled, unset the type and url.
-			if($this->input->post('global_proxy_disabled') == '1'){
-				$changes['global_proxy_type'] = 'Disabled';
-				$changes['global_proxy_url'] = '';
-			} else {
+			if ($this->input->post('global_proxy_disabled') == '1')
+			{
+				if ($data['config']['global_proxy_type'] != '' || $data['config']['global_proxy_url'] != '')
+				{
+					$changes['global_proxy_type'] = 'Disabled';
+					$changes['global_proxy_url'] = '';
+				}
+			}
+			else
+			{
 				// Otherwise, if either the proxy type or url is changing,
 				// then issue an override to the curl library and make
 				// a test request. If this fails, prevent the update and
 				// display an error.
-				if(isset($changes['global_proxy_type']) || isset($changes['global_proxy_url'])) {				
+				if (isset($changes['global_proxy_type']) || isset($changes['global_proxy_url']))
+				{
 					$override['proxy_type'] = (isset($changes['global_proxy_type'])) ? $changes['global_proxy_type'] : $data['config']['global_proxy_type'];
 					$override['proxy_url'] = (isset($changes['global_proxy_url'])) ? $changes['global_proxy_url'] : $data['config']['global_proxy_url'];
 					$this->load->library('bw_curl', $override);
 					$test = $this->bw_curl->get_request('https://duckduckgo.com');
-					if($test == FALSE) {
+					if($test == FALSE)
+					{
 						unset($changes);
 						$data['proxy_error'] = 'Your proxy settings are incorrect, please check your entries.';
 					}
 				}
 			}
 
-			$log = $this->admin_model->format_config_changes($changes);
-			$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated:<br />'.$log,'Info');
-
-			if(isset($changes) && $this->config_model->update($changes) == TRUE)
-				redirect('admin');			
+			if(!isset($data['proxy_error']))
+			{
+				
+				if (count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+				{
+					$log = $this->admin_model->format_config_changes($changes);
+					$this->logs_model->add('Admin: General Panel','General site configuration updated','The general configuration of the site has been updated:<br />'.$log,'Info');	
+					$message = 'Your changes have been saved.';
+				}
+				else 
+				{
+					$message = 'No changes were made.';
+				}
+				$this->session->set_flashdata('returnMessage', json_encode(array('message'=>$message)));
+				redirect('admin/edit');
+			}
 		}
+			
 		$data['page'] = 'admin/edit_';
 		$data['title'] = $this->nav['']['heading'];
 		$data['nav'] = $this->generate_nav();
@@ -143,13 +178,11 @@ class Admin extends CI_Controller {
 	 * @see		Models/Autorun_Model
 	 * @return	void
 	 */
-	public function autorun() {
+	public function autorun()
+	{
 		$this->load->model('autorun_model');
 		$data['page'] = 'admin/autorun';
 		$data['title'] = $this->nav['autorun']['heading'];
-
-		$data['messages_count'] = $this->general_model->count_entries('messages');
-
 		$data['jobs'] = $this->autorun_model->load_all();
 		$data['config'] = $this->bw_config->load_admin('autorun');
 		$data['nav'] = $this->generate_nav();
@@ -234,29 +267,21 @@ class Admin extends CI_Controller {
 	 * @see		Models/Bitcoin_Model
 	 * @return	void
 	 */	
-	public function bitcoin() {
+	public function bitcoin()
+	{
 		$this->load->library('bw_bitcoin');
 		$this->load->model('bitcoin_model');
 		$this->load->model('transaction_cache_model');
 		
+		$data['page'] = 'admin/bitcoin';
+		$data['title'] = $this->nav['bitcoin']['heading'];
+		$data['nav'] = $this->generate_nav();
 		$data['config'] = $this->bw_config->load_admin('bitcoin');
 		$data['bitcoin_index'] = $this->bw_config->price_index;
 		$data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
 		$data['key_usage_count'] = $this->bitcoin_model->count_key_usage();
 		$data['block_cache'] = $this->transaction_cache_model->count_cache_list();
 		$data['coin'] = $this->coin;
-		
-		// If there is any information about a recent transaction, display it.
-		$info = (array)json_decode($this->session->flashdata('info'));
-		if(count($info) !== 0) {
-			// If the information is to do with topping up a WIF key:
-			if($info['action'] == 'topup')
-				$data['returnMessage'] = $this->coin['symbol']." {$info['topup_amount']} was added to the '{$info['account']}' account.";
-		}
-		
-		$data['page'] = 'admin/bitcoin';
-		$data['title'] = $this->nav['bitcoin']['heading'];
-		$data['nav'] = $this->generate_nav();
 		$this->load->library('Layout', $data);
 	}
 	
@@ -295,7 +320,7 @@ class Admin extends CI_Controller {
 			if($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
 				$changes = array();
 				// Check if the selection exists.
-				if($data['config']['price_index'] !== $this->input->post('price_index')) {
+				if($data['config']['price_index'] != $this->input->post('price_index')) {
 					if(is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled'){
 					
 						$update = array('price_index' => $this->input->post('price_index'));
@@ -316,18 +341,25 @@ class Admin extends CI_Controller {
 						redirect('admin/bitcoin');
 					}
 				}
-				if($data['config']['electrum_mpk'] !== $this->input->post('electrum_mpk')) 
+				if ($data['config']['electrum_mpk'] != $this->input->post('electrum_mpk')) 
 					$changes['electrum_mpk'] = $this->input->post('electrum_mpk');
-				if($data['config']['electrum_iteration'] !== $this->input->post('electrum_iteration')) 
+				if ($data['config']['electrum_iteration'] != $this->input->post('electrum_iteration')) 
 					$changes['electrum_iteration'] = $this->input->post('electrum_iteration');
 
 				$changes = array_filter($changes, 'strlen');
 		
-				$log = $this->admin_model->format_config_changes($changes);
-				$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' configuration updated','The '.$this->coin['name'].' configuration of the site has been updated:<br />'.$log,'Info');
-		
-				if(count($changes) > 0 && $this->config_model->update($changes) == TRUE)
-					redirect('admin/bitcoin');	
+				if (count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+				{
+					$log = $this->admin_model->format_config_changes($changes);
+					$this->logs_model->add("Admin: {$this->coin['name']} Panel",$this->coin['name'].' configuration updated','The '.$this->coin['name'].' configuration of the site has been updated:<br />'.$log,'Info');
+					$message = 'Your changes were saved.';
+				}
+				else
+				{
+					$message = 'No changes were made.';
+				}
+				$this->session->set_flashdata('returnMessage', json_encode(array('message'=>$message)));
+				redirect('admin/bitcoin');	
 			}
 		}
 		
@@ -384,27 +416,33 @@ class Admin extends CI_Controller {
 		
 		if($this->form_validation->run('admin_edit_users') == TRUE) {
 			// Determine what changes, if any, to make. 
-			$changes['login_timeout'] = ((int)$this->input->post('login_timeout') !== $data['config']['login_timeout']) ? $this->input->post('login_timeout') : NULL;
-			$changes['captcha_length'] = ((int)$this->input->post('captcha_length') !== $data['config']['captcha_length']) ? $this->input->post('captcha_length') : NULL;
-			$changes['registration_allowed'] = ((int)$this->input->post('registration_allowed') !== $data['config']['registration_allowed']) ? $this->input->post('registration_allowed'): NULL;
-			$changes['vendor_registration_allowed'] = ((int)$this->input->post('vendor_registration_allowed') !== $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
-			$changes['encrypt_private_messages'] = ((int)$this->input->post('encrypt_private_messages') !== $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_messages'): NULL;
-			$changes['force_vendor_pgp'] = ((int)$this->input->post('force_vendor_pgp') !== $data['config']['force_vendor_pgp']) ? $this->input->post('force_vendor_pgp') : NULL;
-			$changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') !== $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
-			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_vendor') !== $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
+			$changes['login_timeout'] = ($this->input->post('login_timeout') != $data['config']['login_timeout']) ? $this->input->post('login_timeout') : NULL;
+			$changes['captcha_length'] = ($this->input->post('captcha_length') != $data['config']['captcha_length']) ? $this->input->post('captcha_length') : NULL;
+			$changes['registration_allowed'] = ($this->input->post('registration_allowed') != $data['config']['registration_allowed']) ? $this->input->post('registration_allowed'): NULL;
+			$changes['vendor_registration_allowed'] = ($this->input->post('vendor_registration_allowed') != $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed'): NULL;
+			$changes['encrypt_private_messages'] = ($this->input->post('encrypt_private_messages') != $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_messages'): NULL;
+			$changes['force_vendor_pgp'] = ($this->input->post('force_vendor_pgp') != $data['config']['force_vendor_pgp']) ? $this->input->post('force_vendor_pgp') : NULL;
+			$changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') != $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
+			$changes['entry_payment_vendor'] = ($this->input->post('entry_payment_vendor') != $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
 			
 			// Set registration payments for buyer/vendor to zero if disabled.
-			if($this->input->post('entry_payment_buyer_disabled') == '1')		$changes['entry_payment_buyer'] = '0';
-			if($this->input->post('entry_payment_vendor_disabled') == '1')		$changes['entry_payment_vendor'] = '0';
-			
+			if($this->input->post('entry_payment_buyer_disabled') == '1' && $data['config']['entry_payment_buyer'] != '0') 	$changes['entry_payment_buyer'] = '0';
+			if($this->input->post('entry_payment_vendor_disabled') == '1' && $data['config']['entry_payment_vendor'] != '0')	$changes['entry_payment_vendor'] = '0';
 			$changes = array_filter($changes, 'strlen');
 
-			$log = $this->admin_model->format_config_changes($changes);
-			$this->logs_model->add('Admin: Users Panel','Users configuration updated','The users configuration of the site has been updated:<br />'.$log,'Info');
+			if (count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+			{
+				$log = $this->admin_model->format_config_changes($changes);
+				$this->logs_model->add('Admin: Users Panel','Users configuration updated','The users configuration of the site has been updated:<br />'.$log,'Info');
 
-			// Update config
-			if($this->config_model->update($changes) == TRUE)
-				redirect('admin/users');
+				$message = 'Your changes have been saved.';
+			}
+			else
+			{
+				$message = 'No changes were made.';
+			}
+			$this->session->set_flashdata('returnMessage',json_encode(array('message' => $message)));
+			redirect('admin/users');
 		} 
 		
 		$data['config'] = $this->bw_config->load_admin('users');
@@ -453,51 +491,100 @@ class Admin extends CI_Controller {
 		$data['categories_delete_select'] = $this->categories_model->generate_select_list('delete_id', 'span10');
 		$data['config'] = $this->bw_config->load_admin('items');
 				
-		if($this->input->post('admin_edit_items') == 'Update') {
-			if($this->form_validation->run('admin_edit_items') == TRUE) {
-			}
-		}	
-			
 		// If the Add Category form has been submitted:
-		if($this->input->post('add_category') == 'Add') {
-			if($this->form_validation->run('admin_add_category') == TRUE) {
+		if ($this->input->post('add_category') == 'Add')
+		{
+			if ($this->form_validation->run('admin_add_category') == TRUE)
+			{
 				// Add the category.
 				$category = array(	'name' => $this->input->post('create_name'),
 									'hash' => $this->general->unique_hash('categories','hash'),
 									'parent_id' => $this->input->post('category_parent'));
-				if($this->categories_model->add($category) == TRUE)
+				if ($this->categories_model->add($category) == TRUE)
+				{
+					$this->session->set_flashdata('returnMessage',json_encode(array('message'=>'Your category has been saved.')));
 					redirect('admin/edit/items');
+				} else {
+					$data['returnMessage'] = 'Error saving category!';
+				}
 			} 
 		} 
 		
 		// If the Rename Category form has been submitted:
-		if($this->input->post('rename_category') == 'Rename') {
-			if($this->form_validation->run('admin_rename_category') == TRUE) {
+		if ($this->input->post('rename_category') == 'Rename')
+		{
+			if ($this->form_validation->run('admin_rename_category') == TRUE)
+			{
 				// Rename the category.
-				if($this->categories_model->rename($this->input->post('rename_id'), $this->input->post('category_name')) == TRUE)
+				if ($this->categories_model->rename($this->input->post('rename_id'), $this->input->post('category_name')) == TRUE)
+				{
+					$this->session->set_flashdata('returnMessage',json_encode(array('message'=>'Your category has been renamed.')));
 					redirect('admin/edit/items');
+				}
 			}
 		}
 		
 		// If the Delete Category form has been submitted:
-		if($this->input->post('delete_category') == 'Delete') {
-			if($this->form_validation->run('admin_delete_category') == TRUE) {
-		
-				$category = $this->categories_model->get(array('id' => $this->input->post('delete_id')));
-				$cat_children = $this->categories_model->get_children($category['id']);
-
-				// Check if items or categories are orphaned by this action, redirect to move these.
-				if($category['count_items'] > 0 || $cat_children['count'] > 0) {
+		if ($this->input->post('delete_category') == 'Delete')
+		{
+			if ($this->form_validation->run('admin_delete_category') == TRUE)
+			{
+ 				$category = $this->categories_model->get(array('id' => $this->input->post('delete_id')));
+				$cat_children = $this->categories_model->get_children_count($category['id']);
+				
+				// Check if items or categories are orphaned by this action, redirect to move these.				
+				if ($category['count_items'] > 0 || $cat_children['count'] > 0)
+				{
 					redirect('admin/category/orphans/'.$category['hash']);
-				} else {
+				}
+				else
+				{
 					// Otherwise it's empty and can be deleted.
-					if($this->categories_model->delete($category['id']) == TRUE)
+					if ($this->categories_model->delete($category['id']) == TRUE)
+					{
+						$this->session->set_flashdata('returnMessage',json_encode(array('message'=>'That category has been deleted..')));
 						redirect('admin/edit/items');
+					}
 				}
 			}
 		}
 		$data['page'] = 'admin/edit_items';
 		$data['title'] = $this->nav['items']['heading'];
+		$this->load->library('Layout', $data);
+	}
+
+	/**
+	 * Trusted User
+	 * URI: admin/trusted_user
+	 * 
+	 * This page allows the admin to configure what defines a trusted user.
+	 * Trusted users are allowed to request up-front payment when a 
+	 * particular item is ordered.
+	 */
+	public function trusted_user()
+	{
+		$data['config'] = $this->bw_config->load_admin('items');
+		
+		if ($this->input->post('trusted_user_update') == 'Update')
+		{
+			if ($this->form_validation->run('admin_trusted_user_update') == TRUE)
+			{
+				$changes = array();
+				$changes['trusted_user_rating'] = ($data['config']['trusted_user_rating'] != $this->input->post('trusted_user_rating')) ? : NULL;
+				$changes['trusted_user_review_count'] = ($data['config']['trusted_user_review_count'] != $this->input->post('trusted_user_review_count')) ? : NULL;
+				$changes['trusted_user_order_count'] = ($data['config']['trusted_user_order_count'] !=$this->input->post('trusted_user_order_count')) ? : NULL;
+				$changes = array_filter($changes, 'strlen');
+				
+				// Making use of lazy evaluation here :)
+				$message = (count($changes) > 0 AND $this->config_model->update($changes) == TRUE)
+											? 'Your changes have been saved.' 
+											: 'No changes were made to the settings.';
+				$this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+				redirect('admin/users');
+			}
+		}
+		$data['page'] = 'admin/trusted_user';
+		$data['title'] = 'Trusted User Settings';
 		$this->load->library('Layout', $data);
 	}
 
@@ -509,7 +596,6 @@ class Admin extends CI_Controller {
 	 * log record.
 	 * 
 	 * @param	string	$record
-	 * @return	void
 	 */
 	public function logs($record = NULL) {
 
@@ -544,17 +630,15 @@ class Admin extends CI_Controller {
 	 * Finally, if the category is successfully removed, return TRUE,
 	 * otherwise return FALSE on failure.
 	 * 
-	 * @param	string
-	 * @see 	Models/Categories_Model
-	 * @see		Libraries/Form_Validation
-	 * @return	void
+	 * @param		string	$hash
 	 */	
-	public function category_orphans($hash) {
+	public function category_orphans($hash)
+	{
 		$this->load->model('categories_model');
 		
 		// Abort if the category does not exist.
 		$data['category'] = $this->categories_model->get(array('hash' => $hash));
-		if($data['category'] == FALSE)
+		if ($data['category'] == FALSE)
 			redirect('admin/items');
 			
 		$this->load->library('form_validation');
@@ -565,31 +649,43 @@ class Admin extends CI_Controller {
 		$data['children'] = $this->categories_model->get_children($data['category']['id']);		
 		
 		// Calculate what text to display.
-		if($data['category']['count_items'] > 0 && $data['children']['count'] > 0){
+		if ($data['category']['count_items'] > 0 && $data['children']['count'] > 0)
+		{
 			$data['list'] = "categories and items";
-		} else {
+		}
+		else
+		{
 			if($data['children']['count'] > 0)				$data['list'] = 'categories';
 			if($data['category']['count_items'] > 0)		$data['list'] = 'items';
 		}
 		
 		// If there is nothing to be done for this category, redirect.
-		if(!isset($data['list']))
+		if ( ! isset($data['list']))
 			redirect('admin/edit/items');
 
-		if($this->form_validation->run('admin_category_orphans') == TRUE) {
+		if ($this->form_validation->run('admin_category_orphans') == TRUE)
+		{
 			// Update records accordingly.
-			if($data['list'] == 'items') {
+			if($data['list'] == 'items')
+			{
 				$this->categories_model->update_items_category($data['category']['id'], $this->input->post('category_id'));
-			} else if($data['list'] == 'categories') {
+			}
+			else if($data['list'] == 'categories')
+			{
 				$this->categories_model->update_parent_category($data['category']['id'], $this->input->post('category_id'));
-			} else if($data['list'] == 'categories and items') {
+			}
+			else if($data['list'] == 'categories and items')
+			{
 				$this->categories_model->update_items_category($data['category']['id'], $this->input->post('category_id'));
 				$this->categories_model->update_parent_category($data['category']['id'], $this->input->post('category_id'));
 			}
 			
 			// Finally, delete the category and redirect.
-			if($this->categories_model->delete($data['category']['id']) == TRUE)
+			if ($this->categories_model->delete($data['category']['id']) == TRUE)
+			{
+				$this->session->set_flashdata('Categories have been moved.');
 				redirect('admin/edit/items');
+			}
 		}
 		
 		$data['page'] = 'admin/category_orphans';
@@ -648,9 +744,9 @@ class Admin extends CI_Controller {
 	 * Delete a User Token
 	 * URI: /admin/tokens/delete/$token
 	 * 
-	 * @see 	Models/Users_Model
-	 * @param	string
-	 * @return	void
+	 * Allows a user to delete the registration token.
+	 * 
+	 * @param	string	$token
 	 */	
 	public function delete_token($token) {
 		$this->load->library('form_validation');
@@ -666,6 +762,8 @@ class Admin extends CI_Controller {
 			// Display a message if the token is successfully deleted.
 			$data['success'] = TRUE;
 			$data['returnMessage'] = 'The selected token has been deleted.';
+			$this->session->set_flashdata('returnMessage', json_encode($data));
+			redirect('admin/tokens');
 		}
 			
 		// Load a list of registration tokens.
@@ -673,19 +771,13 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/user_tokens';
 		$data['title'] = 'Registration Tokens';
 		$this->load->library('Layout', $data);
-			
-		return FALSE;
 	}
 	
 	/**
 	 * Delete an Item, sending the vendor an explanation.
 	 * URI: /admin/delete_item/$hash
 	 * 
-	 * @param	string
-	 * @see 	Models/Messages_Model
-	 * @see		Models/Items_Model
-	 * @see		Libraries/Form_Validation
-	 * @return	void
+	 * @param	string	$hash
 	 */	
 	public function delete_item($hash) {
 		$this->load->library('form_validation');
@@ -723,11 +815,10 @@ class Admin extends CI_Controller {
 	 * Alter a users ban toggle.
 	 * URI: /admin/ban_user/$hash
 	 * 
-	 * @param	string
+	 * @param	string	$hash
 	 * @see 	Models/Messages_Model
 	 * @see		Models/Items_Model
 	 * @see		Libraries/Form_Validation
-	 * @return	void
 	 */	
 	public function ban_user($hash) {
 		$this->load->library('form_validation');
@@ -741,7 +832,7 @@ class Admin extends CI_Controller {
 		$data['page'] = 'admin/ban_user';			
 		
 		if($this->form_validation->run('admin_ban_user') == TRUE) {
-			if($this->input->post('ban_user') !== $data['user']['banned']) {
+			if($this->input->post('ban_user') != $data['user']['banned']) {
 				if( $this->accounts_model->toggle_ban($data['user']['id'], $this->input->post('ban_user') ) ) {
 					$this->session->set_flashdata('returnMessage',json_encode(array('message' => $data['user']['user_name']." has now been ".(($this->input->post('ban_user') == '1') ? 'banned.' : 'unbanned.'))));
 					redirect('user/'.$data['user']['user_hash']);
@@ -761,8 +852,11 @@ class Admin extends CI_Controller {
 	 * 
 	 * This controller shows either the disputes list (if $order_id is unset)
 	 * or a specified disputed order (set by $order_id). 
+	 * 
+	 * @param		int	$order_id
 	 */
-	public function dispute($order_id = NULL) {
+	public function dispute($order_id = NULL) 
+	{
 		$this->load->library('form_validation');
 		$this->load->model('order_model');
 		$this->load->model('disputes_model');
@@ -898,7 +992,15 @@ class Admin extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	public function key_usage($start = 0) {
+	/**
+	 * Key Usage
+	 * 
+	 * Shows the addresses/public keys the site has created.
+	 * 
+	 * @param		int	$start
+	 */
+	public function key_usage($start = 0)
+	{
 		if(!($start > 0 && is_numeric($start)))
 			$start = 0;
 		
@@ -932,23 +1034,30 @@ class Admin extends CI_Controller {
 		$this->load->library('form_validation');
 		$this->load->model('fees_model');
 		$data['coin'] = $this->coin;
+		$data['config'] = $this->bw_config->load_admin('fees');
 		
-		if($this->input->post('update_config') == 'Update') {
-			$data['config'] = $this->bw_config->load_admin('fees');
-			if($this->form_validation->run('admin_update_fee_config') == TRUE) {
-				$changes['minimum_fee'] = ($data['config']['minimum_fee'] !== $this->input->post('minimum_fee')) ? $this->input->post('minimum_fee') : NULL;
-				$changes['default_rate'] = ($data['config']['default_rate'] !== $this->input->post('default_rate')) ? $this->input->post('default_rate') : NULL;
-				$changes['escrow_rate'] = ($data['config']['escrow_rate'] !== $this->input->post('escrow_rate')) ? $this->input->post('escrow_rate') : NULL;
-				
+		if($this->input->post('update_config') == 'Update')
+		{
+			if ($this->form_validation->run('admin_update_fee_config') == TRUE)
+			{
+				$changes['minimum_fee'] = ($data['config']['minimum_fee'] != $this->input->post('minimum_fee')) ? $this->input->post('minimum_fee') : NULL;
+				$changes['default_rate'] = ($data['config']['default_rate'] != $this->input->post('default_rate')) ? $this->input->post('default_rate') : NULL;
+				$changes['escrow_rate'] = ($data['config']['escrow_rate'] != $this->input->post('escrow_rate')) ? $this->input->post('escrow_rate') : NULL;
 				$changes = array_filter($changes, 'strlen');
-				if(count($changes) > 0) 
-					if($this->config_model->update($changes) == TRUE){
-						$log = $this->admin_model->format_config_changes($changes);
-						$this->logs_model->add('Admin: Fees Panel','Fees configuration updated','The fees configuration of the site has been updated:<br />'.$log,'Info');
+				
+				if (count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+				{
+					$log = $this->admin_model->format_config_changes($changes);
+					$this->logs_model->add('Admin: Fees Panel','Fees configuration updated','The fees configuration of the site has been updated:<br />'.$log,'Info');
 
-						$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
-						redirect('admin/items/fees');
-					}
+					$message = 'Your changes have been saved.';
+				}
+				else 
+				{
+					$message = 'No changes have been made.';
+				}
+				$this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+				redirect('admin/items/fees');
 			}
 		}
 		
@@ -1027,6 +1136,9 @@ class Admin extends CI_Controller {
 	/**
 	 * Orders
 	 * 
+	 * This function shows a list of all the orders on the site. 
+	 * 
+	 * @param		int	$start
 	 */
 	public function orders($start = 0) {
 		if(!($start > 0 && is_numeric($start)))
@@ -1061,6 +1173,8 @@ class Admin extends CI_Controller {
 	 * activated/paid for. Lists can be ordered by particular values,
 	 * such as the user id, last login time, registration time, etc.
 	 * The order can be randomized, or just ordered ascending or descending.
+	 * 
+	 * @param		int	$start
 	 */
 	public function user_list($start = 0) {
 		$this->load->library('pagination');
@@ -1328,349 +1442,8 @@ class Admin extends CI_Controller {
 
 		return $nav;
 	}
-	
-	// Callback functions for form validation
-	
-	/**
-	 * Check the captcha length is not too long.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_captcha_length($param) {
-		return ($param > 0 && $param < 13) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Check Bool
-	 * 
-	 * Check the supplied parameter is for a boolean..
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_bool($param) {
-		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Check YesNo
-	 * 
-	 * Checks if the supplied parameter is 0 or 1. Same as check_bool, 
-	 * but uses a different error message
-	 * 
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_yesno($param) {
-		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
-	} 
-	
-	/**
-	 * Check Category Exists.
-	 * 
-	 * Check the required category exists (for parent_id)
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_category_exists($param) {
-		if($param == NULL)
-			return FALSE;
-			
-		if($param == "0")	// Allows the category to be a root category.
-			return TRUE;
-			
-		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Can Delete Category
-	 * 
-	 * Check the category can be deleted (doesn't allow '0' for root category).
-	 *
-	 * @param	int	$param	
-	 * @return	boolean
-	 */
-	public function check_can_delete_category($param) {
-		if($param == NULL)
-			return FALSE;
-			
-		return ($this->categories_model->get(array('id' => $param)) !== FALSE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Registration Token Fee
-	 * 
-	 * This function checks if the supplied 'amount' for the registration
-	 * is 'default', which will trigger the user to be charged the config value,
-	 * or else if the admin has specified a figure.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_registration_token_fee($param) {
-		return ($param == 'default' || is_numeric($param) && $param >= 0) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Bitcoin Account Exists
-	 * 
-	 * Check the bitcoin account already exists in the server wallet.
-	 *
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_bitcoin_account_exists($param) {
-		if($param == '')
-			return FALSE;
-
-		$accounts = $this->bw_bitcoin->listaccounts(0);
-		return (isset($accounts[$param])) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Admin Roles
-	 * 
-	 * Check the submitted parameter is either 1, 2, or 3.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_admin_roles($param) {
-		return ($this->general->matches_any($param, array('1','2','3')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Autorun Interval 
-	 * 
-	 * Check the submitted parameter is a valid interval for an autorun job.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_autorun_interval($param) {
-		return (is_numeric($param) && $param >= '0') ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check is positive
-	 * 
-	 * Check the supplied parameter is a positive number.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_is_positive($param) {
-		return (is_numeric($param) && $param >= 0) ? TRUE : FALSE;		
-	}
-	
-	/**
-	 * Check Price Index
-	 * 
-	 * Check the supplied parameter is a valid price index config value.
-	 *
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_price_index($param) {
-		$config = $this->bw_config->price_index_config;
-		return (is_array($config[$param]) || $param == 'Disabled') ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Proxy Type
-	 * 
-	 * Check the supplied parameter is an acceptable proxy type.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_proxy_type($param) {
-		return ($this->general->matches_any($param, array('HTTP','SOCKS5')) == TRUE ) ? TRUE : FALSE ;
-	}
-	
-	/**
-	 * Check Proxy URL
-	 * 
-	 * Checks the supplied ip:port against a regex. $param may be an 
-	 * empty string if the proxy is disabled, otherwise it uses 
-	 * preg_match to verify the regex. Returns TRUE if $param is valid,
-	 * and FALSE on invalid input.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_proxy_url($param) {
-		if($param == '')
-			return TRUE;
-		preg_match('/^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}):([0-9]{1,5})$/', $param, $match);
-		return (count($match) > 0) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Session Timeout.
-	 * 
-	 * Session timeouts can be a minimum of 5 minutes inactivity before
-	 * logging a user out, to an admin defined interval. The default value
-	 * is set in the Config library, and is 30 minutes. Otherwise it's read
-	 * from this value set in the table.
-	 * 
-	 * @param	string	$param
-	 * return	boolean
-	 */
-	public function check_session_timeout($param) {
-		 return (is_numeric($param) && $param >= 5) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Bitcoin Balance Method
-	 * 
-	 * Checks if the bitcoin balance method is an allowed value:
-	 * 'Disabled' for disabled, 'ECDSA' to generate private keys, and 
-	 * 'Electrum' for the deterministic addresses.
-	 * 
-	 * @param	string	$param
-	 * return	boolean
-	 */
-	public function check_bitcoin_balance_method($param) {
-		return ($this->general->matches_any($param, array('Disabled','ECDSA','Electrum')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check User Search For
-	 * 
-	 * This checks if the search_for parameter is an allowed class of 
-	 * users. Returns TRUE on success, FALSE on failure.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_user_search_for($param) {
-		return ($this->general->matches_any($param, array('','all_users','buyers','vendors','admins')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check User Search With Property
-	 * 
-	 * Checks if the with_property specifier for a search is an allowed
-	 * value. This narrows down the search to specific types of users.
-	 * Returns TRUE on success, FALSE on failure. 
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_user_search_with_property($param) {
-		return ($this->general->matches_any($param, array('','activated','not_activated','banned','not_banned')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check User Search Order By
-	 * 
-	 * This checks if the order_by parameter is allowed. Returns TRUE on 
-	 * valid input, FALSE on failure.
-	 * 
-	 * @param	string $param
-	 * @return	boolean
-	 */
-	public function check_user_search_order_by($param) {
-		return ($this->general->matches_any($param, array('','id','user_name','register_time','login_time','banned')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check User Search List
-	 * 
-	 * This function checks if the order of the list (in order_by)
-	 * is allowed. It can be ascending, descending, or in random order.
-	 * Returns TRUE on valid input, FALSE on failure.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_user_search_list($param) {
-		return ($this->general->matches_any($param, array(NULL,'random','ASC','DESC')) == TRUE) ? TRUE : FALSE;		
-	}
-	
-	/**
-	 * Check Valid Location List Source
-	 * 
-	 * This function checks if the submited source of location info is 
-	 * correct. Allowed values are 'Default' for the standard country 
-	 * list, and 'Custom' for a custom list.
-	 * 
-	 * @param	string $param	
-	 * @return	boolean
-	 */
-	public function check_valid_location_list_source($param) {
-		return ($this->general->matches_any($param, array('Default', 'Custom')) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Location Exists
-	 * 
-	 * This function checks if the supplied location id is either the
-	 * root location, or else checks if it is a valid custom location. 
-	 * If the value is zero, it is accepted by default. 
-	 * Returns a boolean indicating outcome.
-	 * 
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_custom_parent_location_exists($param){
-		if($param == '0')
-			return TRUE;
-			
-		return ($this->location_model->custom_location_by_id($param) !== FALSE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Location Exists
-	 * 
-	 * This function checks if the supplied location id exists in the 
-	 * list of locations. If the value is zero, it is accepted by default.
-	 * Returns a boolean indicating outcome.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_custom_location_exists($param) {
-		return ($this->location_model->custom_location_by_id($param) !== FALSE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check User Exists
-	 * 
-	 * This function checks that the supplied $param (a user hash) 
-	 * corresponds to a valid user. Returns a boolean indicating success
-	 * or failure.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_user_exists($param) {
-		$user = $this->accounts_model->get(array('user_hash' => $param));
-		return ($user == FALSE) ? FALSE : TRUE;
-	}
-	
-	/**
-	 * Check Master Public Key
-	 * 
-	 * This function validates a master public key, by pretending that it
-	 * is a regular uncompressed public key ('04'+Xhex+Yhex), by appending
-	 * the $mpk to '04'. This is passed through the BitcoinLib::validate_public_key()
-	 * function, which returns TRUE if it successfully generates a valid
-	 * point from the key.
-	 * The function returns TRUE if the $mpk is empty!
-	 * 
-	 * @param	string	$mpk
-	 * @param	boolean
-	 */
-	public function check_master_public_key($mpk) {
-		$this->load->library('BitcoinLib');
-		return ($mpk == '' || BitcoinLib::validate_public_key('04'.$mpk) == TRUE) ? TRUE : FALSE;
-	}
 		
 };
 
 /* End of file: Admin.php */
-	
+/* Location: application/controllers/Admin.php */

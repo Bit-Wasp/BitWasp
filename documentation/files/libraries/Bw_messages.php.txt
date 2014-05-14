@@ -18,6 +18,10 @@ class Bw_messages {
 	 * This is used to store the users message password.
 	 */
 	protected $message_password;
+	
+	/**
+	 * CI
+	 */
 	public $CI;
 	
 	/**
@@ -35,6 +39,7 @@ class Bw_messages {
 	public function __construct() {
 		$this->CI = &get_instance();
 		$this->CI->load->library('openssl');
+		$this->CI->load->library('form_validation');
 		$this->CI->load->library('gpg');
 		$this->CI->load->model('users_model');
 	}	
@@ -77,7 +82,6 @@ class Bw_messages {
 			$remove_on_read = '0';
 		} 
 		
-		
 		$from = $data['from'];
 		
 		// Load the account the message is being sentto.
@@ -87,39 +91,41 @@ class Bw_messages {
 						'subject' => $subject,
 						'message' => $message);
 						
-		// Check if the message is encrypted.
-		$encrypted = ((stripos($message, '-----BEGIN PGP MESSAGE-----') !== FALSE) && (stripos($message, '-----END PGP MESSAGE-----') !== FALSE)) ? '1' : '0' ;
+		$encrypted = $this->CI->form_validation->check_pgp_encrypted($content['message']);
 		
 		// If the message isn't already encrypted with PGP..
-		if($encrypted == '0') {
-			// If the sender has requested it, or the recipient has forced it,
+		if($encrypted == FALSE) {
+			// If the recipient has forced it,
 			// encrypt the message with the recipients public key.
-			if( ($this->CI->input->post('pgp_encrypt') == '1') ||
-			    ($to['force_pgp_messages'] == '1') ) {
-					$this->CI->load->model('accounts_model');
-					$pgp = $this->CI->accounts_model->get_pgp_key($to['id']);
-					$content['message'] = $this->CI->gpg->encrypt($pgp['fingerprint'], $content['message']);
-					$encrypted = '1';
-			}		
+			// This only happens if the recipient has NOT blocked non-pgp messages. 
+			if( $to['force_pgp_messages'] == '1' ) {
+				$this->CI->load->model('accounts_model');
+				$pgp = $this->CI->accounts_model->get_pgp_key($to['id']);
+				$content['message'] = $this->CI->gpg->encrypt($pgp['fingerprint'], $content['message']);
+				$encrypted = TRUE;
+			}
 		}
-
 		// JSON encode the content array, and encrypt it if able.
 		$content = json_encode($content);
-		if($this->encrypt_private_messages)
+
+		$rsa = '0';
+		if(	$to['public_key'] !== '' ) 
+		{
+			$rsa = '1';
 			$content = $this->CI->openssl->encrypt($content, $to['public_key']);
-		
-		// Encode the data before insertion.
-		$content = base64_encode($content);
+		}
+
 		$hash = $this->CI->general->unique_hash('messages','hash');
-	
+
 		$results = array('to' => $to['id'],
-						 'content' => $content,
+						 'content' => base64_encode($content),
 						 'hash' => $hash,
 						 'remove_on_read' => $remove_on_read,
-						 'encrypted' => $encrypted,
+						 'rsa_encrypted' => $rsa,
+						 'encrypted' => ($encrypted == TRUE) ? '1' : '0',
 						 'time' => time()
-						 );
-						 
+					 );
+ 
 		return $results;
 	}
 	
@@ -137,7 +143,8 @@ class Bw_messages {
 	 * @param		array	$messages
 	 * @return		array
 	 */
-	public function prepare_output($messages = NULL) {
+	public function prepare_output($messages = NULL)
+	{
 		$this->CI->load->model('users_model');
 		$this->CI->load->model('accounts_model');
 		
@@ -145,21 +152,31 @@ class Bw_messages {
 		if($messages == NULL)
 			return FALSE;
 			
-		// If messages are encrypted, load the private key.
-		if($this->encrypt_private_messages == TRUE)
-			$this->private_key = $this->CI->users_model->load_message_key('private');
+		$key_data = $this->CI->users_model->message_data(array('user_hash' => $this->CI->current_user->user_hash));
 			
 		$results = array();			
+		$senders = array();
 
 		// Loop through messages, decoding, decrypting the content.
 		foreach($messages as $message) {
 
-			$tmp = base64_decode($message['content']);
-			$content = ($this->encrypt_private_messages == TRUE) ? $this->CI->openssl->decrypt($tmp, $this->private_key, $this->current_user->message_password) : $tmp;
+			$content = base64_decode($message['content']);
+			if($message['rsa_encrypted'] == '1') {
+				if($this->CI->current_user->message_password == NULL) {
+					$this->CI->session->set_userdata('before_msg_pin',uri_string());
+					redirect('message/pin');
+					// redirect to pin page.
+				}
+				$content = $this->CI->openssl->decrypt($content, $key_data['private_key'], $this->CI->current_user->message_password);
+			}
 			$content = json_decode($content);
 
+			// Build up vendors to save multiple queries.
+			if(!isset($senders[$content->from])) 
+				$senders[$content->from] = $this->CI->accounts_model->get(array('id' => $content->from));
+
 			$res = array('encrypted' => $message['encrypted'],
-						 'from' => $this->CI->accounts_model->get(array('id' => $content->from)),
+						 'from_id' => $content->from,
 						 'hash' => $message['hash'],
 						 'id' => $message['id'],
 						 'message' => $content->message,
@@ -174,9 +191,14 @@ class Bw_messages {
 			array_push($results, $res);
 			unset($res);
 		}
+		
+		foreach ($results as &$res) 
+		{
+			$res['from'] = $senders[$res['from_id']];
+		}
+		
 		return $results;
 	}
-	
 };
 
 /* End of file Messages.php */

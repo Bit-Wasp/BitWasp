@@ -58,6 +58,7 @@ class Bw_curl {
 	 * which will replace any of the proxy settings loaded in memory.
 	 * This is used to test a new proxy.
 	 * 
+	 * @param	array	$override
 	 * @return	void
 	 */
 	public function __construct($override = NULL) {
@@ -71,7 +72,7 @@ class Bw_curl {
 		}
 
 		// If the $override parameter is supplied, configure these.
-		if(is_array($override) == TRUE) {
+		if(is_array($override)) {
 			$this->proxy_type = $override['proxy_type'];
 			$this->curl_proxy_type = $this->type_ref[$this->proxy_type];
 			$this->proxy_url = $override['proxy_url'];

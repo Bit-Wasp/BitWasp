@@ -3,7 +3,7 @@
 		  <?php echo $nav; ?>
 			
           <?php if(isset($returnMessage)) { ?>
-          <div class='alert alert-success'><?php echo $returnMessage; ?></div><?php } ?>
+          <div class='alert'><?php echo $returnMessage; ?></div><?php } ?>
 			
 		  <div class="container-fluid">
 <?php 

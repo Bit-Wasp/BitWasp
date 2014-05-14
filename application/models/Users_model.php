@@ -29,8 +29,8 @@ class Users_model extends CI_Model {
 	 * Add a user to the table. Use prepared statements..
 	 *
 	 * @access	public
-	 * @param	array
-	 * @param	string
+	 * @param	array	$data
+	 * @param	string	$token_info
 	 * @return	boolean
 	 */					
 	public function add($data, $token_info = NULL) {
@@ -59,15 +59,29 @@ class Users_model extends CI_Model {
 		$key = array_keys($user); $key = $key[0];
 		if(in_array($key, array('user_hash', 'id', 'user_name'))) {
 			// Duplicate the select statement to prevent weird errors later on.
-			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, pgp_two_factor, totp_two_factor, entry_paid');
+			$this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, public_key, pgp_two_factor, totp_two_factor, entry_paid');
 			$query = $this->db->get_where('users', array($key => $user[$key]));
 		} else {
 			return FALSE; //No suitable field found.
 		}
 		
-		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
+		if($query->num_rows() > 0) {
+			$row = $query->row_array();
+			$row['public_key'] = base64_decode($row['public_key']);
+			return $row;
+		}
+		return FALSE;
 	}
 	
+	public function check_user_exists(array $user)
+	{
+		$key = array_keys($user); $key = $key[0];
+		if(in_array($key, array('user_hash', 'id', 'user_name'))) {
+			return ($this->db->where($key, $user[$key])->from('users')->count_all_results() == 1) ? TRUE : FALSE;
+		} else {
+			return FALSE; 
+		}
+	}
 
 	/**
 	 * Deletes
@@ -75,7 +89,7 @@ class Users_model extends CI_Model {
 	 * Deletes a user account. 
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$user_hash
 	 * @return	boolean
 	 */				
 	public function delete($user_hash) {
@@ -87,11 +101,6 @@ class Users_model extends CI_Model {
 		$delete_user = $this->db->delete('users');
 		
 		return ($delete_user == TRUE) ? TRUE : FALSE;
-		//$this->db->where('user_hash', $user_hash);
-		//$delete_user = $this->db->delete('users');
-		
-		//$this->db->where('user_hash', $user_hash);
-		//$delete_user = $this->db->delete('users');
 		
 	}	
 	
@@ -114,6 +123,7 @@ class Users_model extends CI_Model {
 		} elseif (isset($user['user_name'])) {
 			$query = $this->db->get_where('users', array('user_name' => $user['user_name']));
 		} else {
+			$this->db->reset_query();
 			return FALSE; //No suitable field found.
 		}
 
@@ -226,7 +236,7 @@ class Users_model extends CI_Model {
 	 * This function accepts a $user_id, and increases that users completed
 	 * order count by one.
 	 * 
-	 * @param	int	$id
+	 * @param	int	$user_id
 	 * @return	boolean
 	 */
 	public function increase_order_count($user_id) {
@@ -267,7 +277,7 @@ class Users_model extends CI_Model {
 	 * in order to register on the website. $info['user_hash'], $info['amount']
 	 * and $info['bitcoin_address'] must be supplied. 
 	 * 
-	 * @param	array	info
+	 * @param	array	$info
 	 * @return	boolean
 	 */
 	public function set_entry_payment($info) {
@@ -313,10 +323,7 @@ class Users_model extends CI_Model {
 	 * Get Payment Address Owner
 	 * 
 	 * Function to return the user has associated with the particular
-	 * $address. Called in the bw_bitcoin->walletnotify() function to see
-	 * if the address belongs to a fee's account. If so, it will check the
-	 * amount received on that address. When it's >= to the required amount
-	 * the user can log in. Excesses are added to the user account!
+	 * $address. Called when a watched address is found with a fee purpose
 	 * 
 	 * @param	string	$address
 	 * return	string/FALSE
@@ -368,7 +375,7 @@ class Users_model extends CI_Model {
 	 * This function returns the total count of users. Additional parameters
 	 * can be supplied to narrow down the request. 
 	 * 
-	 * @param	array	(opt)$params
+	 * @param	array(opt)	$params
 	 * @return	int
 	 */
 	public function count_user_list($params) {
@@ -394,7 +401,7 @@ class Users_model extends CI_Model {
 	 * Display a list of users. Can supply a list of parameters to narrow
 	 * down the dataset, and also does pagination.
 	 * 
-	 * @param	array	(opt)$params
+	 * @param	array(opt)	$params
 	 * @param	int	$users_per_page
 	 * @param	int $start
 	 * @return	array/FALSE

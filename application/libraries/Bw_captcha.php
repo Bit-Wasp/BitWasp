@@ -11,7 +11,10 @@
  * @author		BitWasp
  */
 class Bw_captcha {
-
+	
+	/**
+	 * CI
+	 */
 	protected $CI; 
 	/**
 	 * Captcha Length
@@ -51,7 +54,7 @@ class Bw_captcha {
 	 * Checks the entered $answer to see if it correspondes to the
 	 * captchakey stored in the session
 	 * 
-	 * @param		string $answer.
+	 * @param		string 	$answer
 	 * @return		bool
 	 */
 	public function check($answer) { 

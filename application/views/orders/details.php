@@ -17,33 +17,33 @@
 						</div>			
 						<div class="row-fluid">
 							<div class="span5 offset1">Items Cost</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-								echo $local_currency['symbol'] . number_format($order['price']*$local_currency['rate'], 2)." / "; 
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+								echo $current_user['currency']['symbol'] . number_format($order['price']*$current_user['currency']['rate'], 2)." / "; 
 							}
 							echo $order['currency']['symbol']." ".number_format($order['price'], 8); ?></div>
 						</div>
 						
 						<div class="row-fluid">
 							<div class="span5 offset1">Shipping Cost</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-									echo $local_currency['symbol'].number_format($fees['shipping_cost']*$local_currency['rate'], 2)." / ";
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+									echo $current_user['currency']['symbol'].number_format($fees['shipping_cost']*$current_user['currency']['rate'], 2)." / ";
 								}
 							echo $order['currency']['symbol']." ".number_format($fees['shipping_cost'], 8); ?></div>
 						</div>
 						
 						<div class="row-fluid">
 							<div class="span5 offset1">Site's Fee</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-								echo $local_currency['symbol'].number_format($fees['fee']*$local_currency['rate'], 2). " / ";
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+								echo $current_user['currency']['symbol'].number_format($fees['fee']*$current_user['currency']['rate'], 2). " / ";
 							}
 							echo $order['currency']['symbol']." ".number_format($fees['fee'], 8); ?></div>
 						</div>
 						
 						<?php if($user_role !== 'Buyer' ) { ?>
 						<div class="row-fluid">
-							<div class="span5 offset1">Escrow Fees</div>
-							<div class="span6"><?php if($local_currency['id'] !== '0') {
-								echo $local_currency['symbol'].number_format($fees['escrow_fees']*$local_currency['rate'], 2). " / ";
+							<div class="span5 offset1">Extra Fees</div>
+							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
+								echo $current_user['currency']['symbol'].number_format($fees['escrow_fees']*$current_user['currency']['rate'], 2). " / ";
 							}
 							echo $order['currency']['symbol']." ".number_format($fees['escrow_fees'], 8); ?></div>
 						</div>
@@ -57,8 +57,8 @@
 								echo 'Total Cost';
 							} ?></div>
 							<div class="span6">
-								<?php if($local_currency['id'] !== '0') {
-									echo $local_currency['symbol'].number_format($order['order_price']*$local_currency['rate'], 2)." / ";
+								<?php if($current_user['currency']['id'] !== '0') {
+									echo $current_user['currency']['symbol'].number_format($order['order_price']*$current_user['currency']['rate'], 2)." / ";
 								}
 								echo $order['currency']['symbol']." ".$order['order_price']; ?>
 							</div>

@@ -19,8 +19,8 @@ class Auth_model extends CI_Model {
 	 * 
 	 * Check the level of authorization required for the URI[0]
 	 *
-	 * @access	public
-	 * @param	string
+	 * @access	public	
+	 * @param	string	$URI
 	 * @return	string / bool
 	 */		
 	public function check_auth($URI) {
@@ -43,8 +43,8 @@ class Auth_model extends CI_Model {
 	 * Load the authorization timeout of this URI.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	int (seconds) / FALSE
+	 * @param	string	$URI
+	 * @return	int(seconds)/FALSE
 	 */			
 	public function check_auth_timeout($URI) {
 		$this->db->select('timeout')
@@ -66,8 +66,8 @@ class Auth_model extends CI_Model {
 	 * Check the supplied solution to a two-factor auth.
 	 *
 	 * @access	public
-	 * @param	string
-	 * @return	bool
+	 * @param	string	$token
+	 * @return	boolean
 	 */			
 	public function check_two_factor_token($token) {
 		$result = FALSE;
@@ -91,7 +91,7 @@ class Auth_model extends CI_Model {
 	 * Store the solution of a two-factor challenge for the user.
 	 *
 	 * @access	public
-	 * @param	string
+	 * @param	string	$token
 	 * @return	bool
 	 */			
 	public function add_two_factor_token($token) {

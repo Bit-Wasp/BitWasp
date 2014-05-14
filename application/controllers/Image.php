@@ -28,7 +28,7 @@ class Image extends CI_Controller {
 	/**
 	 * Load the large version of an image.
 	 * URI: /image/$image_hash
-	 * @param	string
+	 * @param	string	$image_hash
 	 * @access	public
 	 * @see		Models/Bitcoin_Model
 	 * @see		Libraries/Bw_Bitcoin
@@ -46,3 +46,4 @@ class Image extends CI_Controller {
 };
 
 /* End of file Image.php */
+/* Location: application/controllers/Image.php */

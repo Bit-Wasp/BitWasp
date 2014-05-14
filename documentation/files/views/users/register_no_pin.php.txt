@@ -83,7 +83,7 @@ if($force_vendor_pgp == 'Enabled') echo "If you are registering as a vendor, it 
 				  <div class="controls">
 					<select name='local_currency'>
 <?php foreach($currencies as $currency) : ?>
-					  <option value='<?php echo $currency['id']; ?>'<?php echo ($current['id'] == '0') ? ' selected="selected"' : NULL; ?>><?php echo $currency['name']; ?></option>
+					  <option value='<?php echo $currency['id']; ?>'<?php echo ($currency['id'] == '0') ? ' selected="selected"' : NULL; ?>><?php echo $currency['name']; ?></option>
 <?php endforeach; ?>
 					</select>
                     <span class="help-inline"><?php echo form_error('local_currency'); ?></span>
@@ -120,7 +120,7 @@ if($force_vendor_pgp == 'Enabled') echo "If you are registering as a vendor, it 
 			    <noscript><div style="display:none"><input type='hidden' name='js_disabled' value='1' /></div></noscript>
 
                 <div class="form-actions">
-                  <input type='submit' class="btn btn-primary" value="Register" onclick='make_hash()' />
+                  <input type='submit' name='register_user' class="btn btn-primary" value="Register" onclick='make_hash()' />
                   <?php echo anchor('login', 'Cancel', 'title="Cancel" class="btn"');?>
                 </div>
               </fieldset>

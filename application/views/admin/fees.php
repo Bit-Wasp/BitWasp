@@ -5,7 +5,6 @@
 		  <?php if(isset($returnMessage)) { ?><div class='alert'><?php echo $returnMessage; ?></div><?php } ?>
 
 		  <?php echo form_open('admin/items/fees', array('class' => 'form-horizontal')); ?>
-		  
 		    <div class='row-fluid'>
 			  <div class='span5 offset2'><strong>Basic Settings</strong></div>
 		    </div>

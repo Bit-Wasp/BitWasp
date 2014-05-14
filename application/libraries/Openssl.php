@@ -41,7 +41,6 @@ class Openssl {
 	 * This function is used to load the CodeIgniter framework, and to 
 	 * work out the keysize to be used.
 	 * 
-	 * @return		void
 	 */
 	public function __construct() {
 		$CI = &get_instance();
@@ -56,7 +55,7 @@ class Openssl {
 	 * keypair as an array containing the base64 decoded strings (for
 	 * insertion into the database).
 	 * 
-	 * @param		string
+	 * @param		string	$message_password
 	 */
 	public function keypair($message_password) {
 		
@@ -85,7 +84,9 @@ class Openssl {
 	 * This function encrypts the specified $text using the specified
 	 * $public_key. Returns the encrypted text.
 	 * 
-	 * @return		string
+	 * @param		string	$text
+	 * @param		string	$public_key
+	 * @return		bytestring
 	 */
 	public function encrypt($text, $public_key) { 
 		openssl_public_encrypt($text, $encrypted, $public_key);
@@ -100,18 +101,16 @@ class Openssl {
 	 * because when entering the message pin on /messaages/pin, the supplied
 	 * pin may be incorrect. We handle errors by checking the output.
 	 * 
-	 * @param		string
-	 * @param		string
-	 * @param		string
+	 * @param		string	$text
+	 * @param		string	$private_key
+	 * @param		string	$password
 	 * @return		string
 	 */	
 	public function decrypt($text, $private_key, $password) { 
 		// Decrypt the private key prior to use.
 		$res = openssl_pkey_get_private($private_key, $password);
-		
 		// Decrypt the text.
 		@openssl_private_decrypt($text, $decrypted, $res);
-		
 		unset($password);
 		unset($res);
 		return $decrypted;

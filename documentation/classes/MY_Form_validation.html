@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+    <meta charset="utf-8"/>
+    <title>API Documentation</title>
+    <meta name="author" content=""/>
+    <meta name="description" content=""/>
+
+    <link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../css/prism.css" rel="stylesheet" media="all"/>
+    <link href="../css/template.css" rel="stylesheet" media="all"/>
+    
+    <!--[if lt IE 9]>
+    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/ui/1.10.3/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="../js/jquery.smooth-scroll.js"></script>
+    <script src="../js/prism.min.js"></script>
+    <!-- TODO: Add http://jscrollpane.kelvinluck.com/ to style the scrollbars for browsers not using webkit-->
+    <script type="text/javascript">
+    function loadExternalCodeSnippets() {
+        Array.prototype.slice.call(document.querySelectorAll('pre[data-src]')).forEach(function (pre) {
+            var src = pre.getAttribute('data-src');
+            var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
+            var language = 'php';
+
+            var code = document.createElement('code');
+            code.className = 'language-' + language;
+
+            pre.textContent = '';
+
+            code.textContent = 'Loading…';
+
+            pre.appendChild(code);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', src, true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+
+                    if (xhr.status < 400 && xhr.responseText) {
+                        code.textContent = xhr.responseText;
+
+                        Prism.highlightElement(code);
+                    }
+                    else if (xhr.status >= 400) {
+                        code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
+                    }
+                    else {
+                        code.textContent = '✖ Error: File does not exist or is empty';
+                    }
+                }
+            };
+
+            xhr.send(null);
+        });
+    }
+
+    $(document).ready(function(){
+        loadExternalCodeSnippets();
+    });
+    $('#source-view').on('shown', function () {
+        loadExternalCodeSnippets();
+    })
+</script>
+
+    <link rel="shortcut icon" href="../images/favicon.ico"/>
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png"/>
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/apple-touch-icon-72x72.png"/>
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/apple-touch-icon-114x114.png"/>
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <i class="icon-ellipsis-vertical"></i>
+            </a>
+            <a class="brand" href="../index.html">API Documentation</a>
+
+            <div class="nav-collapse">
+                <ul class="nav pull-right">
+                    <li class="dropdown">
+                        <a href="../index.html" class="dropdown-toggle" data-toggle="dropdown">
+                            API Documentation <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                                                    </ul>
+                    </li>
+                    <li class="dropdown" id="charts-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Charts <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../graphs/class.html">
+                                    <i class="icon-list-alt"></i>&#160;Class hierarchy diagram
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" id="reports-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Reports <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="../reports/errors.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">1582</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="../reports/markers.html">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <i class="icon-list-alt"></i>&#160;Markers <span class="label label-info pull-right">0</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--<div class="go_to_top">-->
+    <!--<a href="#___" style="color: inherit">Back to top&#160;&#160;<i class="icon-upload icon-white"></i></a>-->
+    <!--</div>-->
+</div>
+
+<div id="___" class="container-fluid">
+        <section class="row-fluid">
+        <div class="span2 sidebar">
+                                <div class="accordion" style="margin-bottom: 0">
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-2073228502"></a>
+                                <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
+            </div>
+            <div id="namespace-2073228502" class="accordion-body collapse in">
+                <div class="accordion-inner">
+
+                    
+                    <ul>
+                                                    <li class="interface"><a href="../classes/CurveFpInterface.html">CurveFpInterface</a></li>
+                                                    <li class="interface"><a href="../classes/PublicKeyInterface.html">PublicKeyInterface</a></li>
+                                                    <li class="interface"><a href="../classes/PrivateKeyInterface.html">PrivateKeyInterface</a></li>
+                                                    <li class="interface"><a href="../classes/PointInterface.html">PointInterface</a></li>
+                                                    <li class="interface"><a href="../classes/EcDHInterface.html">EcDHInterface</a></li>
+                                                    <li class="interface"><a href="../classes/SignatureInterface.html">SignatureInterface</a></li>
+                                                                                                    <li class="class"><a href="../classes/Template.html">Template</a></li>
+                                                    <li class="class"><a href="../classes/Orders.html">Orders</a></li>
+                                                    <li class="class"><a href="../classes/Authorize.html">Authorize</a></li>
+                                                    <li class="class"><a href="../classes/Admin.html">Admin</a></li>
+                                                    <li class="class"><a href="../classes/Messages.html">Messages</a></li>
+                                                    <li class="class"><a href="../classes/Callback.html">Callback</a></li>
+                                                    <li class="class"><a href="../classes/Welcome.html">Welcome</a></li>
+                                                    <li class="class"><a href="../classes/Listings.html">Listings</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_Test.html">Bitcoin_Test</a></li>
+                                                    <li class="class"><a href="../classes/Users.html">Users</a></li>
+                                                    <li class="class"><a href="../classes/Accounts.html">Accounts</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/Items.html">Items</a></li>
+                                                    <li class="class"><a href="../classes/Reviews.html">Reviews</a></li>
+                                                    <li class="class"><a href="../classes/Bw_captcha.html">Bw_captcha</a></li>
+                                                    <li class="class"><a href="../classes/Bw_session.html">Bw_session</a></li>
+                                                    <li class="class"><a href="../classes/MY_Form_validation.html">MY_Form_validation</a></li>
+                                                    <li class="class"><a href="../classes/Current_User.html">Current_User</a></li>
+                                                    <li class="class"><a href="../classes/Bw_Transaction.html">Bw_Transaction</a></li>
+                                                    <li class="class"><a href="../classes/QRrsItem.html">QRrsItem</a></li>
+                                                    <li class="class"><a href="../classes/QRrs.html">QRrs</a></li>
+                                                    <li class="class"><a href="../classes/QRimage.html">QRimage</a></li>
+                                                    <li class="class"><a href="../classes/QRbitstream.html">QRbitstream</a></li>
+                                                    <li class="class"><a href="../classes/QRrsblock.html">QRrsblock</a></li>
+                                                    <li class="class"><a href="../classes/QRrawcode.html">QRrawcode</a></li>
+                                                    <li class="class"><a href="../classes/QRcode.html">QRcode</a></li>
+                                                    <li class="class"><a href="../classes/FrameFiller.html">FrameFiller</a></li>
+                                                    <li class="class"><a href="../classes/QRencode.html">QRencode</a></li>
+                                                    <li class="class"><a href="../classes/qrstr.html">qrstr</a></li>
+                                                    <li class="class"><a href="../classes/QRtools.html">QRtools</a></li>
+                                                    <li class="class"><a href="../classes/QRspec.html">QRspec</a></li>
+                                                    <li class="class"><a href="../classes/QRimage.html">QRimage</a></li>
+                                                    <li class="class"><a href="../classes/QRinputItem.html">QRinputItem</a></li>
+                                                    <li class="class"><a href="../classes/QRinput.html">QRinput</a></li>
+                                                    <li class="class"><a href="../classes/QRbitstream.html">QRbitstream</a></li>
+                                                    <li class="class"><a href="../classes/QRsplit.html">QRsplit</a></li>
+                                                    <li class="class"><a href="../classes/QRrsItem.html">QRrsItem</a></li>
+                                                    <li class="class"><a href="../classes/QRrs.html">QRrs</a></li>
+                                                    <li class="class"><a href="../classes/QRmask.html">QRmask</a></li>
+                                                    <li class="class"><a href="../classes/QRrsblock.html">QRrsblock</a></li>
+                                                    <li class="class"><a href="../classes/QRrawcode.html">QRrawcode</a></li>
+                                                    <li class="class"><a href="../classes/QRcode.html">QRcode</a></li>
+                                                    <li class="class"><a href="../classes/FrameFiller.html">FrameFiller</a></li>
+                                                    <li class="class"><a href="../classes/QRencode.html">QRencode</a></li>
+                                                    <li class="class"><a href="../classes/QRspec.html">QRspec</a></li>
+                                                    <li class="class"><a href="../classes/QRinputItem.html">QRinputItem</a></li>
+                                                    <li class="class"><a href="../classes/QRinput.html">QRinput</a></li>
+                                                    <li class="class"><a href="../classes/QRtools.html">QRtools</a></li>
+                                                    <li class="class"><a href="../classes/qrstr.html">qrstr</a></li>
+                                                    <li class="class"><a href="../classes/QRsplit.html">QRsplit</a></li>
+                                                    <li class="class"><a href="../classes/QRmask.html">QRmask</a></li>
+                                                    <li class="class"><a href="../classes/Price_Index.html">Price_Index</a></li>
+                                                    <li class="class"><a href="../classes/Version_Checker.html">Version_Checker</a></li>
+                                                    <li class="class"><a href="../classes/Bw_config.html">Bw_config</a></li>
+                                                    <li class="class"><a href="../classes/Jsonrpcclient.html">Jsonrpcclient</a></li>
+                                                    <li class="class"><a href="../classes/Raw_transaction.html">Raw_transaction</a></li>
+                                                    <li class="class"><a href="../classes/General.html">General</a></li>
+                                                    <li class="class"><a href="../classes/Openssl.html">Openssl</a></li>
+                                                    <li class="class"><a href="../classes/BitcoinLib.html">BitcoinLib</a></li>
+                                                    <li class="class"><a href="../classes/Ciqrcode.html">Ciqrcode</a></li>
+                                                    <li class="class"><a href="../classes/Layout.html">Layout</a></li>
+                                                    <li class="class"><a href="../classes/Bw_messages.html">Bw_messages</a></li>
+                                                    <li class="class"><a href="../classes/Image.html">Image</a></li>
+                                                    <li class="class"><a href="../classes/TOTP.html">TOTP</a></li>
+                                                    <li class="class"><a href="../classes/Bw_curl.html">Bw_curl</a></li>
+                                                    <li class="class"><a href="../classes/Autorun.html">Autorun</a></li>
+                                                    <li class="class"><a href="../classes/PrivateKey.html">PrivateKey</a></li>
+                                                    <li class="class"><a href="../classes/TestSuite.html">TestSuite</a></li>
+                                                    <li class="class"><a href="../classes/gmp_Utils.html">gmp_Utils</a></li>
+                                                    <li class="class"><a href="../classes/bcmath_Utils.html">bcmath_Utils</a></li>
+                                                    <li class="class"><a href="../classes/EcDH.html">EcDH</a></li>
+                                                    <li class="class"><a href="../classes/CurveFp.html">CurveFp</a></li>
+                                                    <li class="class"><a href="../classes/Point.html">Point</a></li>
+                                                    <li class="class"><a href="../classes/SECcurve.html">SECcurve</a></li>
+                                                    <li class="class"><a href="../classes/NISTcurve.html">NISTcurve</a></li>
+                                                    <li class="class"><a href="../classes/NumberTheory.html">NumberTheory</a></li>
+                                                    <li class="class"><a href="../classes/Signature.html">Signature</a></li>
+                                                    <li class="class"><a href="../classes/PublicKey.html">PublicKey</a></li>
+                                                    <li class="class"><a href="../classes/Electrum.html">Electrum</a></li>
+                                                    <li class="class"><a href="../classes/Bw_auth.html">Bw_auth</a></li>
+                                                    <li class="class"><a href="../classes/GPG.html">GPG</a></li>
+                                                    <li class="class"><a href="../classes/Bw_bitcoin.html">Bw_bitcoin</a></li>
+                                                    <li class="class"><a href="../classes/BIP32.html">BIP32</a></li>
+                                                    <li class="class"><a href="../classes/Admin_model.html">Admin_model</a></li>
+                                                    <li class="class"><a href="../classes/Disputes_model.html">Disputes_model</a></li>
+                                                    <li class="class"><a href="../classes/Transaction_cache_model.html">Transaction_cache_model</a></li>
+                                                    <li class="class"><a href="../classes/Currencies_model.html">Currencies_model</a></li>
+                                                    <li class="class"><a href="../classes/Autorun_model.html">Autorun_model</a></li>
+                                                    <li class="class"><a href="../classes/Listings_model.html">Listings_model</a></li>
+                                                    <li class="class"><a href="../classes/Images_model.html">Images_model</a></li>
+                                                    <li class="class"><a href="../classes/Accounts_model.html">Accounts_model</a></li>
+                                                    <li class="class"><a href="../classes/Review_model.html">Review_model</a></li>
+                                                    <li class="class"><a href="../classes/Categories_model.html">Categories_model</a></li>
+                                                    <li class="class"><a href="../classes/Shipping_costs_model.html">Shipping_costs_model</a></li>
+                                                    <li class="class"><a href="../classes/Fees_model.html">Fees_model</a></li>
+                                                    <li class="class"><a href="../classes/Users_model.html">Users_model</a></li>
+                                                    <li class="class"><a href="../classes/Items_model.html">Items_model</a></li>
+                                                    <li class="class"><a href="../classes/Auth_model.html">Auth_model</a></li>
+                                                    <li class="class"><a href="../classes/Location_model.html">Location_model</a></li>
+                                                    <li class="class"><a href="../classes/Order_model.html">Order_model</a></li>
+                                                    <li class="class"><a href="../classes/Bitcoin_model.html">Bitcoin_model</a></li>
+                                                    <li class="class"><a href="../classes/Review_auth_model.html">Review_auth_model</a></li>
+                                                    <li class="class"><a href="../classes/Alerts_model.html">Alerts_model</a></li>
+                                                    <li class="class"><a href="../classes/Logs_Model.html">Logs_Model</a></li>
+                                                    <li class="class"><a href="../classes/General_model.html">General_model</a></li>
+                                                    <li class="class"><a href="../classes/Messages_model.html">Messages_model</a></li>
+                                                    <li class="class"><a href="../classes/Config_model.html">Config_model</a></li>
+                                                    <li class="class"><a href="../classes/CI_Input.html">CI_Input</a></li>
+                                            </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </section>
+    <section class="row-fluid">
+        <div class="span10 offset2">
+            <div class="row-fluid">
+                <div class="span8 content class">
+                    <nav>
+                                                <a href="../namespaces/default.html">\</a> <i class="icon-level-up"></i>
+                                            </nav>
+                    <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
+
+                    <h1><small>\</small>MY_Form_validation</h1>
+                    <p><em>Form Validation Class</em></p>
+                    
+
+                    <section id="summary">
+                        <h2>Summary</h2>
+                        <section class="row-fluid heading">
+                            <section class="span4">
+                                <a href="#methods">Methods</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#properties">Properties</a>
+                            </section>
+                            <section class="span4">
+                                <a href="#constants">Constants</a>
+                            </section>
+                        </section>
+                        <section class="row-fluid public">
+                            <section class="span4">
+                                                                    <a href="../classes/MY_Form_validation.html#method___construct" class="">__construct()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method___get" class="">__get()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_autorun_interval" class="">check_autorun_interval()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_bitcoin_amount" class="">check_bitcoin_amount()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_bitcoin_amount_free" class="">check_bitcoin_amount_free()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_bitcoin_public_key" class="">check_bitcoin_public_key()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_bool_enabled" class="">check_bool_enabled()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_bool_areyousure" class="">check_bool_areyousure()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method__check_bool" class="">_check_bool()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_captcha" class="">check_captcha()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_captcha_length" class="">check_captcha_length()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_custom_location_exists" class="">check_custom_location_exists()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_custom_parent_location_exists" class="">check_custom_parent_location_exists()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_delete_on_read" class="">check_delete_on_read()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_is_parent_category" class="">check_is_parent_category()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_master_public_key" class="">check_master_public_key()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_not_parent_category" class="">check_not_parent_category()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_pgp_encrypted" class="">check_pgp_encrypted()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_pgp_required_for_user" class="">check_pgp_required_for_user()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_prepared_comments_vendor" class="">check_prepared_comments_vendor()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_prepared_comments_buyer" class="">check_prepared_comments_buyer()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_prepared_comments_item" class="">check_prepared_comments_item()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_price_index" class="">check_price_index()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_proxy_type" class="">check_proxy_type()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_proxy_url" class="">check_proxy_url()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_registration_token_charge" class="">check_registration_token_charge()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_review_comments_source" class="">check_review_comments_source()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_review_length" class="">check_review_length()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_rsa_keysize" class="">check_rsa_keysize()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_role_any" class="">check_role_any()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_user_exists" class="">check_user_exists()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_user_rating_input" class="">check_user_rating_input()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_user_search_for" class="">check_user_search_for()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_user_search_list" class="">check_user_search_list()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_user_search_order_by" class="">check_user_search_order_by()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_user_search_with_property" class="">check_user_search_with_property()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_category" class="">check_valid_category()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_currency" class="">check_valid_currency()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_location" class="">check_valid_location()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_location_list_source" class="">check_valid_location_list_source()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_location_shipto" class="">check_valid_location_shipto()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_location_shipfrom" class="">check_valid_location_shipfrom()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_rating_choice" class="">check_valid_rating_choice()</a><br />
+                                                                    <a href="../classes/MY_Form_validation.html#method_check_valid_registration_role" class="">check_valid_registration_role()</a><br />
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No public properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No constants found</em>
+                                                            </section>
+                        </section>
+                        <section class="row-fluid protected">
+                            <section class="span4">
+                                                                    <em>No protected methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No protected properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                        <section class="row-fluid private">
+                            <section class="span4">
+                                                                    <em>No private methods found</em>
+                                                            </section>
+                            <section class="span4">
+                                                                    <em>No private properties found</em>
+                                                            </section>
+                            <section class="span4">
+                                <em>N/A</em>
+                            </section>
+                        </section>
+                    </section>
+                </div>
+                <aside class="span4 detailsbar">
+                                        
+                    
+                    <dl>
+                        <dt>File</dt>
+                            <dd><a href="../files/libraries.MY_Form_validation.php.html"><div class="path-wrapper">libraries/MY_Form_validation.php</div></a></dd>
+                                                <dt>Package</dt>
+                            <dd><div class="namespace-wrapper">\CodeIgniter\Libraries</div></dd>
+                                                <dt>Class hierarchy</dt>
+                            <dd class="hierarchy">
+                                                                                                                                                                                                                                                                                                
+                                        <div class="namespace-wrapper">\CI_Form_validation</div>
+                                                                                                    <div class="namespace-wrapper">\MY_Form_validation</div>
+                            </dd>
+
+                        
+                        
+                        
+                                                                            <dt>See also</dt>
+                                                                                    <dd><a href="http://codeigniter.com/user_guide/libraries/form_validation.html"><div class="namespace-wrapper">http://codeigniter.com/user_guide/libraries/form_validation.html</div></a></dd>
+                                                    
+                                                                        </dl>
+                    <h2>Tags</h2>
+                    <table class="table table-condensed">
+                                            <tr>
+                            <th>
+                                category
+                            </th>
+                            <td>
+                                                                    <p>Validation</p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                author
+                            </th>
+                            <td>
+                                                                    <p>EllisLab Dev Team</p>
+                                                            </td>
+                        </tr>
+                                            <tr>
+                            <th>
+                                todo
+                            </th>
+                            <td>
+                                                            </td>
+                        </tr>
+                                        </table>
+                </aside>
+            </div>
+
+                        
+                        
+                                    <a id="methods" name="methods"></a>
+            <div class="row-fluid">
+                <div class="span8 content class"><h2>Methods</h2></div>
+                <aside class="span4 detailsbar"></aside>
+            </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___construct" name="method___construct" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__construct()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__construct( <span class="argument">$config</span>)</pre>
+                <p><em>Construct</em></p>
+                <p>Extend initial class, accept configuration</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td></td>
+                                <td>$config</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method___get" name="method___get" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">__get()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">__get(object <span class="argument">$object</span>)</pre>
+                <p><em>__get</em></p>
+                <p>magic function.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>object</td>
+                                <td>$object</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                            </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_autorun_interval" name="method_check_autorun_interval" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_autorun_interval()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_autorun_interval(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Autorun Interval</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bitcoin_amount" name="method_check_bitcoin_amount" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bitcoin_amount()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bitcoin_amount(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Bitcoin Amount</em></p>
+                <p>Check that the amount is greater than or equal to one satoshi.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bitcoin_amount_free" name="method_check_bitcoin_amount_free" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bitcoin_amount_free()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bitcoin_amount_free(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Bitcoin Amount Free</em></p>
+                <p>This checks that the amount is any positive amount.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bitcoin_public_key" name="method_check_bitcoin_public_key" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bitcoin_public_key()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bitcoin_public_key(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Bitcoin Public Key</em></p>
+                <p>Passes the input to the BitcoinLib library which tries to create
+a valid point on the secp256k1 curve.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bool_enabled" name="method_check_bool_enabled" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bool_enabled()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bool_enabled(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Bool Enabled</em></p>
+                <p>Checks that intput is either 0 or 1, indicating false/true, disabled/enabled, etc.
+Alias for check_book(), this fxn triggers appropriate error.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_bool_areyousure" name="method_check_bool_areyousure" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_bool_areyousure()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_bool_areyousure(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Bool AreYouSure?</em></p>
+                <p>Checks that the input is either 0 or 1, indicating false/true, disabled/enabled, etc.
+Alias for check_bool() which triggers appropriate error.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method__check_bool" name="method__check_bool" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">_check_bool()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">_check_bool(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Bool</em></p>
+                <p>Checks that the input is either 0 or 1, indicating false/true, disabled/enabled, etc.
+Alias for check_bool which triggers appropriate error.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_captcha" name="method_check_captcha" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_captcha()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_captcha(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Captcha</em></p>
+                <p>Checks the given captcha against what's stored in the session.
+Used In: Users, Authorize</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_captcha_length" name="method_check_captcha_length" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_captcha_length()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_captcha_length(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Captcha Length</em></p>
+                <p>Checks that the given captcha length is > 0, and &lt;= 15.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_custom_location_exists" name="method_check_custom_location_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_custom_location_exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_custom_location_exists(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Custom Location Exists</em></p>
+                <p>Checks tha the custom location exists.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_custom_parent_location_exists" name="method_check_custom_parent_location_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_custom_parent_location_exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_custom_parent_location_exists(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check custom parent location exists</em></p>
+                <p>Takes the stored custom locations from memory if available, otherwise
+will load them from the database. Checks that the supplied location
+is for a parent ID.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_delete_on_read" name="method_check_delete_on_read" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_delete_on_read()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_delete_on_read(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Delete On Read</em></p>
+                <p>This function checks whether the given input for the Message
+'burn on reading' functionality is acceptable. NULL means it wasn't
+selected, 1 means it was selected.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_is_parent_category" name="method_check_is_parent_category" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_is_parent_category()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_is_parent_category(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Is Parent Category</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_master_public_key" name="method_check_master_public_key" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_master_public_key()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_master_public_key(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Master Public Key</em></p>
+                <p>Checks that the given master public key was valid. Prefixes it with
+04 to make it look like an uncompressed key so $this->check_bitcoin_public_key
+can handle it.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_not_parent_category" name="method_check_not_parent_category" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_not_parent_category()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_not_parent_category(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Not Parent Category</em></p>
+                <p>Checks that the chosen category ID isn't a parent category, by
+looping through categories in config and checking against the parent.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_pgp_encrypted" name="method_check_pgp_encrypted" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_pgp_encrypted()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_pgp_encrypted(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check PGP Encrypted</em></p>
+                <p>This function extracts the base64 encoded message from a PGP message,
+and checks the data against a regex. Returns TRUE if the input was
+a valid PGP encrypted message (ie, headers match, and encoding is
+correct. Maybe using a php library rather than extension would
+allow us to verify this further?)</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_pgp_required_for_user" name="method_check_pgp_required_for_user" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_pgp_required_for_user()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_pgp_required_for_user(string <span class="argument">$str</span>, string <span class="argument">$post_name</span>) : boolean</pre>
+                <p><em>Check PGP Required for this User</em></p>
+                <p>Checks the provided users PGP settings.
+Returns TRUE if the user has not blocked non-PGP messages,
+or if they have blocked such messages, but the message is encrypted.
+Returns FALSE otherwise.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                                    <tr>
+                                <td>string</td>
+                                <td>$post_name</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_prepared_comments_vendor" name="method_check_prepared_comments_vendor" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_prepared_comments_vendor()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_prepared_comments_vendor(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Vendor Prepared Comments</em></p>
+                <p>Check the input is a valid prepared comment about a vendor.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_prepared_comments_buyer" name="method_check_prepared_comments_buyer" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_prepared_comments_buyer()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_prepared_comments_buyer(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Buyer Prepared Comments</em></p>
+                <p>Checks the input is a valid prepared comment about a buyer.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_prepared_comments_item" name="method_check_prepared_comments_item" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_prepared_comments_item()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_prepared_comments_item(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Item Prepared Comments</em></p>
+                <p>Checks the choice is a valid prepared comment.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_price_index" name="method_check_price_index" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_price_index()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_price_index(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Price Index</em></p>
+                <p>Check the supplied parameter is a valid price index config value.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_proxy_type" name="method_check_proxy_type" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_proxy_type()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_proxy_type(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Proxy Type</em></p>
+                <p>Checks that the proxy type is supported by the system.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_proxy_url" name="method_check_proxy_url" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_proxy_url()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_proxy_url(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Proxy URL</em></p>
+                <p>Checks the supplied ip:port against a regex. $str may be an
+empty string if the proxy is disabled, otherwise it uses
+preg_match to verify the regex. Returns TRUE if $str is valid,
+and FALSE on invalid input.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_registration_token_charge" name="method_check_registration_token_charge" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_registration_token_charge()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_registration_token_charge(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Registration Token Charge</em></p>
+                <p>Checks that the amount set by the admin for the amount to pay
+on registration, for a user with this token, is either default,
+for the default for that user-type, or else an arbitrary amount
+(0 for free, or a valid bitcoin amount).</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_review_comments_source" name="method_check_review_comments_source" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_review_comments_source()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_review_comments_source(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Comments Source</em></p>
+                <p>Check the submitted source for comments for this subject -
+It can either be 'input' or 'prepared'.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_review_length" name="method_check_review_length" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_review_length()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_review_length(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Review Length</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_rsa_keysize" name="method_check_rsa_keysize" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_rsa_keysize()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_rsa_keysize(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check RSA Keysize</em></p>
+                <p>Checks that the keysize is either 1024, 2048, or 4096.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_role_any" name="method_check_role_any" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_role_any()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_role_any(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Role Any</em></p>
+                <p>Check that the given role is valid, ie, either 1 2 or 3.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_user_exists" name="method_check_user_exists" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_user_exists()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_user_exists(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check User Exists</em></p>
+                <p>Checks that the username exists in the users database be trying
+to count results.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_user_rating_input" name="method_check_user_rating_input" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_user_rating_input()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_user_rating_input(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check User Rating Input</em></p>
+                <p>Used on the admin panel when entering the minimum rating for
+trusted users. Simply checks the chosen rating > 0 &amp;&amp; &lt; 5.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_user_search_for" name="method_check_user_search_for" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_user_search_for()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_user_search_for(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check User Search For</em></p>
+                <p>This checks if the search_for parameter is an allowed class of
+users. Returns TRUE on success, FALSE on failure.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_user_search_list" name="method_check_user_search_list" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_user_search_list()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_user_search_list(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check User Search List</em></p>
+                <p>This function checks if the order of the list (in order_by)
+is allowed. It can be ascending, descending, or in random order.
+Returns TRUE on valid input, FALSE on failure.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_user_search_order_by" name="method_check_user_search_order_by" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_user_search_order_by()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_user_search_order_by(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check User Search Order By</em></p>
+                <p>This checks if the order_by parameter is allowed. Returns TRUE on
+valid input, FALSE on failure.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_user_search_with_property" name="method_check_user_search_with_property" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_user_search_with_property()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_user_search_with_property(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check User Search With Property</em></p>
+                <p>Checks if the with_property specifier for a search is an allowed
+value. This narrows down the search to specific types of users.
+Returns TRUE on success, FALSE on failure.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_category" name="method_check_valid_category" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_category()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_category(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Category</em></p>
+                <p>Checks first that the number is natural, and not zero.
+Then looks through categories, checking if it finds it in the array.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_currency" name="method_check_valid_currency" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_currency()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_currency(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Currency</em></p>
+                <p>Check that the user has submitted a valid currency, i.e., already
+in the current list of currencies loaded in the config.</p>
+<p>Used in: Accounts, Listings, Users.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_location" name="method_check_valid_location" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_location()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_location(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Location</em></p>
+                <p>Check that the user has submitted a valid location, i.e., already
+in the current list of locations loaded in the config.</p>
+<p>$str should be an natural number, this function does not allow a
+the root location to be chosen ('0').</p>
+<p>Used in: Accounts, Users, Items.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_location_list_source" name="method_check_valid_location_list_source" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_location_list_source()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_location_list_source(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Location List Source</em></p>
+                
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_location_shipto" name="method_check_valid_location_shipto" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_location_shipto()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_location_shipto(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Location Ship-to</em></p>
+                <p>Checks that the selected destination location is acceptable</p>
+<ul>
+<li>ie, is either 'worldwide', or an ID of a valid location.</li>
+</ul>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_location_shipfrom" name="method_check_valid_location_shipfrom" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_location_shipfrom()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_location_shipfrom(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Location ShipFrom</em></p>
+                <p>Same as above, just without worldwide.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_rating_choice" name="method_check_valid_rating_choice" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_rating_choice()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_rating_choice(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Rating Choice</em></p>
+                <p>Checks that the user has supplied a valid rating, ie, a natural
+number from 1 - 5.</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                    <div class="row-fluid">
+        <div class="span8 content class">
+            <a id="method_check_valid_registration_role" name="method_check_valid_registration_role" class="anchor"></a>
+            <article class="method">
+                <h3 class="public ">check_valid_registration_role()</h3>
+                <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
+                <pre class="signature" style="margin-right: 54px;">check_valid_registration_role(string <span class="argument">$str</span>) : boolean</pre>
+                <p><em>Check Valid Role</em></p>
+                <p>Checks that the selected role is for a valid user:</p>
+<p>Used in:</p>
+
+                                    <h4>Parameters</h4>
+                    <table class="table table-condensed table-hover">
+                                                    <tr>
+                                <td>string</td>
+                                <td>$str</td>
+                                <td></td>
+                            </tr>
+                                            </table>
+                
+                
+                                    <h4>Returns</h4>
+                    boolean
+                                                </article>
+        </div>
+        <aside class="span4 detailsbar">
+            <h1><i class="icon-arrow-down"></i></h1>
+                                                            <dl>
+                                                                            </dl>
+            <h2>Tags</h2>
+            <table class="table table-condensed">
+                                    <tr>
+                        <th>
+                            todo
+                        </th>
+                        <td>
+                                                    </td>
+                    </tr>
+                            </table>
+        </aside>
+    </div>
+
+                                                                    </div>
+    </section>
+
+    <div id="source-view" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="source-view-label" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="source-view-label">MY_Form_validation.php</h3>
+        </div>
+        <div class="modal-body">
+            <pre data-src="../files/libraries/MY_Form_validation.php.txt" class="language-php line-numbers"></pre>
+        </div>
+    </div>
+
+    <footer class="row-fluid">
+        <section class="span10 offset2">
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <section class="row-fluid footer-sections">
+                        <section class="span4">
+                                                        <h1><i class="icon-code"></i></h1>
+                            <div>
+                                <ul>
+                                                                    </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-bar-chart"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../graphs/class.html">Class Hierarchy Diagram</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                        <section class="span4">
+                                                        <h1><i class="icon-pushpin"></i></h1>
+                            <div>
+                                <ul>
+                                    <li><a href="../reports/errors.html">Errors</a></li>
+                                    <li><a href="../reports/markers.html">Markers</a></li>
+                                </ul>
+                            </div>
+                        </section>
+                    </section>
+                </section>
+            </section>
+            <section class="row-fluid">
+                <section class="span10 offset1">
+                    <hr />
+                    Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
+                    on May 14th, 2014 at 03:32.
+                </section>
+            </section>
+        </section>
+    </footer>
+</div>
+
+</body>
+</html>

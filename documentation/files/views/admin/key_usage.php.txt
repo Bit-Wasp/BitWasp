@@ -1,5 +1,8 @@
         <div class="span9 mainContent" id="admin-panel">
 			<h2>Key Usage</h2>
+			
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
+			
 			<?php 
 			if($count == 0) { 
 				echo "No addresses have been created from the master public key.";

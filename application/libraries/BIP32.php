@@ -114,6 +114,7 @@ class BIP32 {
 	 * 
 	 * @param	string	$master
 	 * @param	array	$address_definition
+	 * @param	array	$generated
 	 * @return	array
 	 */
 	public static function CKD($master, $address_definition, $generated = array()) {
@@ -338,7 +339,7 @@ class BIP32 {
 		return BitcoinLib::base58_encode_checksum($string);
 	}
 
-	/*
+	/**
 	 * Import
 	 * 
 	 * This function generates an array containing the properties of the 
@@ -346,7 +347,7 @@ class BIP32 {
 	 * as much information as possible to allow compatibility with the 
 	 * encode function, which accepts a similarly constructed array.
 	 * 
-	 * @param	string	$ext_public_key
+	 * @param	string	$ext_key
 	 * @return	array
 	 */
 	public function import($ext_key) {
@@ -380,7 +381,7 @@ class BIP32 {
 	 * Converts the encoded private key to a public key, and alters the
 	 * properties so it's displayed as a public key.
 	 * 
-	 * @param	string	$ext_private_key
+	 * @param	string	$input
 	 * @return	string
 	 */
 	public static function extended_private_to_public($input) {
@@ -409,7 +410,14 @@ class BIP32 {
 		}
 	}
 	
-	
+	/**
+	 * Extract Public Key
+	 * 
+	 * Extracts a public key from the given extended key
+	 * 
+	 * @param		string	$input
+	 * @return		string/false
+	 */
 	public static function extract_public_key($input) {
 		if(is_array($input) && count($input) == 2) {
 			$ext_key = $input[0];
@@ -432,7 +440,7 @@ class BIP32 {
 	 * bitcoin address. 
 	 * 
 	 * @param	string	$extended_key
-	 * @param	string	$address_version
+	 * @param	string
 	 * return	string/FALSE
 	 */
 	public static function key_to_address($extended_key) {
@@ -555,10 +563,11 @@ class BIP32 {
 	 * bit, indicating a prime derivation must be used.
 	 * 
 	 * @param	int	$address_number
+	 * @param	int	$set_hardened
 	 * @return	string
 	 */
-	public function calc_address_bytes($address_number, $set_prime = 0) {
-		$and_result = ($set_prime == 1) ? $address_number | 0x80000000 : $address_number;
+	public function calc_address_bytes($address_number, $set_hardened = 0) {
+		$and_result = ($set_hardened == 1) ? $address_number | 0x80000000 : $address_number;
 		$hex = unpack("H*", pack("N", $and_result)); 
 		return $hex[1];
 	}
@@ -618,10 +627,11 @@ class BIP32 {
 	 * Convert the 32 bit integer into a decimal numbe, and perform an &
 	 * to unset the byte.
 	 * @param	string	$hex
+	 * @param	int	$is_hardened
 	 * @param	int
 	 */
-	public function get_address_number($hex, $is_prime = 0) {
-		if($is_prime == 1)
+	public function get_address_number($hex, $is_hardened = 0) {
+		if($is_hardened == 1)
 			$hex = str_pad(
 						gmp_strval(
 							gmp_sub(

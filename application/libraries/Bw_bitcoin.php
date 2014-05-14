@@ -17,7 +17,10 @@
  */
 class Bw_bitcoin {
 	
-	public $CI;
+	/**
+	 * CI
+	 */
+	protected $CI;
 	
 	/**
 	 * Config
@@ -154,7 +157,7 @@ class Bw_bitcoin {
 	 * Decodes raw $transaction_hex into an array. $transaction_hex is
 	 * the output of getrawtransaction, or createrawtransaction.
 	 * 
-	 * @param	string	$transaction 
+	 * @param	string	$transaction_hex
 	 * @return	array
 	 */
 	public function decoderawtransaction($transaction_hex) {
@@ -177,7 +180,7 @@ class Bw_bitcoin {
 	 * 
 	 * @param	string	$transaction_hex
 	 * @param	array	$inputs
-	 * @param	array	$privkey
+	 * @param	array	$privkeys
 	 * @return	array
 	 */
 	public function signrawtransaction($transaction_hex, $inputs = NULL, $privkeys = NULL) {
@@ -263,6 +266,9 @@ class Bw_bitcoin {
 	 * containing [txid, vout].
 	 * 
 	 * Returns a JSON string.
+	 * 
+	 * @param	array	$inputs
+	 * @return	array
 	 */
 	public function get_inputs_pkscripts($inputs) {
 		$results = array();

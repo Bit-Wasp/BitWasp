@@ -1,7 +1,7 @@
         <div class="span9 mainContent" id="view-account">
           <div class="container-fluid">
 			  
-			<?php if(isset($returnMessage)) echo '<div class="alert">'.$returnMessage.'</div>'; ?>
+			<?php if(isset($returnMessage)) echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; ?>
 			
             <div class="row-fluid">
               <div class="span9 btn-group">
@@ -80,7 +80,7 @@
 <?php if(isset($user['pgp']['public_key'])) { ?>
 			<div class="row-fluid">
 			  <div class="span2"><strong>PGP Fingerprint</strong></div>
-			  <div class="span7"><?php echo $user['pgp']['fingerprint_f']; ?></div>
+			  <div class="span7"><?php echo substr($user['pgp']['fingerprint'], 0, -8).'<b>'.substr($user['pgp']['fingerprint'],-8).'</b>'; ?></div>
 			</div>
 
             <div class="row-fluid">

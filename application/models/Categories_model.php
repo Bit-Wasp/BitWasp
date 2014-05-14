@@ -85,24 +85,28 @@ class Categories_model extends CI_Model {
 	 * @param	array	$cat
 	 * @return	array/FALSE
 	 */				
-	public function get(array $cat) {
+	public function get(array $cat)
+	{
 		$this->db->select('id, name, hash, parent_id');
 
-		if (isset($cat['hash'])) {
-			$this->db->select('id, name, hash, parent_id');			// Select statement repeated to avoid annoying errors.
-			$query = $this->db->get_where('categories', array('hash' => $cat['hash']));
-		} elseif (isset($cat['id'])) {
-			$this->db->select('id, name, hash, parent_id');
-			$query = $this->db->get_where('categories', array('id' => $cat['id']));
+		if (isset($cat['hash']))
+		{
+			$this->db->select('id, name, hash, parent_id')
+					 ->get_where('categories', array('hash' => $cat['hash']));
+		}
+		elseif (isset($cat['id']))
+		{
+			$this->db->select('id, name, hash, parent_id')
+					 ->get_where('categories', array('id' => $cat['id']));
 		} else {
+			$this->db->reset_query();
 			return FALSE;
 		}
 		
-		if($query->num_rows() > 0) {
+		if ($query->num_rows() > 0)
+		{
 			$row = $query->row_array();
-			$this->db->where('category', $row['id']);
-			$query = $this->db->get('items');
-			$row['count_items'] = $query->num_rows();
+			$row['count_items'] = $this->get_item_count($row['id']);
 			return $row;
 		}
 		return FALSE;
@@ -117,11 +121,18 @@ class Categories_model extends CI_Model {
 	 * @access	public
 	 * @return	array/FALSE
 	 */					
-	public function list_all() {
-		$this->db->select('id, hash, name, parent_id');
-		$this->db->order_by('name', 'asc');
-		$query = $this->db->get('categories');
-		return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
+	public function list_all()
+	{
+		$query = $this->db->select('id, hash, description, name, parent_id')
+				->order_by('name', 'asc')
+				->get('categories');
+		
+		$results = array();
+		foreach ($query->result() as $res) 
+		{
+			$results[$res->id] = (array)$res;
+		}
+		return ($query->num_rows() > 0) ? $results : FALSE;
 	}
 	
 	/**
@@ -134,12 +145,38 @@ class Categories_model extends CI_Model {
 	 * @param	int	$category_id
 	 * @return	array
 	 */				
-	public function get_children($category_id) {
-		$this->db->where('parent_id', $category_id);
-		$query = $this->db->get('categories');
+	public function get_children($category_id)
+	{
+		$query = $this->db->where('parent_id', $category_id)->get('categories');
 		$result = $query->result_array();
 		$result['count'] = $query->num_rows();
 		return $result;
+	}
+
+	/**
+	 * Get Children Count
+	 * 
+	 * Loads the number of child categories for the specified $category_id.
+	 * 
+	 * @param	int	$category_id
+	 * @return	int
+	 */
+	public function get_children_count($category_id) 
+	{
+		return $this->db->where('parent_id', $category_id)->count_all_results('categories');
+	}
+
+	/**
+	 * Get Item Count
+	 * 
+	 * Loads the number of items in each category.
+	 * 
+	 * @param	int	$category_id
+	 * @return	int
+	 */
+	public function get_item_count($category_id)
+	{
+		return $this->db->where('hidden','0')->where('category',$category_id)->count_all_results('items');
 	}
 	
 	/**
@@ -171,7 +208,8 @@ class Categories_model extends CI_Model {
 	 * @param	int	$new_id
 	 * @return	bool
 	 */				
-	public function update_parent_category($current_id, $new_id) {
+	public function update_parent_category($current_id, $new_id)
+	{
 		$this->db->where('parent_id', $current_id);
 		return ($this->db->update('categories', array('parent_id' => $new_id)) == TRUE) ? TRUE : FALSE;
 	}
@@ -179,59 +217,58 @@ class Categories_model extends CI_Model {
 	/**
 	 * Menu
 	 * 
-	 * Prepare categories in a multidimensional array. Load results, and 
-	 * and loop through them to build up information. Build the array, adding
-	 * on menu children, and unset any loose children from the very first level. 
+	 * Returns a multidimensional array, showing the heirarchy of the 
+	 * categories.
 	 * 
-	 * @access	public
 	 * @return	array
-	 */				
-	public function menu() {
-		$this->load->model('items_model');
-		
-		$this->db->select('id, description, name, hash, parent_id');
-		//Load all categories and sort by parent category
-		$this->db->order_by("parent_id asc, name asc");
-		$query = $this->db->get('categories');
-		$menu = array();
-	
-		if($query->num_rows() == 0) 
+	 */
+	public function menu()
+	{
+		$categories = $this->bw_config->categories;
+		if ($categories == FALSE || count($categories) == 0)
 			return array();
 			
+		$this->load->model('items_model');
+
 		// Add all categories to $menu[] array.
-		foreach($query->result() as $result) {
+		foreach ($categories as $result)
+		{
 			// Only need the count for this. 
-			$items = $this->items_model->get_count(array('category' => $result->id));
+			$count_item_children = $this->items_model->get_count(array('category' => $result['id']));
+			$count_menu_children = count($this->get_children($result['id']));
 			
-			$count_child_items = count($this->get_children($result->id));
-			$menu[$result->id] = array(	'id' => $result->id,
-										'name' => $result->name,
-										'description' => $result->description,
-										'hash' => $result->hash,
-										'count' => $items,
-										'count_children' => $count_child_items,
-										'parent_id' => $result->parent_id
-									);
-			if(isset($menu[$result->parent_id]))
-				$menu[$result->parent_id]['count_children'] += $count_child_items;
+			$menu[$result['id']] = array(	
+					'id' => $result['id'],
+					'name' => $result['name'],
+					'description' => $result['description'],
+					'hash' => $result['hash'],
+					'count' => $count_item_children,
+					'count_children' => $count_menu_children,
+					'parent_id' => $result['parent_id']
+				);
+				
+			if (isset($menu[$result['parent_id']]))
+				$menu[$result['parent_id']]['count_children'] += $count_menu_children;
 		}
 		
 		// Store all child categories as an array $menu[parentID]['children']
-		foreach($menu as $ID => &$menuItem) {
+		foreach ($menu as $ID => &$menuItem)
+		{
 			if($menuItem['parent_id'] !== '0')	
 				$menu[$menuItem['parent_id']]['children'][$ID] = &$menuItem;
 		}
 
 		// Remove child categories from the first level of the $menu[] array.
-		foreach(array_keys($menu) as $ID) {
-			if($menu[$ID]['parent_id'] != "0")
+		foreach (array_keys($menu) as $ID)
+		{
+			if ($menu[$ID]['parent_id'] != "0")
 				unset($menu[$ID]);
 		}
+		
 		// Return constructed menu.
 		return $menu;
 	}
 	
-
 	/**
 	 * Generate Select List
 	 * 
@@ -250,6 +287,8 @@ class Categories_model extends CI_Model {
 	 * 
 	 * @param	string	$param_name
 	 * @param	string	$class
+	 * @param	FALSE/int	$selected
+	 * @param	array	$extras
 	 * @return	string
 	 */
 	public function generate_select_list($param_name, $class, $selected = FALSE, $extras = array()) {
@@ -275,9 +314,10 @@ class Categories_model extends CI_Model {
 	 * is not altered.
 	 * 
 	 * @param	array	$array
+	 * @param	FALSE/int	$selected
 	 * @return	string
 	 */
-	public function generate_select_list_recurse($array, $selected) {
+	public function generate_select_list_recurse($array, $selected = FALSE) {
 		
 		if(isset($array['children']) && is_array($array['children'])) {
 			$select_txt = '';

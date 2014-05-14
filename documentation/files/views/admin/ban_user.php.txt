@@ -1,7 +1,9 @@
         <div class="span9 mainContent" id="admin_edit_">
-		  <h2>Ban User</h2>
-		  
-		  <?php echo form_open('admin/ban_user/'.$user['user_hash'], array('class' => 'form-horizontal')); ?>
+			<h2>Ban User</h2>
+
+			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
+
+			<?php echo form_open('admin/ban_user/'.$user['user_hash'], array('class' => 'form-horizontal')); ?>
 		  
 		    <p>To flag <?php echo $user['user_name']; ?> as <?php if($user['banned'] == '1') echo 'un'; ?>banned, change and submit this form.</p>
 		  

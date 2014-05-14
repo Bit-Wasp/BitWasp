@@ -37,7 +37,7 @@ class Messages_model extends CI_Model {
 	 * @return		array / FALSE
 	 */
 	public function get($hash) {
-		$this->db->select('id, content, hash, viewed, encrypted, viewed, remove_on_read, time')
+		$this->db->select('id, content, hash, viewed, rsa_encrypted, encrypted, viewed, remove_on_read, time')
 				 ->where('to', $this->current_user->user_id)
 				 ->where('hash', $hash);
 				
@@ -55,7 +55,7 @@ class Messages_model extends CI_Model {
 	 * @return		array / NULL
 	 */
 	public function inbox($limit = 0) {
-		$this->db->select('id, content, hash, viewed, encrypted, viewed, remove_on_read, time')
+		$this->db->select('id, content, hash, viewed, rsa_encrypted, encrypted, viewed, remove_on_read, time')
 				 ->where('to', $this->current_user->user_id)
 		  		 ->order_by('time','desc'); 		
 

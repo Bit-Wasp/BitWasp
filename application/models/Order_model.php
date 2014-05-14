@@ -167,6 +167,124 @@ class Order_model extends CI_Model {
 		$this->db->where('id', $order_id);
 		return  ($this->db->delete('orders') == TRUE) ? TRUE : FALSE;
 	}
+
+	/**
+	 * Vendor Accept Order
+	 * 
+	 * Pass info generated at either buyer_confirm or vendor_accept page
+	 * via $info, and then create the order/address details.
+	 * 
+	 * $info = array('vendor_public_keys' => array,
+	 * 				'order_type' => array, 
+	 * 				'order' => array
+	 * 				'initiating_user' => array
+	 * 				'update_fields' => array
+	 * 
+	 * );
+	 * @param		array	$info
+	 * @return	string/TRUE
+	 */
+	public function vendor_accept_order($info) {
+		
+		$this->load->library('Raw_transaction');
+		$this->load->model('bitcoin_model');
+		$this->load->model('accounts_model');
+
+		if ($info['initiating_user'] == 'buyer')
+		{
+			$this->update_order($info['order']['id'], $info['update_fields']);
+			foreach ($info['update_fields'] as $key => $field)
+			{
+				$info['order'][$key] = $field;
+			}
+			$info['update_fields'] = array();
+		}
+
+		$buyer_public_key = $info['order']['buyer_public_key'];
+		$vendor_public_key = $info['vendor_public_keys'][0];
+		$admin_public_key = $this->bitcoin_model->get_next_key();
+
+		if ($admin_public_key == FALSE)
+		{
+			return 'An error occured, which prevented your order being created. Please notify an administrator.';
+		}
+		else
+		{
+			
+			$public_keys = array($buyer_public_key, $vendor_public_key['public_key'], $admin_public_key['public_key']);
+			$multisig_details = Raw_transaction::create_multisig('2', $public_keys);
+			
+			// If no errors, we're good to create the order!
+			if ($multisig_details !== FALSE)
+			{
+				$this->bitcoin_model->log_key_usage('order', $this->bw_config->electrum_mpk, $admin_public_key['iteration'], $admin_public_key['public_key'], $info['order']['id']);
+				$this->accounts_model->delete_bitcoin_public_key($vendor_public_key['id'], $info['order']['vendor']['id']);
+				
+				$info['update_fields']['vendor_public_key'] = $vendor_public_key['public_key'];
+				$info['update_fields']['admin_public_key'] = $admin_public_key['public_key'];
+				$info['update_fields']['buyer_public_key'] = $buyer_public_key;
+				$info['update_fields']['address'] = $multisig_details['address'];
+				$info['update_fields']['redeemScript'] = $multisig_details['redeemScript'];
+				$info['update_fields']['selected_payment_type_time'] = time();
+				$info['update_fields']['progress'] = 2;
+				
+				if ($info['order_type'] == 'escrow')
+				{
+					$info['update_fields']['vendor_selected_escrow'] = '1';
+					$info['update_fields']['extra_fees'] = ((($info['order']['price']+$info['order']['shipping_costs'])/100)*$this->bw_config->escrow_rate);
+				}
+				else
+				{
+					$info['update_fields']['vendor_selected_escrow'] = '0';
+					$info['update_fields']['vendor_selected_upfront'] = '1';
+					$info['update_fields']['extra_fees'] = ((($info['order']['price']+$info['order']['shipping_costs'])/100)*$this->bw_config->upfront_rate);
+				}
+				
+				if ($this->update_order($info['order']['id'], $info['update_fields']) == TRUE) 
+				{
+					$this->bitcoin_model->add_watch_address($multisig_details['address'], 'order');
+					
+					$subject = 'Confirmed Order #'.$info['order']['id'];
+					$message = 'Your order with '.$info['order']['vendor']['user_name'].' has been confirmed.\n'.(($info['order_type'] == 'escrow') ? 'Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You do not need to sign before you receive the goods. You can raise a dispute if you have any issues.' : 'You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.' );
+					$this->order_model->send_order_message($info['order']['id'], $info['order']['buyer']['user_name'], $subject, $message);
+					
+					$msg = ($info['initiating_user'] == 'buyer') 
+															? 'This order has been automatically accepted, visit the orders page to see the payment address!' 
+															: 'You have accepted this order! Visit the orders page to see the bitcoin address!' ;
+					$this->session->set_flashdata('returnMessage', json_encode(array('message' => $msg)));
+
+					return TRUE;
+				}
+				else
+				{
+					return 'There was an error creating your order.';
+				}
+			} else {
+				return 'Unable to create address.';
+			}
+		}
+	}
+
+	/**
+	 * Requested Order Type
+	 * 
+	 * Takes an $order_arr, and determines which order type should be 
+	 * requested: either 'escrow' or 'upfront'
+	 * 
+	 * @param	array	$order_arr
+	 * @return	string
+	 */
+	public function requested_order_type($order_arr)
+	{
+		$upfront = FALSE;
+	
+		foreach ($order_arr['items'] as $item)
+		{
+			$upfront = $upfront || (($item['prefer_upfront'] == '1') ? TRUE : FALSE);
+		}
+		return ($upfront == TRUE) ? 'upfront' : 'escrow';
+	}
+	
 	
 	/**
 	 * Update Items
@@ -175,7 +293,7 @@ class Order_model extends CI_Model {
 	 * If $act == 'update' then we update the order with the new $update['quantity'],
 	 * otherwise it's creating the item in the order.
 	 * 
-	 * @param	int	$order_id
+	 * @param	int		$order_id
 	 * @param	array	$update
 	 * @param	string	$act
 	 * @return	bool
@@ -233,7 +351,7 @@ class Order_model extends CI_Model {
 	 * This function will set the {$user_type}_public_key for $order_id, 
 	 * to the supplied $public_key.
 	 * 
-	 * @param	int	$order_id
+	 * @param	int		$order_id
 	 * @param	string	$user_type
 	 * @param	string	$public_key
 	 * @return	boolean
@@ -253,6 +371,12 @@ class Order_model extends CI_Model {
 	 * 
 	 * Sends a message to $recipient - the vendors name. The $order_id is 
 	 * specified, as well as the $message and $subject.
+	 * 
+	 * @param	int	$order_id
+	 * @param	string	$recipient
+	 * @param	string	$subject
+	 * @param	string	$message
+	 * @return	void
 	 */
 	public function send_order_message($order_id, $recipient, $subject, $message) {
 		$this->load->library('bw_messages');
@@ -315,7 +439,7 @@ class Order_model extends CI_Model {
 	 * 
 	 * Takes an $order_id, and increases the buyer/vendors order count.
 	 * 
-	 * @param	int	$order_id
+	 * @param	int	$user_ids
 	 */
 	public function increase_users_order_count($user_ids) {
 		$this->load->model('users_model');
@@ -403,8 +527,11 @@ class Order_model extends CI_Model {
 	 * simply progresses to complete.
 	 * 
 	 * Updates order information where necessary.
+	 * 
+	 * @param	array	$array
 	 */
-	public function order_finalized_callback($array) {
+	public function order_finalized_callback($array)
+	{
 
 		$this->load->model('disputes_model');
 		$this->load->model('bitcoin_model');
@@ -415,8 +542,6 @@ class Order_model extends CI_Model {
 			
 			$complete = false;
 			// If progress is 6, then a disputed order is completed.
-			
-			echo "Progrses: ".$order['progress']."\n";
 			
 			if ($order['progress'] == '8')
 			{
@@ -477,6 +602,17 @@ class Order_model extends CI_Model {
 		}
 	}
 	
+	/**
+	 * Update Order
+	 * 
+	 * This function is used to change properties of an order, and also
+	 * to move it in a non-linear fashion through the order process - 
+	 * allows for refunds, requesting early finalization..
+	 * 
+	 * @param	int	$order_id
+	 * @param	array	$update
+	 * @return	boolean
+	 */
 	public function update_order($order_id, array $update = array()) {
 		if(count($update) == 0)
 			return FALSE;
@@ -484,14 +620,6 @@ class Order_model extends CI_Model {
 		$this->db->where('id', $order_id);
 		
 		return ($this->db->update('orders', $update) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Set Last Updated Time
-	 */
-	public function set_last_updated_time($order_id) {
-		$this->db->where('id', $order_id);
-		return ($this->db->update('orders', array('time' => time())) == TRUE) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -512,7 +640,6 @@ class Order_model extends CI_Model {
 		if($current_order == FALSE || (isset($current_order['progress']) && $current_order['progress'] !== $current_progress))
 			return FALSE;
 			
-		$update['time'] = time();
 		if($current_progress == '2' && in_array($set_progress, array('3','4'))) {
 			$update['progress'] = ($set_progress == '3') ? '3' : '4';
 		} else if($current_progress == '3' && $set_progress == '6') {
@@ -570,7 +697,7 @@ class Order_model extends CI_Model {
 				foreach($items as $item) {
 					// Load each item & quantity.
 					$array = explode("-", $item);
-					$item_info = $this->items_model->get($array[0]);
+					$item_info = $this->items_model->get($array[0], FALSE);
 					$quantity = $array[1];
 					
 					// If the item no longer exists, display a message.
@@ -634,11 +761,11 @@ class Order_model extends CI_Model {
 				$order_price = ($this->current_user->user_role == 'Vendor') ? ($order['price']+$order['shipping_costs']-$order['extra_fees']) : ($order['price']+$order['shipping_costs']+$order['fees']);
 				
 				// Convert price to bitcoin. 
-				$order_price = ($currency['id'] !== '0') ? $order_price/$this->bw_config->exchange_rates[strtolower($currency['symbol'])] : number_format($order_price,8);
+				$order_price = ($currency['id'] !== '0') ? $order_price/$this->bw_config->currencies[$order['currency']]['rate'] : number_format($order_price,8);
 				
 				// Load the users local currency.
 				// Convert the order's price into the users own currency.
-				$price_l = ($order_price*$this->bw_config->exchange_rates[strtolower($this->bw_config->currencies[$this->current_user->currency['id']]['symbol'])]);
+				$price_l = ($order_price*$this->bw_config->exchange_rates[strtolower($this->current_user->currency['code'])]);
 				$price_l = ($this->current_user->currency['id'] !== '0') ? number_format($price_l, 2) : number_format($price_l, 8);
 				
 				// Add extra details to the order.
@@ -673,6 +800,14 @@ class Order_model extends CI_Model {
 		}
 	}
 
+	/**
+	 * Buyer Cancel
+	 * 
+	 * Cancels a buyers order by resetting everything.
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
 	public function buyer_cancel($order_id) {
 		$changes = array(	'progress' => '0',
 							'shipping_costs' => 0.00000000,
@@ -683,6 +818,12 @@ class Order_model extends CI_Model {
 		return ($this->db->update('orders', $changes) == TRUE) ? TRUE : FALSE;
 	}
 
+	/**
+	 * Vendor Cancel
+	 * 
+	 * @param	int	$order_id
+	 * @return	boolean
+	 */
 	public function vendor_cancel($order_id) {
 		$changes = array(	'progress' => '0',
 							'shipping_costs' => 0.00000000,
@@ -736,12 +877,24 @@ class Order_model extends CI_Model {
 		return ($this->db->update('orders', array('progress' => $progress)) == TRUE) ? TRUE : FALSE;
 	}
 
+	/**
+	 * Admin Count Orders
+	 * 
+	 * @return	int
+	 */
 	public function admin_count_orders() {
 		$this->db->select('id');
 		$this->db->from('orders');
 		$this->db->where('progress >','0');
 		return $this->db->count_all_results();
 	}
+	/**
+	 * Admin Order Page
+	 * 
+	 * @param	int	$per_page
+	 * @param	int	$start
+	 * @return	int
+	 */
 	public function admin_order_page($per_page, $start) {
 		$this->db->where('progress >','0');
 		$this->db->limit($per_page, $start);
@@ -749,6 +902,12 @@ class Order_model extends CI_Model {
 		$get = $this->db->get('orders');
 		return $this->build_array($get->result_array());
 	}
+	/**
+	 * Admin Order Details
+	 * 
+	 * @param	int	 $order_id
+	 * return	false/array
+	 */
 	public function admin_order_details($order_id) {
 		$this->db->where('progress >','0');
 		$this->db->where('id', "$order_id");
@@ -758,10 +917,7 @@ class Order_model extends CI_Model {
 		} else {
 			return $this->build_array($query->result_array());
 		}
-			
 	}
-
-
 };
 
 /* End Of File: order_model.php */

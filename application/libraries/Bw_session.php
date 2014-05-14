@@ -13,13 +13,37 @@
  */
 class Bw_session {
 
+	/**
+	 * CI
+	 * 
+	 * Store CodeIgniter
+	 */
 	public $CI;
 
+	/**
+	 * URI
+	 * 
+	 * Present URI, as an array
+	 */
 	public $URI;
+	
+	/**
+	 * User Role
+	 */
 	public $user_role;
+	
+	/**
+	 * Auth Level
+	 */
 	public $auth_level;
 	
-	public function __construct() {
+	/**
+	 * Construct
+	 * 
+	 * Initialize the user sesssion
+	 */
+	public function __construct()
+	{
 		$this->CI = &get_instance();
 		$this->CI->load->model('auth_model');
 		$this->CI->load->model('users_model');
@@ -68,8 +92,8 @@ class Bw_session {
 	 * as a full session (param=null), for two factor (param=two_factor)
 	 * or to register a pgp key (param=force_pgp)
 	 * 
-	 * @param		array
-	 * @param		array
+	 * @param		array	$user
+	 * @param		array	$params
 	 * @return		void
 	 */
 	public function create($user, $params = NULL) {
@@ -109,6 +133,7 @@ class Bw_session {
 	 * Destroy the current session, remove userdata, and redirect
 	 * to the login page.
 	 * 
+	 * @param		boolean	$redirect
 	 * @return		void
 	 */
 	public function destroy($redirect = TRUE) {

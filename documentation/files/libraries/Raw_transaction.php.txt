@@ -29,16 +29,9 @@ class Raw_transaction {
 	public static $op_code = array(	
 			'00' => 'OP_FALSE', 	'61' => 'OP_NOP',			'6a' => 'OP_RETURN',
 			'76' => 'OP_DUP',		'87' => 'OP_EQUAL',			'88' => 'OP_EQUALVERIFY',
-			'51' => 'OP_TRUE',		
-			/*'52' => 'OP_2',				'53' => 'OP_3',
-			'54' => 'OP_4',			'55' => 'OP_5',				'56' => 'OP_6',
-			'57' => 'OP_7',			'58' => 'OP_8',				'59' => 'OP_9',
-			'5a' => 'OP_10',		'5b' => 'OP_11',			'5c' => 'OP_12',
-			'5d' => 'OP_13',		'5e' => 'OP_14',			'5f' => 'OP_15',
-			'60' => 'OP_16',	*/	'61' => 'OP_IF',			
-			'a6' => 'OP_RIPEMD160',	'a7' => 'OP_SHA1',			'a8' => 'OP_SHA256',
-			'a9' => 'OP_HASH160',	'aa' => 'OP_HASH256',	'ac' => 'OP_CHECKSIG',	
-			'ae' => 'OP_CHECKMULTISIG'	);
+			'51' => 'OP_TRUE',		'a6' => 'OP_RIPEMD160',		'a7' => 'OP_SHA1',
+			'a8' => 'OP_SHA256',	'a9' => 'OP_HASH160',		'aa' => 'OP_HASH256',
+			'ac' => 'OP_CHECKSIG',	'ae' => 'OP_CHECKMULTISIG'	);
 
 	/**
 	 * Flip Byte Order
@@ -77,7 +70,7 @@ class Raw_transaction {
 		// Flip byte order if requested.
 		return ($reverse == FALSE) ? $requested_bytes : self::_flip_byte_order($requested_bytes);
 	}
-	
+
 	/**
 	 * Decimal to Bytes
 	 * 
@@ -93,6 +86,7 @@ class Raw_transaction {
 		$hex = base_convert($decimal, 10, 16);
 		if(strlen($hex) %2 != 0) 
 			$hex = "0".$hex;
+
 		$hex = str_pad($hex, $bytes*2, "0", STR_PAD_LEFT);
 		
 		return ($reverse == TRUE) ? self::_flip_byte_order($hex) : $hex;
@@ -116,11 +110,9 @@ class Raw_transaction {
 	public static function _get_vint(&$string) {
 		// Load the next byte, convert to decimal.
 		$decimal = hexdec(self::_return_bytes($string, 1));
-		
 		// Less than 253: Not encoding extra bytes.
 		// More than 253, work out the $number of bytes using the 2^(offset)
 		$num_bytes = ( $decimal < 253 ) ? 0 : 2^($decimal-253);
-			
 		// Num_bytes is 0: Just return the decimal
 		// Otherwise, return $num_bytes bytes (order flipped) and converted to decimal
 		return ($num_bytes == 0) ? $decimal : hexdec(self::_return_bytes($string, $num_bytes, TRUE));
@@ -141,7 +133,7 @@ class Raw_transaction {
 	 * @param	int	$decimal
 	 * @return	string/FALSE
 	 */
-	public function _encode_vint($decimal) {
+	public static function _encode_vint($decimal) {
 		$hex = dechex($decimal);
 		if($hex < 0xFD) {
 			$hint = self::_dec_to_bytes($decimal, 1);
@@ -224,14 +216,20 @@ class Raw_transaction {
 		// Loop until $input count is reached, sequentially removing the
 		// leading data from $raw_transaction reference.
 		for($i = 0; $i < $input_count; $i++) {
+			// Check that the variable has at least 36 bytes, and that the 
+			// required length for this input is less than the length of the raw_transaction string.
+			if( strlen($raw_transaction) < 74
+			||	!((hexdec(substr($raw_transaction, 72, 2))+74+8) < strlen($raw_transaction))
+				)
+				return FALSE;
+
 			// Load the TxID (32bytes) and vout (4bytes)
 			$txid = self::_return_bytes($raw_transaction, 32, TRUE);
 			$vout = self::_return_bytes($raw_transaction, 4, TRUE);
-			
+
 			// Script is prefixed with a varint that must be decoded.
 			$script_length = self::_get_vint($raw_transaction); 		// decimal number of bytes.
 			$script = self::_return_bytes($raw_transaction, $script_length);
-		
 			// Build input body depending on whether the TxIn is coinbase.
 			$input_body = array();
 			if($txid == '0000000000000000000000000000000000000000000000000000000000000000') 	// coinbase
@@ -247,6 +245,7 @@ class Raw_transaction {
 			
 			$inputs[$i] = $input_body;
 		}
+		
 		return $inputs;
 	}
 
@@ -334,7 +333,6 @@ class Raw_transaction {
 	 * will attempt to create the address based on the transaction type
 	 * and $address_version byte.
 	 * 
-	 * 
 	 * @param	string	$data
 	 * @param	string	$address_version
 	 * @return	array/FALSE
@@ -350,19 +348,18 @@ class Raw_transaction {
 		// Standard: pay to pubkey hash
 		$define['p2ph'] = array('type' => 'pubkeyhash',
 								'reqSigs' => 1,
-								'data_index_for_hash' => 2);
-		// Pay to script hash
-		$define['p2sh'] = array('type' => 'scripthash',
-								'reqSigs' => 1,
-								'data_index_for_hash' => 1);		
-		
+								'data_index_for_hash' => 2);		
 		$rule['p2ph'] = array(
 				'0' => '/^OP_DUP/',
 				'1' => '/^OP_HASH160/',
 				'2' => '/^[0-9a-f]{40}$/i', // 2
 				'3' => '/^OP_EQUALVERIFY/',
 				'4' => '/^OP_CHECKSIG/' );
-		
+								
+		// Pay to script hash
+		$define['p2sh'] = array('type' => 'scripthash',
+								'reqSigs' => 1,
+								'data_index_for_hash' => 1);		
 		$rule['p2sh'] = array(
 				'0' => '/^OP_HASH160/',
 				'1' => '/^[0-9a-f]{40}$/i', // pos 1
@@ -411,7 +408,7 @@ class Raw_transaction {
 	 * This function accepts $tx - a reference to the raw transaction being
 	 * decoded, and $output_count. Also accepts $address_version for when
 	 * dealing with networks besides bitcoin.
-	 * Returns FALSE if 
+
 	 * @param	string	$tx
 	 * @param	int		$output_count
 	 * @param	string	$address_version
@@ -421,6 +418,12 @@ class Raw_transaction {
 			
 		$outputs = array();
 		for($i = 0; $i < $output_count; $i++) { 
+			// Check the $tx has sufficient length to cover this input.
+			if( strlen($tx) < 8
+			||	!((hexdec(substr($tx, 8, 2))+8+2) < strlen($tx))
+				)
+				return FALSE;
+			
 			// Pop 8 bytes (flipped) from the $tx string, convert to decimal,
 			// and then convert to Satoshis.
 			$satoshis = base_convert(self::_return_bytes($tx, 8, TRUE), 16, 10);
@@ -467,7 +470,7 @@ class Raw_transaction {
 		
 		$outputs = '';
 		for($i = 0; $i < $output_count; $i++) {
-			$satoshis = (float)$vout_arr[$i]['value']*1e8;
+			$satoshis = $vout_arr[$i]['value']*1e8;
 			$amount = self::_dec_to_bytes($satoshis, 8);
 			$amount = self::_flip_byte_order($amount);
 			if($amount > 0xFFFFFFFFFFFFFFFF)
@@ -493,17 +496,32 @@ class Raw_transaction {
 	 * @param	string	$raw_tranasction
 	 * @param	string	$address_version
 	 */
-	public function decode($raw_transaction, $address_version = '00') {
+	public static function decode($raw_transaction, $address_version = '00') {
 		$raw_transaction = trim($raw_transaction);
-		$txid = hash('sha256', hash('sha256', pack("H*", $raw_transaction), TRUE));
+		if( ((bool)preg_match('/^[0-9a-fA-F]{2,}$/i', $raw_transaction) !== TRUE)
+		||	(strlen($raw_transaction))%2 !== 0)
+			return false;
+			
+		$txid = hash('sha256', hash('sha256', pack("H*",trim($raw_transaction)), TRUE));
 		
 		$info = array();
-		$info['version'] = gmp_strval(gmp_init(self::_return_bytes($raw_transaction, 4, TRUE), 16), 10);
 		$info['txid'] = $txid;
+		$info['version'] = gmp_strval(gmp_init(self::_return_bytes($raw_transaction, 4, TRUE), 16), 10);
+		if(!in_array($info['version'], array('1')))
+			return FALSE;
+		
 		$input_count = self::_get_vint($raw_transaction);
+		if( !($input_count >= 0 && $input_count <= 4294967296))
+			return FALSE;
+		
 		$info['vin'] = self::_decode_inputs($raw_transaction, $input_count);
+		if($info['vin'] == FALSE)
+			return FALSE;
 
 		$output_count = self::_get_vint($raw_transaction);
+		if( !($output_count >= 0 && $output_count <= 4294967296))
+			return FALSE;
+			
 		$info['vout'] = self::_decode_outputs($raw_transaction, $output_count, $address_version);
 			
 		$info['locktime'] = hexdec(self::_return_bytes($raw_transaction, 4));
@@ -520,7 +538,7 @@ class Raw_transaction {
 	 * @param	array	$raw_transaction_array
 	 * @return	string
 	 */
-	public function encode($raw_transaction_array) {
+	public static function encode($raw_transaction_array) {
 		// $encoded_version
 		$encoded_version = $bytes = self::_dec_to_bytes($raw_transaction_array['version'], 4, TRUE); // TRUE - get little endian
 
@@ -554,10 +572,9 @@ class Raw_transaction {
 	 * @param	string	$raw_transaction
 	 * @return	string
 	 */
-	public function _create_txin_signature_hash($raw_transaction, $json_inputs, $specific_input = -1) {
-		$decode = self::decode($raw_transaction);
+	public static function _create_txin_signature_hash($raw_transaction, $json_inputs, $specific_input = -1, $e = NULL) {
+		$decode = ($e == NULL) ? self::decode($raw_transaction) : $e;
 		$inputs = (array)json_decode($json_inputs);
-	
 		if($specific_input !== -1 && !is_numeric($specific_input))
 			return FALSE;
 			
@@ -611,7 +628,7 @@ class Raw_transaction {
 	 * @param	string	$key
 	 * @return	boolean
 	 */
-	public function _check_sig($sig, $hash, $key) {
+	public static function _check_sig($sig, $hash, $key) {
 		$signature = self::decode_signature($sig);
 		$test_signature = new Signature(gmp_init($signature['r'],16), gmp_init($signature['s'],16));
 		$generator = SECcurve::generator_secp256k1();
@@ -628,7 +645,7 @@ class Raw_transaction {
 		$public_key = new PublicKey($generator, $public_key_point);
 		$hash = gmp_init($hash, 16);
 		
-		return ($public_key->verifies($hash, $test_signature)) ? TRUE : FALSE;
+		return ($public_key->verifies($hash, $test_signature) == TRUE) ? TRUE : FALSE;
 
 	}
 	
@@ -642,7 +659,7 @@ class Raw_transaction {
 	 * @param	array	$data(should not be set!)
 	 * @return	array
 	 */
-	public function decode_redeem_script($redeem_script, $data = array()) {
+	public static function decode_redeem_script($redeem_script, $data = array()) {
 		// If there is no more work to be done (script is fully parsed, 
 		// return the array)
 		if(strlen($redeem_script) == 0)
@@ -744,29 +761,6 @@ class Raw_transaction {
 					 'address' => BitcoinLib::public_key_to_address($redeem_script, '05'));
 	}
 
-	/**
-	 * Decode Signature
-	 * 
-	 * This function extracts the r and s parameters from a DER encoded
-	 * signature. No checking on the validity of the numbers. 
-	 * 
-	 * @param	string	$signature
-	 * @return	array
-	 */
-	public static function decode_signature($signature) {
-		$r_start = 8;
-		$r_length = hexdec(substr($signature, 6, 2))*2;
-		$r_end = $r_start+$r_length;
-		$r = substr($signature, $r_start, $r_length);
-		
-		$s_start = $r_end+4;
-		$s_length = hexdec(substr($signature, ($r_end+2), 2))*2;
-		$s = substr($signature, $s_start, $s_length);
-		return array('r' => $r, 
-					 's' => $s,
-					 'hash_type' => substr($signature, -2),
-					 'last_byte_s' => substr($s, -2));
-	}
 
 	/**
 	 * Validate Signed Transaction
@@ -783,6 +777,9 @@ class Raw_transaction {
 	 */
 	public static function validate_signed_transaction( $raw_tx, $json_string, $address_version = '00' ) {
 		$decode = self::decode($raw_tx, $address_version);
+		if($decode == FALSE)
+			return FALSE;
+			
 		$json_arr = (array) json_decode($json_string);
 
 		$message_hash = self::_create_txin_signature_hash($raw_tx, $json_string);		
@@ -797,7 +794,8 @@ class Raw_transaction {
 				$signature = $scripts[0];
 			
 				$public_key = $scripts[1];
-				$outcome = $outcome && self::_check_sig($signature, $message_hash[$i], $public_key);
+				$o = self::_check_sig($signature, $message_hash[$i], $public_key);
+				$outcome = $outcome && $o;
 				
 			} else if($type_info['type'] == 'scripthash') {
 				// Pay-to-script-hash. Check OP_FALSE <sig> ... <redeemScript>
@@ -844,7 +842,7 @@ class Raw_transaction {
 	 * @param	array	$outputs
 	 * @return	string/FALSE
 	 */
-	public function create($inputs, $outputs, $magic_byte = '00') {
+	public static function create($inputs, $outputs, $magic_byte = '00') {
 
 		// Generate the p2sh byte from the regular byte.
 		$regular_byte = $magic_byte;
@@ -855,9 +853,9 @@ class Raw_transaction {
 		// Inputs is the set of [txid/vout/scriptPubKey]
 		$tx_array['vin'] = array();
 		foreach($inputs as $input) {
-			/*if(!isset($input['txid']) || strlen($input['txid']) !== 64
+			if(!isset($input['txid']) || strlen($input['txid']) !== 64
 			|| !isset($input['vout']) || !is_numeric($input['vout']))
-				return FALSE;*/
+				return FALSE;
 			
 			$tx_array['vin'][] = array(	'txid' => $input['txid'],
 								'vout' => $input['vout'],
@@ -876,6 +874,7 @@ class Raw_transaction {
 			$decode_address = BitcoinLib::base58_decode($address);
 			$version = substr($decode_address, 0, 2);
 			$hash = substr($decode_address, 2, 40);
+			
 			if($version == $regular_byte) {
 				// OP_DUP OP_HASH160 <pubKeyHash> OP_EQUALVERIFY OP_CHECKSIG 
 				$scriptPubKey['hex'] = "76a914{$hash}88ac"; 
@@ -893,5 +892,144 @@ class Raw_transaction {
 		return self::encode($tx_array);
 		
 	}
+	
+	/**
+	 * Sign
+	 * 
+	 * This function accepts the same parameters as signrawtransaction.
+	 * $raw_transaction is a hex encoded string for an unsigned/partially 
+	 * signed transaction. $inputs is an array, containing the txid/vout/
+	 * scriptPubKey/redeemscript. $priv_keys contains WIF keys. 
+	 * 
+	 * The function looks at each TxIn and tries to sign, if the hash160
+	 * belongs to a key specified in the wallet.
+	 * 
+	 * @param	string	$raw_transaction
+	 * @param	array	$inputs
+	 * @param	array	$priv_keys
+	 * @param	string	$magic_byte
+	 * @return	array
+	 */
+	public static function sign($raw_transaction, $inputs, array $priv_keys = array(), $magic_byte = '00')
+	{
+		// Generate digests of inputs to sign.
+		$message_hash = self::_create_txin_signature_hash($raw_transaction, $inputs);
+	
+		$inputs_arr = (array)json_decode($inputs);
+		
+		// Generate an association of expected hash160's and related information.
+		$wallet = BitcoinLib::private_keys_to_receive($priv_keys);
+		$decode = self::decode($raw_transaction);	
+		
+		$sign_count = 0;
+		foreach($decode['vin'] as $vin => $input ) {
+			
+			$scriptPubKey = self::_decode_scriptPubKey($inputs_arr[$vin]->scriptPubKey);
+			$tx_info = self::_get_transaction_type($scriptPubKey, $magic_byte);
+
+			if(isset($wallet[$tx_info['hash160']])) {	
+				$key_info = $wallet[$tx_info['hash160']];
+				$generator = SECcurve::generator_secp256k1();
+				$point = new Point($generator->getCurve(), gmp_init(substr($key_info['uncompressed_key'], 2, 64), 16), gmp_init(substr($key_info['uncompressed_key'], 66, 64), 16), $generator->getOrder());
+				
+				// Create Signature
+				$_public_key = new PublicKey($generator, $point);
+				$_private_key = new PrivateKey($_public_key, gmp_init($key_info['private_key'], 16));
+				$sign = $_private_key->sign(gmp_init($message_hash[$vin],16),  gmp_init((string)bin2hex(openssl_random_pseudo_bytes(32)), 16));
+				if($sign !== FALSE) {
+					$sign_count++;
+					$decode['vin'][$vin]['scriptSig']['hex'] = self::encode_signature($sign, $tx_info, $key_info);
+				}
+			}
+		}
+		$new_raw = self::encode($decode);
+		// If the transaction isn't fully signed, return false.
+		// If it's fully signed, perform signature verification, return true if valid, or invalid if signatures are incorrect.
+		$complete = (((count($decode['vin'])-$sign_count) == '0') ? ((self::validate_signed_transaction($new_raw, $inputs, $magic_byte) == TRUE) ? 'true' : 'invalid') : 'false');
+			
+		return array('hex' => $new_raw,
+					 'complete' => $complete);
+	}
+
+
+	/**
+	 * Encode Signature
+	 * 
+	 * This function accepts a signature object, and information about 
+	 * the txout being spent, and the relevant key for signing, and
+	 * encodes the signature in DER format.
+	 * 
+	 * @param	Signature	$signature
+	 * @param	array	$tx_info
+	 * @param	array	$key_info
+	 * @return	string
+	 */
+	public static function encode_signature(Signature $signature, $tx_info, $key_info) {
+		
+		// Pad r and s to 64 characters.
+		$rh = str_pad(BitcoinLib::hex_encode($signature->getR()),64,'0', STR_PAD_LEFT);
+		$sh = str_pad(BitcoinLib::hex_encode($signature->getS()),64,'0', STR_PAD_LEFT);
+		
+		// Check if the first byte of each has its highest bit set, 
+		$t1 = unpack( "H*", (pack( 'H*',substr($rh, 0, 2)) & pack('H*', '80')));
+		$t2 = unpack( "H*", (pack( 'H*',substr($sh, 0, 2)) & pack('H*', '80')));
+		// if so, the result != 00, and must be padded.
+		$r = ($t1[1] !== '00') ? '00'.$rh : $rh;
+		$s = ($t2[1] !== '00') ? '00'.$sh : $sh;
+		
+		// Create the signature.
+		$der_sig =  '30'
+					. self::_dec_to_bytes( (4+((strlen($r)+strlen($s))/2)), 1) //((strlen($r)+strlen($s)+16)/2),1)
+					.'02'
+					. self::_dec_to_bytes(strlen($r)/2,1)
+					. $r
+					. '02'
+					. self::_dec_to_bytes(strlen($s)/2,1)
+					. $s
+					. '01';
+		// Append the length of the signature.
+		$der_sig =  self::_dec_to_bytes( strlen($der_sig)/2, 1)
+					. $der_sig;
+
+		if($tx_info['type'] == 'pubkeyhash') {
+			// Need to append the public key. 
+			$scriptSig = $der_sig
+					. self::_dec_to_bytes( strlen($key_info['public_key'])/2, 1)
+					. $key_info['public_key'];
+		} else if($tx_info['type'] == 'scripthash') {
+			// Reorder signatures and return.
+			// not done yet!
+			$redeemScript = self::_dec_to_bytes( strlen($inputs_arr[$vin]->redeemScript)/2, 1);
+			$scriptSig = '';
+		}
+		
+		return $scriptSig;
+	}
+
+	/**
+	 * Decode Signature
+	 * 
+	 * This function extracts the r and s parameters from a DER encoded
+	 * signature. No checking on the validity of the numbers. 
+	 * 
+	 * @param	string	$signature
+	 * @return	array
+	 */
+	public static function decode_signature($signature) {
+		$r_start = 8;
+		$r_length = hexdec(substr($signature, 6, 2))*2;
+		$r_end = $r_start+$r_length;
+		$r = substr($signature, $r_start, $r_length);
+		
+		$s_start = $r_end+4;
+		$s_length = hexdec(substr($signature, ($r_end+2), 2))*2;
+		$s = substr($signature, $s_start, $s_length);
+		return array('r' => $r, 
+					 's' => $s,
+					 'hash_type' => substr($signature, -2),
+					 'last_byte_s' => substr($s, -2));
+	}
+	
 };
+
 

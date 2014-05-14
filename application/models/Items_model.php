@@ -80,9 +80,13 @@ class Items_model extends CI_Model {
 	/**
 	 * Pagination Links
 	 * 
-	 * @jparam	array	$items_config
-	 * @param	string	base_url
-	 * @param	int	
+	 * Creates HTML links for pagination.
+	 * 
+	 * @param	array	$items_config
+	 * @param	string	$base_url
+	 * @param	int		$per_page
+	 * @param	int		$url_segment
+	 * @return	string
 	 */
 	public function pagination_links($items_config, $base_url, $per_page, $url_segment) {
 		$this->load->library('pagination');
@@ -103,7 +107,9 @@ class Items_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	array	$opt
-	 * @return	bool
+	 * @param	array	$start
+	 * @param	int		$per_page
+	 * @return	boolean
 	 */					
 	public function get_list_pages($opt = array(), $start, $per_page) {
 		$limit = $per_page;
@@ -168,7 +174,7 @@ class Items_model extends CI_Model {
 				$row['description_s'] = substr(strip_tags($row['description']),0,70);
 				if(strlen($row['description']) > 70) $row['description_s'] .= '...';
 				$row['price_b'] = number_format(($row['price']/$rate), 8);
-				$row['price_l'] = ($this->current_user->currency['id'] !== '0') ? number_format((float)($row['price_b']*$local_rate[$this->current_user->currency['id']]), 2) : number_format((float)($row['price_b']*$local_rate[$this->current_user->currency['id']]), 8);
+				$row['price_l'] = ($this->current_user->currency['id'] !== '0') ? number_format((float)($row['price_b']*$local_rate), 2) : number_format((float)($row['price_b']*$local_rate), 8);
 				$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];
 
 				// being used anywhere?
@@ -181,7 +187,15 @@ class Items_model extends CI_Model {
 		
 	}
 	
-	public function get_list($opt = array()) {
+	/**
+	 * Get List
+	 * 
+	 * Loads all possible items.
+	 * 
+	 * @return	array
+	 */
+	public function get_list($opt = array())
+	{
 		return $this->get_list_pages($opt, 0, 10000);
 	}
 	
@@ -192,22 +206,23 @@ class Items_model extends CI_Model {
 	 * Get information about an item (by $hash).
 	 * 
 	 * @access	public
-	 * @param	string	$hash
+	 * @param	string		$hash
+	 * @param	$boolean	$hidden
 	 * @return	array/FALSE
 	 */					
-	public function get($hash) {
-		$this->db->select('items.id, items.hash, price, vendor_hash, currency, hidden, category, items.name, ship_from, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.id as vendor_id, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width')
-				 ->where('hidden', '0')
+	public function get($hash, $hidden = TRUE) {
+		if($hidden == TRUE)
+			$this->db->where('hidden', '0');
+			
+		$this->db->select('items.id, items.hash, price, vendor_hash, prefer_upfront, currency, hidden, category, items.name, ship_from, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.id as vendor_id, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width')
 				 ->where('items.hash', $hash)
 				 ->order_by('add_time DESC')
 				 ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
 				 ->join('images', 'images.hash = items.main_image')
 				 ->limit(1, 'id desc');
+				 
 		$query = $this->db->get('items');
 		if($query->num_rows() > 0) {
-			$local_currency = $this->bw_config->currencies[$this->current_user->currency['id']];
-			$local_rate = $this->bw_config->exchange_rates[strtolower($local_currency['symbol'])];
-			
 			$row = $query->row_array();
 			
 			$row['vendor'] = array();
@@ -225,19 +240,21 @@ class Items_model extends CI_Model {
 			$row['description'] = strip_tags(nl2br($row['description']),'<br>');
 			$row['description_f'] = $row['description'];
 	
-			$currency = $this->bw_config->currencies[$row['currency']];
-			$rate = $this->bw_config->exchange_rates[(strtolower($currency['symbol']))];
-
 			// Load information about the items.
 			$row['description_s'] = substr(strip_tags($row['description']),0,70);
 			if(strlen($row['description']) > 70) $row['description_s'] .= '...';
-			$row['price_b'] = number_format(($row['price']/$local_rate), 8);
+
+			$row['price_b'] = number_format(($row['price']/$this->current_user->currency['rate']), 8);
+			$row['price_l'] = ($this->current_user->currency['id'] != '0') 
+										? number_format((float)($row['price_b']*$this->current_user->currency['rate']), 2) 
+										: number_format((float)($row['price_b']*$this->current_user->currency['rate']), 8);
+			$row['price_f'] = $this->current_user->currency['symbol'].' '.$row['price_l'];
+			
+			$row['images'] = $this->images_model->by_item($row['id']);
 			$row['add_time_f'] = $this->general->format_time($row['add_time']);
 			$row['ship_from_f'] = $this->bw_config->locations[$row['ship_from']]['location'];
 			$row['update_time_f'] = $this->general->format_time($row['update_time']);
-			$row['price_l'] = ($this->current_user->currency['id'] !== '0') ? number_format((float)($row['price_b']*$local_rate[$this->current_user->currency['id']]), 2) : number_format((float)($row['price_b']*$local_rate[$this->current_user->currency['id']]), 8);
-			$row['price_f'] = $local_currency['symbol'].' '.$row['price_l'];
-			$row['images'] = $this->images_model->by_item($row['id']);
+
 
 			return $row;
 		}
@@ -252,7 +269,7 @@ class Items_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	string	$user_hash
-	 * @return	bool
+	 * @return	array/FALSE
 	 */					
 	public function by_user($user_hash) {		
 		$this->db->select('id, hash, price, currency, hidden, category, name, description, main_image');

@@ -13,8 +13,6 @@
  */
 class Orders extends CI_Controller {
 
-	public $coin;
-
 	/**
 	 * Constructor
 	 * 
@@ -39,6 +37,7 @@ class Orders extends CI_Controller {
 		$this->load->model('accounts_model');
 		$this->load->model('bitcoin_model');
 		$this->load->model('messages_model');
+		
 		$this->coin = $this->bw_config->currencies[0];
 	}
 	
@@ -49,12 +48,9 @@ class Orders extends CI_Controller {
 	 * 
 	 * Displays a vendors orders.
 	 * 
-	 * @param	string or null
 	 * @return	void
 	 */
-	public function vendor_orders($status = NULL) {
-		if($status == 'update')
-			$data['returnMessage'] = "Order has been updated.";
+	public function vendor_orders() {
 			
 		$this->load->model('review_auth_model');
 		
@@ -110,58 +106,40 @@ class Orders extends CI_Controller {
 			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Invalid order ID.')));
 			redirect('orders');
 		}
-
-		$this->load->model('bitcoin_model');
+		
+		$this->load->model('review_model');
 		$data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
 		$data['fees']['shipping_cost'] = $data['order']['shipping_costs'];
 		$data['fees']['fee'] = $data['order']['fees'];
 		$data['fees']['total'] = $data['order']['shipping_costs']+$data['order']['fees'];
 
-		if($this->input->post('vendor_accept_order') == 'Accept Order') {
-			if($this->form_validation->run('vendor_accept_order') == TRUE) {
-				if($data['available_public_keys'] == FALSE) {
-					$data['returnMessage'] = 'You have no available public keys to use in this order!';
-				} else {
-					$this->load->library('Raw_transaction');
-					$vendor_public_key = $data['available_public_keys'][0];
-					$admin_public_key = $this->bitcoin_model->get_next_key();
+		$data['request_order_type'] = $this->order_model->requested_order_type($data['order']);
+		$data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
+		$data['order_type'] = ($data['trusted_vendor'] AND $data['request_order_type'] == 'upfront') ? 'upfront' : 'escrow';
 
-					if($admin_public_key == FALSE) {
-						$data['returnMessage'] = 'An error occured, which prevented your order being created. Please notify an administrator.';
-					} else {
-						$public_keys = array($data['order']['buyer_public_key'], $vendor_public_key['public_key'], $admin_public_key['public_key']);
-						$multisig_details = Raw_transaction::create_multisig('2', $public_keys);
-						// If no errors, we're good to create the order!
-						if($multisig_details !== FALSE) {
-							$this->bitcoin_model->log_key_usage('order', $this->bw_config->electrum_mpk, $admin_public_key['iteration'], $admin_public_key['public_key'], $data['order']['id']);
-							$this->accounts_model->delete_bitcoin_public_key($vendor_public_key['id']);
-							
-							$update = array('vendor_public_key' => $vendor_public_key['public_key'],
-											'admin_public_key' => $admin_public_key['public_key'],
-											'address' => $multisig_details['address'],
-											'redeemScript' => $multisig_details['redeemScript'],
-											'selected_payment_type_time' => time());
-							
-							if($this->input->post('selected_escrow') == '1') {
-								$update['vendor_selected_escrow'] = '1';
-								$update['extra_fees'] = ((($data['order']['price']+$data['order']['shipping_costs'])/100)*$this->bw_config->escrow_rate);
-							}
-							if($this->order_model->progress_order($data['order']['id'], '1', '2', $update) == TRUE) {
-								$this->bitcoin_model->add_watch_address($multisig_details['address'], 'order');
-								
-								$subject = 'Vendor has confirmed order #'.$data['order']['id'];
-								$message = 'Your order with '.$data['order']['vendor']['user_name'].' has been confirmed.\n'.(($this->input->post('selected_escrow') == '1') ? 'Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You do not need to sign before you receive the goods. You can raise a dispute if you have any issues.' : 'You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.' );
-								$this->order_model->send_order_message($data['order']['id'], $data['order']['buyer']['user_name'], $subject, $message);
-								$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You have accepted this order! Visit the orders page to see the bitcoin address!')));
-															
-								redirect('orders');
-							} else {
-								$data['returnMessage'] = 'There was an error creating your order.';
-							}
-						} else {
-							$data['returnMessage'] = 'Unable to create address.';
-						}
-					}
+		if ($this->input->post('vendor_accept_order') == 'Accept Order')
+		{
+			if ($data['available_public_keys'] == FALSE)
+			{
+				$data['returnMessage'] = 'You have no available public keys to use in this order!';
+			}
+			else
+			{
+				$accept_details = array('vendor_public_keys' => $data['available_public_keys'],
+										'order_type' => $data['order_type'],
+										'order' => $data['order'],
+										'initiating_user' => 'vendor',
+										'update_fields' => array());
+				
+				$vendor_accept = $this->order_model->vendor_accept_order($accept_details);
+				
+				if ($vendor_accept == TRUE) 
+				{
+					redirect('orders');
+				}
+				else if (is_string($vendor_accept) == TRUE) 
+				{
+					$data['returnMessage'] = $vendor_accept;
 				}
 			}
 		}
@@ -172,20 +150,30 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	public function vendor_finalize_early($order_id) {
+	/**
+	 * Vendor Finalize Early
+	 * 
+	 * This controller allows a vendor who is trusted to request early
+	 * finalization of an escrow order.
+	 * 
+	 * @param		int		$order_id
+	 */
+	public function vendor_finalize_early($order_id)
+	{
 		$data['order'] = $this->order_model->load_order($order_id, array('4'));
 		if ($data['order'] == FALSE) 
 			redirect('orders');
 
-		if ( !($data['order']['vendor']['completed_order_count'] > 5
-			 && $data['order']['progress'] == '4'
-			 && $data['order']['vendor_selected_upfront'] == '0'))
+		$this->load->model('review_model');
+
+		if ( $this->review_model->decide_trusted_user($data['order'], 'vendor') == FALSE 
+			 || $data['order']['vendor_selected_upfront'] == '1')
 		{
 			$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to finalize this order early!')));
 			redirect('orders/details/'.$data['order']['id']);
 		}
 
-		$this->form_validation->set_rules('upfront', '', 'callback_check_refund_choice');
+		$this->form_validation->set_rules('upfront', '', 'check_bool_areyousure');
 		
 		if ($this->input->post('request_FE') == 'Continue') 
 		{
@@ -222,7 +210,18 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	public function vendor_refund($order_id) {
+	/**
+	 * Vendor Refund
+	 * Role: Vendor
+	 * URI: orders/refund/<order_id>
+	 * 
+	 * This page allows a vendor to initiate a refund to the buyer by 
+	 * creating a raw transaction paying the buyer.
+	 * 
+	 * @param	int	$order_id
+	 */
+	public function vendor_refund($order_id)
+	{
 		$data['order'] = $this->order_model->load_order($order_id, array('3','4'));
 		if ($data['order'] == FALSE)
 		{
@@ -240,17 +239,19 @@ class Orders extends CI_Controller {
 		$this->load->library('BitcoinLib');
 		$this->load->library('Raw_transaction');
 		
-		$this->form_validation->set_rules('refund', '', 'callback_check_refund_choice');
+		$this->form_validation->set_rules('refund', '', 'check_bool_areyousure');
 		
-		if($this->input->post('issue_refund') == 'Issue Refund')
+		if ($this->input->post('issue_refund') == 'Issue Refund')
 		{
-			if($this->form_validation->run() == TRUE)
+			if ($this->form_validation->run() == TRUE)
 			{
-				if($this->input->post('refund') == '0') {
+				if ($this->input->post('refund') == '0')
+				{
 					$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You have chosen not to refund this order.')));
 					redirect('orders/details/'.$data['order']['id']);
-				} else {
-					
+				}
+				else
+				{
 					// Construct new raw transaction!
 					
 					// Add the inputs at the multisig address.
@@ -259,7 +260,8 @@ class Orders extends CI_Controller {
 					// Create the transaction inputs
 					$tx_ins = array();
 					$value = 0.00000000;
-					foreach($payments as $pmt) {
+					foreach ($payments as $pmt)
+					{
 						$tx_ins[] = array(	'txid' => $pmt['tx_id'],
 											'vout' => $pmt['vout']);
 						$value += (float)$pmt['value'];
@@ -274,26 +276,34 @@ class Orders extends CI_Controller {
 					$tx_outs[$buyer_address] = (float)$data['order']['total_paid']-0.0001;
 
 					$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
-					if($raw_transaction == FALSE) {
+					if ($raw_transaction == FALSE)
+					{
 						$data['returnMessage'] = 'Error creating transaction!';
-					} else {
+					}
+					else
+					{
 						$decoded_transaction = Raw_transaction::decode($raw_transaction);
 						$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
 						
-						$update = array('unsigned_transaction' => $raw_transaction." ",
-										'json_inputs' => "'$json'",
-										'partially_signed_transaction' => '',
-										'partially_signed_time' => '',
-										'partially_signing_user_id' => '',
-										'progress' => '8',
-										'refund_time' => time());
+						$update = array(
+							'unsigned_transaction' => $raw_transaction." ",
+							'json_inputs' => "'$json'",
+							'partially_signed_transaction' => '',
+							'partially_signed_time' => '',
+							'partially_signing_user_id' => '',
+							'progress' => '8',
+							'refund_time' => time()
+						);
 						
-						if($this->order_model->update_order($data['order']['id'], $update) == TRUE) {
+						if ($this->order_model->update_order($data['order']['id'], $update) == TRUE)
+						{
 							$this->transaction_cache_model->clear_expected_for_address($data['order']['address']);
 							$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
 							$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'A refund has been issued for this order. Please sign to ensure the funds can be claimed ASAP.')));
 							redirect('orders/details/'.$data['order']['id']);
-						} else {
+						}
+						else
+						{
 							$data['returnMessage'] = 'An error occured processing the refund.';
 						}
 					}
@@ -308,10 +318,6 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 	
-	public function check_refund_choice($param) {
-		return (is_numeric($param) && in_array($param, array('0','1'))) ? TRUE : FALSE;
-	}
-	
 	// Buyer pages
 	
 	/**
@@ -319,20 +325,16 @@ class Orders extends CI_Controller {
 	 * User Role: Buyer
 	 * URI: /purchase/$item_hash
 	 * 
-	 * @access	public
-	 * @see		Models/Items_Model
-	 * @see		Models/Order_Model
-	 * @see		Models/Bitcoin_Model
-	 * 
-	 * @param	string
+	 * @param	string	$item_hash
 	 * @return	void
 	 */
 	public function purchase_item($item_hash) {	
 		$this->load->model('items_model');
 		$this->load->model('shipping_costs_model');
-		$item_info = $this->items_model->get($item_hash);
+		$item_info = $this->items_model->get($item_hash, FALSE);
 		if($item_info == FALSE) 
 			redirect('items');
+			
 		$account = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
 		$shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $account['location']);
 
@@ -371,14 +373,17 @@ class Orders extends CI_Controller {
 	 * @param	int	$id
 	 * @return	void
 	 */	
-	public function buyer_confirm($id) {
+	public function buyer_confirm($id)
+	{
 		
 		$this->load->model('bitcoin_model');
 		$this->load->model('fees_model');
 		$this->load->model('shipping_costs_model');
+		$this->load->model('review_model');
+		
 		
 		$data['order'] = $this->order_model->load_order($id, array('0'));
-		if($data['order'] == FALSE)
+		if ($data['order'] == FALSE)
 			redirect('purchases');
 		
 		$data['title'] = 'Place Order #'.$data['order']['id'];
@@ -389,31 +394,81 @@ class Orders extends CI_Controller {
 		$data['fees']['fee'] = $this->fees_model->calculate(($data['order']['price']+$data['fees']['shipping_cost']));
 		$data['fees']['total'] = $data['fees']['shipping_cost']+$data['fees']['fee'];
 		$data['total'] = $data['order']['price']+$data['fees']['total'];
+		
+		$data['vendor_public_keys'] = $this->accounts_model->bitcoin_public_keys($data['order']['vendor']['id']);		
+		$data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
+		$data['request_upfront'] = $this->order_model->requested_order_type($data['order']);
+		$data['order_type'] = ($data['trusted_vendor'] && $data['request_upfront'] == 'upfront') ? 'upfront' : 'escrow';
 
-		if($this->form_validation->run('order_place') == TRUE) {
+		if ($this->form_validation->run('order_place') == TRUE)
+		{
 			$continue = FALSE;
-			if($data['order']['vendor']['block_non_pgp'] == '1') {
-				$this->form_validation->set_rules("buyer_address", "Your address", 'callback_check_pgp_encrypted');
+		
+			if ($data['order']['vendor']['block_non_pgp'] == '1')
+			{
+				$this->form_validation->set_rules("buyer_address", "Your address", 'check_pgp_encrypted');
+			
 				if($this->form_validation->run() == TRUE) 
 					$continue = TRUE;
-			} else {
+			}
+			else
+			{
 				$continue = TRUE;
 			}
 			
-			if($continue == TRUE) {
-				if($this->order_model->set_user_public_key($id, 'buyer', $this->input->post('bitcoin_public_key')) == TRUE) {
+			
+			if ($continue == TRUE)
+			{
+				// If the vendor has public keys, allow the order address to be created immediately. 
+				
+				if ($data['vendor_public_keys'] !== FALSE) 
+				{
+					$accept_details = array('vendor_public_keys' => $data['vendor_public_keys'],
+							'order_type' => $data['order_type'],
+							'order' => $data['order'],
+							'initiating_user' => 'buyer',
+							'update_fields' => array(
+										'price' => $data['order']['price'],
+										'fees' => $data['fees']['fee'],
+										'confirmed_time' => time(),
+										'buyer_public_key' => $this->input->post('bitcoin_public_key'),
+										'shipping_costs' => $data['fees']['shipping_cost']
+									));
+					
+					$vendor_accept = $this->order_model->vendor_accept_order($accept_details);
+					
+					if ($vendor_accept == TRUE) 
+					{
+						redirect('purchases');
+					}
+					else if (is_string($vendor_accept) == TRUE) 
+					{
+						$data['returnMessage'] = $vendor_accept;
+					}
+				}
+				else
+				{
+					// Eventually this will be deprecated as BIP0032 will ensure you have a key.
+					// No public keys available, so just submit to the vendor for approval.
+					$this->order_model->set_user_public_key($id, 'buyer', $this->input->post('bitcoin_public_key'));
+				
 					$update = array('price' => $data['order']['price'],
 									'fees' => $data['fees']['fee'],
 									'confirmed_time' => time(),
 									'shipping_costs' => $data['fees']['shipping_cost']);
 
-					if($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE) {
+					// Simply progress order from step 0 to step 1. 
+					if ($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE)
+					{
 						$data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
-					} else {
+					}
+					else
+					{
 						// Send message to vendor						
 						$subject = "New Order #{$data['order']['id']} from ".$this->current_user->user_name;
 						$message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
-						for($i = 0; $i < count($data['order']['items']); $i++) {
+						for ($i = 0; $i < count($data['order']['items']); $i++)
+						{
 							$message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
 						}
 						$message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n".$this->input->post('buyer_address');
@@ -424,7 +479,8 @@ class Orders extends CI_Controller {
 					}
 				}
 			}
-		} 			
+		} 
+		
 		$data['orders'] = $this->order_model->buyer_orders();
 		$data['local_currency'] = $this->current_user->currency;
 		$this->load->library('Layout', $data);
@@ -446,27 +502,33 @@ class Orders extends CI_Controller {
 		$data['coin'] = $this->coin;
 		
 		// Process Form Submission
+		
 		// Check if we are Proceeding an order, or Recounting it.
 		$place_order = $this->input->post('place_order');
 		$recount = $this->input->post('recount');
-		if(is_array($place_order) || is_array($recount)) {
+		if (is_array($place_order) || is_array($recount)) {
+			
 			// Load the ID of the order.
 			$id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount); $id = $id[0];
-			if(!(is_numeric($id) && $id >= 0))
+			if( ! (is_numeric($id) && $id >= 0))
 				redirect('purchases');
 			
 			// If the order cannot be loaded (progress == 0), redirect to Purchases page.
 			$current_order = $this->order_model->load_order($id, array('0'));
-			if($current_order == FALSE)
+			if ($current_order == FALSE)
 				redirect('purchases');
 
 			// Loop through items in order, and update each.
 			$list = $this->input->post('quantity');
-			foreach($list as $hash => $quantity) {
+			foreach ($list as $hash => $quantity)
+			{
 				$item_info = $this->items_model->get($hash);
-				if($item_info !== FALSE) {
+			
+				if ($item_info !== FALSE)
+				{
 					$update = array('item_hash' => $hash,
 									'quantity' => $quantity);
+									
 					$this->order_model->update_items($current_order['id'], $update, 'force');
 				}
 			}
@@ -475,39 +537,44 @@ class Orders extends CI_Controller {
 			redirect($url);
 		}
 		
+		
 		// Process 'cancelled' orders
 		$cancel = $this->input->post('cancel');
-		if(is_array($cancel)) {
+		if (is_array($cancel))
+		{
 			$id = array_keys($cancel); $id = $id[0];
-			if(!(is_numeric($id) && $id >= 0))
+			if( ! (is_numeric($id) && $id >= 0))
 				redirect('purchases');
 				
 			$current_order = $this->order_model->load_order($id, array('1'));
-			if($current_order == FALSE)
+			if ($current_order == FALSE)
 				redirect('purchases');
 			
-			if($this->order_model->buyer_cancel($id) == TRUE) 
+			if ($this->order_model->buyer_cancel($id) == TRUE) 
 				$data['returnMessage'] = 'This order has been cancelled';
 		}
 		
 		// Process 'received' orders during up-front payments
 		$received = $this->input->post('received');
-		if(is_array($received)) {
+		if (is_array($received))
+		{
 			$id = array_keys($received); $id = $id[0];
-			if(!(is_numeric($id) && $id >= 0))
+			if( ! (is_numeric($id) && $id >= 0))
 				redirect('purchases');
 				
 			$current_order = $this->order_model->load_order($id, array('5'));
-			if($current_order == FALSE)
+			if ($current_order == FALSE)
 				redirect('purchases');
 
 			// Prevent escrow orders from being marked as 'received'.
-			if($current_order['vendor_selected_upfront'] == '0') {
+			if ($current_order['vendor_selected_upfront'] == '0')
+			{
 				$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You must sign & broadcast this transaction!')));
 				redirect('purchases');
 			}
 
-			if($this->order_model->progress_order($id, '5', '7', array('received_time' => time())) == TRUE) {
+			if ($this->order_model->progress_order($id, '5', '7', array('received_time' => time())) == TRUE)
+			{
 				$this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been marked as received. Please leave feedback for this user!')));
 				redirect('purchases');
 			}
@@ -517,9 +584,11 @@ class Orders extends CI_Controller {
 		// Load information about orders.
 		
 		$data['orders'] = $this->order_model->buyer_orders(); 
-		if($data['orders'] !== FALSE) {
+		if ($data['orders'] !== FALSE)
+		{
 			$id_list = array();
-			foreach($data['orders'] as $t_order) {
+			foreach ($data['orders'] as $t_order)
+			{
 				$id_list[] = $t_order['id'];
 			}
 			$data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
@@ -531,7 +600,6 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-
 	// All users can view these pages
 
 	/**
@@ -539,18 +607,14 @@ class Orders extends CI_Controller {
 	 * User Role: Buyer/Vendor
 	 * URI: /order/dispute/$id or orders/dispute/$id
 	 * 
-	 * @access	public
-	 * @see		Models/Order_Model
-	 * @see		Models/Escrow_Model
-	 * @see		Models/Messages_Model
-	 * @see		Models/Items_Model
-	 * @see		Libraries/Form_Validation
-	 * @see		Libraries/Bw_Messages
+	 * Displays dispute initiation form if it's not already done, otherwise
+	 * shows details pages.
 	 * 
-	 * @param	int
+	 * @param	int	$id
 	 * @return	void
 	 */
-	public function dispute($id) {
+	public function dispute($id)
+	{
 		$list_page = ($this->current_user->user_role == 'Vendor') ? 'purchases' : 'orders';
 		$data['dispute_page'] = ($this->current_user->user_role == 'Vendor') ? 'orders/dispute/'.$id : 'purchases/dispute/'.$id;
 		$data['cancel_page'] = ($this->current_user->user_role == 'Vendor') ? 'orders' : 'purchases';
@@ -628,6 +692,17 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
+	/**
+	 * Details
+	 * Buyer URI: purchases/details/<order_id>
+	 * Vendor URI: orders/details/<order_id>
+	 * Admin URI: admin/orders/<order_id>
+	 * 
+	 * Order details page. Shows buyer/vendor/admin the details of the 
+	 * the order.
+	 * 
+	 * @param	int		$order_id
+	 */
 	public function details($order_id) {
 		if(!(is_numeric($order_id) && $order_id >= 0))
 			redirect('');
@@ -658,6 +733,7 @@ class Orders extends CI_Controller {
 		
 		$this->load->library('Raw_transaction');
 		$this->load->model('transaction_cache_model');
+		$this->load->model('review_model');
 							
 		$data['display_form'] = FALSE;
 
@@ -731,7 +807,7 @@ class Orders extends CI_Controller {
 			if (in_array($data['order']['progress'], array('3','4') ))
 				$data['can_refund'] = TRUE;
 				
-			if ($data['order']['vendor']['completed_order_count'] > 5
+			if ($this->review_model->decide_trusted_user($data['order'], 'vendor') == TRUE
 			 && $data['order']['progress'] == '4'
 			 && $data['order']['vendor_selected_escrow'] !== '0'
 			 && $data['order']['vendor_selected_upfront'] == '0')
@@ -755,6 +831,7 @@ class Orders extends CI_Controller {
 		$data['fees']['total'] = $data['order']['shipping_costs']+$data['order']['fees'];
 		$data['user_role'] = $this->current_user->user_role;
 		$data['local_currency'] = $this->current_user->currency;		
+		$data['local_currency']['rate'] = $this->bw_config->exchange_rates[(strtolower($data['local_currency']['code']))];
 		
 		if($this->current_user->user_role == 'Buyer'
 		&& ($data['order']['paid_time'] == '')) {
@@ -767,59 +844,7 @@ class Orders extends CI_Controller {
 		$this->load->library('Layout', $data);
 	}
 
-	// Callback functions
-
-	/**
-	 * Check Public Key
-	 * 
-	 * Checks if the public key corresponds to a valid point on the 
-	 * secp256k1 curve.
-	 * 
-	 * @param	string	$public_key
-	 * @return	boolean
-	 */
-	public function check_bitcoin_public_key($public_key) {
-		$this->load->library('BitcoinLib');
-		return (BitcoinLib::validate_public_key($public_key) == TRUE) ? TRUE : FALSE;
-	}
-		
-	/**
-	 * Check Hex
-	 * 
-	 * Checks if the supplied parameter is a valid hex string.
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_hex($param) {
-		return (bool)preg_match("^[a-fA-F0-9]^", trim($param));
-	}
-	
-	/**
-	 * Check PGP Encrypted
-	 * 
-	 * See Bw_messages/check_pgp_encrypted();
-	 * 
-	 * @param	string	$param
-	 * @return	boolean
-	 */
-	public function check_pgp_encrypted($param) {
-		return ($this->bw_messages->check_pgp_encrypted($param) == TRUE) ? TRUE : FALSE;
-	}
-
-	/**
-	 * Check Bool
-	 * 
-	 * Check the supplied parameter is for a boolean..
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_escrow_choice($param) {
-		return ($this->general->matches_any($param, array('0','1')) == TRUE) ? TRUE : FALSE;
-	}
-
 };
 
-/* End of File: orders.php */
+/* End of File: Orders.php */
 /* Location: application/controllers/orders.php */

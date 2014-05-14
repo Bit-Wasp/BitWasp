@@ -23,8 +23,8 @@ class Callback extends CI_Controller {
 		parent::__construct();
 		
 		// Prevent access via web. Uncomment when enough people have changed.
-		//if(!$this->input->is_cli_request())
-			//die("Not Allowed");
+		if(!$this->input->is_cli_request())
+			die("Not Allowed");
 	}
 	
 	/**
@@ -34,10 +34,13 @@ class Callback extends CI_Controller {
 	 * @access	public
 	 * @see		Models/Bitcoin_Model	 
 	 * @see		Libraries/Bw_Bitcoin
+	 * 
+	 * @param	string	$block_hash
 	 */
-	public function block($block_hash = NULL) {
+	public function block($block_hash = NULL) 
+	{
 		// Abort if no block hash is supplied.
-		if($block_hash == NULL)
+		if ($block_hash == NULL)
 			return FALSE;
 			
 		$this->load->library('bw_bitcoin');
@@ -45,44 +48,53 @@ class Callback extends CI_Controller {
 		$this->load->model('transaction_cache_model');
 
 		// Die if bitcoind is actually offline.
-		if($this->bw_bitcoin->getinfo() == NULL) {
+		if ($this->bw_bitcoin->getinfo() == NULL) 
 			return FALSE;
-		}
+
 		// Reject already known blocks.
-		if($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
+		if ($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
 			return FALSE;
+
 		$block = $this->bw_bitcoin->getblock($block_hash);
 		
-		if(!is_array($block))
+		if ( ! is_array($block))
 			return FALSE;
 		
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
-		if(count($watched_addresses) == 0)
+		if (count($watched_addresses) == 0)
 			return FALSE;
 		
 		$txs = array();
-		foreach($block['tx'] as $id => $tx_id) {
-			array_push($txs, array(	'tx_id' => $tx_id,
-									'tx_raw' => $this->bw_bitcoin->getrawtransaction($tx_id),
-									'block_height' => $block['height']));
+		foreach ($block['tx'] as $id => $tx_id)
+		{
+			array_push($txs, array(
+				'tx_id' => $tx_id,
+				'tx_raw' => $this->bw_bitcoin->getrawtransaction($tx_id),
+				'block_height' => $block['height']
+			));
 		}
 		
-		if(count($txs) > 0)
+		if (count($txs) > 0)
 			$this->transaction_cache_model->add_cache_list($txs);
 	}	
 	
 	/**
 	 * Process
 	 */
-	public function process() {
+	public function process()
+	{
 
 		// Die if the callback is already running
-		if($this->bw_config->bitcoin_callback_running == 'true') {
+		if ($this->bw_config->bitcoin_callback_running == 'true')
+		{
 			// Hack to get the script running again if it's been running for over 10 minutes.
-			if((time()-$this->bw_config->bitcoin_callback_starttime) > 2*60) {
+			if ( (time()-$this->bw_config->bitcoin_callback_starttime) > 2*60)
+			{
 				echo "Reset callback running\n";
 				$this->config_model->update(array('bitcoin_callback_running' => 'false'));
-			} else {
+			}
+			else
+			{
 				echo "Fail, as still running\n";
 				// If not over 10 minutes, it might still be working, so just do nothing.
 				return FALSE;
@@ -93,70 +105,87 @@ class Callback extends CI_Controller {
 
 		// Load the cached transactions to process. Die if nothing to do.
 		$list = $this->transaction_cache_model->cache_list();
-		if($list == FALSE || count($list) == 0 ) {
+		if ($list == FALSE OR count($list) == 0 )
 			return FALSE;
-		}
 
 		$this->load->library('Raw_transaction');
 		$this->load->model('order_model');
 		$this->load->model('bitcoin_model');
 
 		// No problems, so prevent other instances from running!
-		$this->config_model->update(array(	'bitcoin_callback_running' => 'true',
-											'bitcoin_callback_starttime' => time()));
+		$this->config_model->update(array(	
+			'bitcoin_callback_running' => 'true',
+			'bitcoin_callback_starttime' => time()
+		));
 
 		// Load watched addresses, and payments received on addresses.
 		$watched_addresses = $this->bitcoin_model->watch_address_list();
-		var_dump($watched_addresses);
 		$payments_list = $this->transaction_cache_model->payments_list('order');
+		
 		// Try to scrape payments to and from our multisig addresses.
 		$order_finalized = array();
 		$received_payments = array();
 		$fee_payments = array();
 
-		foreach($list as $cached_tx) {
+		foreach ($list as $cached_tx)
+		{
 			// Raw_transaction library is way faster than asking bitcoind.
 			$tx = Raw_transaction::decode($cached_tx['tx_raw']);
 
-			if(	count($tx['vin']) > 0 && $payments_list !== FALSE) {
+			if (count($tx['vin']) > 0 AND $payments_list !== FALSE)
+			{
 				$spending_transactions = $this->transaction_cache_model->check_inputs_against_payments($tx['vin'], $payments_list);
-				if(count($spending_transactions) > 0) {
-					foreach($spending_transactions as $tmp) {
+				if (count($spending_transactions) > 0)
+				{
+					foreach ($spending_transactions as $tmp)
+					{
 						$check = $this->transaction_cache_model->check_if_expected_spend($tx['vout']);
 						// Put transaction into scam or successful array.
-						$order_finalized[] = array(	'final_id' => $cached_tx['tx_id'], 
-													'address' => $tmp['assoc_address'],
-													'valid' => (($check == FALSE) ? FALSE : TRUE));
+						$order_finalized[] = array(	
+							'final_id' => $cached_tx['tx_id'], 
+							'address' => $tmp['assoc_address'],
+							'valid' => (($check == FALSE) ? FALSE : TRUE)
+						);
 					}
 				}
 			}
 
-			if( count($tx['vout']) > 0 ) {
+			if (count($tx['vout']) > 0)
+			{
 				$output_list = $this->transaction_cache_model->parse_outputs_into_array($cached_tx['tx_id'], $cached_tx['block_height'], $tx['vout']);
-				foreach($output_list as $tmp) {
-					// Someone is paying money to a watched address. Record the transaction.
-					if( in_array($tmp['address'], $watched_addresses['addresses']) == TRUE) {
-						$tmp['purpose'] = $watched_addresses['data'][$tmp['address']]['purpose'];
-						$received_payments[] = $tmp;
- 					}
+				
+				if (count($output_list) > 0)
+				{
+					foreach ($output_list as $tmp)
+					{
+						// Someone is paying money to a watched address. Record the transaction.
+						if (in_array($tmp['address'], $watched_addresses['addresses']) == TRUE)
+						{
+							$tmp['purpose'] = $watched_addresses['data'][$tmp['address']]['purpose'];
+							$received_payments[] = $tmp;
+						}
+					}				
 				}
 			}
 			$delete_cache[] = array('tx_id' => $cached_tx['tx_id']);
 		}
 
 		// Log all incoming payments.
-		if(count($received_payments) > 0) {
+		if (count($received_payments) > 0)
+		{
 			echo "Handling ".count($received_payments)." received_payments\n";
 			$this->transaction_cache_model->add_payments_list($received_payments);
 		}
 
 		// Log all outgoing payments: orders being finalized.
-		if(count($order_finalized) > 0){
+		if (count($order_finalized) > 0)
+		{
 			echo "Handling ".count($order_finalized)." order_finalized\n";
 			$this->order_model->order_finalized_callback($order_finalized);
 		}
+		
 		// Delete payments from the block cache.
-		if(count($delete_cache) > 0)
+		if (count($delete_cache) > 0)
 			$this->transaction_cache_model->delete_cache_list($delete_cache);
 
 		// This could be made into an autorun job:
@@ -213,4 +242,5 @@ class Callback extends CI_Controller {
 	}
 };
 
-/* End of file Image.php */
+/* End of file: Callback.php */
+/* Location: application/controllers/Callback.php */

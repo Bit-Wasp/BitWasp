@@ -20,8 +20,8 @@ class Review_model extends CI_Model {
 	 * @access	public
 	 */
 	public function __construct() {
-		$this->load->model('review_auth_model');
 		parent::__construct();
+		$this->load->model('review_auth_model');
 	}
 
 	/**
@@ -101,7 +101,21 @@ class Review_model extends CI_Model {
 		}
 		return $success;
 	}
-	
+
+	/**
+	 * Random Latest Reviews
+	 * 
+	 * Loads a random list of reviews which are of type: $review_type, 
+	 * and about the subject: $subject_hash. Can additionally specify if
+	 * disputed/non-disputed/all reviews should be displayed using $disputed.
+	 * $desired_count sets how many it should return.
+	 * 
+	 * @param		int	$desired_count
+	 * @param	string	$review_type
+	 * @param	string	$subject_hash
+	 * @param	boolean/int	$disputed
+	 * @return	array/false
+	 */
 	public function random_latest_reviews($desired_count, $review_type, $subject_hash, $disputed = FALSE) {
 		// Load 30 latest reviews. 
 		$this->db->where('review_type', $review_type);
@@ -138,10 +152,10 @@ class Review_model extends CI_Model {
 	 * This function parses the rating row array from the database into 
 	 * a structured array for use in views.
 	 * 
-	 * @param	array	$row
+	 * @param	array	$review
 	 * @param	array
 	 */
-	public function parse_review_row($review){
+	public function parse_review_row($review) {
 		$data = array();
 		$content = json_decode($review['json']);
 		foreach($content as $name => $rating) {
@@ -168,7 +182,7 @@ class Review_model extends CI_Model {
 	 * @param	int	$desired_count
 	 * @param	string	$review_type
 	 * @param	string	$subject_hash
-	 * @param	(opt) 	$disputed(FALSE/0/1)
+	 * @param	FALSE/int(opt) 	$disputed
 	 * @return	array
 	 */
 	public function random_reviews($desired_count, $review_type, $subject_hash, $disputed = FALSE) {
@@ -203,7 +217,7 @@ class Review_model extends CI_Model {
 	 * 
 	 * @param	string	$review_type
 	 * @param	string	$subject_hash
-	 * @param	bool/int	(opt)$disputed
+	 * @param	bool/int(opt)	$disputed
 	 * @return	int
 	 */
 	public function count_reviews($review_type, $subject_hash, $disputed = FALSE){
@@ -216,6 +230,40 @@ class Review_model extends CI_Model {
 		$this->db->from('reviews');
 		
 		return $this->db->count_all_results();
+	}
+	
+	/**
+	 * Decide Trusted User
+	 * 
+	 * Used when an order is being confirmed by the buyer or vendor, to 
+	 * consider if they should be allowed finalize early, or request up-front
+	 * payment altogether for some items.
+	 * 
+	 * @param	array	$order_arr
+	 * @param	string	$user_type
+	 */
+	public function decide_trusted_user($order_arr, $user_type) {
+		
+		$user_type = strtolower($user_type);
+		if(!in_array($user_type, array('buyer','vendor')))
+			return FALSE;
+			
+		$review_count = $this->db->where('review_type', 'user')
+				->where('subject_hash', $order_arr[$user_type]['user_hash'])
+				->count_all('reviews');
+		
+		$average_rating = $this->db->where('review_type','user')
+				->where('subject_hash', $order_arr[$user_type]['user_hash'])
+				->from('reviews')
+				->select_avg('average_rating')
+				->get()
+				->row_array();
+				
+		$this->load->model('review_model');
+		return ($order_arr['vendor']['completed_order_count'] >= $this->bw_config->trusted_user_order_count
+			&&	$average_rating['average_rating'] >= $this->bw_config->trusted_user_rating
+			&&	$review_count >= $this->bw_config->trusted_user_review_count
+			) ? TRUE : FALSE;
 	}
 	
 	/**
@@ -244,7 +292,7 @@ class Review_model extends CI_Model {
 	}
 	
 	/**
-	 * Prepare Database Entry
+	 * Prepare Review Array
 	 * 
 	 * This function accepts the $review_type/$subject_hash, an array
 	 * containing the ratings from 1-5 of the various qualities, the
@@ -253,6 +301,7 @@ class Review_model extends CI_Model {
 	 * 
 	 * @param	string	$review_type
 	 * @param	string	$subject_hash
+	 * @param	string	$disputed
 	 * @param	array	$rating_array
 	 * @param	string	$comments
 	 * @return	array

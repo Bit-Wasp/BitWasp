@@ -71,6 +71,8 @@ class Image {
 	 * 
 	 * This function imports the image and stores it in $this->{ext}_import,
 	 * where {ext} can be imagick or gd, depending on what's available.
+	 * 
+	 * @param	array	$image_info
 	 */
 	public function import($image_info) {
 		if($this->use_library == 'magickwand') {
@@ -168,7 +170,7 @@ class Image {
 	 * to base64. Parameter $image_png can be either an Imagick object, 
 	 * or a GD image resource.
 	 * 
-	 * @param	Imagick/GD object $image_png
+	 * @param	Imagick/GD  $image_png
 	 * @return	string/FALSE
 	 */
 	public function capture_image($image_png) {
@@ -209,14 +211,16 @@ class Image {
 	 * 
 	 * Create the HTML string that will display the image temporarily.
 	 * @param	string	$filename
+	 * @return	string
 	 */
 	public function temp($filename) {
 		$image = $this->encode($filename);
 		$html = "<img src=\"data:image/png;base64,{$image}\" />\n";
 		return $html;
 	}
-	
 
 };
 
+/* End of file: Image.php */
+/* Location: application/libraries/Image.php */
 

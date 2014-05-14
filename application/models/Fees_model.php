@@ -11,11 +11,10 @@
  * @author		BitWasp
  * 
  */
-
 class Fees_model extends CI_Model {
 
 	/**
-	 * Constructor
+	 * Construct
 	 *
 	 * @access	public
 	 */		
@@ -58,7 +57,7 @@ class Fees_model extends CI_Model {
 	 * which contains keys for 'low', the lower limit of the range, 
 	 * 'high', the upper limit of the range, and 'rate', the range. 
 	 * 
-	 * @param	array
+	 * @param	array	$fee
 	 * @return	boolean
 	 */
 	public function add($fee) {
@@ -71,6 +70,7 @@ class Fees_model extends CI_Model {
 	 * Calculates the fee to be applied to an order of $order_price.
 	 * 
 	 * @param	string	$order_price
+	 * @return	int
 	 */
 	public function calculate($order_price) {
 		$fees_list = $this->fees_list();

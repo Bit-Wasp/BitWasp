@@ -2,7 +2,9 @@
 			<h2>Dispute: Order #<?php echo $current_order['id']; ?></h2>
 			<Br />
 			
-			<?php if(isset($returnMessage)) echo "<div class='alert'>$returnMessage</div>"; ?>
+			<?php if(isset($returnMessage)) { ?>
+			<div class='alert<?php echo (isset($success)) ? ' alert-success' : ''; ?>'><?php echo $returnMessage; ?></div>			
+			<?php } ?>
 
 			<?php if($form == TRUE) { ?>
 

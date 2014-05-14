@@ -1,6 +1,7 @@
         <div class="span9 mainContent" id="admin_edit_items">
 
 		  <?php echo $nav; ?>
+		  <?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 
 		  <?php echo form_open('admin/edit/autorun', array('class' => 'form-horizontal')); ?>
 				

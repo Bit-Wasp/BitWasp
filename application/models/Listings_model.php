@@ -51,7 +51,14 @@ class Listings_model extends CI_Model {
 		$this->db->where('vendor_hash', $this->current_user->user_hash);
 		return ($this->db->delete('items') == TRUE) ? TRUE : FALSE;
 	}
-	
+
+	/**
+	 * My Listings
+	 * 
+	 * Loads a vendors listings into an array, or FALSE if they have none.
+	 * 
+	 * @return	array/FALSE
+	 */
 	public function my_listings() {
 		$this->db->select('id, hash, price, currency, hidden, category, name, description, main_image');
 		$this->db->where('vendor_hash', $this->current_user->user_hash);

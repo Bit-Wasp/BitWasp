@@ -29,6 +29,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Welcome extends CI_Controller {
 
 	/**
+	 * Construct
+	 */
+	public function __construct() 
+	{
+		parent::__construct();
+	}
+	
+	/**
 	 * Index Page for this controller.
 	 *
 	 * Maps to the following URL
@@ -51,5 +59,5 @@ class Welcome extends CI_Controller {
 	}
 }
 
-/* End of file welcome.php */
+/* End of file: Welcome.php */
 /* Location: ./application/controllers/Welcome.php */

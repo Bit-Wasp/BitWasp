@@ -38,7 +38,15 @@ class Transaction_cache_model extends CI_Model {
 	public function add_cache_list($array) {
 		return ($this->db->insert_batch('transactions_block_cache', $array) == TRUE) ? TRUE : FALSE;
 	}
-	
+
+	/**
+	 * Count Cache List
+	 * 
+	 * Returns the total count of records in the block cache - displayed
+	 * on admin panel
+	 * 
+	 * @return	int
+	 */
 	public function count_cache_list() {
 		$this->db->select('id');
 		$this->db->from('transactions_block_cache');
@@ -51,13 +59,14 @@ class Transaction_cache_model extends CI_Model {
 	 * Deletes a list of cached transaction id's as specified by the
 	 * tx_id key in each child-array. 
 	 * 
-	 * @param	array
+	 * @param	array	$array
 	 * @return	boolean
 	 */
 	public function delete_cache_list($array) {
-		$i = 0;
-		foreach($array as $tx) {
-			($i++ == 0) ? $this->db->where('tx_id', $tx['tx_id']) : $this->db->or_where('tx_id',$tx['tx_id']);
+		$this->db->where('tx_id', $array[0]['tx_id']);
+		foreach (array_splice($array, 1) as $tx)
+		{
+			$this->db->or_where('tx_id', $tx['tx_id']);
 		}
 		return $this->db->delete('transactions_block_cache');
 	}
@@ -70,7 +79,7 @@ class Transaction_cache_model extends CI_Model {
 	 * @return	array
 	 */
 	public function cache_list() {
-		$this->db->limit(800);
+		$this->db->limit(1000);
 		$query = $this->db->get('transactions_block_cache');
 		return ($query->num_rows() > 0) ? $query->result_array() : FALSE ;
 	}
@@ -92,46 +101,67 @@ class Transaction_cache_model extends CI_Model {
 		$this->load->model('users_model');
 		$final = array();
 
-		foreach($tx_array as $payment) {
+		foreach ($tx_array as $payment)
+		{
 			// Check that we have not encountered this before.
-			if($this->check_already_have_payment($payment['tx_id'], $payment['vout']) == FALSE) {
+			if ($this->check_already_have_payment($payment['tx_id'], $payment['vout']) == FALSE)
+			{
 				// Treat order and fee payments differently!
-				if($payment['purpose'] == 'order') {
+				if ($payment['purpose'] == 'order')
+				{
 					$order = $this->order_model->get_order_by_address($payment['address']);
-					$payment['order_id'] = $order['id'];
-
+					$order_total = ($order['price']+$order['shipping_costs']+$order['fees'])*1e8;
+					
+					// Sum up the total number of payments. 
 					$total_payment = $payment['value']*1e8;
 					$order_payments = $this->payments_to_address($payment['address']);
-					foreach($order_payments as $record) {
+					foreach ($order_payments as $record)
+					{
 						$total_payment += $record['value']*1e8;
 					}
-					$order_total = ($order['price']+$order['shipping_costs']+$order['fees'])*1e8;
-
-					if($order['finalized'] == '0' && $order_total-$total_payment <= 0) {
+					
+					// Set the order id for payment records.
+					$payment['order_id'] = $order['id'];
+					
+					// If it's not already finalized, and payment is sufficient, record a paid order.
+					if ($order['finalized'] == '0' AND abs($order_total-$total_payment) <= 0.00000001) 
 						$this->record_paid_order($order['id']);
-					}
 				}
 
-				if($payment['purpose'] == 'fees') {
+				if ($payment['purpose'] == 'fees')
+				{
+					// Load the user hash.
 					$user_hash = $this->users_model->get_payment_address_owner($payment['address']);
+					
+					// Check the user_hash and entry_payment exist..
+					if ($user_hash !== FALSE)
+					{
+						$entry_payment = $this->users_model->get_entry_payment($user_hash);
+
+						if ($entry_payment !== FALSE)
+						{
+							
+							// Get current value, and add the previous ones.
+							$paid_amount = $payment['value']*1e8;
+							$fee_payments = $this->payments_to_address($payment['address']);
+							foreach ($fee_payments as $record)
+							{
+								$paid_amount += $record['value']*1e8;
+							}
+							
+							// If the paid amount is correct, let the user log in.
+							if ($paid_amount >= $entry_payment['amount']*1e8)
+							{
+								$this->users_model->delete_entry_payment($user_hash);
+								$this->users_model->set_entry_paid($user_hash);
+							}
+						}
+					}
+
 					// Set user hash for payment records.
 					$payment['fees_user_hash'] = $user_hash;
-					$entry_payment = $this->users_model->get_entry_payment($user_hash);
-
-					if($entry_payment !== FALSE) {
-						// Get current value, and add the previous ones.
-						$paid_amount = $payment['value']*1e8;
-						$fee_payments = $this->payments_to_address($payment['address']);
-						foreach($fee_payments as $record) {
-							$paid_amount += $record['value']*1e8;
-						}
-						// If the paid amount is correct, let the user log in.
-						if($paid_amount >= $entry_payment['amount']*1e8) {
-							$this->users_model->delete_entry_payment($user_hash);
-							$this->users_model->set_entry_paid($user_hash);
-						}
-					}
 				}
+				
 				$final[] = $payment;
 			}
 		}
@@ -171,9 +201,12 @@ class Transaction_cache_model extends CI_Model {
 	 * @return	array
 	 */
 	public function parse_outputs_into_array($txid, $block_height,  $outputs) {
-		$addrs = array();
-		foreach($outputs as $v_out => $output) {
+		if(!is_array($outputs))
+			return array();
 			
+		$addrs = array();
+		
+		foreach($outputs as $v_out => $output) {
 			// Only try to deal with what you can decode! 
 			
 			// Remove this if() if you want to get rid of the Raw_transaction::decode function.
@@ -185,6 +218,7 @@ class Transaction_cache_model extends CI_Model {
 								'vout' => $v_out,
 								'block_height' => $block_height);
 		}
+		
 		return $addrs;
 	}
 
@@ -326,6 +360,11 @@ class Transaction_cache_model extends CI_Model {
 	 * This function converts a generated, unsigned transactions outputs
 	 * to a recognizable, and hopefuly reproducable hash whenever outgoing 
 	 * payments are encountered in the future.
+	 * 
+	 * @param		array	$outputs
+	 * @param		string	$multisig_address
+	 * @param		int		$order_id
+	 * @return		boolean
 	 */
 	public function log_transaction($outputs, $multisig_address, $order_id) {
 		$outputs = $this->outputs_to_log_array($outputs);
@@ -391,7 +430,7 @@ class Transaction_cache_model extends CI_Model {
 	}
 
 	//
-	// Chain reorg functions
+	// Chain reorg functions - not complete!! 
 	//
 
 	/**
@@ -409,12 +448,31 @@ class Transaction_cache_model extends CI_Model {
 		return ($this->db->count_all_results() == 0) ? FALSE : TRUE;
 	}
 	
+	/**
+	 * Check Block Height Set
+	 * 
+	 * Check if a particular height in the blockchain has already been 
+	 * recorded.
+	 * 
+	 * @param	int	$height
+	 * @return	boolean
+	 */
 	public function check_block_height_set($height) {
 		$this->db->where('height', $height);
 		$this->db->from('blocks');
 		return ($this->db->count_all_results() == 0) ? FALSE : TRUE ; 
 	}
 	
+	/**
+	 * Add Seen Block
+	 * 
+	 * Records a block into the blocks table..
+	 * 
+	 * @param		string	$block_hash
+	 * @param		int		$height
+	 * @param		string	$prev_hash
+	 * @return		boolean
+	 */
 	public function add_seen_block($block_hash, $height, $prev_hash) {
 		$insert = array('hash' => $block_hash,
 						'height' => $height,
@@ -422,6 +480,13 @@ class Transaction_cache_model extends CI_Model {
 		return ($this->db->insert('blocks', $insert) == TRUE) ? TRUE : FALSE;
 	}
 
+	/**
+	 * Last Added Block
+	 * 
+	 * Return the last block added to the processed list.
+	 * 
+	 * @return array/FALSE
+	 */
 	public function last_added_block() {
 		$this->db->order_by('id', 'DESC');
 		$this->db->limit(1);
@@ -429,6 +494,14 @@ class Transaction_cache_model extends CI_Model {
 		return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
 	}
 	
+	/**
+	 * Block Info
+	 * 
+	 * Loads stored information about a particular block.
+	 * 
+	 * @param		array	$info
+	 * @return		array/FALSE
+	 */
 	public function block_info($info) {
 		if(!isset($info['block']) && !isset($info['height']) )
 			return FALSE;

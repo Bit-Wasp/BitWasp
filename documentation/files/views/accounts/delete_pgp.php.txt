@@ -2,6 +2,8 @@
           <h2>Edit Account</h2>
 		  <br />
 		  
+		  <?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; } ?>
+		  
           <?php echo form_open('pgp/delete', array('class' => 'form-horizontal')); ?>
           
           Your PGP key can be used to protect your account with two-factor authentication, and for automatic encryption of private messages. Removing your PGP key will disable these features. Confirm that you wish to delete your key:

@@ -25,6 +25,7 @@
               </div>
 
              <!-- Captcha -->
+             <?php if($display_captcha) { ?>
              <div class="control-group">
                 <label class="control-label" for="captcha">Captcha</label>
                 <div class="controls">
@@ -37,6 +38,7 @@
                   <span class="help-inline"><?php echo form_error('captcha'); ?></span>
                 </div>
               </div>
+              <?php } ?>
               <!-- /Captcha -->
 
 			  <noscript><div style="display:none"><input type='hidden' name='js_disabled' value='1' /></div></noscript>

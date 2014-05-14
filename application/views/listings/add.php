@@ -31,7 +31,7 @@
                 <label class="control-label" for="price">Price</label>
                 <div class="controls">
                   <div class="input-prepend">
-                    <span class="add-on"><i><?php echo $local_currency['symbol']; ?></i></span>
+                    <span class="add-on"><i><?php echo $current_user['currency']['symbol']; ?></i></span>
                     <input type='text' name='price' value="<?php echo set_value('price'); ?>" />
                   </div>
                   <span class="help-inline"><?php echo form_error('price'); ?></span>

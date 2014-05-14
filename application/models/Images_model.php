@@ -88,7 +88,7 @@ class Images_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	string	$image_hash
-	 * @param	string	$file_name
+	 * @param	string	$encoded_string
 	 * @return	boolean
 	 */	
 	public function add($image_hash, $encoded_string) {
@@ -107,9 +107,9 @@ class Images_model extends CI_Model {
 	 *
 	 * @access	public
 	 * @param	string	$image_hash
-	 * @param	string	$file_name
+	 * @param	string	$encoded_string
 	 * @param	string	$item_hash
-	 * @param	boolean	$mail_image
+	 * @param	boolean	$main_image
 	 * @return	boolean
 	 */					
 	public function add_to_item($image_hash, $encoded_string, $item_hash, $main_image = FALSE) {
@@ -138,7 +138,7 @@ class Images_model extends CI_Model {
 	 * if the specified image does not exist.
 	 *
 	 * @access	public
-	 * @param	int	$image_hash
+	 * @param	string	$image_hash
 	 * @return	array/FALSE
 	 */					
 	public function get_item($image_hash) {

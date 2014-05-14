@@ -2,9 +2,9 @@
           <h2>Replace PGP key</h2>
 		  
           <?php echo form_open('pgp/replace', array('class' => 'form-horizontal')); ?>
-          <?php if(isset($returnMessage)) { echo $returnMessage; } else { ?>
+			<?php if(isset($returnMessage)) { echo '<div class="alert'.((isset($success) && $success == TRUE) ? 'alert-sucecss' : '').'">'.$returnMessage.'</div>'; } else { ?>
           Enter your replacement PGP key below. 
-          <?php } ?>
+			<?php } ?>
   		    <fieldset>
 				<br />
               <div class="control-group">

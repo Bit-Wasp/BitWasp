@@ -76,7 +76,6 @@ class Users extends CI_Controller
 	 */
 	public function login() 
 	{
-		$data['header_meta'] = $this->load->view('users/login_hash_header', NULL, true);
 		
 		$this->load->model('accounts_model');
 		
@@ -85,7 +84,7 @@ class Users extends CI_Controller
 			$valid = TRUE;
 			if ($this->display_captcha) 
 			{
-				$this->form_validation->set_rules("captcha", "required|callback_check_captcha");
+				$this->form_validation->set_rules("captcha", "required|check_captcha");
 				if ($this->form_validation->run() !== TRUE)
 					$valid = FALSE;					
 			}
@@ -113,7 +112,7 @@ class Users extends CI_Controller
 							$this->session->set_flashdata('returnMessage', json_encode(array('message' => "You have been banned from this site.")));
 							redirect('login');							
 						}
-						else if ($user_info['user_role'] !== 'Admin' && $this->bw_config->maintenance_mode == TRUE) 
+						else if ($user_info['user_role'] !== 'Admin' AND $this->bw_config->maintenance_mode == TRUE) 
 						{
 							// Maintainance mode active, but user isn't admin. Disallow.
 							$this->session->set_flashdata('returnMessage', json_encode(array('message' => "The site is in maintenance mode, please try again later.")));
@@ -138,13 +137,15 @@ class Users extends CI_Controller
 							redirect('login/pgp_factor');
 						}
 						else if ($user_info['user_role'] == 'Vendor' 
-							&& $this->bw_config->force_vendor_pgp == TRUE
-							&& $this->accounts_model->get_pgp_key($user_info['id']) == FALSE) 
+							AND $this->bw_config->force_vendor_pgp == TRUE
+							AND $this->accounts_model->get_pgp_key($user_info['id']) == FALSE) 
 						{
 							// Redirect to register a PGP key.
 							$this->bw_session->create($user_info, 'force_pgp');	// enable a half-session where the user registers a PGP key.
 							redirect('register/pgp');
-						} else {
+						}
+						else
+						{
 							// Success! Log the user in.
 							$this->bw_session->create($user_info);
 							// Changed from redirect('/');
@@ -164,7 +165,7 @@ class Users extends CI_Controller
 		$data['action_page'] = 'login';
 		$data['captcha'] = ($this->display_captcha) ? $this->bw_captcha->generate() : '';
 		$data['display_captcha'] = $this->display_captcha;
-		
+		$data['header_meta'] = $this->load->view('users/login_hash_header', NULL, true);
 		$this->load->library('Layout',$data);
  
 	}
@@ -185,7 +186,7 @@ class Users extends CI_Controller
 			
 		// If a token is invalid, redirect to the register page.
 		$data['token_info'] = $this->users_model->check_registration_token($token);
-		if ($token !== NULL && $data['token_info'] == FALSE)
+		if ($token !== NULL AND $data['token_info'] == FALSE)
 			redirect('register');
 			
 		$this->load->library('openssl');
@@ -220,102 +221,101 @@ class Users extends CI_Controller
 				$this->session->set_flashdata('returnMessage', json_encode(array('message' => "Please select a valid role.")));
 				redirect('register');
 			}
+
+			$user_name = $this->input->post('user_name');
+
+			// Ensure password has been treated with first round of hashing.
+			$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password0')) : $this->input->post('password0');
+			$salt = $this->general->generate_salt();
+			$password = $this->general->password($password, $salt);
+			
+			// Generate OpenSSL keys for the users private messages.	
+			if ($data['encrypt_private_messages'] == TRUE)
+			{
+				$pin = $this->input->post('message_pin0');
+				$message_password = $this->general->password($this->input->post('message_pin0'), $salt);
+				$message_keys = $this->openssl->keypair($message_password);
+				unset($message_password);
+			}
 			else
 			{
-				$password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password0')) : $this->input->post('password0');
+				// Set default values for the message keys.
+				$message_keys = array(	'public_key' => '0',
+										'private_key' => '0');
+			}	
 
-				// Generate the users salt and hashed password.
-				$salt = $this->general->generate_salt();
-				$password = $this->general->password($password, $salt);
+			// Generate a user hash.
+			$user_hash = $this->general->unique_hash('users', 'user_hash');
+
+			// Build the array for the model.
+			$register_info = array(	'password' => $password,
+									'location' => $this->input->post('location'),
+									'register_time' => time(),
+									'salt' => $salt,
+									'user_hash' => $user_hash,
+									'user_name' => $user_name,
+									'user_role' => $data['role'],
+									'public_key' => $message_keys['public_key'],
+									'private_key' => $message_keys['private_key'],
+									'local_currency' => $this->input->post('local_currency') );	
+			
+			$add_user = $this->users_model->add($register_info, $data['token_info']);
+			
+			// Check the submission
+			if ($add_user)
+			{
 				
-				$user_name = $this->input->post('user_name');
+				$entry_fee = 'entry_payment_'.strtolower($data['role']);
 				
-				// Generate OpenSSL keys for the users private messages.	
-				if ($data['encrypt_private_messages'] == TRUE)
+				if (isset($data['token_info']) AND $data['token_info'] !== FALSE)
 				{
-					$pin = $this->input->post('message_pin0');
-					$message_password = $this->general->password($this->input->post('message_pin0'), $salt);
-					$message_keys = $this->openssl->keypair($message_password);
-					unset($message_password);
-				}
-				else
-				{
-					// Set default values for the message keys.
-					$message_keys = array(	'public_key' => '0',
-											'private_key' => '0');
-				}	
-
-				// Generate a user hash.
-				$user_hash = $this->general->unique_hash('users', 'user_hash');
-
-				// Build the array for the model.
-				$register_info = array(	'password' => $password,
-										'location' => $this->input->post('location'),
-										'register_time' => time(),
-										'salt' => $salt,
-										'user_hash' => $user_hash,
-										'user_name' => $user_name,
-										'user_role' => $data['role'],
-										'public_key' => $message_keys['public_key'],
-										'private_key' => $message_keys['private_key'],
-										'local_currency' => $this->input->post('local_currency') );		
-				
-				$add_user = $this->users_model->add($register_info, $data['token_info']);
-				
-				// Check the submission
-				if ($add_user)
-				{
-					// Registration successful, show login page.
-					$data['title'] = 'Registration Successful';
-					$data['page'] = 'users/login';
-					$data['action_page'] = 'login';
-					$data['header_meta'] = $this->load->view('users/login_hash_header', NULL, true);
-					$data['captcha'] = $this->bw_captcha->generate();
-
-					$entry_fee = 'entry_payment_'.strtolower($data['role']);
-					
-					if (isset($data['token_info']) && $data['token_info'] !== FALSE)
+					// Accounts created from tokens are treated specially
+					if ($data['token_info']['entry_payment'] > 0)
 					{
-						if ($data['token_info']['entry_payment'] > 0)
-						{
-							$address = $this->bitcoin_model->get_fees_address($user_hash, $this->coin['crypto_magic_byte']);
-							$entry_fee_amount = $data['token_info']['entry_payment'];
-							$info = array(	'user_hash' => $user_hash,
-											'amount' => $data['token_info']['entry_payment'],
-											'bitcoin_address' => $address);
-							$this->users_model->set_entry_payment($info);
-							$this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee_amount} to {$address}. You can log in to view these details again.")));
-							redirect('login');
-						}
-						else 
-						{
-							$this->users_model->set_entry_paid($user_hash);
-							$data['returnMessage'] = 'Your account has been created, please login below.';
-							redirect('login');
-						}
-					}
-					else if (isset($this->bw_config->$entry_fee) && $this->bw_config->$entry_fee > 0)
-					{
+						// Payment > 0, then inform the user about the required amount.
 						$address = $this->bitcoin_model->get_fees_address($user_hash, $this->coin['crypto_magic_byte']);
-						$entry_fee = $this->bw_config->$entry_fee;
+						$entry_fee_amount = $data['token_info']['entry_payment'];
 						$info = array(	'user_hash' => $user_hash,
-										'amount' => $entry_fee,
-										'bitcoin_address' => $address );
+										'amount' => $data['token_info']['entry_payment'],
+										'bitcoin_address' => $address);
 						$this->users_model->set_entry_payment($info);
 						$this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee_amount} to {$address}. You can log in to view these details again.")));
 						redirect('login');
-					} else {
+					}
+					else 
+					{
+						// Account accessible immediately.
 						$this->users_model->set_entry_paid($user_hash);
-						$this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, please login below.")));
 						$data['returnMessage'] = 'Your account has been created, please login below.';
 						redirect('login');
 					}
 				}
-				else 
+				
+				else if (isset($this->bw_config->$entry_fee) AND $this->bw_config->$entry_fee > 0)
 				{
-					// Unsuccessful submission, show form again.
-					$data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
+					// If there's no token, and the required fee is non-zero:
+					$address = $this->bitcoin_model->get_fees_address($user_hash, $this->coin['crypto_magic_byte']);
+					$entry_fee = $this->bw_config->$entry_fee;
+					$info = array(	'user_hash' => $user_hash,
+									'amount' => $entry_fee,
+									'bitcoin_address' => $address );
+					$this->users_model->set_entry_payment($info);
+					$this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee_amount} to {$address}. You can log in to view these details again.")));
+					redirect('login');
 				}
+				else
+				{
+					// Othewise account accessible immediately
+					$this->users_model->set_entry_paid($user_hash);
+					$this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, please login below.")));
+					$data['returnMessage'] = 'Your account has been created, please login below.';
+					redirect('login');
+				}
+			}
+			else 
+			{
+				// Unsuccessful submission, show form again.
+				$data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
 			}
 		}
 
@@ -379,6 +379,7 @@ class Users extends CI_Controller
 			
 			$data['returnMessage'] = 'Unable to import the supplied public key. Please ensure you are submitting an ASCII armored PGP public key.';
 		}
+		
 		$this->load->library('Layout', $data);
 	}
 	
@@ -454,7 +455,6 @@ class Users extends CI_Controller
 		if ($this->current_user->pgp_factor !== TRUE) 
 			redirect('');
 				
-		$this->load->library('form_validation');
 		$this->load->library('gpg');
 		$this->load->library('bw_auth');
 		$this->load->model('accounts_model');
@@ -476,20 +476,19 @@ class Users extends CI_Controller
 					$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
 					$this->bw_session->create($user_info);
 					redirect('');
-				} else {
+				}
+				else
+				{
 					// Leave an error if the user has not been redirected.
 					$data['returnMessage'] = "Your token did not match. Please remove any whitespaces and enter only the token. A new challenge has been generated.";
 				}			
 			} 
 		}
 		
-		// Generate a new challenge for new requests, or if a user 
-		// has failed one.
+		// Generate a new challenge for new requests, or if a user has failed one.
 		$data['challenge'] = $this->bw_auth->generate_two_factor_token();
 		if ($data['challenge'] == FALSE)
-		{
 			$this->logs_model->add('Two Factor Auth','Unable to generate two factor challenge','Unable to generate two factor authentication token.','Error');
-		}
 		
 		$this->load->library('Layout', $data);
 	}
@@ -500,12 +499,12 @@ class Users extends CI_Controller
 	 * 
 	 * Display a page for users to enter a TOTP token from their app.
 	 */
-	public function totp_factor() {
+	public function totp_factor()
+	{
 		// Abort if there is no two factor request.
 		if ($this->current_user->totp_factor !== TRUE) 
 			redirect('');
 
-		$this->load->library('form_validation');
 		$this->load->library('totp');
 		$this->load->model('accounts_model');
 		
@@ -520,7 +519,9 @@ class Users extends CI_Controller
 					$user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
 					$this->bw_session->create($user_info);
 					redirect('');
-				} else {
+				}
+				else
+				{
 					$data['returnMessage'] = 'You entered an invalid token.';
 				}
 			}
@@ -531,58 +532,7 @@ class Users extends CI_Controller
 		$this->load->library('Layout', $data);
 	}
 	
-	// Callback functions for for validation.
-	
-	/**
-	 * Check Captcha
-	 * 
-	 * Check the supplied captcha solution ($param) is correct.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */	
-	public function check_captcha($param) 
-	{
-		return $this->bw_captcha->check($param);
-	}
-	
-	/**
-	 * Check Role
-	 * 
-	 * Check the supplied role ID ($param) is allowed.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */	
-	public function check_role($param) 
-	{
-		$allowed_values = ($this->bw_config->vendor_registration_allowed) ? array('1','2','3') : array('1','3');	
-		return ($this->general->matches_any($param, $allowed_values)) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Valid Currency
-	 * 
-	 * Check if the supplied currency ID ($param) exists.
-	 *
-	 * @param	int	$param
-	 * @return	boolean
-	 */
-	public function check_valid_currency($param) 
-	{
-		return (isset($this->bw_config->currencies[$param])) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check Location
-	 * 
-	 * Check the supplied location ID ($param) exists.
-	 *
-	 * @param	id	$param
-	 * @return	boolean
-	 */
-	public function check_location($param) 
-	{
-		return (isset($this->bw_config->locations[$param])) ? TRUE : FALSE;
-	}
 };
+
+/* End of file: Users.php */
+/* Location: ./application/controllers/Users.php */

@@ -1,4 +1,31 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+/**
+ * CodeIgniter
+ *
+ * An open source application development framework for PHP 5.2.4 or newer
+ *
+ * NOTICE OF LICENSE
+ *
+ * Licensed under the Academic Free License version 3.0
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0) that is
+ * bundled with this package in the files license_afl.txt / license_afl.rst.
+ * It is also available through the world wide web at this URL:
+ * http://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to obtain it
+ * through the world wide web, please send an email to
+ * licensing@ellislab.com so we can send you a copy immediately.
+ *
+ * @package		CodeIgniter
+ * @author		EllisLab Dev Team
+ * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
+ * @license		http://opensource.org/licenses/AFL-3.0 Academic Free License (AFL 3.0)
+ * @link		http://codeigniter.com
+ * @since		Version 1.0
+ * @filesource
+ */
+defined('BASEPATH') OR exit('No direct script access allowed');
+
 /*
 | -------------------------------------------------------------------------
 | URI ROUTING
@@ -21,8 +48,9 @@
 |
 | -------------------------------------------------------------------------
 | RESERVED ROUTES
+| -------------------------------------------------------------------------
 |
-| There area two reserved routes:
+| There are three reserved routes:
 |
 |	$route['default_controller'] = 'welcome';
 |
@@ -32,19 +60,28 @@
 |
 |	$route['404_override'] = 'errors/page_missing';
 |
-| This route will tell the Router what URI segments to use if those provided
-| in the URL cannot be matched to a valid route.
-
+| This route will tell the Router which controller/method to use if those
+| provided in the URL cannot be matched to a valid route.
+|
+|	$route['translate_uri_dashes'] = FALSE;
+|
+| This is not exactly a route, but allows you to automatically route
+| controller and method names that contain dashes. '-' isn't a valid
+| class or method name character, so it requires translation.
+| When you set this option to TRUE, it will replace ALL dashes in the
+| controller and method URI segments.
+|
+| Examples:	my-controller/index	-> my_controller/index
+|		my-controller/my-method	-> my_controller/my_method
 */
-//$route['home'] = "welcome";							// Default config, must be logged in.
-
 
 $route['image/(:any)'] = 'image/index/$1';
 
 $route['register'] = 'users/register';				// System. Require user is a guest.
 $route['register/(:any)'] = 'users/register/$1';
 $route['login'] = 'users/login';
-$route['login/two_factor'] = 'users/two_factor';	// half session.
+$route['login/pgp_factor'] = 'users/pgp_factor';	// half session.
+$route['login/totp_factor'] = 'users/totp_factor';	// half session
 $route['register/pgp'] = 'users/register_pgp';		// half session.
 $route['register/payment'] = 'users/payment';		// half session.
 $route['logout'] = 'users/logout';				
@@ -61,6 +98,9 @@ $route['inbox'] = 'messages/inbox';
 
 $route['user/(:any)'] = 'accounts/view/$1';			// Optionally require auth?
 $route['account/edit'] = 'accounts/edit';		
+$route['account/disable_2fa'] = 'accounts/disable_2fa';
+$route['account/pgp_factor'] = 'accounts/enable_pgp_factor';
+$route['account/two_factor'] = 'accounts/two_factor';
 $route['account'] = 'accounts/me';
 $route['pgp/add'] = 'accounts/add_pgp';				// Optionally require a password.
 $route['pgp/delete'] = 'accounts/delete_pgp';
@@ -81,20 +121,6 @@ $route['location/(:any)/(:any)'] = 'items/location/$1/$2';
 $route['location/(:any)'] = 'items/location/$1';
 $route['category/(:any)/(:num)'] = 'items/category/$1/$2';
 $route['category/(:any)'] = 'items/category/$1';
-
-
-// Bitcoin testing functions. Remove before production!!
-$route['bitcoin/i'] = 'bitcoin_test/index';
-$route['bitcoin/balance'] = 'bitcoin_test/current_balance';
-$route['bitcoin/get_block/(:any)'] = 'bitcoin_test/get_block/$1';
-$route['bitcoin/send'] = 'bitcoin_test/sendtome';
-$route['bitcoin/txn/(:any)'] = 'bitcoin_test/transaction/$1';
-$route['bitcoin/reset'] = 'btc_internal/reset';
-
-$route['bitcoin'] = 'bitcoin/panel';
-$route['cashout'] = 'bitcoin/cashout';
-
-$route['callback/install_config'] = 'btc_internal/install_config';
 
 $route['admin'] = 'admin';
 $route['admin/bitcoin'] = 'admin/bitcoin';
@@ -119,15 +145,15 @@ $route['orders/dispute/(:num)'] = 'orders/dispute/$1';
 
 // Vendor
 $route['orders'] = 'orders/vendor_orders';
-$route['orders/review/(:any)/(:num)'] = 'reviews/form/1/$2';
 $route['orders/accept/(:num)'] = 'orders/vendor_accept/$1';
+$route['orders/finalize_early/(:num)'] = 'orders/vendor_finalize_early/$1';
+$route['orders/refund/(:num)'] = 'orders/vendor_refund/$1';
 
 // Buyer
 $route['purchases/details/(:num)'] = 'orders/details/$1';
 $route['purchases'] = 'orders/buyer_orders';
 $route['purchases/confirm/(:num)'] = 'orders/buyer_confirm/$1';
 $route['purchases/dispute/(:num)'] = 'orders/dispute/$1';
-$route['purchases/review/(:any)/(:num)'] = 'reviews/form/$1/$2';
 $route['purchase/(:any)'] = 'orders/purchase_item/$1';
 // Both
 
@@ -135,7 +161,8 @@ $route['purchase/(:any)'] = 'orders/purchase_item/$1';
 $route['404_override'] = '';
 $route['default_controller'] = 'welcome';
 
+$route['translate_uri_dashes'] = FALSE;
+
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
-
 

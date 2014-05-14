@@ -34,7 +34,10 @@ class Bw_auth {
 	 */
 	protected $message_password_timeout = 1200;
 	
-	public $CI;
+	/**
+	 * CI
+	 */
+	protected $CI;
 	
 	/**
 	 * URI
