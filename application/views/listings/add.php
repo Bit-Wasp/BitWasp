@@ -49,8 +49,24 @@
               <div class="control-group">
                 <label class="control-label" for="hidden">Hidden Listing</label>
                 <div class="controls">
-                  <input name="hidden" type="checkbox" value='on' >
+					<select name='hidden' autoselection='off'>
+						<option value=''></option>
+						<option value='0'>No</option>
+						<option value='1'>Yes</option>
+					</select>
                   <span class="help-inline"><?php echo form_error('hidden'); ?></span>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label class="control-label" for="hidden">Prefer up-front payment?</label>
+                <div class="controls">
+					<select name='prefer_upfront' autoselection='off'>
+						<option value=''></option>
+						<option value='0'>No</option>
+						<option value='1'>Yes</option>
+					</select>
+                  <span class="help-inline"><?php echo form_error('prefer_upfront'); ?></span>
                 </div>
               </div>
  

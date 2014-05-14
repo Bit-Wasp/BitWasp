@@ -135,10 +135,10 @@ class Listings extends CI_Controller
 			$hash = $this->general->unique_hash('items','hash');
 			$properties = array('add_time' => time(),
 								'category' => $this->input->post('category'),
-								'currency' => $data['local_currency']['id'],
+								'currency' => $this->current_user->currency['id'],
 								'description' => $this->input->post('description'),
 								'hash' => $hash,
-								'hidden' => ($this->input->post('hidden') == 'on') ? '1' : '0',
+								'hidden' => ($this->input->post('hidden') == '1') ? '1' : '0',
 								'main_image' => 'default',
 								'name' => $this->input->post('name'),
 								'price' => $this->input->post('price'),
