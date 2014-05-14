@@ -47,7 +47,7 @@
 			  <div class="span5">
 				<?php echo $locations_parent; ?>
 			  </div>
-			  <span class="help-inline"><?php echo form_error('parent_location'); ?></span>
+			  <span class="help-inline"><?php echo form_error('location'); ?></span>
 			</div>
 			<div class="row-fluid">
 			  <div class='span5 offset3'>

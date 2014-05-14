@@ -91,12 +91,12 @@ class Categories_model extends CI_Model {
 
 		if (isset($cat['hash']))
 		{
-			$this->db->select('id, name, hash, parent_id')
+			$query = $this->db->select('id, name, hash, parent_id')
 					 ->get_where('categories', array('hash' => $cat['hash']));
 		}
 		elseif (isset($cat['id']))
 		{
-			$this->db->select('id, name, hash, parent_id')
+			$query = $this->db->select('id, name, hash, parent_id')
 					 ->get_where('categories', array('id' => $cat['id']));
 		} else {
 			$this->db->reset_query();
@@ -108,8 +108,9 @@ class Categories_model extends CI_Model {
 			$row = $query->row_array();
 			$row['count_items'] = $this->get_item_count($row['id']);
 			return $row;
+		} else {
+			return FALSE;
 		}
-		return FALSE;
 	}
 	
 	/**
@@ -132,7 +133,7 @@ class Categories_model extends CI_Model {
 		{
 			$results[$res->id] = (array)$res;
 		}
-		return ($query->num_rows() > 0) ? $results : FALSE;
+		return ($query->num_rows() > 0) ? $results : array();
 	}
 	
 	/**

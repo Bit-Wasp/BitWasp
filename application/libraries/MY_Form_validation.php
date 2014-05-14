@@ -227,6 +227,9 @@ class MY_Form_validation extends CI_Form_validation {
 	{
 		if ( ! $this->is_natural($str))
 			return FALSE;
+		
+		if($str == '0')
+			return TRUE;
 			
 		// Use custom list if we have it, to spare the DB query.
 		if ($this->CI->bw_config->location_list_source == 'Custom')

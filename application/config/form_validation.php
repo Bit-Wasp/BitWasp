@@ -157,25 +157,34 @@ $config = array('register_form'=>array(
 							),
 				'add_listing' => array(
 										array('field' => 'name',
-											  'label' => 'Item name',
+											  'label' => 'item name',
 											  'rules' => 'required|htmlspecialchars',
 										),
 										array('field' => 'description',
-											  'label' => 'Description',
+											  'label' => 'item description',
 											  'rules' => 'required|htmlspecialchars',
 										),
 										array('field' => 'category',
-											  'label' => 'Category',
+											  'label' => 'category',
 											  'rules' => 'required|check_valid_category|check_not_parent_category',
 										),
 										array('field' => 'ship_from',
-											  'label' => 'Ship from',
-											  'rules' => 'check_valid_location'
+											  'label' => 'ship from',
+											  'rules' => 'required|check_valid_location'
 										),
 										array('field' => 'price',
 											  'label' => 'listing price',
-											  'rules' => 'check_bitcoin_amount',
+											  'rules' => 'required|check_bitcoin_amount',
+										),
+										array('field' => 'hidden',
+											  'label' => 'hidden item',
+											  'rules' => 'required|check_bool_areyousure'
+										),
+										array('field' => 'prefer_upfront',
+											  'label' => 'upfront prefered',
+											  'rules' => 'required|check_bool_areyousure'
 										)
+											  
 							),
 				'edit_listing' => array(
 										array('field' => 'name',

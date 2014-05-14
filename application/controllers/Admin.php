@@ -1321,7 +1321,7 @@ class Admin extends CI_Controller {
 		$data['config'] = $this->bw_config->load_admin('');
 		$data['tos'] = $this->bw_config->terms_of_service;
 
-		if($this->input->post('tos_update') == 'Update') {				 
+		if($this->input->post('tos_update') == 'Update') {		 
 			if($this->form_validation->run('admin_tos') == TRUE) {
 
 				$tos_toggle = $this->input->post('terms_of_service_toggle');

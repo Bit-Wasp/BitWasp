@@ -147,7 +147,8 @@ class Location_model extends CI_Model {
 	 * @return	array
 	 */
 	public function to_multi_dimensional_array($list) {
-		
+
+		$menu = array();
 		// Add all categories to $menu[] array.
 		foreach($list as $result)
 		{	

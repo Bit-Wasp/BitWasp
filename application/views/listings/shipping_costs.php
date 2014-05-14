@@ -36,6 +36,7 @@
 <?php } ?>
 
 		<?php echo form_open('listings/shipping/'.$item['hash'], array('class' => 'form-horizontal')); ?>		    
+		
 		<div class='row-fluid span8'>
 			<div class='well'>
 				<strong>New Shipping Cost</strong>
@@ -47,7 +48,7 @@
 					<div class='span4'><?php echo $locations; ?></div>
 					<div class="input-prepend">
 					   <span class="add-on"><i><?php echo $item['currency']['symbol']; ?></i></span>
-					   <input type='text' class='span8' name='add_price' value="<?php echo ($item['currency']['id'] == '0') ? '0.1' : '10'; ?>" />
+					   <input type='text' class='span8' name='add_price' value="<?php echo ($item['currency']['id'] == '0') ? '0.003' : '10'; ?>" />
 					</div>
 				</div>
 				<div class="form-actions">
