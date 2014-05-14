@@ -279,7 +279,7 @@ rpcconnect=127.0.0.1</pre><br />
           <legend>Bitwasp Configuration</legend><br />
           <label for="admin">Administrative Password:</label><br />
           This password is for the 'admin' account, the default account with administrative powers - make it a good one. This account is required.
-          <input type="text" id="hostname" class="input_text" name="admin_password" /><br /><br />
+          <input type="password" id="hostname" class="input_text" name="admin_password" /><br /><br />
 
           <label for="admin">Electrum MPK:</label><br />
           This is used to create determinstic addresses without needed private keys on the server. This MPK will receive fee's from orders and registrations, and will also be used to create public keys for multi-signature order addresses.
@@ -304,7 +304,7 @@ rpcconnect=127.0.0.1</pre><br />
 			<input type='radio' name='encrypt_private_messages' value='0' > No
 			<br /><br />
 		  If you choose to enable this option, provide a password to protect your message keys:
-		    <input type='text' id='hostname' class='input_text' name='admin_pm_password'  /><br /><br />
+		    <input type='password' id='hostname' class='input_text' name='admin_pm_password'  /><br /><br />
 		  
 		  <label for="allow_guests">Allow Guests to Browse?</label><br />
 		  Turning this setting on will force users to register and login before they can see items.<br />
