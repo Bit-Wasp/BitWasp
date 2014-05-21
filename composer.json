@@ -1,0 +1,13 @@
+{
+	"description" : "Open source bitcoin marketplace",
+	"name" : "BitWasp/BitWasp",
+	"require": {
+		"php": ">=5.2.4",
+	        "ext-gmp": "*",
+		"ext-mcrypt": "*",
+	        "bitwasp/bitcoin-lib": "@dev"
+	},
+	"require-dev": {
+		"mikey179/vfsStream": "1.1.*"
+	}
+}
