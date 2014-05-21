@@ -10,9 +10,15 @@
 		  <div class="row-fluid">
 			<div class="span2 offset1">New Category</div>
 			<div class="span4">
-			  <select name='category_id'>
+			  <select name='category_id' autocomplete='off'>
+				<option value=''></option>
 			    <?php // Filter children of the category to be deleted, and the category itself, from the displayed list.
-			    $remove = $children;
+			    if($allow_root == TRUE) echo "<option value='0'>Root Category</option>";
+			    
+			    foreach($categories as $cat) { ?>
+					<option value='<?php echo $cat['id']; ?>'><?php echo $cat['name']; ?></option>					
+				<?php }
+			    /*$remove = $children;
 			    $remove[] = $category;
 			    foreach($categories as $cat) { 
 					$banned = false;
@@ -22,7 +28,7 @@
 					}
 					if($banned == false) {?>
 			    <option value='<?php echo $cat['id']; ?>'><?php echo $cat['name']; ?></option>
-			    <?php } } ?>
+			    <?php } } */?>
 			  </select>
 			</div>
 			<span class='help-inline'><?php echo form_error('category_id'); ?></span>

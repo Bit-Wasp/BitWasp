@@ -37,6 +37,7 @@ $lang['check_user_search_list'] = 'You must select a valid order for the list';
 $lang['check_user_search_order_by'] = 'You must select a valid column to order the list by.';
 $lang['check_valid_currency'] = 'Please select a valid currency from the list.';
 $lang['check_valid_category'] = 'Please select a valid category from the list.';
+$lang['check_valid_category_root'] = 'Please select a valid category from the list.';
 $lang['check_valid_location'] = 'Please select a valid location from the list.';
 $lang['check_valid_location_list_source'] = "List source must be 'Default' or 'Custom'";
 $lang['check_valid_location_shipto'] = 'Please select a valid shipping destination.';

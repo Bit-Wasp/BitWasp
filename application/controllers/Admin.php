@@ -529,11 +529,10 @@ class Admin extends CI_Controller {
 		{
 			if ($this->form_validation->run('admin_delete_category') == TRUE)
 			{
- 				$category = $this->categories_model->get(array('id' => $this->input->post('delete_id')));
-				$cat_children = $this->categories_model->get_children_count($category['id']);
+				$category = $this->bw_config->categories[$this->input->post('delete_id')];
 				
 				// Check if items or categories are orphaned by this action, redirect to move these.				
-				if ($category['count_items'] > 0 || $cat_children['count'] > 0)
+				if ($category['count_child_items'] > 0 || $children['count_child_cats'] > 0)
 				{
 					redirect('admin/category/orphans/'.$category['hash']);
 				}
@@ -640,23 +639,50 @@ class Admin extends CI_Controller {
 		$data['category'] = $this->categories_model->get(array('hash' => $hash));
 		if ($data['category'] == FALSE)
 			redirect('admin/items');
-			
-		$this->load->library('form_validation');
-			
-		// Load the list of categories.
-		$data['categories'] = $this->categories_model->list_all();
-		// Load the selected categories children.
-		$data['children'] = $this->categories_model->get_children($data['category']['id']);		
 		
+		// Load all the categories from memory.
+		$data['categories'] = $this->bw_config->categories;
+		
+		// Function to load all child categories for a parent.
+		$childList = function($pos) use (& $data) {
+			if(count($data) == 0)
+				return array();
+				
+			$children = array();
+			// Loop through categories, adding any which have the $pos id
+			// as a parent.
+			foreach($data['categories'] as $cat) {
+				if($cat['parent_id'] == $pos)
+					$children[] = $cat['id'];
+			}
+			return $children;
+		};
+
+		// Begin removing cats, and loop through them, adding more child
+		// categories to the $remove_cats list as they are found.
+		$remove_cats = array($data['category']['id']);
+		while(count($remove_cats) > 0) {
+			$remove_pos = $remove_cats[0];
+			unset($data['categories'][$remove_pos]);
+			unset($remove_cats[0]);
+			$remove_cats = array_merge($remove_cats, $childList($remove_pos));
+		}
+
+		$data['allow_root'] = FALSE;
 		// Calculate what text to display.
-		if ($data['category']['count_items'] > 0 && $data['children']['count'] > 0)
+		if ($data['category']['count_child_items'] > 0 && $data['category']['count_child_cats'] > 0)
 		{
 			$data['list'] = "categories and items";
 		}
 		else
 		{
-			if($data['children']['count'] > 0)				$data['list'] = 'categories';
-			if($data['category']['count_items'] > 0)		$data['list'] = 'items';
+			if ($data['category']['count_child_cats'] > 0) {
+				$data['allow_root'] = TRUE;
+				$data['list'] = 'categories';
+			}
+			
+			if ($data['category']['count_child_items'] > 0)
+				$data['list'] = 'items';
 		}
 		
 		// If there is nothing to be done for this category, redirect.

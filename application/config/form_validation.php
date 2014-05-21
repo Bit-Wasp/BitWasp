@@ -166,7 +166,7 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'category',
 											  'label' => 'category',
-											  'rules' => 'required|check_valid_category|check_not_parent_category',
+											  'rules' => 'required|check_valid_category',
 										),
 										array('field' => 'ship_from',
 											  'label' => 'ship from',
@@ -179,7 +179,7 @@ $config = array('register_form'=>array(
 										array('field' => 'hidden',
 											  'label' => 'hidden item',
 											  'rules' => 'required|check_bool_areyousure'
-										),
+									),
 										array('field' => 'prefer_upfront',
 											  'label' => 'upfront prefered',
 											  'rules' => 'required|check_bool_areyousure'
@@ -363,7 +363,7 @@ $config = array('register_form'=>array(
 				'admin_category_orphans' => array(
 										array('field' => 'category_id',
 											  'label' => 'Category',
-											  'rules' => 'check_category_exists|check_is_parent_category'
+											  'rules' => 'check_valid_category_root'
 										)
 							),
 				'admin_create_token' => array(

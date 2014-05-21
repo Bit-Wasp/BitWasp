@@ -38,7 +38,8 @@ class BitcoinLib {
 	 * @return	string
 	 */
 	public static function hex_encode($number) {
-		return gmp_strval(gmp_init($number, 10), 16);
+		$hex = gmp_strval(gmp_init($number, 10), 16);
+		return (strlen($hex)%2 != 0) ? '0'.$hex : $hex;
 	}
 	
 	/**

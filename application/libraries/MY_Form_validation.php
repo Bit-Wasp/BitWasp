@@ -277,13 +277,28 @@ class MY_Form_validation extends CI_Form_validation {
 		if($str == '0')
 			return TRUE;
 			
+		return isset($this->CI->bw_config->categories[$str]) 
+				AND $this->CI->bw_config->categories[$str]['count_child_items'] == 0;
+/*		
 		$found = FALSE;
 		foreach ($this->CI->bw_config->categories as $cat)
 		{
 			if($cat['parent_id'] == $str)
 				$found = TRUE;
 		}
-		return $found;
+		
+		return $found;*/
+	}
+
+	/**
+	 * Check Parent Category Root
+	 * 
+	 * @param	string	$str
+	 * @return	boolean
+	 */
+	public function check_valid_category_root($str)
+	{
+		return $str == '0' OR isset($this->CI->bw_config->categories[$str]);
 	}
 
 	/**
@@ -312,7 +327,16 @@ class MY_Form_validation extends CI_Form_validation {
 	 */
 	public function check_not_parent_category($str)
 	{
-		return  $this->check_is_parent_category($str) == FALSE;
+		if ( ! $this->is_natural_no_zero($str))
+			return FALSE;
+			
+		foreach ($this->CI->bw_config->categories as $cat)
+		{
+			if ($cat['parent_id'] == $str)
+				return TRUE;
+		}
+		
+		return FALSE;
 	}
 
 	/**

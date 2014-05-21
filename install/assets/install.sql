@@ -651,6 +651,7 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `content` blob NOT NULL,
   `encrypted` enum('0','1') NOT NULL,
+  `rsa_encrypted` enum('0','1') DEFAULT 0,
   `hash` varchar(16) NOT NULL,
   `remove_on_read` enum('0','1') NOT NULL,
   `time` int(20) NOT NULL,

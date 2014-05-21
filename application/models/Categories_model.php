@@ -87,17 +87,21 @@ class Categories_model extends CI_Model {
 	 */				
 	public function get(array $cat)
 	{
-		$this->db->select('id, name, hash, parent_id');
 
 		if (isset($cat['hash']))
-		{
-			$query = $this->db->select('id, name, hash, parent_id')
-					 ->get_where('categories', array('hash' => $cat['hash']));
+		{			
+			$query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id) AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
+							  ->from('categories c1')
+							  ->where('c1.hash', $cat['hash'])
+							  ->get();
+
 		}
 		elseif (isset($cat['id']))
 		{
-			$query = $this->db->select('id, name, hash, parent_id')
-					 ->get_where('categories', array('id' => $cat['id']));
+			$query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id) AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
+							  ->from('categories c1')
+							  ->where('c1.hash', $cat['id'])
+							  ->get();
 		} else {
 			$this->db->reset_query();
 			return FALSE;
@@ -124,10 +128,28 @@ class Categories_model extends CI_Model {
 	 */					
 	public function list_all()
 	{
-		$query = $this->db->select('id, hash, description, name, parent_id')
-				->order_by('name', 'asc')
-				->get('categories');
+		/*$query = $this->db->query('
+SELECT
+   c1.*,
+   (SELECT COUNT(*) FROM bw_items WHERE category = c1.id) AS count_child_items,
+   (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats
+FROM 
+   bw_categories c1');*/
 		
+		
+		$query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id) AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
+						  ->from('categories c1')
+						  ->get();
+						  
+		/*// 
+		$query = $this->db->select("c1.*, count(item_c.id) as count_child_items, count(c2.id) as count_child_cats")
+						  ->from("categories c1")
+						  ->join("categories c2", 'c2.parent_id = c1.id','left')
+						  //->join('categories child_c', 'child_c.parent_id = c.id', 'left')
+						  ->join('items item_c', 'item_c.category = c1.id', 'left')
+						  ->group_by('c1.id')
+						  ->get();*/
+
 		$results = array();
 		foreach ($query->result() as $res) 
 		{

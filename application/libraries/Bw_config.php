@@ -13,6 +13,9 @@
  */ 
 class Bw_config {
 
+	/**
+	 * CI
+	 */
 	protected $CI;
 	
 	/**
@@ -295,13 +298,6 @@ class Bw_config {
 		$this->locations = $this->CI->location_model->get_list($this->location_list_source, FALSE);
 		$this->categories = $this->CI->categories_model->list_all();
 
-
-		/*var_dump(
-			$this->currencies
-			//$this->exchange_rates, 
-			//$this->locations
-			//$this->categories
-		);*/
 		// Load the configuration of the bitcoin_index options.
 		$this->price_index_config = $this->CI->config->item('bitcoin_index');	
 		
