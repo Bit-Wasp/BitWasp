@@ -6,8 +6,5 @@
 	        "ext-gmp": "*",
 		"ext-mcrypt": "*",
 	        "bitwasp/bitcoin-lib": "@dev"
-	},
-	"require-dev": {
-		"mikey179/vfsStream": "1.1.*"
 	}
 }
