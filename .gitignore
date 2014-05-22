@@ -7,3 +7,4 @@
 .htaccess
 /vendor
 composer.lock
+composer.phar
