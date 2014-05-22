@@ -497,7 +497,7 @@ class Order_model extends CI_Model {
 							);
 
 			$raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
-            var_dump($tx_ins, $tx_outs, $raw_transaction);
+
 			if($raw_transaction == FALSE) {
 				echo 'error :(';
 			} else {
