@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use BitWasp\BitcoinLib\BitcoinLib;
+use BitWasp\BitcoinLib\RawTransaction;
+
 /**
  * Orders Controller
  *
@@ -30,6 +33,7 @@ class Orders extends CI_Controller {
 	 */
 	public function __construct() {
 		parent::__construct();
+
 		$this->load->library('form_validation');
 		$this->load->library('bw_messages');
 		$this->load->model('order_model');
@@ -235,10 +239,8 @@ class Orders extends CI_Controller {
 			redirect('orders');
 		}
 			
-		$this->load->model('transaction_cache_model');			
-		$this->load->library('BitcoinLib');
-		$this->load->library('Raw_transaction');
-		
+		$this->load->model('transaction_cache_model');
+
 		$this->form_validation->set_rules('refund', '', 'check_bool_areyousure');
 		
 		if ($this->input->post('issue_refund') == 'Issue Refund')
@@ -275,14 +277,14 @@ class Orders extends CI_Controller {
 					$buyer_address = BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
 					$tx_outs[$buyer_address] = (float)$data['order']['total_paid']-0.0001;
 
-					$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
+					$raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
 					if ($raw_transaction == FALSE)
 					{
 						$data['returnMessage'] = 'Error creating transaction!';
 					}
 					else
 					{
-						$decoded_transaction = Raw_transaction::decode($raw_transaction);
+						$decoded_transaction = RawTransaction::decode($raw_transaction);
 						$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
 						
 						$update = array(
@@ -730,8 +732,7 @@ class Orders extends CI_Controller {
 			$data['action_page'] = 'admin/order/'.$order_id;
 			$data['cancel_page'] = 'admin/orders';
 		} 
-		
-		$this->load->library('Raw_transaction');
+
 		$this->load->model('transaction_cache_model');
 		$this->load->model('review_model');
 							
@@ -753,12 +754,12 @@ class Orders extends CI_Controller {
 		// Only allow access to the form handling script if the form is allowed to be displayed.
 		if($data['display_form'] == TRUE && $this->input->post('submit_signed_transaction') == 'Submit Transaction') {
 			if($this->form_validation->run('input_transaction') == TRUE) { 
-				$validate = Raw_transaction::validate_signed_transaction($this->input->post('partially_signed_transaction'), str_replace("'", "", $data['order']['json_inputs']));
+				$validate = RawTransaction::validate_signed_transaction($this->input->post('partially_signed_transaction'), $data['order']['json_inputs']);
 
 				if($validate == FALSE) {
 					$data['invalid_transaction_error'] = 'Enter a valid partially signed transaction.';
 				} else {
-					$decode = Raw_transaction::decode($this->input->post('partially_signed_transaction'));
+					$decode = RawTransaction::decode($this->input->post('partially_signed_transaction'));
 					// Check that the outputs are acceptable.
 					$check = $this->transaction_cache_model->check_if_expected_spend($decode['vout']);
 					// $check will contain the order address if the vouts
@@ -819,10 +820,10 @@ class Orders extends CI_Controller {
 								BitcoinLib::public_key_to_address($data['order']['admin_public_key'], $this->coin['crypto_magic_byte']) => 'admin');
 
 		if(strlen($data['order']['partially_signed_transaction']) > 0) {
-			$data['raw_tx'] = Raw_transaction::decode($data['order']['partially_signed_transaction']);
+			$data['raw_tx'] = RawTransaction::decode($data['order']['partially_signed_transaction']);
 			$data['signer'] = $this->accounts_model->get(array('id' => $data['order']['partially_signing_user_id']));
 		} else if(strlen($data['order']['unsigned_transaction']) > 0) {
-			$data['raw_tx'] = Raw_transaction::decode($data['order']['unsigned_transaction']);
+			$data['raw_tx'] = RawTransaction::decode($data['order']['unsigned_transaction']);
 		}
 
 		$data['fees']['shipping_cost'] = $data['order']['shipping_costs'];

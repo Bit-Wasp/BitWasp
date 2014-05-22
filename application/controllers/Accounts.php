@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use BitWasp\BitcoinLib\BitcoinLib;
+
 /**
  * Accounts Management Controller
  *
@@ -78,7 +80,6 @@ class Accounts extends CI_Controller
 		
 		if ( $this->input->post('submit_public_keys') == 'Upload Public Keys')
 		{
-			$this->load->library('BitcoinLib');
 			$keys = explode("\n",$this->input->post('public_key_list'));
 			
 			foreach ($keys as $key)

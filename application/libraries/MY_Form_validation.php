@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * CodeIgniter
  *
@@ -45,7 +46,7 @@ class MY_Form_validation extends CI_Form_validation {
 	 */
 	public function __construct($config = array())
 	{
-		parent::__construct($config);  
+		parent::__construct($config);
 		log_message('debug', 'BW Form Validation Extras Initialized');
 	}
 
@@ -113,8 +114,7 @@ class MY_Form_validation extends CI_Form_validation {
 	 */
 	public function check_bitcoin_public_key($str)
 	{
-		$this->CI->load->library('BitcoinLib');
-		return BitcoinLib::validate_public_key($str);
+		return \BitWasp\BitcoinLib\BitcoinLib::validate_public_key($str);
 	}
 
 	/**

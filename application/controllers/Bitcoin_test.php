@@ -1,5 +1,7 @@
 <pre><?php
 
+use BitWasp\BitcoinLib\BitcoinLib;
+
 /**
  * Bitcoin Test Controller
  * 
@@ -12,9 +14,12 @@ class Bitcoin_Test extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('bw_bitcoin');
-		$this->load->library('Raw_transaction');
 		
 	}
 
+
+    public function a() {
+        print_r(BitcoinLib::get_new_key_set('00'));
+    }
 };
 

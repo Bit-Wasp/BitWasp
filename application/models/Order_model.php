@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use BitWasp\BitcoinLib\BitcoinLib;
+use BitWasp\BitcoinLib\RawTransaction;
+
 /**
  * Order Model
  *
@@ -185,8 +188,7 @@ class Order_model extends CI_Model {
 	 * @return	string/TRUE
 	 */
 	public function vendor_accept_order($info) {
-		
-		$this->load->library('Raw_transaction');
+
 		$this->load->model('bitcoin_model');
 		$this->load->model('accounts_model');
 
@@ -212,7 +214,7 @@ class Order_model extends CI_Model {
 		{
 			
 			$public_keys = array($buyer_public_key, $vendor_public_key['public_key'], $admin_public_key['public_key']);
-			$multisig_details = Raw_transaction::create_multisig('2', $public_keys);
+			$multisig_details = RawTransaction::create_multisig('2', $public_keys);
 			
 			// If no errors, we're good to create the order!
 			if ($multisig_details !== FALSE)
@@ -466,14 +468,10 @@ class Order_model extends CI_Model {
 		$coin = $this->bw_config->currencies[0];
 		
 		$this->load->model('transaction_cache_model');
-		$this->load->model('accounts_model');			
-		$this->load->library('BitcoinLib');
-		$this->load->library('bw_bitcoin');					
+		$this->load->model('accounts_model');
 		
 		foreach($paid as $record) {
-			// Check that the bitcoin daemon is active before creating a transaction.
-			// This will preserve the paid_orders information until it's on.
-				
+
 			$order = $this->get($record['order_id']);
 			$vendor_address = BitcoinLib::public_key_to_address($order['vendor_public_key'], $coin['crypto_magic_byte']);
 			$admin_address = BitcoinLib::public_key_to_address($order['admin_public_key'], $coin['crypto_magic_byte']);
@@ -494,15 +492,16 @@ class Order_model extends CI_Model {
 			$json = json_encode($tx_pkScripts);
 			
 			// Create the transaction outputs
-			$tx_outs = array(	$admin_address => (float)($order['fees']+$order['extra_fees']-0.0001),
-								$vendor_address => (float)($order['price']+$order['shipping_costs']-$order['extra_fees'])
+			$tx_outs = array(	$admin_address => (string)number_format(($order['fees']+$order['extra_fees']-0.0001),8),
+								$vendor_address => (string)number_format(($order['price']+$order['shipping_costs']-$order['extra_fees']),8)
 							);
-										
-			$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
+
+			$raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
+
 			if($raw_transaction == FALSE) {
 				echo 'error :(';
 			} else {
-				$decoded_transaction = Raw_transaction::decode($raw_transaction);
+				$decoded_transaction = RawTransaction::decode($raw_transaction);
 				$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $order['address'], $order['id']);
 				$update = array('unsigned_transaction' => $raw_transaction." ",
 								'json_inputs' => "'$json'",
@@ -517,7 +516,7 @@ class Order_model extends CI_Model {
 	
 	/**
 	 * Order Finalized Callback
-	 * 
+	 * -
 	 * This function is called with an array of information when an input
 	 * in an order has been spent. If this happens, it either corresponds
 	 * to an escrow or up-front payment going through. We need to check

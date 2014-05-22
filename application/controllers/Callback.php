@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use BitWasp\BitcoinLib\RawTransaction;
+
 /**
  * Callback Controller
  *
@@ -88,7 +90,7 @@ class Callback extends CI_Controller {
 		if ($this->bw_config->bitcoin_callback_running == 'true')
 		{
 			// Hack to get the script running again if it's been running for over 10 minutes.
-			if ( (time()-$this->bw_config->bitcoin_callback_starttime) > 2*60)
+			if ( (time()-$this->bw_config->bitcoin_callback_starttime) > 1*60)
 			{
 				echo "Reset callback running\n";
 				$this->config_model->update(array('bitcoin_callback_running' => 'false'));
@@ -108,7 +110,6 @@ class Callback extends CI_Controller {
 		if ($list == FALSE OR count($list) == 0 )
 			return FALSE;
 
-		$this->load->library('Raw_transaction');
 		$this->load->model('order_model');
 		$this->load->model('bitcoin_model');
 
@@ -130,7 +131,7 @@ class Callback extends CI_Controller {
 		foreach ($list as $cached_tx)
 		{
 			// Raw_transaction library is way faster than asking bitcoind.
-			$tx = Raw_transaction::decode($cached_tx['tx_raw']);
+			$tx = RawTransaction::decode($cached_tx['tx_raw']);
 
 			if (count($tx['vin']) > 0 AND $payments_list !== FALSE)
 			{

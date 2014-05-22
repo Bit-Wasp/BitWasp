@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use BitWasp\BitcoinLib\BitcoinLib;
+
 /**
  * Accounts Model
  *
@@ -264,8 +266,7 @@ class Accounts_model extends CI_Model {
 		$result = $query->result_array();
 		if(count($result) == 0)
 			return FALSE;
-		
-		$this->load->library('BitcoinLib');
+
 		$coin = $this->bw_config->currencies[0];
 		
 		foreach($result as &$res) {
