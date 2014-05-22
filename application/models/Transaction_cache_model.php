@@ -97,7 +97,6 @@ class Transaction_cache_model extends CI_Model {
 	 * @return	boolean
 	 */
 	public function add_payments_list($tx_array) {
-        echo "add payments list\n";
 		$this->load->model('order_model');
 		$this->load->model('users_model');
 		$final = array();
