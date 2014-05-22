@@ -97,14 +97,13 @@ class Admin_model extends CI_Model
             // Load the settings backup and restore it.
             $settings_backup = (array)json_decode($this->bw_config->settings_preserve);
             $this->config_model->update($settings_backup);
-            $changes['setting_preserve'] = '';
 
-            // Turn off maintenance mode
+            $changes['setting_preserve'] = '';
             $changes['maintenance_mode'] = '0';
 
             // Commit changes
             if ($this->config_model->update($changes) == FALSE)
-                return TRUE;
+                return FALSE;
         }
         return TRUE;
     }
@@ -146,7 +145,7 @@ class Admin_model extends CI_Model
         $success = TRUE;
         foreach ($array as $index => $interval) {
             if ($this->autorun_model->set_interval($index, $interval) == FALSE)
-                $sucess = FALSE;
+                $success = FALSE;
         }
         return $success;
     }
