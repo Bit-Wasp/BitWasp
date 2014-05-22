@@ -12,17 +12,10 @@
  * 
  */
 class Currencies_model extends CI_Model {
-
-	/**
-	 * Constructor
-	 *
-	 * Load the config model
-	 * 
-	 * @see		Libraries/Bw_Config
-	 * @access	public
-	 * @return	void
-	 */		
-	public function __construct() { 
+    /**
+     * Construct
+     */
+    public function __construct() {
 		parent::__construct();
 	}
 	
@@ -32,20 +25,17 @@ class Currencies_model extends CI_Model {
 	 * Load a specific currency if the $id parameter is set as an argument.
 	 * If not, then load all currencies
 	 *
-	 * @access	public
-	 * @param	int	$id
-	 * @return	array/FALSE
-	 */				
-	public function get($id = NULL) {
+     * @param int/null $id
+     * @return bool
+     */
+    public function get($id = NULL) {
 		if($id == NULL)
 		{
-			$this->db->select('id, code, name, symbol, crypto_magic_byte');	// Duplicated to avoid a stupid error..
-			$query = $this->db->get('currencies');
+            $query = $this->db->select('id, code, name, symbol, crypto_magic_byte')->get('currencies');
 		}
 		else
 		{
-			$this->db->select('id, code, name, symbol, crypto_magic_byte');
-			$query = $this->db->get_where('currencies', array('id' => "$id"));
+			$query = $this->db->select('id, code, name, symbol, crypto_magic_byte')->get_where('currencies', array('id' => "$id"));
 		}
 		
 		$results = array();
@@ -88,6 +78,7 @@ class Currencies_model extends CI_Model {
 			$row['time_f'] = $this->general->format_time($row['time']);
 			return $row;
 		}
+        return FALSE;
 	}
 	
 	/**
@@ -101,14 +92,13 @@ class Currencies_model extends CI_Model {
 	 * @return	int / FALSE
 	 */					
 	public function get_exchange_rate($code) {
-		$this->db->order_by('id desc');
-		$this->db->limit('1');
-		
-		$query = $this->db->get('exchange_rates');
-		if($query->num_rows() > 0) {
+        $query = $this->db->order_by('id desc')->limit('1')->get('exchange_rates');
+
+        if($query->num_rows() > 0) {
 			$row = $query->row_array();
 			return $row[$code];
 		}
+
 		return FALSE;
 	}
 	
@@ -123,6 +113,6 @@ class Currencies_model extends CI_Model {
 	 * @return	bool
 	 */					
 	public function update_exchange_rates($update) {
-		return ($this->db->insert('exchange_rates', $update) == TRUE) ? TRUE : FALSE;
+		return $this->db->insert('exchange_rates', $update) == TRUE;
 	}
 };
