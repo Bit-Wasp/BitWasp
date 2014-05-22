@@ -78,8 +78,7 @@ class Logs_Model extends CI_Model
             'time' => time(),
             'message' => $message)) == TRUE;
     }
-}
-
-;
+};
 
 /* End of file logs_model.php */
+/* Location: application/models/Logs_model.php */
