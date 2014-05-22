@@ -13,7 +13,7 @@
 class General_model extends CI_Model {
 
 	/**
-	 * Constructor
+	 * Construct
 	 *
 	 * @access	public
 	 * @return	void
@@ -28,13 +28,11 @@ class General_model extends CI_Model {
 	 *
 	 * @param	string	$table
 	 * @param	string	$column
-	 * @param	string	$hash
+	 * @param	string	$entry
 	 * @return	bool
 	 */
 	public function check_unique_entry($table, $column, $entry) {
-		$this->db->where($column, $entry);
-		$query = $this->db->get($table);
-		return ($query->num_rows() < 1) ? TRUE : FALSE;
+		return $this->db->where($column, $entry)->count_all_results($table) == 0;
 	}
 
 	/**
@@ -47,8 +45,7 @@ class General_model extends CI_Model {
 	 * @return	bool
 	 */
 	public function rows_before_time($table, $time) {
-		$this->db->where("time <", "$time");
-		$query = $this->db->get($table);
+		$query = $this->db->where("time <", "$time")->get($table);
 		return ($query->num_rows() > 0) ? $query->result_array() : FALSE ;
 	}
 	
@@ -93,3 +90,5 @@ class General_model extends CI_Model {
 		
 };
 
+/* End of File: General_model.php */
+/* Location: application/models/General_model.php */
