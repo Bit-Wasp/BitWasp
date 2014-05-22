@@ -73,7 +73,8 @@ class Listings_model extends CI_Model {
 				if(strlen($row['description']) > 50) $row['description_s'] .= '...';
 				
 				$row['main_image'] = $this->images_model->get($row['main_image']);
-				$row['currency'] = $this->currencies_model->get($row['currency']);			
+                $row['currency'] = $this->bw_config->currencies[$row['currency']];
+                $row['currency']['rate'] = $this->bw_config->exchange_rates[strtolower($row['currency']['code'])];
 							
 				$row['price_b'] = number_format(($row['price']/$row['currency']['rate']), 8);
 				$local_currency = $this->currencies_model->get($this->current_user->currency['id']);

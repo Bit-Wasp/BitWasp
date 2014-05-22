@@ -191,16 +191,7 @@ class Location_model extends CI_Model {
 	 */
 	public function get_list($list, $menu = TRUE)
 	{
-		if ($list == 'Default')
-		{
-			//Load all categories and sort by parent category
-			$this->db->order_by("parent_id asc, location asc");
-			$query = $this->db->get('locations_default_list');
-
-			if($query->num_rows() == 0)
-				return array();
-		}
-		else if($list == 'Custom')
+		if($list == 'Custom')
 		{
 			//Load all categories and sort by parent category
 			$this->db->order_by("parent_id asc, location asc");
@@ -209,6 +200,15 @@ class Location_model extends CI_Model {
 			if ($query->num_rows() == 0) 
 				return array();
 		}
+		else
+		{
+			//Load all categories and sort by parent category
+			$this->db->order_by("parent_id asc, location asc");
+			$query = $this->db->get('locations_default_list');
+
+			if($query->num_rows() == 0)
+				return array();
+		} 
 		
 		$results = array();
 		foreach ($query->result_array() as $res)

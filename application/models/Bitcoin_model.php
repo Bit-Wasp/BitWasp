@@ -1,5 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use BitWasp\BitcoinLib\BitcoinLib;
+use BitWasp\BitcoinLib\Electrum;
+
 /**
  * Bitcoin Model
  *
@@ -33,16 +36,14 @@ class Bitcoin_model extends CI_Model {
 	 * @return	$array
 	 */
 	public function get_next_key() {
-		$this->load->library('Electrum');
-
 		$i = $this->bw_config->electrum_iteration;
-		$public_key = Electrum::public_key_from_mpk($this->bw_config->electrum_mpk, $i, 0, FALSE);
+		$public_key = Electrum::public_key_from_mpk($this->bw_config->electrum_mpk, $this->bw_config->electrum_iteration, 0, FALSE);
 		if($public_key == FALSE) 
 			return FALSE;
 			
-		$this->config_model->update(array('electrum_iteration' => ($i+1)));
+		$this->config_model->update(array('electrum_iteration' => ($this->bw_config->electrum_iteration+1)));
 		return array('public_key' => $public_key,
-					 'iteration' => $i);
+					 'iteration' => $this->bw_config->electrum_iteration);
 	}
 	
 	/**
@@ -57,10 +58,8 @@ class Bitcoin_model extends CI_Model {
 	 * @return	string
 	 */
 	public function get_fees_address($user_hash, $magic_byte) {
-		$this->load->library('BitcoinLib');
 		// Take the next electrum key.
 		$key_data = $this->get_next_key();
-		
 		$address = BitcoinLib::public_key_to_address($key_data['public_key'], $magic_byte);
 		
 		// Log electrum usage
@@ -89,8 +88,7 @@ class Bitcoin_model extends CI_Model {
 			return FALSE;
 		if($usage == 'fees' && $user_hash == FALSE)
 			return FALSE;
-			
-		$this->load->library('BitcoinLib');
+
 		$coin = $this->bw_config->currencies[0];
 		$address = BitcoinLib::public_key_to_address($public_key, $coin['crypto_magic_byte']);
 		

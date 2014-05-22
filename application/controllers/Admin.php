@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+use BitWasp\BitcoinLib\RawTransaction;
+
 /**
  * Administration Panel Controller
  *
@@ -887,7 +889,7 @@ class Admin extends CI_Controller {
 		$this->load->model('order_model');
 		$this->load->model('disputes_model');
 		$data['coin'] = $this->coin;
-		
+
 		// If no order is specified, load the list of disputes.
 		if($order_id == NULL) {
 			$data['page'] = 'admin/disputes_list';
@@ -943,9 +945,7 @@ class Admin extends CI_Controller {
 						// Construct new raw transaction!
 						$this->load->model('transaction_cache_model');
 						$this->load->library('bw_bitcoin');
-						$this->load->library('BitcoinLib');
-						$this->load->library('Raw_transaction');
-						
+
 						// Add the inputs at the multisig address.
 						$payments = $this->transaction_cache_model->payments_to_address($data['current_order']['address']);
 
@@ -974,11 +974,11 @@ class Admin extends CI_Controller {
 							$tx_outs[$vendor_address] = (float)$pay_vendor_amount;
 						}
 										
-						$raw_transaction = Raw_transaction::create($tx_ins, $tx_outs);
+						$raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
 						if($raw_transaction == FALSE) {
 							echo 'error :(';
 						} else {
-							$decoded_transaction = Raw_transaction::decode($raw_transaction);
+							$decoded_transaction = RawTransaction::decode($raw_transaction);
 							$this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['current_order']['address'], $data['current_order']['id']);
 							
 							$update = array('unsigned_transaction' => $raw_transaction." ",

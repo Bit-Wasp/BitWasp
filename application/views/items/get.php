@@ -28,8 +28,8 @@
 			  <?php } ?>
 				<div class='row-fluid'>
 					<div class='span1'>Price</div>
-					<div class='span2'><?php 
-			  if($local_currency['id'] !== '0') echo $local_currency['symbol'].number_format($item['price_l'],2)." / ";
+					<div class='span2'><?php
+			  if($current_user['currency']['id'] !== '0') echo $current_user['currency']['symbol'].number_format($item['price_l'],2)." / ";
 			  echo $coin['symbol']." ".number_format($item['price_b'],8); ?></div>
 					<?php if($user_role == 'Buyer') { ?>
 					<div class='span2'><?php echo anchor('purchase/'.$item['hash'], 'Purchase Item', 'class="btn"'); ?></div>

@@ -27,6 +27,10 @@ $check['database_config_file_writable'] = ( ! is_writable($database_config_file)
 $check['bitcoin_config_file_writable'] 	= ( ! is_writable($bitcoin_config_file)) ? FALSE : TRUE;
 $check['config_config_file_writable'] 	= ( ! is_writable($config_config_file)) ? FALSE : TRUE;
 
+$check['composer_directory_exists'] = TRUE;
+if(!is_dir($installdir.'/vendor'))
+	$check['composer_direxists'] = FALSE;
+	
 // Work out if the environment is ready for the installer.
 $environment_check = TRUE; 
 foreach($check as $key => $outcome) {
@@ -96,6 +100,13 @@ foreach($check as $key => $outcome) {
 				// Work out which error to display, and what command will fix it.
 				$a = explode("_", $key);
 				$last = $a[count($a)-1];
+				if($last == 'direxists') {
+					echo "<p class=\"error\">You must run composer!</p>";
+					$cmd = "curl -s http://getcomposer.org/installer | php && php composer.phar install";
+					echo "$ ".$cmd;
+					$commands[] = $cmd;
+				}
+				
 				if($last == 'writable') {
 					$type = $a[count($a)-2];
 					$name = implode(" ", array_slice($a, 0, count($a)-2));

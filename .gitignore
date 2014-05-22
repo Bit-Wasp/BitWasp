@@ -5,3 +5,5 @@
 ./application/storage/.gnupg
 *~ 
 .htaccess
+/vendor
+composer.lock

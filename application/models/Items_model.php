@@ -244,7 +244,10 @@ class Items_model extends CI_Model {
 			$row['description_s'] = substr(strip_tags($row['description']),0,70);
 			if(strlen($row['description']) > 70) $row['description_s'] .= '...';
 
-			$row['price_b'] = number_format(($row['price']/$this->current_user->currency['rate']), 8);
+            $currency = $this->bw_config->currencies[$row['currency']];
+            $rate = $this->bw_config->exchange_rates[strtolower($currency['code'])];
+
+			$row['price_b'] = number_format(($row['price']/$rate), 8);
 			$row['price_l'] = ($this->current_user->currency['id'] != '0') 
 										? number_format((float)($row['price_b']*$this->current_user->currency['rate']), 2) 
 										: number_format((float)($row['price_b']*$this->current_user->currency['rate']), 8);

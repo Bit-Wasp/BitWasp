@@ -97,12 +97,14 @@ class Transaction_cache_model extends CI_Model {
 	 * @return	boolean
 	 */
 	public function add_payments_list($tx_array) {
+        echo "add payments list\n";
 		$this->load->model('order_model');
 		$this->load->model('users_model');
 		$final = array();
 
 		foreach ($tx_array as $payment)
 		{
+
 			// Check that we have not encountered this before.
 			if ($this->check_already_have_payment($payment['tx_id'], $payment['vout']) == FALSE)
 			{
@@ -208,8 +210,7 @@ class Transaction_cache_model extends CI_Model {
 		
 		foreach($outputs as $v_out => $output) {
 			// Only try to deal with what you can decode! 
-			
-			// Remove this if() if you want to get rid of the Raw_transaction::decode function.
+
 			if(isset($output['scriptPubKey']['addresses'][0]))
 				$addrs[] = array('address' => $output['scriptPubKey']['addresses'][0],
 								'pkScript' => $output['scriptPubKey']['hex'],
