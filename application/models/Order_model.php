@@ -661,9 +661,9 @@ class Order_model extends CI_Model
             $update['progress'] = ($set_progress == '3') ? '3' : '4';
         } else if ($current_progress == '3' AND $set_progress == '6') {
             $update['progress'] = '6';
-        } else if ($current_progress == '4' AND $this->general->matches_any($set_progress, array('5', '6')) == TRUE) {
+        } else if ($current_progress == '4' AND in_array($set_progress, array('5', '6')) == TRUE) {
             $update['progress'] = ($set_progress == '5') ? '5' : '6';
-        } else if ($current_progress == '5' AND $this->general->matches_any($set_progress, array('6', '7')) == TRUE) {
+        } else if ($current_progress == '5' AND in_array($set_progress, array('6', '7')) == TRUE) {
             $update['progress'] = ($set_progress == '6') ? '6' : '7';
         } else {
             $update['progress'] = ($current_progress + 1);

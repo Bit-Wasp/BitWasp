@@ -183,7 +183,7 @@ class Bw_session {
 		if( $this->CI->current_user->force_pgp == TRUE && !in_array(uri_string(), array('register/pgp', 'logout')) )
 			redirect('register/pgp');
 		
-		//if( $this->CI->current_user->entry_payment == TRUE && !$this->CI->general->matches_any(uri_string(), array('register/payment', 'logout')) )
+		//if( $this->CI->current_user->entry_payment == TRUE && !in_array(uri_string(), array('register/payment', 'logout')) )
 			//redirect('register/payment');			
 			
 		if($this->auth_level == 'guestonly') {

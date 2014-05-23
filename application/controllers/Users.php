@@ -188,7 +188,7 @@ class Users extends CI_Controller
             }
 
             // If there's no token, the admin cannot register.
-            if ($token == NULL && !$this->general->matches_any($data['role'], array('Buyer', 'Vendor'))) {
+            if ($token == NULL && !in_array($data['role'], array('Buyer', 'Vendor'))) {
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Please select a valid role.")));
                 redirect('register');
             }
