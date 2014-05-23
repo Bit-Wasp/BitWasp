@@ -162,7 +162,7 @@ class Transaction_cache_model extends CI_Model
                 $final[] = $payment;
             }
         }
-        return scount($final) == 0 OR $this->db->insert_batch('transactions_payments_cache', $final) == TRUE;
+        return count($final) == 0 OR $this->db->insert_batch('transactions_payments_cache', $final) == TRUE;
     }
 
     /**
