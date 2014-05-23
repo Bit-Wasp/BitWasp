@@ -246,7 +246,7 @@ rpcconnect=127.0.0.1</pre><br />
 					$redir .= "://".$_SERVER['HTTP_HOST'];
 					$redir .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
 					$redir .= '?end';
-					header( 'Location: ' . $redir . '' ) ;
+					//header( 'Location: ' . $redir . '' ) ;
 				}
 
 			}

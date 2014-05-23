@@ -23,15 +23,15 @@ class Core {
 			return FALSE;echo 'h';
 		if(empty($data['admin_password']))
 			return FALSE;echo 'i';
-		if(!isset($data['allow_guests']) || !in_array($data['tidy_urls'], array('0','1')))
+		if(!isset($data['allow_guests']) OR !in_array($data['allow_guests'], array('0','1')))
 			return FALSE;	echo 'j';	
-		if(empty($data['tidy_urls']) || !in_array($data['tidy_urls'], array('0','1')))
+		if(!isset($data['tidy_urls']) OR !in_array($data['tidy_urls'], array('0','1')))
 			return FALSE;
-		if(empty($data['electrum_mpk']) || strlen($data['electrum_mpk']) !== 128)
+		if(empty($data['electrum_mpk']) OR strlen($data['electrum_mpk']) !== 128)
 			return FALSE;echo 'k';
-		if(!isset($data['force_vendor_pgp']) || !in_array($data['force_vendor_pgp'], array('0','1')))
+		if(!isset($data['force_vendor_pgp']) OR !in_array($data['force_vendor_pgp'], array('0','1')))
 			return FALSE;echo 'l';
-		if(!isset($data['encrypt_private_messages']) || !in_array($data['encrypt_private_messages'], array('0','1')))
+		if(!isset($data['encrypt_private_messages']) OR !in_array($data['encrypt_private_messages'], array('0','1')))
 			return FALSE;echo 'm';
 		if($data['encrypt_private_messages'] == '1')
 			if(empty($data['admin_pm_password']))

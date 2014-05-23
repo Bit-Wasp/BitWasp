@@ -100,7 +100,10 @@ class Database {
 		
 		// Execute a multi query
 		$mysqli->multi_query($new);
-
+        if(mysqli_connect_errno()){
+            var_dump($mysqli);
+            return false;
+        }
 		// Close the connection
 		$mysqli->close();
 
