@@ -39,7 +39,7 @@
 							echo $order['currency']['symbol']." ".number_format($fees['fee'], 8); ?></div>
 						</div>
 						
-						<?php if($user_role !== 'Buyer' ) { ?>
+						<?php if($current_user['user_role'] !== 'Buyer' ) { ?>
 						<div class="row-fluid">
 							<div class="span5 offset1">Extra Fees</div>
 							<div class="span6"><?php if($current_user['currency']['id'] !== '0') {
@@ -51,7 +51,7 @@
 						
 						<div class="row-fluid">
 							<div class="span5 offset1"><?php
-							if($user_role == 'Vendor') {
+							if($current_user['user_role'] == 'Vendor') {
 								echo 'Total Payment';
 							} else {
 								echo 'Total Cost';

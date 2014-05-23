@@ -35,39 +35,42 @@ class Template {
 		if(!isset($data['header_meta'])) 
 			$data['header_meta'] = ''; 
 
-		$info = (array)json_decode($CI->session->flashdata('returnMessage'));
-		if (count($info) !== 0 && !isset($data['returnMessage']) && isset($info['message'])) 
+		$info = json_decode($CI->session->flashdata('returnMessage'));
+		if (count($info) !== 0 && !isset($data['returnMessage']) && isset($info->message))
 		{
-			$data['returnMessage'] = $info['message'];			
+			$data['returnMessage'] = $info->message;
 		
-			if (isset($info['success']) && $info['success'] == TRUE) 
-				$data['success'] == TRUE;
+			if (isset($info->success) && $info->success == TRUE)
+				$data['success'] = TRUE;
 		}
 
-		$data['logged_in'] = $CI->current_user->logged_in();
+        $data['site_title'] 		= $CI->bw_config->site_title;
+        $data['site_description']	= $CI->bw_config->site_description;
+        $footer['price_index']		= $CI->bw_config->price_index;
+        $footer['exchange_rates']	= $CI->bw_config->exchange_rates;
 
-		$bar['role'] 				= 'guest';
+        // Load cryptocurrency
+        $data['coin'] = $CI->bw_config->currencies[0];
+        $bar['coin'] = $CI->bw_config->currencies[0];
+
+        // Load data about current user
+        $data['current_user'] = $CI->current_user->status();
+        $bar['current_user'] = $CI->current_user->status();
+
 		$bar['allow_guests'] 		= $CI->bw_config->allow_guests;
+
 		$category_data['cats'] 		= '';
 		$category_data['block'] 	= FALSE;
 
-		$data['site_title'] 		= $CI->bw_config->site_title;
-		$data['site_description']	= $CI->bw_config->site_description;
-		$footer['price_index']		= $CI->bw_config->price_index;
-		$footer['exchange_rates']	= $CI->bw_config->exchange_rates;
-		
 		//Check if there are categories to display
 		if ( ! isset($data['currentCat'])) 
 			$data['currentCat'] = array(); 
 
-		if ($data['logged_in'])
-		{ 
-			$bar['coin'] = $CI->bw_config->currencies[0];
-			// If the user is logged in, load their role, and the categories. 
-			$bar['role'] = strtolower($CI->current_user->user_role);			
-			$bar['current_user'] = $CI->current_user->status();
+		if ($CI->current_user->logged_in())
+		{
+
 			$bar['count_unread_messages'] = $CI->general_model->count_unread_messages();
-			if($bar['role'] == 'vendor')
+			if($CI->current_user->user_role == 'Vendor')
 				$bar['count_new_orders'] = $CI->general_model->count_new_orders();
 				
 			$categories = $CI->categories_model->menu();		
@@ -81,22 +84,15 @@ class Template {
 				$category_data['ship_to_error'] = $data['ship_to_error'];
 			
 		} else {
-			// If a numeric user_id is set and two_factor or force_pgp flags are set, choose the required bar.
-			if(isset($CI->current_user->user_id) && is_numeric($CI->current_user->user_id) 
-			&& (  $CI->current_user->pgp_factor == TRUE
-				|| $CI->current_user->totp_factor == TRUE
-			    || $CI->current_user->force_pgp == TRUE
-			    || $CI->current_user->entry_payment == TRUE))
-					$bar['role'] = 'half';
-			
+
 			// If guests are allowed to browse, load the categories.
-			if($bar['allow_guests'] == TRUE) {
+			if($CI->bw_config->allow_guests == TRUE) {
 				$categories = $CI->categories_model->menu();		
 				$category_data['cats'] = (empty($categories)) ? 'No Categories' : $this->menu($categories , 0, $data['currentCat']); 
 				
 			} else {
 				// Otherwise, block categories on the pages users have access to.
-				if($CI->general->matches_any($CI->current_user->URI[0], array('login','register')))
+				if(in_array($CI->current_user->URI[0], array('login','register')))
 					$category_data['block'] = TRUE;
 			}
 		}
@@ -109,7 +105,7 @@ class Template {
 
 		// Load the HTML.
 		$CI->load->view('templates/header', $header);
-		$CI->load->view('templates/bar/'.$bar['role'], $bar);
+		$CI->load->view('templates/bar/'.strtolower($CI->current_user->user_role), $bar);
 		$CI->load->view('templates/midsection');
         $CI->load->view('templates/sidebar', $category_data);
         $CI->load->view($data['page'], $data);

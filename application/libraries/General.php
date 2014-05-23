@@ -29,27 +29,6 @@ class General {
 	}
 
 	/**
-	 * Expect keys
-	 * 
-	 * Ensures all the comment-separated entries in $str are present in 
-	 * the array. Will set unpresent entries = NULL.
-	 * 
-	 * Should not be used...
-	 * 
-	 * @param		string	$str
-	 * @param		array	$array
-	 * @return		array
-	 */
-	public function expect_keys($str, $array) {
-		$keys = explode(",", $str);
-		foreach($keys as $key) {
-			if(!array_key_exists(trim($key), $array))
-				$array[$key] = NULL;
-		}
-		return $array;
-	}
-	
-	/**
 	 * Random Data
 	 * 
 	 * Generate pseudo-random data of a specified length
@@ -143,23 +122,6 @@ class General {
 		// Finally return the generated unique hash.
 		return $hash;			
 	}
-		
-	/**
-	 * Matches Any
-	 * 
-	 * Determines if any values in in $arr matches $string.
-	 * 
-	 * shouldn't be used..
-	 * @param		string
-	 * @param		array
-	 * @return		bool
-	 */
-	public function matches_any($str, array $arr) {
-		foreach($arr as $val) {
-			if (($str == $val) == TRUE) return TRUE;
-		}
-		return FALSE;
-	}
 	
 	/**
 	 * Role from ID
@@ -224,3 +186,4 @@ class General {
 };
 
  /* End of file General.php */
+/* Location: application/libraries/General.php */

@@ -79,7 +79,6 @@ class Orders extends CI_Controller
                 $data['returnMessage'] = 'This order has been cancelled.';
         }*/
 
-        $data['coin'] = $this->coin;
         $data['orders'] = $this->order_model->vendor_orders();
 
         $id_list = array();
@@ -87,7 +86,6 @@ class Orders extends CI_Controller
             $id_list[] = $t_order['id'];
         }
         $data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
-        $data['local_currency'] = $this->current_user->currency;
         $data['page'] = 'orders/vendor_orders';
         $data['title'] = 'My Orders';
         $this->load->library('Layout', $data);
@@ -146,7 +144,6 @@ class Orders extends CI_Controller
 
         $data['title'] = 'Accept Order #' . $data['order']['id'];
         $data['page'] = 'orders/vendor_accept';
-        $data['local_currency'] = $this->current_user->currency;
         $this->load->library('Layout', $data);
     }
 
@@ -198,7 +195,6 @@ class Orders extends CI_Controller
 
         $data['page'] = 'orders/vendor_finalize_early';
         $data['title'] = 'Request Early Finalization';
-        $data['local_currency'] = $this->current_user->currency;
         $this->load->library('Layout', $data);
     }
 
@@ -289,8 +285,6 @@ class Orders extends CI_Controller
 
         $data['page'] = 'orders/vendor_refund';
         $data['title'] = 'Issue Refund';
-        $data['coin'] = $this->coin;
-        $data['local_currency'] = $this->current_user->currency;
         $this->load->library('Layout', $data);
     }
 
@@ -444,7 +438,6 @@ class Orders extends CI_Controller
         }
 
         $data['orders'] = $this->order_model->buyer_orders();
-        $data['local_currency'] = $this->current_user->currency;
         $this->load->library('Layout', $data);
     }
 
@@ -461,8 +454,6 @@ class Orders extends CI_Controller
     {
         $this->load->model('items_model');
         $this->load->model('review_auth_model');
-
-        $data['coin'] = $this->coin;
 
         // Process Form Submission
 
@@ -554,7 +545,6 @@ class Orders extends CI_Controller
 
         $data['page'] = 'orders/buyer_orders';
         $data['title'] = 'My Purchases';
-        $data['local_currency'] = $this->current_user->currency;
         $this->load->library('Layout', $data);
     }
 
@@ -787,9 +777,6 @@ class Orders extends CI_Controller
         $data['fees']['fee'] = $data['order']['fees'];
         $data['fees']['escrow_fees'] = $data['order']['extra_fees'];
         $data['fees']['total'] = $data['order']['shipping_costs'] + $data['order']['fees'];
-        $data['user_role'] = $this->current_user->user_role;
-        $data['local_currency'] = $this->current_user->currency;
-        $data['local_currency']['rate'] = $this->bw_config->exchange_rates[(strtolower($data['local_currency']['code']))];
 
         if ($this->current_user->user_role == 'Buyer'
             && ($data['order']['paid_time'] == '')

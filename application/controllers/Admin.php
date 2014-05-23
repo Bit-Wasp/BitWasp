@@ -14,13 +14,6 @@ class Admin extends CI_Controller
 {
 
     /**
-     * Coin
-     *
-     * Stores the cryptocurrency the market is set up for
-     */
-    public $coin;
-
-    /**
      * Nav
      *
      * Stores the admin navigation bar
@@ -38,15 +31,13 @@ class Admin extends CI_Controller
         $this->load->library('form_validation');
         $this->load->model('admin_model');
 
-        $this->coin = $this->bw_config->currencies[0];
-
         // Define information for the navigation panel.
         $this->nav = array('' => array('panel' => '',
             'title' => 'General',
             'heading' => 'Admin Panel'),
             'bitcoin' => array('panel' => '/bitcoin',
-                'title' => $this->coin['name'],
-                'heading' => $this->coin['name'] . ' Panel'),
+                'title' => $this->bw_config->currencies[0]['name'],
+                'heading' => $this->bw_config->currencies[0]['name'] . ' Panel'),
             'items' => array('panel' => '/items',
                 'title' => 'Items',
                 'heading' => 'Items Panel'),
@@ -318,7 +309,6 @@ class Admin extends CI_Controller
         $data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
         $data['key_usage_count'] = $this->bitcoin_model->count_key_usage();
         $data['block_cache'] = $this->transaction_cache_model->count_cache_list();
-        $data['coin'] = $this->coin;
         $this->load->library('Layout', $data);
     }
 
@@ -351,7 +341,6 @@ class Admin extends CI_Controller
 
         $data['config'] = $this->bw_config->load_admin('bitcoin');
         $data['price_index'] = $this->bw_config->price_index;
-        $data['coin'] = $this->coin;
 
         // If the Settings form was submitted:
         if ($this->input->post('submit_edit_bitcoin') == 'Update') {
@@ -424,7 +413,6 @@ class Admin extends CI_Controller
         $data['nav'] = $this->generate_nav();
         $data['user_count'] = $this->general_model->count_entries('users');
         $data['config'] = $this->bw_config->load_admin('users');
-        $data['coin'] = $this->coin;
 
         $data['page'] = 'admin/users';
         $data['title'] = $this->nav['users']['heading'];
@@ -901,7 +889,6 @@ class Admin extends CI_Controller
         $this->load->library('form_validation');
         $this->load->model('order_model');
         $this->load->model('disputes_model');
-        $data['coin'] = $this->coin;
 
         // If no order is specified, load the list of disputes.
         if ($order_id == NULL) {
@@ -1073,7 +1060,6 @@ class Admin extends CI_Controller
     {
         $this->load->library('form_validation');
         $this->load->model('fees_model');
-        $data['coin'] = $this->coin;
         $data['config'] = $this->bw_config->load_admin('fees');
 
         if ($this->input->post('update_config') == 'Update') {
@@ -1185,7 +1171,6 @@ class Admin extends CI_Controller
         $this->load->model('order_model');
         $this->load->library('pagination');
 
-        $data['coin'] = $this->coin;
         $pagination = array();
         $pagination["base_url"] = site_url("admin/orders/");
         $pagination["total_rows"] = $this->order_model->admin_count_orders();

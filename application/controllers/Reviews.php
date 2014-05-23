@@ -15,13 +15,6 @@ class Reviews extends CI_Controller
 {
 
     /**
-     * Coin
-     *
-     * This variable contains information about the cryptocurrency.
-     */
-    public $coin;
-
-    /**
      * Constructor
      *
      * Load libs/models.
@@ -33,7 +26,6 @@ class Reviews extends CI_Controller
         parent::__construct();
         $this->load->model('review_auth_model');
         $this->load->model('review_model');
-        $this->coin = $this->bw_config->currencies[0];
     }
 
     /**
@@ -241,7 +233,6 @@ class Reviews extends CI_Controller
             }
         }
 
-        $data['coin'] = $this->coin;
         $this->load->library('Layout', $data);
     }
 

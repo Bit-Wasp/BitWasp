@@ -6,9 +6,9 @@
             <div class="row-fluid">
               <div class="span9 btn-group">
 				<h2><?php 
-				if($logged_in == TRUE) {
+				if($current_user['logged_in'] == TRUE) {
 					echo anchor('message/send/'.$user['user_hash'],'Message', 'class="btn"')." "; 
-					if($user_role == "Admin" && $user['user_role'] !== "Admin") {
+					if($current_user['user_role'] == "Admin" && $user['user_role'] !== "Admin") {
 						$txt = ($user['banned'] == '0') ? 'Ban User' : 'Unban User';
 						echo anchor('admin/ban_user/'.$user['user_hash'], $txt, 'class="btn"'); 
 					}
