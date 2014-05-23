@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * Alerts Model
@@ -9,53 +9,53 @@
  * admin fixes the issue, the script won't trigger a maintenance_mode/log
  * if it hears about it again.
  *
- * @package		BitWasp
- * @subpackage	Models
- * @category	Alerts
- * @author		BitWasp
- * 
+ * @package        BitWasp
+ * @subpackage    Models
+ * @category    Alerts
+ * @author        BitWasp
+ *
  */
-class Alerts_model extends CI_Model {
+class Alerts_model extends CI_Model
+{
 
-	/**
-	 * Constructor
-	 *
-	 * @access	public
-	 * @return	void
-	 */		
-	public function __construct() {
-		parent::__construct();
-	}	
-	
-	/**
-	 * Add
-	 *
-	 * Store an alert in the table. Array requires parameters 'source', 
-	 * and 'message'. If time is not supplied, it will be stored as the
-	 * time the site heard about the alert.
-	 
-	 * @param	array	$alert
-	 * @return	boolean
-	 */
-	public function add($alert) {
-		if(!isset($alert['time']))
-			$alert['time'] = time();
-			
-		return ($this->db->insert('alerts',$alert) == TRUE) ? TRUE : FALSE;
-	}
-	
-	/**
-	 * Check
-	 * 
-	 * Check if an alert message has been seen already.
-	 * 
-	 * @param	string	$string
-	 * @return	boolean
-	 */
-	public function check($string) {
-		$query = $this->db->get_where('alerts', array('message' => "$string"));
-		return ($query->num_rows() > 0) ? TRUE : FALSE;
-	}
+    /**
+     * Construct
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    /**
+     * Add
+     *
+     * Store an alert in the table. Array requires parameters 'source',
+     * and 'message'. If time is not supplied, it will be stored as the
+     * time the site heard about the alert.
+     * @param    array $alert
+     * @return    boolean
+     */
+    public function add($alert)
+    {
+        if (!isset($alert['time']))
+            $alert['time'] = time();
+
+        return $this->db->insert('alerts', $alert) == TRUE;
+    }
+
+    /**
+     * Check
+     *
+     * Check if an alert message has been seen already.
+     *
+     * @param    string $string
+     * @return    boolean
+     */
+    public function check($string)
+    {
+        $query = $this->db->get_where('alerts', array('message' => "$string"));
+        return $query->num_rows() > 0;
+    }
 };
 
 /* End of File: alerts_model.php */
