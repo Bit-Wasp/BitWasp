@@ -282,9 +282,8 @@ class Messages extends CI_Controller
             if ($answer == $solution) {
                 $this->current_user->set_message_password($message_password);
                 unset($message_password);
-                $to_location = $this->session->userdata('before_msg_pin');
                 $this->session->unset_userdata('before_msg_pin');
-                redirect($to_location);
+                redirect($this->session->userdata('before_msg_pin'));
             } else {
                 $data['returnMessage'] = 'The PIN you entered was incorrect. Please try again';
             }
