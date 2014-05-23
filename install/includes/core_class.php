@@ -6,36 +6,35 @@ class Core {
 	function validate_post($data)
 	{
 		if(empty($data['db_hostname']))
-			return FALSE;echo 'a';
-		if(empty($data['db_username']))
-			return FALSE;echo 'b';
-		if(empty($data['db_password']))
-			return FALSE;echo 'c';
-		if(empty($data['db_database']))
-			return FALSE;echo 'd';
-		if(empty($data['btc_ip']))
-			return FALSE;echo 'e';
-		if(empty($data['btc_port']))
-			return FALSE;echo 'f';
-		if(empty($data['btc_username']))
-			return FALSE;echo 'g';
-		if(empty($data['btc_password']))
-			return FALSE;echo 'h';
-		if(empty($data['admin_password']))
-			return FALSE;echo 'i';
-		if(!isset($data['allow_guests']) || !in_array($data['tidy_urls'], array('0','1')))
-			return FALSE;	echo 'j';	
-		if(empty($data['tidy_urls']) || !in_array($data['tidy_urls'], array('0','1')))
 			return FALSE;
-		if(empty($data['electrum_mpk']) || strlen($data['electrum_mpk']) !== 128)
-			return FALSE;echo 'k';
-		if(!isset($data['force_vendor_pgp']) || !in_array($data['force_vendor_pgp'], array('0','1')))
-			return FALSE;echo 'l';
-		if(!isset($data['encrypt_private_messages']) || !in_array($data['encrypt_private_messages'], array('0','1')))
-			return FALSE;echo 'm';
-		if($data['encrypt_private_messages'] == '1')
-			if(empty($data['admin_pm_password']))
-				return FALSE;echo 'o';
+		if(empty($data['db_username']))
+			return FALSE;
+		if(empty($data['db_password']))
+			return FALSE;
+		if(empty($data['db_database']))
+			return FALSE;
+		if(empty($data['btc_ip']))
+			return FALSE;
+        if(empty($data['btc_port']))
+			return FALSE;
+		if(empty($data['btc_username']))
+			return FALSE;
+		if(empty($data['btc_password']))
+			return FALSE;
+		if(empty($data['admin_password']))
+			return FALSE;
+		if(!isset($data['allow_guests']) OR !in_array($data['allow_guests'], array('0','1')))
+			return FALSE;
+		if(!isset($data['tidy_urls']) OR !in_array($data['tidy_urls'], array('0','1')))
+			return FALSE;
+		if(empty($data['electrum_mpk']) OR strlen($data['electrum_mpk']) !== 128)
+			return FALSE;
+		if(!isset($data['force_vendor_pgp']) OR !in_array($data['force_vendor_pgp'], array('0','1')))
+			return FALSE;
+		if(!isset($data['encrypt_private_messages']) OR !in_array($data['encrypt_private_messages'], array('0','1')))
+			return FALSE;
+		if($data['encrypt_private_messages'] == '1' AND empty($data['admin_pm_password']))
+				return FALSE;
 		return TRUE;
 	}
 	

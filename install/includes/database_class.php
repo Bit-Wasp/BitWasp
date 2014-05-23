@@ -37,10 +37,6 @@ class Database {
 		// Open the default SQL file
 		$query = file_get_contents('assets/install.sql');
 
-		$extra_params = '';
-		$extra_values = '';
-
-
 		$password = function($password) {
 			$salt = hash('sha512', mcrypt_create_iv(512, MCRYPT_DEV_URANDOM));
 			$hash = $password;
@@ -85,8 +81,6 @@ class Database {
 
 		$handled_enc = $handle_enc_pms($data, $pw['salt']);
 
-		$register_time = time();
-
 		$new  = str_replace("%ENCRYPT_PRIVATE_MESSAGES%",$data['encrypt_private_messages'],$query);
 		$new  = str_replace("%ALLOW_GUESTS%",$data['allow_guests'],$new);
 		$new  = str_replace("%FORCE_VENDOR_PGP%",$data['force_vendor_pgp'],$new);
@@ -100,7 +94,10 @@ class Database {
 		
 		// Execute a multi query
 		$mysqli->multi_query($new);
-
+        if(mysqli_connect_errno()){
+            var_dump($mysqli);
+            return false;
+        }
 		// Close the connection
 		$mysqli->close();
 
@@ -179,9 +176,15 @@ class Database {
 		$query = "INSERT INTO `{$data['db_database']}`.`bw_users` (banned, block_non_pgp,entry_paid,force_pgp_messages,location,salt,password,register_time,user_hash,user_name,user_role,local_currency{$extra_params}) VALUES ('0','0','1','0','1','{$pw['salt']}','{$pw['password']}','{$register_time}','{$user_hash}','admin','Admin','0'{$extra_values})";
 
 		$mysqli->query($query);
-		print_r($mysqli);
-		$mysqli->close();
-		
+
+        // Check for errors
+        if(mysqli_connect_errno()){
+            var_dump($mysqli);
+            return false;
+        }
+
+        $mysqli->close();
+
 		return true;
 				
 	}
