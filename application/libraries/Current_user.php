@@ -124,9 +124,10 @@ class Current_User {
 
 			$this->CI->load->model('accounts_model');
 			$this->user = $this->CI->accounts_model->get(array('user_hash' => $this->user_hash), array('own' => TRUE));
-			
-			$this->currency = ($this->CI->bw_config->price_index == 'Disabled' || !is_array($this->CI->bw_config->currencies)) ? $this->CI->bw_config->currencies[0] : $this->CI->bw_config->currencies[$this->user['local_currency']];
-			$this->currency['rate'] = $this->CI->bw_config->exchange_rates[(strtolower($this->currency['code']))];
+			if($this->user !== FALSE){
+			    $this->currency = ($this->CI->bw_config->price_index == 'Disabled' ) ? $this->CI->bw_config->currencies[0] : $this->CI->bw_config->currencies[$this->user['local_currency']];
+			    $this->currency['rate'] = $this->CI->bw_config->exchange_rates[(strtolower($this->currency['code']))];
+            }
 		} else {
 			$id = $this->CI->session->userdata('user_id');
 
@@ -138,19 +139,28 @@ class Current_User {
 			if(is_numeric($id) && $id !== NULL) {
 				$this->user_id = $id;
 			
-				if($this->CI->session->userdata('pgp_factor') == 'true')
-					$this->pgp_factor = TRUE;
+				if($this->CI->session->userdata('pgp_factor') == 'true'){
+                    $this->pgp_factor = TRUE;
+                    $this->user_role = 'half';
+                }
 					
-				if($this->CI->session->userdata('totp_factor') == 'true')
+				if($this->CI->session->userdata('totp_factor') == 'true'){
 					$this->totp_factor = TRUE;
-			
-				if($this->CI->session->userdata('force_pgp') == 'true')
+                    $this->user_role = 'half';
+                }
+
+				if($this->CI->session->userdata('force_pgp') == 'true'){
 					$this->force_pgp = TRUE;
+                    $this->user_role = 'half';
+                }
 					
-				if($this->CI->session->userdata('entry_payment') == 'true')
+				if($this->CI->session->userdata('entry_payment') == 'true'){
 					$this->entry_payment = TRUE;
-			}
-			
+                    $this->user_role = 'half';
+                }
+			} else {
+                $this->user_role = 'guest';
+            }
 			
 		}	
 	}

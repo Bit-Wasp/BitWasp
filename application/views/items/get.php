@@ -4,9 +4,9 @@
 		  <div class="itemInfo" id="prod_<?php echo $item['hash']; ?>">
 			<h2><?php 
 			
-			if($logged_in == TRUE) { 
+			if($current_user['logged_in'] == TRUE) {
 				echo anchor('message/send/'.$item['vendor']['user_hash'], 'Message Vendor', 'class="btn"')." "; 
-				if($user_role == 'Admin')
+				if($current_user['user_role'] == 'Admin')
 					echo anchor('admin/delete_item/'.$item['hash'], 'Delete', 'class="btn"');
 			} ?>
 			<?php echo $item['name'] ?></h2>
@@ -31,7 +31,7 @@
 					<div class='span2'><?php
 			  if($current_user['currency']['id'] !== '0') echo $current_user['currency']['symbol'].number_format($item['price_l'],2)." / ";
 			  echo $coin['symbol']." ".number_format($item['price_b'],8); ?></div>
-					<?php if($user_role == 'Buyer') { ?>
+					<?php if($current_user['user_role']== 'Buyer') { ?>
 					<div class='span2'><?php echo anchor('purchase/'.$item['hash'], 'Purchase Item', 'class="btn"'); ?></div>
 					<?php } ?>
 				</div>
@@ -52,7 +52,7 @@
 							<div class='row-fluid'>
 								<div class='span5'><?php echo $shipping_charge['destination_f']; ?></div>
 								<div class='span6'><?php 
-								if($local_currency['id'] !== '0')  echo $local_currency['symbol'].number_format($shipping_charge['cost']*$local_currency['rate'],2)." / "; ?>
+								if($current_user['currency']['id'] !== '0')  echo $current_user['currency']['symbol'].number_format($shipping_charge['cost']*$current_user['currency']['rate'],2)." / "; ?>
 								<?php echo $coin['symbol']; ?> <?php echo number_format($shipping_charge['cost'],8); ?></div>
 							</div>
 						<?php } ?>

@@ -187,9 +187,6 @@ class Items extends CI_Controller
         $data['item'] = $this->items_model->get($hash, FALSE);
         $data['page'] = 'items/get';
         $data['title'] = $data['item']['name'];
-        $data['user_role'] = $this->current_user->user_role;
-        $data['local_currency'] = $this->current_user->currency;
-        $data['coin'] = $this->bw_config->currencies[0];
         $data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
 
         $data['reviews'] = $this->review_model->random_latest_reviews(8, 'item', $hash);

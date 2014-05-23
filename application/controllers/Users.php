@@ -15,14 +15,6 @@ class Users extends CI_Controller
 {
 
     /**
-     * Coin
-     *
-     * This variable contains the 0th currency to be used on the site.
-     * Used for cosmetic purposes, ie, so 'Bitcoin' isn't hardcoded everywhere.
-     */
-    public $coin;
-
-    /**
      * Constructor
      *
      * Load libs/models.
@@ -181,7 +173,6 @@ class Users extends CI_Controller
         $data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
         $data['locations_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'span5');
         $data['currencies'] = $this->bw_config->currencies;
-        $data['coin'] = $this->coin;
 
         // Different rules depending on whether a PIN must be entered.
         $register_page = ($data['encrypt_private_messages'] == TRUE) ? 'users/register' : 'users/register_no_pin';
@@ -365,7 +356,6 @@ class Users extends CI_Controller
 
         $data['page'] = 'users/payment';
         $data['title'] = 'Entry Payment';
-        $data['coin'] = $this->coin;
         $data['user'] = $this->users_model->get(array('id' => $this->current_user->user_id));
         $data['entry_payment'] = $this->users_model->get_entry_payment($data['user']['user_hash']);
         $data['payments'] = $this->transaction_cache_model->payments_to_address($data['entry_payment']['bitcoin_address']);
