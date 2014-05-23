@@ -6,36 +6,35 @@ class Core {
 	function validate_post($data)
 	{
 		if(empty($data['db_hostname']))
-			return FALSE;echo 'a';
+			return FALSE;
 		if(empty($data['db_username']))
-			return FALSE;echo 'b';
+			return FALSE;
 		if(empty($data['db_password']))
-			return FALSE;echo 'c';
+			return FALSE;
 		if(empty($data['db_database']))
-			return FALSE;echo 'd';
+			return FALSE;
 		if(empty($data['btc_ip']))
-			return FALSE;echo 'e';
-		if(empty($data['btc_port']))
-			return FALSE;echo 'f';
+			return FALSE;
+        if(empty($data['btc_port']))
+			return FALSE;
 		if(empty($data['btc_username']))
-			return FALSE;echo 'g';
+			return FALSE;
 		if(empty($data['btc_password']))
-			return FALSE;echo 'h';
+			return FALSE;
 		if(empty($data['admin_password']))
-			return FALSE;echo 'i';
+			return FALSE;
 		if(!isset($data['allow_guests']) OR !in_array($data['allow_guests'], array('0','1')))
-			return FALSE;	echo 'j';	
+			return FALSE;
 		if(!isset($data['tidy_urls']) OR !in_array($data['tidy_urls'], array('0','1')))
 			return FALSE;
 		if(empty($data['electrum_mpk']) OR strlen($data['electrum_mpk']) !== 128)
-			return FALSE;echo 'k';
+			return FALSE;
 		if(!isset($data['force_vendor_pgp']) OR !in_array($data['force_vendor_pgp'], array('0','1')))
-			return FALSE;echo 'l';
+			return FALSE;
 		if(!isset($data['encrypt_private_messages']) OR !in_array($data['encrypt_private_messages'], array('0','1')))
-			return FALSE;echo 'm';
-		if($data['encrypt_private_messages'] == '1')
-			if(empty($data['admin_pm_password']))
-				return FALSE;echo 'o';
+			return FALSE;
+		if($data['encrypt_private_messages'] == '1' AND empty($data['admin_pm_password']))
+				return FALSE;
 		return TRUE;
 	}
 	
