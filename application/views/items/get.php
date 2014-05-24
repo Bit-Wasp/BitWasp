@@ -5,7 +5,8 @@
 			<h2><?php 
 			
 			if($current_user['logged_in'] == TRUE) {
-				echo anchor('message/send/'.$item['vendor']['user_hash'], 'Message Vendor', 'class="btn"')." "; 
+                if($current_user['user_hash'] !== $item['vendor']['user_hash'])
+				    echo anchor('message/send/'.$item['vendor']['user_hash'], 'Message Vendor', 'class="btn"')." ";
 				if($current_user['user_role'] == 'Admin')
 					echo anchor('admin/delete_item/'.$item['hash'], 'Delete', 'class="btn"');
 			} ?>
@@ -73,7 +74,7 @@
 
             <li class="span2 productBox" id="prod_<?php echo $item['hash']; ?>">
               <div class="thumbnail">
-				<?php echo anchor('image/'.$image['hash'], "<img src='data:image/jpeg;base64,{$image['encoded']}' class='productImg' title='{$item['name']}' >"); ?>
+				<?php echo anchor('image/'.$image['hash'], "<img src='data:image/jpeg;base64,{$image['encoded']}' class='productImg' title='{$item['name']}' width='170'>"); ?>
               </div>
             </li>
 <?php endforeach; ?>
