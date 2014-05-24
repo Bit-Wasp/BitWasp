@@ -231,7 +231,7 @@ class Users extends CI_Controller
 
             // Check the submission
             if ($add_user) {
-
+                $this->load->model('bitcoin_model');
                 $entry_fee = 'entry_payment_' . strtolower($data['role']);
 
                 if (isset($data['token_info']) AND $data['token_info'] !== FALSE) {
