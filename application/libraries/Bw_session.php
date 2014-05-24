@@ -168,7 +168,7 @@ class Bw_session {
 	public function validate_req() {
 		$this->auth_level = $this->CI->auth_model->check_auth($this->URI[0]);
 		
-		if(!in_array($this->URI[0], array('','items','item','category','user')) && $this->CI->bw_config->allow_guests == TRUE  && !$this->CI->current_user->logged_in() )
+		if(in_array($this->URI[0], array('','items','item','category','user')) && $this->CI->bw_config->allow_guests == TRUE  && !$this->CI->current_user->logged_in() )
 			return TRUE;
 		
 		if($this->auth_level == FALSE)
@@ -183,8 +183,8 @@ class Bw_session {
 		if( $this->CI->current_user->force_pgp == TRUE && !in_array(uri_string(), array('register/pgp', 'logout')) )
 			redirect('register/pgp');
 		
-		//if( $this->CI->current_user->entry_payment == TRUE && !in_array(uri_string(), array('register/payment', 'logout')) )
-			//redirect('register/payment');			
+		if( $this->CI->current_user->entry_payment == TRUE && !in_array(uri_string(), array('register/payment', 'logout')) )
+			redirect('register/payment');
 			
 		if($this->auth_level == 'guestonly') {
 			// Added this if block.
