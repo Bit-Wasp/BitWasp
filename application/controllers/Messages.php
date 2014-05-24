@@ -208,41 +208,14 @@ class Messages extends CI_Controller
             $data['from'] = $this->current_user->user_id;
             $message = $this->bw_messages->prepare_input($data);
             if ($this->messages_model->send($message)) {
-                $this->session->set_flashdata('msg_sent', 'true');
-                redirect('message/sent');
+                $this->session->set_flashdata('returnMessage', json_encode(array('message'=>'Your message has been sent!')));
+                redirect('inbox');
             }
         }
 
         $data['page'] = 'messages/send';
         $data['title'] = 'Send Message';
 
-        $this->load->library('Layout', $data);
-    }
-
-    /**
-     * Sent
-     *
-     * Catcher page for sent messages. Avoids refresh issues.
-     * URI: /messages/sent
-     *
-     * @access    public
-     * @see        Libraries/Bw_Messages
-     * @see        Models/Messages_Model
-     *
-     * @return    void
-     */
-    public function sent()
-    {
-        $messages = $this->messages_model->inbox();
-        $data['messages'] = $this->bw_messages->prepare_output($messages);
-        $data['title'] = 'Inbox';
-        $data['page'] = 'messages/inbox';
-
-        if ($this->session->flashdata('msg_sent') == TRUE) {
-            $data['returnMessage'] = 'Message has been sent';
-        } else {
-            redirect('inbox');
-        }
         $this->load->library('Layout', $data);
     }
 
@@ -282,8 +255,10 @@ class Messages extends CI_Controller
             if ($answer == $solution) {
                 $this->current_user->set_message_password($message_password);
                 unset($message_password);
+                $redirect_url = $this->session->userdata('before_msg_pin');
                 $this->session->unset_userdata('before_msg_pin');
-                redirect($this->session->userdata('before_msg_pin'));
+
+                redirect($redirect_url);
             } else {
                 $data['returnMessage'] = 'The PIN you entered was incorrect. Please try again';
             }

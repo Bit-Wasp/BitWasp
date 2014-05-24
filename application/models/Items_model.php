@@ -128,12 +128,14 @@ class Items_model extends CI_Model
      * @param    int $per_page
      * @return    boolean
      */
-    public function get_list_pages($opt = array(), $start, $per_page)
+    public function get_list_pages($opt = array(), $start, $per_page, $hidden_allowed = FALSE)
     {
         $limit = $per_page;
 
+        if(!$hidden_allowed)
+            $this->db->where('hidden','0');
+
         $this->db->select('items.id, items.hash, price, vendor_hash, currency, description, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code')
-            ->where('hidden', '0')
             ->order_by('add_time DESC')
             ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
             ->join('images', 'images.hash = items.main_image')
@@ -166,17 +168,18 @@ class Items_model extends CI_Model
         $results = array();
 
         if ($query->num_rows() > 0) {
+
             $local_currency = $this->bw_config->currencies[$this->current_user->currency['id']];
             $local_rate = $this->bw_config->exchange_rates[strtolower($local_currency['code'])];
 
             foreach ($query->result_array() as $row) {
-                // get vendor information
+                // Get vendor information
                 $row['vendor'] = array();
                 $row['vendor']['user_name'] = $row['user_name'];
                 $row['vendor']['user_hash'] = $row['user_hash'];
                 $row['vendor']['banned'] = $row['banned'];
 
-                // get main image information
+                // Get main image information
                 $row['main_image'] = array();
                 $row['main_image']['hash'] = $row['image_hash'];
                 $row['main_image']['encoded'] = $row['image_encoded'];
@@ -184,19 +187,18 @@ class Items_model extends CI_Model
                 $row['main_image']['width'] = $row['image_width'];
 
                 $row['description_s'] = strip_tags($row['description']);
-                $row['description_s'] = strlen($row['description_s']) > 70 ? substr($row['description_s'], 0, 70) . "..." : $row['description_s'];
+                $row['description_s'] = (strlen($row['description_s']) > 70)
+                    ? substr($row['description_s'], 0, 70) . "..."
+                    : $row['description_s'];
 
+                // Calculate Bitcoin price
                 $rate = $this->bw_config->exchange_rates[strtolower($row['currency_code'])];
-
-                // Load information about the items.
-                $row['description_s'] = substr(strip_tags($row['description']), 0, 70);
-                if (strlen($row['description']) > 70) $row['description_s'] .= '...';
                 $row['price_b'] = number_format(($row['price'] / $rate), 8);
+
+                // Set a formatted price, in the users native currency.
                 $row['price_l'] = ($this->current_user->currency['id'] !== '0') ? number_format((float)($row['price_b'] * $local_rate), 2) : number_format((float)($row['price_b'] * $local_rate), 8);
                 $row['price_f'] = $local_currency['symbol'] . ' ' . $row['price_l'];
 
-                // being used anywhere?
-                // $row['images'] = $this->images_model->by_item($row['id']);
                 $results[] = $row;
             }
         }
