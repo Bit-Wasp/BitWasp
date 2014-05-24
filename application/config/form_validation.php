@@ -301,7 +301,7 @@ $config = array('register_form'=>array(
 				'admin_edit_bitcoin' => array(
 										array('field' => 'price_index',
 											  'label' => 'Price Index',
-											  'rules' => 'check_price_index'
+											  'rules' => 'required'
 										),
 										array('field' => 'electrum_mpk',
 											  'label' => 'master public key',
@@ -309,7 +309,7 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'electrum_iteration',
 											  'label' => 'electrum address index',
-											  'rules' => 'required|is_natural_no_zero'
+											  'rules' => 'required|is_natural'
 										)
 							),
 				'admin_add_category' => array(
