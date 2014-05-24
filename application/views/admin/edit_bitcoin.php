@@ -6,6 +6,7 @@
   		  <fieldset>
 			
   		    <?php echo form_open('admin/edit/bitcoin', array('class' => 'form-horizontal')); ?>
+              <?php echo validation_errors(); ?>
  			  <div class="row-fluid">
 				<div class="span5 offset2"><strong>Settings</strong></div>
 			  </div>				
@@ -33,6 +34,7 @@
 				<div class="span4"><input type='text' name='electrum_iteration' value='<?php echo $config['electrum_iteration']; ?>' /></div>
 				<span class='span5'>Only change this if you know what you're doing!</span>
 			  </div>
+              <span class="help-inline offset2"><?php echo form_error('electrum_iteration'); ?></span>
 			  	 
 		      <div class="form-actions">
 		        <input type='submit' name='submit_edit_bitcoin' value='Update' class='btn btn-primary' />

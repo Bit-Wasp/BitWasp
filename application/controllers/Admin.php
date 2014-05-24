@@ -347,8 +347,9 @@ class Admin extends CI_Controller
             if ($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
                 $changes = array();
                 // Check if the selection exists.
-                if ($data['config']['price_index'] != $this->input->post('price_index')) {
-                    if (is_array($data['config']['price_index_config'][$this->input->post('price_index')]) || $this->input->post('price_index') == 'Disabled') {
+                if ($data['price_index'] != $this->input->post('price_index')) {
+                    if (is_array($data['config']['price_index_config'][$this->input->post('price_index')])
+                    OR $this->input->post('price_index') == 'Disabled') {
 
                         $update = array('price_index' => $this->input->post('price_index'));
                         $this->config_model->update($update);
