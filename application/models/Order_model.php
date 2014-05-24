@@ -214,6 +214,7 @@ class Order_model extends CI_Model
         $query = $this->db->where('buyer_id', $this->current_user->user_id)
             ->order_by('progress asc, time desc')
             ->get('orders');
+        #echo $this->db->last_query();
         return ($query->num_rows() > 0) ? $this->build_array($query->result_array()) : array();
 
     }
@@ -236,7 +237,6 @@ class Order_model extends CI_Model
             ->where('buyer_id', $this->current_user->user_id)
             ->where('progress', $progress)
             ->get('orders');
-
         $result = $this->build_array($query->result_array());
         return $result[0];
     }
@@ -254,6 +254,7 @@ class Order_model extends CI_Model
      */
     public function load_order($id, $allowed_progress = array())
     {
+
         switch ($this->current_user->user_role) {
             case 'Vendor':
                 $this->db->where('vendor_hash', $this->current_user->user_hash);
@@ -267,14 +268,15 @@ class Order_model extends CI_Model
         }
 
         $query = $this->db->where('id', "$id")
+            ->where_in('progress', $allowed_progress)
+            ->limit(1)
             ->get('orders');
 
         if ($query->num_rows() > 0) {
-            $result = $query->row_array();
-            if (in_array($result['progress'], $allowed_progress)) {
-                $row = $this->build_array($result);
+            $row = $this->build_array($query->result_array());
+            if (in_array($row[0]['progress'], $allowed_progress))
                 return $row[0];
-            }
+
         }
         return FALSE;
     }
@@ -346,8 +348,12 @@ class Order_model extends CI_Model
                     $this->bitcoin_model->add_watch_address($multisig_details['address'], 'order');
 
                     $subject = 'Confirmed Order #' . $info['order']['id'];
-                    $message = 'Your order with ' . $info['order']['vendor']['user_name'] . ' has been confirmed.\n' . (($info['order_type'] == 'escrow') ? 'Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You do not need to sign before you receive the goods. You can raise a dispute if you have any issues.' : 'You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.');
+                    $message = 'Your order with ' . $info['order']['vendor']['user_name'] . ' has been confirmed.\n' . (($info['order_type'] == 'escrow') ? 'Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You can raise a dispute if you have any issues.' : 'You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.');
                     $this->order_model->send_order_message($info['order']['id'], $info['order']['buyer']['user_name'], $subject, $message);
+
+                    $subject = 'New Order #'.$info['order']['id'];
+                    $message = 'A new order from ' . $info['order']['buyer']['user_name'] . ' has been confirmed.\n' . (($info['order_type'] == 'escrow') ? 'Escrow was chosen for this order. Once paid, you will be asked to sign the transaction to indicate the goods have been dispatched.' : 'Up-front payment was chosen for this order based on your settings for one of the items. The buyer will be asked to sign the transaction paying you immediately after payment, which you can sign and broadcast to mark the order as dispatched.');
+                    $this->order_model->send_order_message($info['order']['id'], $info['order']['vendor']['user_name'], $subject, $message);
 
                     $msg = ($info['initiating_user'] == 'buyer')
                         ? 'This order has been automatically accepted, visit the orders page to see the payment address!'
@@ -399,7 +405,7 @@ class Order_model extends CI_Model
         $upfront = FALSE;
 
         foreach ($order_arr['items'] as $item) {
-            $upfront = $upfront || $item['prefer_upfront'] == '1';
+            $upfront = $upfront || (bool)$item['prefer_upfront'];
         }
         return ($upfront == TRUE) ? 'upfront' : 'escrow';
     }

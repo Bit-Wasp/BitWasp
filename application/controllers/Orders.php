@@ -164,7 +164,7 @@ class Orders extends CI_Controller
         $this->load->model('review_model');
 
         if ($this->review_model->decide_trusted_user($data['order'], 'vendor') == FALSE
-            || $data['order']['vendor_selected_upfront'] == '1'
+            OR $data['order']['vendor_selected_upfront'] == '1'
         ) {
             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to finalize this order early!')));
             redirect('orders/details/' . $data['order']['id']);
@@ -322,7 +322,8 @@ class Orders extends CI_Controller
                 'items' => $item_info['hash'] . "-1",
                 'price' => $item_info['price_b'],
                 'currency' => '0');
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => (($this->order_model->add($new_order) == TRUE) ? 'Your order has been created!' : 'Unable to add your order at this time, please try again later.'))));
+            $this->session->set_flashdata('returnMessage',
+                json_encode(array('message' => (($this->order_model->add($new_order) == TRUE) ? 'Your order has been created!' : 'Unable to add your order at this time, please try again later.'))));
         } else {
             // Already have order, update it
             if ($order['progress'] == '0') {
@@ -351,7 +352,6 @@ class Orders extends CI_Controller
         $this->load->model('fees_model');
         $this->load->model('shipping_costs_model');
         $this->load->model('review_model');
-
 
         $data['order'] = $this->order_model->load_order($id, array('0'));
         if ($data['order'] == FALSE)
@@ -431,6 +431,7 @@ class Orders extends CI_Controller
                         $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
 
                         $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
+
                         redirect('purchases');
                     }
                 }
@@ -466,7 +467,7 @@ class Orders extends CI_Controller
             $id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount);
             $id = $id[0];
             if (!(is_numeric($id) && $id >= 0))
-                redirect('purchases');
+                 redirect('purchases');
 
             // If the order cannot be loaded (progress == 0), redirect to Purchases page.
             $current_order = $this->order_model->load_order($id, array('0'));
@@ -485,8 +486,12 @@ class Orders extends CI_Controller
                     $this->order_model->update_items($current_order['id'], $update, 'force');
                 }
             }
+
             // If the order is being placed, redirect to there.
-            $url = (is_array($place_order)) ? 'purchases/confirm/' . $current_order['id'] : 'purchases';
+            $url = (is_array($place_order))
+                ? 'purchases/confirm/' . $current_order['id']
+                : 'purchases';
+
             redirect($url);
         }
 

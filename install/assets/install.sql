@@ -652,6 +652,8 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
   `content` blob NOT NULL,
   `encrypted` enum('0','1') NOT NULL,
   `rsa_encrypted` enum('0','1') DEFAULT '0',
+  `aes_iv` mediumblob(32),
+  `aes_key` mediumblob(256),
   `hash` varchar(16) NOT NULL,
   `remove_on_read` enum('0','1') NOT NULL,
   `time` int(20) NOT NULL,
@@ -841,7 +843,7 @@ CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
   `item_id` int(9) NOT NULL,
   `destination_id` varchar(10) NOT NULL,
   `cost` decimal(20,8) NOT NULL,
-  `enabled` enum('0','1') DEFAULT NULL,
+  `enabled` enum('0','1') DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `destination_id` (`destination_id`,`item_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -913,13 +915,13 @@ CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
 
 CREATE TABLE IF NOT EXISTS `bw_users` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `banned` enum('0','1') NOT NULL DEFAULT '0',
+  `banned` enum('0','1') DEFAULT '0',
   `block_non_pgp` enum('0','1') DEFAULT '0',
   `entry_paid` enum('0','1') DEFAULT '0',
-  `force_pgp_messages` enum('0','1') NOT NULL,
+  `force_pgp_messages` enum('0','1') DEFAULT '0',
   `location` int(3) NOT NULL,
   `login_time` int(20) NOT NULL,
-  `display_login_time` enum('0','1') NOT NULL,
+  `display_login_time` enum('0','1') DEFAULT '0',
   `password` varchar(128) NOT NULL,
   `public_key` blob NOT NULL,
   `private_key` blob NOT NULL,
@@ -929,7 +931,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `user_name` varchar(40) NOT NULL,
   `user_role` enum('Buyer','Vendor','Admin') NOT NULL,
   `local_currency` int(11) NOT NULL,
-  `completed_order_count` int(9) NOT NULL DEFAULT '0',
+  `completed_order_count` int(9)  DEFAULT '0',
   `totp_secret` varchar(25),
   `totp_two_factor` enum('0','1') DEFAULT '0',
   `pgp_two_factor` enum('0','1') DEFAULT '0',

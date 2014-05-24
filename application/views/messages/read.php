@@ -31,8 +31,8 @@
               <div class="span9"><br />
 <?php 
 if($message['encrypted']) { echo '<pre>'; $message['message'] = str_replace('<br />','',$message['message']); }
-echo $message['message'];
-if($message['encrypted']) echo '</pre>'; 
+echo str_replace('\n','<br>',$message['message']);
+if($message['encrypted']) echo '</pre>';
 ?>
               </div>
             </div>
