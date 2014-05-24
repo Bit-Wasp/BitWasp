@@ -113,7 +113,7 @@ class Listings_model extends CI_Model
             $row['description_f'] = nl2br($row['description']);
             $row['vendor'] = $this->accounts_model->get(array('user_hash' => $row['vendor_hash']));
             $row['currency'] = $this->bw_config->currencies[$row['currency']];
-            $row['currency'] = $this->bw_config->exchange_rates[strtolower($row['currency']['code'])];
+            $row['currency']['rate'] = $this->bw_config->exchange_rates[strtolower($row['currency']['code'])];
             $row['price_b'] = $row['price'] / $row['currency']['rate'];
 
             $local_currency = $this->bw_config->currencies[$this->current_user->currency['id']];
@@ -123,6 +123,7 @@ class Listings_model extends CI_Model
 
             $row['main_image_f'] = $this->images_model->get($row['main_image']);
             $row['images'] = $this->images_model->by_item($hash);
+
             return $row;
         }
 

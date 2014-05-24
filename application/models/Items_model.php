@@ -162,6 +162,7 @@ class Items_model extends CI_Model
 
         // Get the list of items.
         $query = $this->db->get('items');
+
         $results = array();
 
         if ($query->num_rows() > 0) {
@@ -257,7 +258,8 @@ class Items_model extends CI_Model
                 : number_format((float)($row['price_b'] * $this->current_user->currency['rate']), 8);
             $row['price_f'] = $this->current_user->currency['symbol'] . ' ' . $row['price_l'];
 
-            $row['images'] = $this->images_model->by_item($row['id']);
+            $row['images'] = $this->images_model->by_item($row['hash']);
+
             $row['add_time_f'] = $this->general->format_time($row['add_time']);
             $row['ship_from_f'] = $this->bw_config->locations[$row['ship_from']]['location'];
             $row['update_time_f'] = $this->general->format_time($row['update_time']);

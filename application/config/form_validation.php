@@ -197,7 +197,7 @@ $config = array('register_form'=>array(
 										),
 										array('field' => 'category',
 											  'label' => 'Category',
-											  'rules' => 'required|check_valid_category|check_not_parent_category',
+											  'rules' => 'required|check_valid_category',
 										),
 										array('field' => 'price',
 											  'label' => 'item price',
