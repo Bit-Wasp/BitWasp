@@ -248,28 +248,37 @@ class Listings extends CI_Controller
                     $upload_data = $this->upload->data();
                     $upload_data['upload_path'] = $config['upload_path'];
 
-                    $this->image->import($upload_data); // Should be error checking here
+                    $return_config = function ($h, $w) use ($upload_data) {
+                        return array('image_library' => 'gd2',
+                        'source_image' => $upload_data['full_path'],
+                        //'create_thumb' => TRUE,
+                        //'maintain_ratio' => TRUE,
+                        'return_base64' => TRUE,
+                        'width'         => $w,
+                        'height'       => $h);
+                    };
+                    $hash = $this->general->unique_hash('images', 'hash');
 
-                    // Prepare the normal image's encoded string
-                    $normal_encoded_string = $this->image->encode($upload_data['file_name']);
-                    // Resize the image to smaller sizes. Image is base64 encoded in output array.
-                    $small = $this->image->resize('200', '150', $upload_data['raw_name'] . "_s");
-                    //$thumb = $this->image->resize('100','75', $upload_data['raw_name']."_thumb");
+                    // Resize to thumb and max size.
+                    $this->load->library('image_lib', $return_config(90,120));
+                    $small = ($this->image_lib->resize()) ? $this->image_lib->base64_image : FALSE;
+
+                    $this->image_lib->clear();
+                    $this->image_lib->initialize($return_config(900,1200));
+                    $large = ($this->image_lib->resize()) ? $this->image_lib->base64_image : FALSE;
 
                     $main_image = FALSE;
-                    if ($data['item']['main_image'] == 'default'
-                        || $this->input->post('main_image') == 'true'
-                    )
+                    if ($data['item']['main_image'] == 'default' OR $this->input->post('main_image') == 'true')
                         $main_image = TRUE;
-
-                    $hash = $this->general->unique_hash('images', 'hash');
 
                     // If resizing fails, use the normal image.
                     ($small !== FALSE)
-                        ? $this->images_model->add_to_item($hash, $small['encoded_string'], $item_hash, $main_image)
-                        : $this->images_model->add_to_item($hash, $normal_encoded_string, $item_hash, $main_image);
-                    $this->images_model->add($hash . "_l", $normal_encoded_string);
-                    //$add_thumb = $this->images_model->add_to_item($thumb['file_name'], $item_hash);
+                        ? $this->images_model->add_to_item($hash, $small, $item_hash, $main_image)
+                        : $this->images_model->add_to_item($hash, $this->image_lib->b64encode_any_image($upload_data['full_path']),$item_hash, $main_image);
+                    #($large !== FALSE)
+                    #    ? $this->images_model->add_to_item($hash . "_l", $large, $item_hash, $main_image)
+                    #    : $this->images_model->add_to_item($hash . "_l", $this->image_lib->b64encode_any_image($upload_data['full_path']),$item_hash, $main_image);
+                    $this->images_model->add($hash . "_l", $large);
 
                     // Remove the uploaded file.
                     unlink($upload_data['full_path']);
