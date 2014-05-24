@@ -255,8 +255,6 @@ rpcconnect=127.0.0.1</pre><br />
 			}
 		}
 
-
-
 		 if(isset($message)) {echo '<p class="error">' . $message . '</p>';} 
 		?>
 
