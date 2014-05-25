@@ -48,6 +48,7 @@ class Template {
         $data['site_description']	= $CI->bw_config->site_description;
         $footer['price_index']		= $CI->bw_config->price_index;
         $footer['exchange_rates']	= $CI->bw_config->exchange_rates;
+        $footer['currencies']	    = $CI->bw_config->currencies;
 
         // Load cryptocurrency
         $data['coin'] = $CI->bw_config->currencies[0];
