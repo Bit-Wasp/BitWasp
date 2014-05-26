@@ -118,6 +118,15 @@
 								<textarea class='span12'><?php echo ($order['partially_signed_transaction'] !== '') ? $order['partially_signed_transaction'] : $order['unsigned_transaction'].$order['json_inputs']; ?></textarea>
 							</div>
 						</div>
+
+                        <?php if($strange_address == TRUE) { ?>
+                            <div class="row-fluid">
+                                <div class="span8 offset3">
+                                    Warning! This transaction has been tampered with, do not sign.
+                                </div>
+                            </div>
+                        <?php } ?>
+
 						<?php if($order['partially_signed_transaction'] !== '') { ?>
 						<div class='row-fluid'>
 							<div class='span8 offset3'>
@@ -125,6 +134,7 @@
 							</div>
 						</div>
 						<?php } ?>
+
 						<div class='row-fluid'>
 							<div class='span3'>Paying:</div>
 							<div class='span8'>
