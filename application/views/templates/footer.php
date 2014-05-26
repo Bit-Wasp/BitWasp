@@ -4,7 +4,6 @@
         <p class="pull-right"><i>
 <?php 
 if($price_index !== 'Disabled' && isset($exchange_rates) ) {
-		//echo '1 BTC ';
 		foreach($exchange_rates as $code => $rate) {
             if(! in_array($code, array('time','time_f')))
                 echo ' '.$rate.strtoupper($code)." / ";
