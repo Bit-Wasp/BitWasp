@@ -30,6 +30,7 @@ class Config_model extends CI_Model
      */
     public function __construct()
     {
+        parent::__construct();
         $query = $this->db->get('config');
         if ($query->num_rows() > 0) {
             $this->config = $query->result_array();
