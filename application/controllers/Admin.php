@@ -490,6 +490,9 @@ class Admin extends CI_Controller
         $data['item_count'] = $this->general_model->count_entries('items');
         $data['config'] = $this->bw_config->load_admin('items');
         $data['categories'] = $this->categories_model->list_all();
+        $data['trusted_user'] = array('order_count' => $this->bw_config->trusted_user_order_count,
+            'rating' => $this->bw_config->trusted_user_rating,
+            'review_count' => $this->bw_config->trusted_user_review_count);
         $data['page'] = 'admin/items';
         $data['title'] = $this->nav['items']['heading'];
         $this->load->library('Layout', $data);

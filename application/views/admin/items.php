@@ -15,5 +15,10 @@
 			  <span class="span3">Fees Configuration</span>
 			  <span class="span7"><?php echo anchor('admin/items/fees','Manage'); ?></span>
 			</div>
+
+            <div class="row-fluid">
+                <span class="span3">Trusted vendor settings</span>
+                <span class="span7"><?php echo anchor('admin/trusted_user','Configure'); ?></span>
+            </div>
 		  </div>
 		</div>
