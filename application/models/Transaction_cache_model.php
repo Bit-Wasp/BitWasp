@@ -453,7 +453,7 @@ class Transaction_cache_model extends CI_Model
     {
         return $this->db->where('hash', $block_hash)
             ->from('blocks')
-            ->count_all_results() == 0;
+            ->count_all_results() > 0;
     }
 
     /**

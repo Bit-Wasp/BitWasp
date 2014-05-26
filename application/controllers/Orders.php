@@ -697,6 +697,12 @@ class Orders extends CI_Controller
         // - The order is progress 3, and the user is the buyer
         // - The order is progress 4, escrow, and the role is the vendor.
         // - The order has been disputed, and anyone may sign.
+        $data['display_form'] = (($data['order']['partially_signed_transaction'] == '' AND $data['order']['unsigned_transaction'] != '')
+        AND ($data['order']['progress'] == '3' AND $this->current_user->user_role == 'Buyer'
+            OR $data['order']['progress'] == '4' AND $data['order']['vendor_selected_escrow'] == '1' AND $this->current_user->user_role == 'Vendor'
+            OR $data['order']['progress'] == '6'
+            OR $data['order']['progress'] == '8'));
+
         if ($data['order']['partially_signed_transaction'] == '' && $data['order']['unsigned_transaction'] !== '')
             if ($data['order']['progress'] == '3' && $this->current_user->user_role == 'Buyer'
                 || $data['order']['progress'] == '4' && $data['order']['vendor_selected_escrow'] == '1' && $this->current_user->user_role == 'Vendor'
@@ -719,7 +725,6 @@ class Orders extends CI_Controller
                     // $check will contain the order address if the vouts
                     // lead to the same unique hash we store when generating the transaction.
                     if ($check == $data['order']['address']) {
-                        $complete = FALSE;
                         if ($data['order']['progress'] == '3') {
                             // Buyer must sign early before vendor dispatches.
                             $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
@@ -767,9 +772,9 @@ class Orders extends CI_Controller
             AND $data['order']['vendor_selected_upfront'] == '0'
         );
 
-        $data['addrs'] = array(BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']) => 'buyer',
-            BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->coin['crypto_magic_byte']) => 'vendor',
-            BitcoinLib::public_key_to_address($data['order']['admin_public_key'], $this->coin['crypto_magic_byte']) => 'admin');
+        $data['addrs'] = array(BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']) => 'buyer',
+            BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']) => 'vendor',
+            BitcoinLib::public_key_to_address($data['order']['admin_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']) => 'admin');
 
         if (strlen($data['order']['partially_signed_transaction']) > 0) {
             $data['raw_tx'] = RawTransaction::decode($data['order']['partially_signed_transaction']);
@@ -777,6 +782,16 @@ class Orders extends CI_Controller
         } else if (strlen($data['order']['unsigned_transaction']) > 0) {
             $data['raw_tx'] = RawTransaction::decode($data['order']['unsigned_transaction']);
         }
+
+        $checkStrangeAddress = function () use ($data) {
+            $tx_addrs = array();
+            foreach($data['raw_tx']['vout'] as $vout){
+                $tx_addrs[] = $vout['scriptPubKey']['addresses'][0];
+            }
+            return count($tx_addrs)!=count(array_intersect($tx_addrs, array_keys($data['addrs'])));
+        };
+
+        $data['strange_address'] = (isset($data['raw_tx'])) ? $checkStrangeAddress() : FALSE;
 
         $data['fees']['shipping_cost'] = $data['order']['shipping_costs'];
         $data['fees']['fee'] = $data['order']['fees'];

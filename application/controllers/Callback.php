@@ -55,7 +55,6 @@ class Callback extends CI_Controller
             return FALSE;
 
         $block = $this->bw_bitcoin->getblock($block_hash);
-
         if (!is_array($block) || !isset($block['tx']))
             return FALSE;
 
@@ -118,12 +117,12 @@ class Callback extends CI_Controller
         // Try to scrape payments to and from our multisig addresses.
         $order_finalized = array();
         $received_payments = array();
-        $fee_payments = array();
 
         foreach ($list as $cached_tx) {
             // Raw_transaction library is way faster than asking bitcoind.
             $tx = RawTransaction::decode($cached_tx['tx_raw']);
 
+            // Check inputs of these transactions against our list of payments.
             if (count($tx['vin']) > 0 AND $payments_list !== FALSE) {
                 $spending_transactions = $this->transaction_cache_model->check_inputs_against_payments($tx['vin'], $payments_list);
                 if (count($spending_transactions) > 0) {
@@ -137,6 +136,7 @@ class Callback extends CI_Controller
                 }
             }
 
+            // Check outputs against our list of addresses.
             if (count($tx['vout']) > 0) {
                 $output_list = $this->transaction_cache_model->parse_outputs_into_array($cached_tx['tx_id'], $cached_tx['block_height'], $tx['vout']);
 
@@ -166,8 +166,10 @@ class Callback extends CI_Controller
         }
 
         // Delete payments from the block cache.
-        if (count($delete_cache) > 0)
+        if (count($delete_cache) > 0){
+            echo "Clearing cache (" . count($delete_cache) . ")\n";
             $this->transaction_cache_model->delete_cache_list($delete_cache);
+        }
 
         // This could be made into an autorun job:
         $this->order_model->order_paid_callback();
