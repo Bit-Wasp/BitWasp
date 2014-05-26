@@ -1,5 +1,5 @@
 		  <div class="span9 mainContent" id="admin-trusted-user">
-			<h2><?php echo anchor('admin', 'Back', 'class="btn"'); ?> Trusted User Settings</h2>
+			<h2><?php echo anchor('admin/items', 'Back', 'class="btn"'); ?> Trusted User Settings</h2>
 
 			<?php if(isset($returnMessage)) echo '<div class="alert">' . $returnMessage . '</div>'; ?>
 
