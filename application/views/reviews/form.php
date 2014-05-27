@@ -199,7 +199,7 @@
 					</div>
 				</form>
 
-				<?php } else if($review_state['review_type'] == 'vendor') { ?>
+			<?php } else if($review_state['review_type'] == 'vendor') { ?>
 				<br />
 				
 				<div class='row-fluid'>

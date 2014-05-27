@@ -517,17 +517,18 @@ $config = array('register_form'=>array(
 										)
 							),
 				'vendor_submit_review' => array(
+
 										array('field' => 'buyer_communication',
 											  'label' => "buyer's communication",
-											  'rules' => 'callback_check_numeric_rating'
+											  'rules' => 'required|check_valid_rating_choice'
 										),
 										array('field' => 'buyer_cooperation',
 											  'label' => "buyer's cooperation",
-											  'rules' => 'callback_check_numeric_rating'
+											  'rules' => 'required|check_valid_rating_choice'
 										),
 										array('field' => 'buyer_comments_source',
-											  'label' => "buyer comments source",
-											  'rules' => 'callback_check_comments_source'
+											  'label' => "comments source",
+											  'rules' => 'required|check_review_comments_source'
 										)
 							),
 				'input_transaction' => array(
