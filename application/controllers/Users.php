@@ -227,7 +227,9 @@ class Users extends CI_Controller
                 'private_key' => $message_keys['private_key'],
                 'local_currency' => $this->input->post('local_currency'));
 
-            $add_user = $this->users_model->add($register_info, $data['token_info']);
+                    var_dump($this->input->post('local_currency'), $register_info);
+
+             $add_user = $this->users_model->add($register_info, $data['token_info']);
 
             // Check the submission
             if ($add_user) {
@@ -269,10 +271,12 @@ class Users extends CI_Controller
                     $data['returnMessage'] = 'Your account has been created, please login below.';
                     redirect('login');
                 }
+
             } else {
                 // Unsuccessful submission, show form again.
                 $data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
             }
+
         }
 
         $data['title'] = 'Register';
