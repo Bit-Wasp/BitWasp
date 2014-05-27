@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * CodeIgniter
  *
@@ -501,7 +500,7 @@ class MY_Form_validation extends CI_Form_validation {
 	}
 
 	/**
-	 * Check Comments Source
+	 * Check Review Comments Source
 	 * 
 	 * Check the submitted source for comments for this subject -
 	 * It can either be 'input' or 'prepared'.
@@ -513,7 +512,7 @@ class MY_Form_validation extends CI_Form_validation {
 	{
 		return in_array($str, array('input', 'prepared'));
 	}
-	
+
 	/**
 	 * Check Review Length
 	 * 
@@ -703,15 +702,15 @@ class MY_Form_validation extends CI_Form_validation {
 	 */
 	public function check_valid_location_list_source($str)
 	{
-		return $str == 'Custom' || $str == 'Default';
+		return $str == 'Custom' OR $str == 'Default';
 	}
-	
+
 	/**
 	 * Check Valid Location Ship-to
-	 * 
-	 * Checks that the selected destination location is acceptable 
+	 *
+	 * Checks that the selected destination location is acceptable
 	 *  - ie, is either 'worldwide', or an ID of a valid location.
-	 * 
+	 *
 	 * @param		string	$str
 	 * @return		boolean
 	 */
@@ -745,7 +744,7 @@ class MY_Form_validation extends CI_Form_validation {
 	 */
 	public function check_valid_rating_choice($str) 
 	{
-		return in_array($str, array('1','2','3','4','5'));
+		return in_array((string)$str, array('1','2','3','4','5'));
 	}
 	
 	/**

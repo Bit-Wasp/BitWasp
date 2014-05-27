@@ -26,6 +26,7 @@ class Reviews extends CI_Controller
         parent::__construct();
         $this->load->model('review_auth_model');
         $this->load->model('review_model');
+        $this->load->library('form_validation');
     }
 
     /**
@@ -112,22 +113,25 @@ class Reviews extends CI_Controller
             if ($data['review_state']['review_type'] == 'buyer') {
                 if ($this->input->post('buyer_submit_review') == 'Submit Review') {
                     // Always need to validate the review_length and vendor data.
-                    $this->form_validation->set_rules('review_length', 'Review Length', 'check_review_length');
-                    $this->form_validation->set_rules('vendor_communication', $data['review_info']['vendor']['user_name'] . "'s communication", 'check_valid_rating_choice');
-                    $this->form_validation->set_rules('vendor_shipping', 'the orders shipping', 'check_valid_rating_choice');
-                    $this->form_validation->set_rules('vendor_comments_source', 'Comments Source', 'check_review_comments_source');
+                    $this->form_validation->set_rules('review_length', 'Review Length', 'reuired|check_review_length');
+                    $this->form_validation->set_rules('vendor_communication', $data['review_info']['vendor']['user_name'] . "'s communication", 'required|check_valid_rating_choice');
+                    $this->form_validation->set_rules('vendor_shipping', 'the orders shipping', 'required|check_valid_rating_choice');
+                    $this->form_validation->set_rules('vendor_comments_source', 'Comments Source', 'required|check_review_comments_source');
 
                     // Determine what rule to apply depending on the comments source, knowing it too will be validated.
                     if ($this->input->post('vendor_comments_source') == 'prepared')
-                        $this->form_validation->set_rules('vendor_prepared_comments', 'Vendor Comments', 'check_prepared_comments_vendor');
+                        $this->form_validation->set_rules('vendor_prepared_comments', 'Vendor Comments', 'required|check_prepared_comments_vendor');
                     // If user wishes to type in their own data?
                     if ($this->input->post('vendor_comments_source') == 'input')
-                        $this->form_validation->set_rules('vendor_free_comments', 'Vendor Comments', 'max_length[150]|htmlspecialchars');
+                        $this->form_validation->set_rules('vendor_free_comments', 'Vendor Comments', 'required|max_length[150]|htmlspecialchars');
 
 
                     if ($this->form_validation->run() == TRUE) {
                         // Prepare vendor review.
-                        $vendor_comments = ($this->input->post('vendor_comments_source') == 'prepared') ? $this->input->post('vendor_prepared_comments') : $this->input->post('vendor_free_comments');
+                        $vendor_comments = ($this->input->post('vendor_comments_source') == 'prepared')
+                            ? $this->input->post('vendor_prepared_comments')
+                            : $this->input->post('vendor_free_comments');
+
                         $rating_array = array('communication' => $this->input->post('vendor_communication'),
                             'shipping' => $this->input->post('vendor_shipping'));
 
@@ -138,9 +142,9 @@ class Reviews extends CI_Controller
                         // Short review. Apply same item feedback to each item.
                         if ($this->input->post('review_length') == 'short') {
                             // Set up some rules
-                            $this->form_validation->set_rules('short_item_quality', 'Item Quality', 'check_valid_rating_choice');
-                            $this->form_validation->set_rules('short_item_matches_desc', 'Item Matches Description', 'check_valid_rating_choice');
-                            $this->form_validation->set_rules('short_item_comments_source', 'Item Comments Source', 'check_review_comments_source');
+                            $this->form_validation->set_rules('short_item_quality', 'Item Quality', 'required|check_valid_rating_choice');
+                            $this->form_validation->set_rules('short_item_matches_desc', 'Item Matches Description', 'required|check_valid_rating_choice');
+                            $this->form_validation->set_rules('short_item_comments_source', 'Item Comments Source', 'required|check_review_comments_source');
 
                             // Check comments source, again this will also be validated.
                             // Is the comment prepared:
@@ -169,9 +173,9 @@ class Reviews extends CI_Controller
                             $c = 0;
                             // Loop through each item, and set up form validation rules.
                             foreach ($data['review_info']['items'] as $item) {
-                                $this->form_validation->set_rules("item[{$c}][quality]", "item " . ($c + 1) . "'s quality", 'check_valid_rating_choice');
-                                $this->form_validation->set_rules("item[{$c}][matches_desc]", "item " . ($c + 1) . "'s matches description", 'check_valid_rating_choice');
-                                $this->form_validation->set_rules("item[{$c}][comments_source]", "item " . ($c + 1) . "'s comments source", "check_review_comments_source");
+                                $this->form_validation->set_rules("item[{$c}][quality]", "item " . ($c + 1) . "'s quality", 'required|check_valid_rating_choice');
+                                $this->form_validation->set_rules("item[{$c}][matches_desc]", "item " . ($c + 1) . "'s matches description", 'required|check_valid_rating_choice');
+                                $this->form_validation->set_rules("item[{$c}][comments_source]", "item " . ($c + 1) . "'s comments source", "required|check_review_comments_source");
 
                                 $item_post = $full_item_post[$c];
                                 // Comments source will determine what rule to apply
@@ -211,11 +215,18 @@ class Reviews extends CI_Controller
 
                 if ($this->input->post('vendor_submit_review') == 'Submit Review') {
                     // Do form validation on static buyer review form
-                    if ($this->form_validation->run('vendor_submit_review') == TRUE) {
-                        ($this->input->post('buyer_comments_source') == 'prepared') ? $this->form_validation->set_rules('buyer_prepared_comments', 'Buyer Comments', 'check_prepared_comments_buyer') : $this->form_validation->set_rules('buyer_free_comments', 'Buyer Comments', 'max_length[150]|htmlspecialchars');
+                    if ($this->form_validation->run('vendor_submit_review') === TRUE) {
 
-                        if ($this->form_validation->run() == TRUE) {
-                            $comments = ($this->input->post('buyer_comments_source') == 'prepared') ? $this->input->post('buyer_prepared_comments') : $this->input->post('buyer_free_comments');
+                        //$this->load->library('form_validation', array(), 'comments_validation');
+                        ($this->input->post('buyer_comments_source') == 'prepared')
+                            ? $this->form_validation->set_rules('buyer_prepared_comments', 'Buyer Comments', 'required|check_prepared_comments_buyer')
+                            : $this->form_validation->set_rules('buyer_free_comments', 'Buyer Comments', 'required|htmlspecialchars|max_length[150]');
+
+                        if ($this->form_validation->run() === TRUE) {
+                            $comments = ($this->input->post('buyer_comments_source') == 'prepared')
+                                ? $this->input->post('buyer_prepared_comments')
+                                : $this->input->post('buyer_free_comments');
+
                             $rating_array = array('communication' => $this->input->post('buyer_communication'),
                                 'cooperation' => $this->input->post('buyer_cooperation'));
                             $all_reviews[] = $this->review_model->prepare_review_array('user', $data['review_info']['buyer']['user_hash'], $data['review_info']['disputed'], $rating_array, $comments);
