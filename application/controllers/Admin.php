@@ -583,9 +583,9 @@ class Admin extends CI_Controller
         if ($this->input->post('trusted_user_update') == 'Update') {
             if ($this->form_validation->run('admin_trusted_user_update') == TRUE) {
                 $changes = array();
-                $changes['trusted_user_rating'] = ($data['config']['trusted_user_rating'] != $this->input->post('trusted_user_rating')) ? : NULL;
-                $changes['trusted_user_review_count'] = ($data['config']['trusted_user_review_count'] != $this->input->post('trusted_user_review_count')) ? : NULL;
-                $changes['trusted_user_order_count'] = ($data['config']['trusted_user_order_count'] != $this->input->post('trusted_user_order_count')) ? : NULL;
+                $changes['trusted_user_rating'] = ($data['config']['trusted_user_rating'] != $this->input->post('trusted_user_rating')) ? $this->input->post('trusted_user_rating'): NULL;
+                $changes['trusted_user_review_count'] = ($data['config']['trusted_user_review_count'] != $this->input->post('trusted_user_review_count')) ? $this->input->post('trusted_user_review_count') : NULL;
+                $changes['trusted_user_order_count'] = ($data['config']['trusted_user_order_count'] != $this->input->post('trusted_user_order_count')) ? $this->input->post('trusted_user_order_count') : NULL;
                 $changes = array_filter($changes, 'strlen');
 
                 // Making use of lazy evaluation here :)
