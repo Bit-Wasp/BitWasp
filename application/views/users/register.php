@@ -95,7 +95,7 @@ if($force_vendor_pgp == 'Enabled')
 				  <div class="controls">
 				    <select name='local_currency'>
 <?php foreach($currencies as $currency) : ?>
-					  <option value='<?php echo $currency['id']; ?>'<?php echo ($currency['id'] == '0') ? ' selected="selected"' : NULL; ?>><?php echo $currency['name']; ?></option>
+					  <option value='<?php echo $currency['id']; ?>'><?php echo $currency['name']; ?></option>
 <?php endforeach; ?>
 					</select>
                     <span class="help-inline"><?php echo form_error('local_currency'); ?></span>
