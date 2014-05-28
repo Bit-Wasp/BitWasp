@@ -234,41 +234,25 @@ class Users extends CI_Controller
                 $this->load->model('bitcoin_model');
                 $entry_fee = 'entry_payment_' . strtolower($data['role']);
 
-                if (isset($data['token_info']) AND $data['token_info'] !== FALSE) {
-                    // Accounts created from tokens are treated specially
-                    if ($data['token_info']['entry_payment'] > 0) {
-                        // Payment > 0, then inform the user about the required amount.
-                        $address = $this->bitcoin_model->get_fees_address($user_hash, $this->coin['crypto_magic_byte']);
-                        $entry_fee = $data['token_info']['entry_payment'];
-                        $info = array('user_hash' => $user_hash,
-                            'amount' => $data['token_info']['entry_payment'],
-                            'bitcoin_address' => $address);
-                        $this->users_model->set_entry_payment($info);
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee} to {$address}. You can log in to view these details again.")));
-                        redirect('login');
-                    } else {
-                        // Account accessible immediately.
-                        $this->users_model->set_entry_paid($user_hash);
-                        $data['returnMessage'] = 'Your account has been created, please login below.';
-                        redirect('login');
-                    }
-                } else if (isset($this->bw_config->$entry_fee) AND $this->bw_config->$entry_fee > 0) {
-                    // If there's no token, and the required fee is non-zero:
-                    $address = $this->bitcoin_model->get_fees_address($user_hash, $this->coin['crypto_magic_byte']);
-                    $entry_fee = $this->bw_config->$entry_fee;
+                // User is registered. Work out if we charge a fee or let them login immediately.
+                if( (isset($data['token_info']) AND $data['token_info'] !== FALSE AND $data['token_info']['entry_payment'] > 0)
+                OR  (isset($this->bw_config->$entry_fee) AND $this->bw_config->$entry_fee > 0 )) {
+
+                    // Create a fees address, and record the entry payment
+                    $address = $this->bitcoin_model->get_fees_address($user_hash, $this->bw_config->currencies[0]['crypto_magic_byte']);
+                    $entry_fee = $data['token_info']['entry_payment'];
                     $info = array('user_hash' => $user_hash,
-                        'amount' => $entry_fee,
+                        'amount' => $data['token_info']['entry_payment'],
                         'bitcoin_address' => $address);
                     $this->users_model->set_entry_payment($info);
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee} to {$address}. You can log in to view these details again.")));
-                    redirect('login');
+                    $message = "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee} to {$address}. You can log in to view these details again.";
                 } else {
-                    // Othewise account accessible immediately
+                    // Allow the user immediate access.
                     $this->users_model->set_entry_paid($user_hash);
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your account has been created, please login below.")));
-                    $data['returnMessage'] = 'Your account has been created, please login below.';
-                    redirect('login');
+                    $message = "Your account has been created, please login below: ";
                 }
+                $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+                redirect('login');
             } else {
                 // Unsuccessful submission, show form again.
                 $data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
