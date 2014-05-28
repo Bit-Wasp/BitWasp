@@ -113,10 +113,10 @@ class Reviews extends CI_Controller
             if ($data['review_state']['review_type'] == 'buyer') {
                 if ($this->input->post('buyer_submit_review') == 'Submit Review') {
                     // Always need to validate the review_length and vendor data.
-                    $this->form_validation->set_rules('review_length', 'Review Length', 'reuired|check_review_length');
+                    $this->form_validation->set_rules('review_length', 'Review Length', 'required|check_review_length');
                     $this->form_validation->set_rules('vendor_communication', $data['review_info']['vendor']['user_name'] . "'s communication", 'required|check_valid_rating_choice');
-                    $this->form_validation->set_rules('vendor_shipping', 'the orders shipping', 'required|check_valid_rating_choice');
-                    $this->form_validation->set_rules('vendor_comments_source', 'Comments Source', 'required|check_review_comments_source');
+                    $this->form_validation->set_rules('vendor_shipping', 'orders shipping', 'required|check_valid_rating_choice');
+                    $this->form_validation->set_rules('vendor_comments_source', 'comments source', 'required|check_review_comments_source');
 
                     // Determine what rule to apply depending on the comments source, knowing it too will be validated.
                     if ($this->input->post('vendor_comments_source') == 'prepared')

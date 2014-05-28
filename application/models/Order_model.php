@@ -233,11 +233,11 @@ class Order_model extends CI_Model
      */
     public function load($vendor_hash, $progress)
     {
-        $query = $this->db->where('vendor_hash', $vendor_hash)
+        $result = $this->build_array($this->db->where('vendor_hash', $vendor_hash)
             ->where('buyer_id', $this->current_user->user_id)
             ->where('progress', $progress)
-            ->get('orders');
-        $result = $this->build_array($query->result_array());
+            ->get('orders')
+            ->result_array());
         return $result[0];
     }
 
@@ -367,6 +367,65 @@ class Order_model extends CI_Model
             } else {
                 return 'Unable to create address.';
             }
+        }
+    }
+
+    /**
+     * Create Spend Transaction
+     *
+     * This function takes a $from_address, an order address, and a $tx_outs array,
+     * specifying who the transaction should pay.
+     *
+     * Returns TRUE if the transaction is successfully created, and previous details
+     * removed, or else a string containing an error if it fails.
+     *
+     * @param string $from_address
+     * @param array $tx_outs
+     * @param string $script
+     * @return bool|string
+     */
+    public function create_spend_transaction($from_address, array $tx_outs = array(), $script) {
+        if(count($tx_outs) < 1)
+            return 'No outputs specified in transaction.';
+
+        $this->load->model('transaction_cache_model');
+
+        // Add the inputs at the multisig address.
+        $payments = $this->transaction_cache_model->payments_to_address($from_address);
+        if(count($payments) == 0)
+            return 'No spendable outputs found for this address';
+
+        $order_id = $payments[0]['order_id'];
+
+        // Create the transaction inputs
+        $tx_ins = array();
+        $tx_pkScripts = array();
+        foreach ($payments as $pmt) {
+            $tx_ins[] = array('txid' => $pmt['tx_id'],
+                'vout' => $pmt['vout']);
+            $tx_pkScripts[] = array('txid' => $pmt['tx_id'], 'vout' => (int)$pmt['vout'], 'scriptPubKey' => $pmt['pkScript'], 'redeemScript' => $script);
+        }
+
+        $json = json_encode($tx_pkScripts);
+        $tx_outs = array_map('strval', $tx_outs);
+
+        $raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
+        if ($raw_transaction == FALSE) {
+            return 'An error occurred creating the transaction!';
+        } else {
+            $decoded_transaction = RawTransaction::decode($raw_transaction);
+
+            if($this->update_order($order_id, array('unsigned_transaction' => $raw_transaction . " ",
+                'json_inputs' => "'$json'",
+                'partially_signed_transaction' => '',
+                'partially_signed_time' => '',
+                'partially_signing_user_id' => ''))) {
+                $this->transaction_cache_model->clear_expected_for_address($from_address);
+                $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $from_address, $order_id);
+
+                return TRUE;
+            }
+            return 'An error occured updating the order!';
         }
     }
 
@@ -601,44 +660,20 @@ class Order_model extends CI_Model
         $this->load->model('accounts_model');
 
         foreach ($paid as $record) {
-
             $order = $this->get($record['order_id']);
             $vendor_address = BitcoinLib::public_key_to_address($order['vendor_public_key'], $coin['crypto_magic_byte']);
             $admin_address = BitcoinLib::public_key_to_address($order['admin_public_key'], $coin['crypto_magic_byte']);
 
-            // Load inputs
-            $payments = $this->transaction_cache_model->payments_to_address($order['address']);
-
-            // Create the transaction inputs
-            $tx_ins = array();
-            $tx_pkScripts = array();
-            $value = 0.00000000;
-            foreach ($payments as $pmt) {
-                $tx_ins[] = array('txid' => $pmt['tx_id'], 'vout' => $pmt['vout']);
-                $value += (float)$pmt['value'];
-                $tx_pkScripts[] = array('txid' => $pmt['tx_id'], 'vout' => (int)$pmt['vout'], 'scriptPubKey' => $pmt['pkScript'], 'redeemScript' => $order['redeemScript']);
-            }
-
-            $json = json_encode($tx_pkScripts);
-
             // Create the transaction outputs
             $tx_outs = array($admin_address => (string)number_format(($order['fees'] + $order['extra_fees'] - 0.0001), 8),
-                $vendor_address => (string)number_format(($order['price'] + $order['shipping_costs'] - $order['extra_fees']), 8)
-            );
+                $vendor_address => (string)number_format(($order['price'] + $order['shipping_costs'] - $order['extra_fees']), 8));
 
-            $raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
-
-            if ($raw_transaction == FALSE) {
-                echo 'error :(';
-            } else {
-                $decoded_transaction = RawTransaction::decode($raw_transaction);
-                $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $order['address'], $order['id']);
-                $update = array('unsigned_transaction' => $raw_transaction . " ",
-                    'json_inputs' => "'$json'",
-                    'paid_time' => time());
-
+            $create_spend_transaction = $this->create_spend_transaction($order['address'], $tx_outs, $order['redeemScript']);
+            if($create_spend_transaction == TRUE) {
                 $next_progress = ($order['vendor_selected_escrow'] == '1') ? '4' : '3';
-                $this->progress_order($order['id'], '2', $next_progress, $update);
+                $this->progress_order($order['id'], '2', $next_progress, array('paid_time'=>time()));
+            } else {
+                //$this->log_model->
             }
             $this->transaction_cache_model->delete_finalized_record($order['id']);
         }

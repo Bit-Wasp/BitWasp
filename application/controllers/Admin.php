@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-use BitWasp\BitcoinLib\RawTransaction;
+use BitWasp\BitcoinLib\BitcoinLib;
 
 /**
  * Administration Panel Controller
@@ -925,9 +925,7 @@ class Admin extends CI_Controller
                 }
             }
 
-
             // Resolution:
-
             $data['transaction_fee'] = 0.0001;
             $data['admin_fee'] = $data['current_order']['fees'] + $data['current_order']['extra_fees'] - $data['transaction_fee'];
             $data['user_funds'] = (float)($data['current_order']['order_price'] - $data['admin_fee'] - $data['transaction_fee']);
@@ -942,63 +940,31 @@ class Admin extends CI_Controller
                     $epsilon = 0.00000001;
 
                     if (abs($sum - $data['user_funds']) < $epsilon) {
-
-                        // Construct new raw transaction!
-                        $this->load->model('transaction_cache_model');
-                        $this->load->library('bw_bitcoin');
-
-                        // Add the inputs at the multisig address.
-                        $payments = $this->transaction_cache_model->payments_to_address($data['current_order']['address']);
-
-                        // Create the transaction inputs
-                        $tx_ins = array();
-                        $value = 0.00000000;
-                        foreach ($payments as $pmt) {
-                            $tx_ins[] = array('txid' => $pmt['tx_id'],
-                                'vout' => $pmt['vout']);
-                            $value += (float)$pmt['value'];
-                            $tx_pkScripts[] = array('txid' => $pmt['tx_id'], 'vout' => (int)$pmt['vout'], 'scriptPubKey' => $pmt['pkScript'], 'redeemScript' => $data['current_order']['redeemScript']);
-                        }
-
-                        $json = json_encode($tx_pkScripts);
-
                         $tx_outs = array();
+
                         // Add outputs for the sites fee, buyer, and vendor.
-                        $admin_address = BitcoinLib::public_key_to_address($data['current_order']['admin_public_key'], $this->coin['crypto_magic_byte']);
+                        $admin_address = BitcoinLib::public_key_to_address($data['current_order']['admin_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
                         $tx_outs[$admin_address] = (float)$data['admin_fee'];
                         if ($pay_buyer_amount > 0) {
-                            $buyer_address = BitcoinLib::public_key_to_address($data['current_order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
+                            $buyer_address = BitcoinLib::public_key_to_address($data['current_order']['buyer_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
                             $tx_outs[$buyer_address] = (float)$pay_buyer_amount;
                         }
                         if ($pay_vendor_amount > 0) {
-                            $vendor_address = BitcoinLib::public_key_to_address($data['current_order']['vendor_public_key'], $this->coin['crypto_magic_byte']);
+                            $vendor_address = BitcoinLib::public_key_to_address($data['current_order']['vendor_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
                             $tx_outs[$vendor_address] = (float)$pay_vendor_amount;
                         }
 
-                        $raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
-                        if ($raw_transaction == FALSE) {
-                            echo 'error :(';
-                        } else {
-                            $decoded_transaction = RawTransaction::decode($raw_transaction);
-                            $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['current_order']['address'], $data['current_order']['id']);
-
-                            $update = array('unsigned_transaction' => $raw_transaction . " ",
-                                'json_inputs' => "'$json'",
-                                'partially_signed_transaction' => '',
-                                'partially_signed_time' => '',
-                                'partially_signing_user_id' => '');
-
-                            $this->order_model->update_order($data['current_order']['id'], $update);
-                            $this->transaction_cache_model->clear_expected_for_address($data['current_order']['address']);
-                            $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['current_order']['address'], $data['current_order']['id']);
-
+                        // Create spend transaction and redirect, otherwise display an error
+                        $create_spend_transaction = $this->order_model->create_spend_transaction($data['current_order']['address'], $tx_outs, $data['current_order']['redeemScript']);
+                        if($create_spend_transaction == TRUE){
                             // Notify users by way of a dispute update
-                            $update = array('posting_user_id' => '',
+                            $this->disputes_model->post_dispute_update(array('posting_user_id' => '',
                                 'order_id' => $order_id,
                                 'dispute_id' => $data['dispute']['id'],
-                                'message' => 'New transaction on order page.');
-                            $this->disputes_model->post_dispute_update($update);
+                                'message' => 'New transaction on order page.'));
                             redirect('admin/dispute/' . $order_id);
+                        } else {
+                            $data['returnMessage'] = $create_spend_transaction;
                         }
                     } else {
                         $data['amount_error'] = 'The User Funds amount must be completely spread between both users.';
