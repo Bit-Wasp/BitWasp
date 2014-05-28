@@ -756,7 +756,7 @@ class Admin extends CI_Controller
                         'comment' => $this->input->post('token_comment'),
                         'entry_payment' => $entry_payment)) == TRUE) {
                     // If token is successfully added, display error message.
-                    $this->session->set_flashdata('returnMessage',array('success' => TRUE, 'message' => 'Your token has been created.'));
+                    $this->session->set_flashdata('returnMessage',json_encode(array('success' => TRUE, 'message' => 'Your token has been created.')));
                     redirect('admin/user_tokens');
                 }
             }

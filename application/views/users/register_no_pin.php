@@ -43,16 +43,13 @@ echo form_open($registerPage, array('class' => 'form-horizontal', 'name' => 'reg
                 </div>
 <?php
 if(isset($token_info) && $token_info !== FALSE){?>
-			    <div class="control-group">
-                  <label class="control-label" for="user_type">Role</label>
-	              <div class="controls"><?php echo $token_info['role']['str'];?>
-	              <span class="span6">
-<?php
-if($force_vendor_pgp == 'Enabled' && $token_info['role']['str'] == 'Vendor') echo "If you are registering as a vendor, it is required you upload a PGP public key. Please have one ready on your first login.";
-?>
-                   </span><br />
-	              </div>
-	            </div>
+    <div class="control-group">
+        <label class="control-label" for="user_type">Role</label>
+        <div class="controls">
+            <label class='control-label'><?php echo $token_info['user_type']['txt'];?></label>
+            <input type='hidden' name='user_type' value='<?php echo $token_info['user_type']['int']; ?>' />
+        </div>
+    </div>
 <?php } else { ?>
 				<div class="control-group">
 				  <label class="control-label" for="user_type">Role</label>
@@ -69,6 +66,11 @@ if($force_vendor_pgp == 'Enabled') echo "If you are registering as a vendor, it 
 				  </div>
 				</div>
 <?php } ?>
+
+              <span class="help-inline"><?php
+                  if($force_vendor_pgp == 'Enabled' && isset($token_info) && $token_info['user_type']['txt'] == 'Vendor'){
+                      echo "If you are registering as a vendor, it is required you upload a PGP public key. Please have one ready on your first login.";
+                  } ?></span><br />
 
                <div class="control-group">
                   <label class="control-label" for="location">Location</label>

@@ -59,6 +59,7 @@ if(isset($token_info) && $token_info !== FALSE){?>
 	              <div class="controls">
 					<label class='control-label'><?php echo $token_info['user_type']['txt'];?></label>
 					<input type='hidden' name='user_type' value='<?php echo $token_info['user_type']['int']; ?>' />
+
 	              </div>
 	            </div>
 <?php } else { ?>
