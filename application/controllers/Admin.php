@@ -593,7 +593,7 @@ class Admin extends CI_Controller
                     ? 'Your changes have been saved.'
                     : 'No changes were made to the settings.';
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
-                redirect('admin/users');
+                redirect('admin/items');
             }
         }
         $data['page'] = 'admin/trusted_user';
@@ -756,9 +756,8 @@ class Admin extends CI_Controller
                         'comment' => $this->input->post('token_comment'),
                         'entry_payment' => $entry_payment)) == TRUE) {
                     // If token is successfully added, display error message.
-                    $data['success'] = TRUE;
-                    $data['returnMessage'] = 'Your token has been created.';
-                    $this->session->set_flashdata('returnMessage',json_encode($data));
+                    $this->session->set_flashdata('returnMessage',array('success' => TRUE, 'message' => 'Your token has been created.'));
+                    redirect('admin/user_tokens');
                 }
             }
         }
@@ -791,9 +790,7 @@ class Admin extends CI_Controller
         $data['returnMessage'] = 'Unable to delete the specified token, please try again later.';
         if ($this->users_model->delete_registration_token($token['id']) == TRUE) {
             // Display a message if the token is successfully deleted.
-            $data['success'] = TRUE;
-            $data['returnMessage'] = 'The selected token has been deleted.';
-            $this->session->set_flashdata('returnMessage', json_encode($data));
+            $this->session->set_flashdata('returnMessage', json_encode(array('success' => TRUE, 'message' => 'The selected token has been deleted')));
             redirect('admin/tokens');
         }
 
