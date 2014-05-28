@@ -233,51 +233,22 @@ class Orders extends CI_Controller
                 } else {
                     // Construct new raw transaction!
 
-                    // Add the inputs at the multisig address.
-                    $payments = $this->transaction_cache_model->payments_to_address($data['order']['address']);
-
-                    // Create the transaction inputs
-                    $tx_ins = array();
-                    $value = 0.00000000;
-                    foreach ($payments as $pmt) {
-                        $tx_ins[] = array('txid' => $pmt['tx_id'],
-                            'vout' => $pmt['vout']);
-                        $value += (float)$pmt['value'];
-                        $tx_pkScripts[] = array('txid' => $pmt['tx_id'], 'vout' => (int)$pmt['vout'], 'scriptPubKey' => $pmt['pkScript'], 'redeemScript' => $data['order']['redeemScript']);
-                    }
-
-                    $json = json_encode($tx_pkScripts);
-
                     $tx_outs = array();
                     // Add outputs for the sites fee, buyer, and vendor.
                     $buyer_address = BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
                     $tx_outs[$buyer_address] = (float)$data['order']['total_paid'] - 0.0001;
 
-                    $raw_transaction = RawTransaction::create($tx_ins, $tx_outs);
-                    if ($raw_transaction == FALSE) {
-                        $data['returnMessage'] = 'Error creating transaction!';
-                    } else {
-                        $decoded_transaction = RawTransaction::decode($raw_transaction);
-                        $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
-
-                        $update = array(
-                            'unsigned_transaction' => $raw_transaction . " ",
-                            'json_inputs' => "'$json'",
-                            'partially_signed_transaction' => '',
-                            'partially_signed_time' => '',
-                            'partially_signing_user_id' => '',
-                            'progress' => '8',
-                            'refund_time' => time()
-                        );
-
-                        if ($this->order_model->update_order($data['order']['id'], $update) == TRUE) {
-                            $this->transaction_cache_model->clear_expected_for_address($data['order']['address']);
-                            $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $data['order']['address'], $data['order']['id']);
+                    $create_spend_transaction = $this->order_model->create_spend_transaction($data['order']['address'], $tx_outs, $data['order']['redeemScript']);
+                    if($create_spend_transaction == TRUE) {
+                        if ($this->order_model->update_order($data['order']['id'], array('progress' => '8',
+                                'refund_time' => time())) == TRUE) {
                             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'A refund has been issued for this order. Please sign to ensure the funds can be claimed ASAP.')));
                             redirect('orders/details/' . $data['order']['id']);
                         } else {
                             $data['returnMessage'] = 'An error occured processing the refund.';
                         }
+                    } else {
+                        $data['returnMessage'] = $create_spend_transaction;
                     }
                 }
             }
