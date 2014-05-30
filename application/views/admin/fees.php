@@ -61,7 +61,8 @@
 		</div>
 <?php } ?>
 	
-		  <?php echo form_open('admin/items/fees', array('class' => 'form-horizontal')); ?>
+		  <?php echo form_open('admin/items/fees', array('class' => 'form-horizontal'));
+          echo validation_errors(); ?>
 		  
 		    <div class='row-fluid'>
 			  <div class='span5 offset2'><strong>Create Fee Rate</strong></div>

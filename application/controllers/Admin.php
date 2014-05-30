@@ -1067,19 +1067,22 @@ class Admin extends CI_Controller
 
         if ($this->input->post('create_fee') == 'Add') {
             if ($this->form_validation->run('admin_add_fee') == TRUE) {
-                $rate = array('low' => $this->input->post('lower_limit'),
-                    'high' => $this->input->post('upper_limit'),
-                    'rate' => $this->input->post('percentage_fee'));
-                if ($this->fees_model->add($rate) == TRUE) {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
-                    redirect('admin/items/fees');
+                if($this->input->post('upper_limit') > $this->input->post('lower_limit')) {
+                    $rate = array('low' => $this->input->post('lower_limit'),
+                        'high' => $this->input->post('upper_limit'),
+                        'rate' => $this->input->post('percentage_fee'));
+                    if ($this->fees_model->add($rate) == TRUE) {
+                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
+                        redirect('admin/items/fees');
+                    }
+                } else {
+                    $data['returnMessage'] = 'Upper limit must be less than lower limit!';
                 }
             }
         }
 
         $data['config'] = $this->bw_config->load_admin('fees');
         $data['fees'] = $this->fees_model->fees_list();
-
         $data['page'] = 'admin/fees';
         $data['title'] = 'Order Fees';
         $this->load->library('Layout', $data);

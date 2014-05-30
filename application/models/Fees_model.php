@@ -103,8 +103,8 @@ class Fees_model extends CI_Model
      */
     public function fees_list()
     {
-        $query = $this->db->order_by('low', 'ASC')->get('fees');
-        return ($query->num_rows > 0) ? $query->result_array() : FALSE;
+        $query = $this->db->get('fees');
+        return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
     }
 };
 
