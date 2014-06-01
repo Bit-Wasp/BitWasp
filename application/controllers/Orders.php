@@ -374,6 +374,15 @@ class Orders extends CI_Controller
                     $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
 
                     if ($vendor_accept == TRUE) {
+                        $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
+                        $message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
+                        for ($i = 0; $i < count($data['order']['items']); $i++) {
+                            $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+                        }
+                        $message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n" . $this->input->post('buyer_address');
+                        $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
+                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
+
                         redirect('purchases');
                     } else if (is_string($vendor_accept) == TRUE) {
                         $data['returnMessage'] = $vendor_accept;

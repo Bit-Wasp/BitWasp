@@ -438,12 +438,12 @@ $config = array('register_form'=>array(
 							),
 				'admin_add_fee' => array(
 										array('field' => 'lower_limit',
-											  'label' => 'range lower limit',
+											  'label' => 'lower limit',
 											  'rules' => 'check_bitcoin_amount_free'
 										),
 										array('field' => 'upper_limit',
-											  'label' => 'range upper limit',
-											  'rules' => 'check_bitcoin_amount|greater_than[lower_limit]'
+											  'label' => 'upper limit',
+											  'rules' => 'check_bitcoin_amount'
 										),
 										array('field' => 'percentage_fee',
 											  'label' => 'percentage fee',
