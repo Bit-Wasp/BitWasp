@@ -130,7 +130,7 @@
 						<?php if($order['partially_signed_transaction'] !== '') { ?>
 						<div class='row-fluid'>
 							<div class='span8 offset3'>
-								Signed by <?php echo anchor('view/'.$signer['user_hash'], $signer['user_name']); ?> <?php echo $order['partially_signed_time_f']; ?>. Sign and broadcast to complete payment.
+								Signed by <?php echo anchor('user/'.$signer['user_hash'], $signer['user_name']); ?> <?php echo $order['partially_signed_time_f']; ?>. Sign and broadcast to complete payment.
 							</div>
 						</div>
 						<?php } ?>
