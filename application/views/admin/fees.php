@@ -72,16 +72,19 @@
 			  <div class='span2 offset1'>Lower Limit</div>
 			  <div class='span7'><input type='text' name='lower_limit' value='' /></div>
 		    </div>
+            <?php echo form_error('lower_limit'); ?>
 		  
 		    <div class='row-fluid'>
 			  <div class='span2 offset1'>Upper Limit</div>
 			  <div class='span7'><input type='text' name='upper_limit' value='' /></div>
 		    </div>
+            <?php echo form_error('upper_limit'); ?>
 		    
 		    <div class='row-fluid'>
 			  <div class='span2 offset1'>Percentage Fee</div>
 			  <div class='span7'><input type='text' name='percentage_fee' value='' /></div>
 		    </div>
+            <?php echo form_error('percentage_fee'); ?>
 		    
 		    <div class='row-fluid'>
 			  <div class='span5 offset3'><input type='submit' name='create_fee' value='Add' class='btn' /></div>
