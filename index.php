@@ -264,15 +264,21 @@ switch (ENVIRONMENT)
 
 	define('VIEWPATH', $view_folder);
 
-include __DIR__.'/vendor/autoload.php';
-/*
- * --------------------------------------------------------------------
- * LOAD THE BOOTSTRAP FILE
- * --------------------------------------------------------------------
- *
- * And away we go...
- */
-require_once BASEPATH.'core/CodeIgniter.php';
 
-/* End of file index.php */
-/* Location: ./index.php */
+/**
+ * Load dependencies from composer
+ */
+include __DIR__.'/vendor/autoload.php';
+
+
+    /*
+     * --------------------------------------------------------------------
+     * LOAD THE BOOTSTRAP FILE
+     * --------------------------------------------------------------------
+     *
+     * And away we go...
+     */
+    require_once BASEPATH.'core/CodeIgniter.php';
+
+    /* End of file index.php */
+    /* Location: ./index.php */
