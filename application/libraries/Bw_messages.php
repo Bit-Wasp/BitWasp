@@ -142,7 +142,7 @@ class Bw_messages
             'rsa_encrypted' => $rsa,
             'aes_iv' => $iv,
             'aes_key' => $encrypted_key,
-            'encrypted' => (int)$pgp_encrypted,
+            'encrypted' => (($pgp_encrypted) ? '1' : '0'),
             'time' => time()
         );
 
