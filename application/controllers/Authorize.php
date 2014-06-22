@@ -12,7 +12,7 @@
  * @author        BitWasp
  *
  */
-class Authorize extends CI_Controller
+class Authorize extends MY_Controller
 {
 
     /**
@@ -40,10 +40,9 @@ class Authorize extends CI_Controller
         $this->load->model('users_model');
         $this->load->model('auth_model');
 
-        $data['header_meta'] = $this->load->view('authorize/authorize_hash_header', NULL, true);
         $data['title'] = 'Authorize Request';
         $data['page'] = 'authorize/password';
-
+        
         $data['returnMessage'] = 'To access this page, you must enter your password.';
 
         if ($this->form_validation->run('authorize') == TRUE) {
@@ -51,9 +50,7 @@ class Authorize extends CI_Controller
 
             // Check the user info exists.
             if ($user_info !== FALSE) {
-                // Work out if submitted password has been hashed by javascript already
-                $password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
-                $password = $this->general->password($password, $user_info['salt']);
+                $password = $this->general->password($this->general->hash($this->input->post('password')), $user_info['salt']);
 
                 // Check the password is valid.
                 $check_login = $this->users_model->check_password($this->current_user->user_name, $password);
@@ -70,7 +67,7 @@ class Authorize extends CI_Controller
 
         // Generate a new captcha.
         $data['captcha'] = $this->bw_captcha->generate();
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
 
     }
 }

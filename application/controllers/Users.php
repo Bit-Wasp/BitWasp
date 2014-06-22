@@ -11,7 +11,7 @@
  * @author        BitWasp
  *
  */
-class Users extends CI_Controller
+class Users extends MY_Controller
 {
 
     /**
@@ -84,8 +84,7 @@ class Users extends CI_Controller
                 $user_info = $this->users_model->get(array('user_name' => $user_name));
 
                 if ($user_info !== FALSE) {
-                    $password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
-                    $password = $this->general->password($password, $user_info['salt']);
+                    $password = $this->general->password($this->general->hash($this->input->post('password')), $user_info['salt']);
 
                     $check_login = $this->users_model->check_password($user_name, $password);
 
@@ -140,8 +139,7 @@ class Users extends CI_Controller
         $data['action_page'] = 'login';
         $data['captcha'] = ($this->display_captcha) ? $this->bw_captcha->generate() : '';
         $data['display_captcha'] = $this->display_captcha;
-        $data['header_meta'] = $this->load->view('users/login_hash_header', NULL, true);
-        $this->load->library('Layout', $data);
+        $this->_render('users/login', $data);
 
     }
 
@@ -153,7 +151,6 @@ class Users extends CI_Controller
      */
     public function register($token = NULL)
     {
-        $data['header_meta'] = $this->load->view('users/register_hash_header', NULL, true);
 
         // If registration is disabled, and no token is set, direct to the login page.
         if (($this->bw_config->maintenance_mode == TRUE) OR ($this->bw_config->registration_allowed == FALSE && $token == NULL))
@@ -171,7 +168,7 @@ class Users extends CI_Controller
         $data['force_vendor_pgp'] = $this->bw_config->force_vendor_pgp;
         $data['encrypt_private_messages'] = $this->bw_config->encrypt_private_messages;
         $data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
-        $data['locations_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'span5');
+        $data['locations_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'form-control');
         $data['currencies'] = $this->bw_config->currencies;
 
         // Different rules depending on whether a PIN must be entered.
@@ -196,9 +193,8 @@ class Users extends CI_Controller
             $user_name = $this->input->post('user_name');
 
             // Ensure password has been treated with first round of hashing.
-            $password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password0')) : $this->input->post('password0');
             $salt = $this->general->generate_salt();
-            $password = $this->general->password($password, $salt);
+            $password = $this->general->password($this->general->hash($this->input->post('password0')), $salt);
 
             // Generate OpenSSL keys for the users private messages.
             if ($data['encrypt_private_messages'] == TRUE) {
@@ -260,12 +256,12 @@ class Users extends CI_Controller
         }
 
         $data['title'] = 'Register';
-        $data['page'] = $register_page;
+        $data['page'] = $register_page.((isset($token) && $token !== NULL) ? '/'.$token : '');
         $data['token'] = $token;
         $data['captcha'] = $this->bw_captcha->generate();
         $data['display_captcha'] = $this->display_captcha;
+        $this->_render($register_page, $data);
 
-        $this->load->library('Layout', $data);
     }
 
     /**
@@ -317,7 +313,7 @@ class Users extends CI_Controller
             $data['returnMessage'] = 'Unable to import the supplied public key. Please ensure you are submitting an ASCII armored PGP public key.';
         }
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -368,7 +364,7 @@ class Users extends CI_Controller
             }
         }
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -417,7 +413,7 @@ class Users extends CI_Controller
         if ($data['challenge'] == FALSE)
             $this->logs_model->add('Two Factor Auth', 'Unable to generate two factor challenge', 'Unable to generate two factor authentication token.', 'Error');
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -451,12 +447,10 @@ class Users extends CI_Controller
 
         $data['title'] = 'Two Factor Authentication';
         $data['page'] = 'users/totp_factor';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
-}
-
-;
+};
 
 /* End of file: Users.php */
 /* Location: ./application/controllers/Users.php */

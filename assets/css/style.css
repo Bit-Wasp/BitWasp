@@ -1,44 +1,87 @@
-.mainContent {
-	padding-left: 20px;
-	padding-top: 15px;
-	padding-right: 20px;
-	margin-bottom: 30px;
-	background-image: url('../../assets/img/gridbg.gif');
-	background-repeat: repeat;
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+body {
+  padding-top: 50px;
+  margin: 25px;
 }
 
-.mainContent h2 {
-	font-size: 26px;
-	margin-bottom: 10px;
-	line-height: 1;
-	letter-spacing: -1px;
-	color: #FF6600;
+.slide-image {
+  width: 100%;
 }
 
-.mainContent h3 {
-	font-size: 18px;
-	margin-bottom: 10px;
-	line-height: 1;
-	letter-spacing: -1px;
-	color: #FF6600;
+.carousel-holder {
+  margin-bottom: 30px;
 }
 
-.userbar ul {
-	padding-top: 0px;
-	padding-left:10px;
-	padding-bottom: 0px;
-	
+.carousel-control,.item {
+  border-radius: 4px;
 }
 
-.userbar li {
-	list-style-type: none;
+.caption {
+  height: 80px;
+  overflow: hidden;
 }
+
+.caption h4 {
+  white-space: nowrap;
+}
+
+.thumbnail img {
+  width:100%;
+  height: auto;
+}
+
+.ratings {
+  color: #d17581;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.thumbnail {
+  padding: 0;
+}
+
+.thumbnail .caption-full {
+  padding: 9px;
+  color: #333;
+}
+
+footer {
+  margin: 50px 0;
+}
+
+li.padd { margin-left: 10px; }	
 
 /* Hack to prevent indentation in a new row of items 3*/
 .row-fluid .span3:nth-child(4n+1) {
 	margin-left: 0;
 }
 
+.table-curved {
+    border-collapse: separate;
+}
+.table-curved {
+    border: solid #ccc 1px;
+    border-radius: 6px;
+    border-left:0px;
+}
+.table-curved td, .table-curved th {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+.table-curved th {
+    border-top: none;
+}
+.table-curved th:first-child {
+    border-radius: 6px 0 0 0;
+}
+.table-curved th:last-child {
+    border-radius: 0 6px 0 0;
+}
+.table-curved th:only-child{
+    border-radius: 6px 6px 0 0;
+}
+.table-curved tr:last-child td:first-child {
+    border-radius: 0 0 0 6px;
+}
+.table-curved tr:last-child td:last-child {
+    border-radius: 0 0 6px 0;
+}

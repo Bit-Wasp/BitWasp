@@ -112,6 +112,7 @@ class Review_model extends CI_Model
     public function random_latest_reviews($desired_count, $review_type, $subject_hash, $disputed = FALSE)
     {
         // Load 30 latest reviews.
+        //$this->db->where( timestamp < 12pm );?
         $this->db->where('review_type', $review_type);
         $this->db->where('subject_hash', $subject_hash);
         if ($disputed !== FALSE && in_array($disputed, array('0', '1')))
@@ -162,6 +163,7 @@ class Review_model extends CI_Model
         }
         $data['disputed'] = $review['disputed'];
         $data['average_rating'] = $review['average_rating'];
+        $data['time_f'] = $this->general->format_time($review['timestamp']);
         return $data;
     }
 

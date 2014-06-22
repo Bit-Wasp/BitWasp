@@ -39,8 +39,9 @@ class Image extends CI_Controller {
 		// Redirect if the image does not exist.
 		if($image == FALSE)
 			redirect('');
-		
-		echo "<center><img src=\"data:image/jpeg;base64,{$image['encoded']}\"></center>";
+        header("Content-type: image/png");
+        echo base64_decode($image['encoded']);
+		#echo "<img class='img-responsive' src=\"data:image/jpeg;base64,{$image['encoded']}\">";
 	}
 	
 };

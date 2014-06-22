@@ -229,7 +229,7 @@ if ( ! function_exists('create_captcha'))
 		{
 			$img_filename = $now.'.jpg';
 			ImageJPEG($im, $img_path.$img_filename);
-			$img = '<img src="'.$img_url.$img_filename.'" style="width: '.$img_width.'; height: '.$img_height .'; border: 0;" alt=" " />';
+			$img = '<img src="'.$img_url.$img_filename.'" alt=" " />';
 		}
 
 		ImageDestroy($im);

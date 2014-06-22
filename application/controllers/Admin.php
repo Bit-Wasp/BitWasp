@@ -10,7 +10,7 @@ use BitWasp\BitcoinLib\BitcoinLib;
  * @category    Admin
  * @author        BitWasp
  */
-class Admin extends CI_Controller
+class Admin extends MY_Controller
 {
 
     /**
@@ -72,11 +72,12 @@ class Admin extends CI_Controller
             $data['gpg'] = 'gnupg-' . $this->gpg->version;
         $data['openssl'] = OPENSSL_VERSION_TEXT;
         $data['config'] = $this->bw_config->load_admin('');
+        $data['encrypt_private_messages'] = $this->bw_config->encrypt_private_messages;
 
         $data['page'] = 'admin/index';
         $data['title'] = $this->nav['']['heading'];
         $data['nav'] = $this->generate_nav();
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -92,7 +93,7 @@ class Admin extends CI_Controller
     {
         $nav = '';
         if ($this->bw_config->electrum_mpk == '')
-            $nav .= '<div class="alert">You have not configured an electrum master public key. Please do so now ' . anchor('admin/edit/bitcoin', 'here') . '.</div>';
+            $nav .= '<div class="alert alert-danger">You have not configured an electrum master public key. Please do so now ' . anchor('admin/edit/bitcoin', 'here') . '.</div>';
 
         $links = '';
         foreach ($this->nav as $entry) {
@@ -106,17 +107,20 @@ class Admin extends CI_Controller
             $links .= '>' . anchor('admin' . $entry['panel'], $entry['title']) . '</li>';
         }
 
-        $nav .= '<div class="tabbable">
-			<label class="span3"><h2>' . $self['heading'] . '</h2></label>
-			<label class="span1">';
-        if ($panel_url !== '/logs') $nav .= anchor('admin/edit' . $panel_url, 'Edit', 'class="btn"');
-        $nav .= '</label>
-			<label class="span7">
-			  <ul class="nav nav-tabs">
-			  ' . $links . '
-			  </ul>
-			</label>
-		  </div>';
+        $nav .= '
+        <div class="row">
+            <ul class="nav nav-tabs">
+                <li class="col-xs-3"><h4>'.$self['heading'].'</h4></li>
+                <li class="col-xs-1">';
+
+        if ($panel_url !== '/logs') $nav .= " ".anchor('admin/edit' . $panel_url, 'Edit', '');
+
+        $nav .= '
+                </li>
+                <li class="col-xs-8">'.$links.'</li>
+            </ul>
+        </div>
+        <div class="row">&nbsp;</div>';
 
         return $nav;
     }
@@ -191,7 +195,7 @@ class Admin extends CI_Controller
         $data['page'] = 'admin/edit_';
         $data['title'] = $this->nav['']['heading'];
         $data['nav'] = $this->generate_nav();
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -209,12 +213,57 @@ class Admin extends CI_Controller
     {
         $this->load->model('autorun_model');
         $data['page'] = 'admin/autorun';
+        $data['autorum_cmd'] = '*/1 * * * * php '.__DIR__.'/index.php callback autorun';
         $data['title'] = $this->nav['autorun']['heading'];
         $data['jobs'] = $this->autorun_model->load_all();
         $data['config'] = $this->bw_config->load_admin('autorun');
         $data['nav'] = $this->generate_nav();
 
-        $this->load->library('Layout', $data);
+        if ($this->form_validation->run('admin_edit_autorun') == TRUE) {
+            $this->load->library('autorun', FALSE);
+
+            // Load the POST array of jobs, and the specified intervals.
+            $jobs = $this->input->post('jobs');
+            $update = FALSE;
+
+            // Load the array of disabled jobs.
+            $disabled_jobs = $this->input->post('disabled_jobs');
+
+            foreach ($jobs as $index => $interval) {
+                // Intervals should always be numeric.
+                if (!is_numeric($interval))
+                    redirect('admin/autorun');
+
+                // Set the interval to zero if a job is disabled.
+                if ($data['jobs'][$index] !== '0' && (isset($disabled_jobs[$index]) && $disabled_jobs[$index] == '1')) {
+                    if ($this->autorun_model->set_interval($index, '0') == TRUE){
+                        $update = TRUE;
+                    }
+                } else {
+                    // If the job exists, and the interval has changed..
+                    if (isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval) {
+                        // Update the interval.
+                        if ($this->autorun_model->set_interval($index, $interval) == TRUE){
+                            $update = TRUE;
+
+                        }
+
+                        // If the interval has changed, rerun the job??
+                        if ($interval !== '0'){
+                            $this->autorun->jobs[$index]->job();
+                        }
+                    }
+                }
+            }
+
+            // If the update happened successfully, redirect!
+            if ($update){
+                $this->current_user->set_return_message('Your changes have been saved',TRUE);
+                redirect('admin/autorun');
+            }
+        }
+
+        $this->_render('admin/autorun', $data);
     }
 
     /**
@@ -279,7 +328,7 @@ class Admin extends CI_Controller
         $data['config'] = $this->bw_config->load_admin('autorun');
         $data['nav'] = $this->generate_nav();
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -309,7 +358,7 @@ class Admin extends CI_Controller
         $data['bitcoin_info'] = $this->bw_bitcoin->getinfo();
         $data['key_usage_count'] = $this->bitcoin_model->count_key_usage();
         $data['block_cache'] = $this->transaction_cache_model->count_cache_list();
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -369,20 +418,24 @@ class Admin extends CI_Controller
                         redirect('admin/bitcoin');
                     }
                 }
-                if ($data['config']['electrum_mpk'] != $this->input->post('electrum_mpk'))
-                    $changes['electrum_mpk'] = $this->input->post('electrum_mpk');
-                if ($data['config']['electrum_iteration'] != $this->input->post('electrum_iteration'))
+
+                if ($data['config']['electrum_iteration'] !== $this->input->post('electrum_iteration'))
                     $changes['electrum_iteration'] = $this->input->post('electrum_iteration');
 
                 $changes = array_filter($changes, 'strlen');
 
+                // Since electrum mpk may be empty, do this after strlen filter
+                if ($data['config']['electrum_mpk'] !== $this->input->post('electrum_mpk'))
+                    $changes['electrum_mpk'] = $this->input->post('electrum_mpk');
+
                 if (count($changes) > 0 && $this->config_model->update($changes) == TRUE) {
                     $log = $this->admin_model->format_config_changes($changes);
-                    $this->logs_model->add("Admin: {$this->coin['name']} Panel", $this->coin['name'] . ' configuration updated', 'The ' . $this->coin['name'] . ' configuration of the site has been updated:<br />' . $log, 'Info');
+                    $this->logs_model->add("Admin: {$this->bw_config->currencies[0]['name']} Panel", $this->bw_config->currencies[0]['name'] . ' configuration updated', 'The ' . $this->bw_config->currencies[0]['name'] . ' configuration of the site has been updated:<br />' . $log, 'Info');
                     $message = 'Your changes were saved.';
                 } else {
                     $message = 'No changes were made.';
                 }
+
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
                 redirect('admin/bitcoin');
             }
@@ -391,7 +444,7 @@ class Admin extends CI_Controller
         $data['page'] = 'admin/edit_bitcoin';
         $data['title'] = $this->nav['bitcoin']['heading'];
         $data['nav'] = $this->generate_nav();
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -414,10 +467,9 @@ class Admin extends CI_Controller
         $data['nav'] = $this->generate_nav();
         $data['user_count'] = $this->general_model->count_entries('users');
         $data['config'] = $this->bw_config->load_admin('users');
-
         $data['page'] = 'admin/users';
         $data['title'] = $this->nav['users']['heading'];
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -448,13 +500,34 @@ class Admin extends CI_Controller
             $changes['vendor_registration_allowed'] = ($this->input->post('vendor_registration_allowed') != $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed') : NULL;
             $changes['encrypt_private_messages'] = ($this->input->post('encrypt_private_messages') != $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_messages') : NULL;
             $changes['force_vendor_pgp'] = ($this->input->post('force_vendor_pgp') != $data['config']['force_vendor_pgp']) ? $this->input->post('force_vendor_pgp') : NULL;
-            $changes['entry_payment_buyer'] = ($this->input->post('entry_payment_buyer') != $data['config']['entry_payment_buyer']) ? $this->input->post('entry_payment_buyer') : NULL;
-            $changes['entry_payment_vendor'] = ($this->input->post('entry_payment_vendor') != $data['config']['entry_payment_vendor']) ? $this->input->post('entry_payment_vendor') : NULL;
-
-            // Set registration payments for buyer/vendor to zero if disabled.
-            if ($this->input->post('entry_payment_buyer_disabled') == '1' && $data['config']['entry_payment_buyer'] != '0') $changes['entry_payment_buyer'] = '0';
-            if ($this->input->post('entry_payment_vendor_disabled') == '1' && $data['config']['entry_payment_vendor'] != '0') $changes['entry_payment_vendor'] = '0';
             $changes = array_filter($changes, 'strlen');
+
+            // If being set set to disabled, and payment amount > 0, hard set  to zero.
+            // Otherwise allow amounts to be updated:
+            // - Set payment amount to zero if (i) checkbox is checked and config amount not already zero,
+            //   or (ii) admin hasn't checked disabled, but set post amount to 0.
+            // - Otherwise, if the payment amount differs from what we have, create the change.
+            if ($this->input->post('entry_payment_buyer_disabled') == '1' AND $this->bw_config->entry_payment_buyer !== '0'
+            OR  $this->input->post('entry_payment_buyer_disabled') == null AND $this->input->post('entry_payment_buyer') == '0'){
+                echo 'a';
+                $changes['entry_payment_buyer'] = '0';
+            } else {
+                if($this->input->post('entry_payment_buyer_disabled') == null AND $this->input->post('entry_payment_buyer') != $data['config']['entry_payment_buyer']) {
+                    echo 'b';
+                    $changes['entry_payment_buyer'] = $this->input->post('entry_payment_buyer');
+                }
+            }
+            // Same for vendor amount
+            if ($this->input->post('entry_payment_vendor_disabled') == '1' AND $this->bw_config->entry_payment_vendor !== '0'
+                OR  $this->input->post('entry_payment_vendor_disabled') == null AND $this->input->post('entry_payment_vendor') == '0'){
+                    echo 'c';
+                    $changes['entry_payment_vendor'] = '0';
+            } else {
+                if($this->input->post('entry_payment_vendor_disabled') == null AND $this->input->post('entry_payment_vendor') != $data['config']['entry_payment_vendor']) {
+                    echo 'd';
+                    $changes['entry_payment_vendor'] = $this->input->post('entry_payment_vendor');
+                }
+            }
 
             if (count($changes) > 0 && $this->config_model->update($changes) == TRUE) {
                 $log = $this->admin_model->format_config_changes($changes);
@@ -464,6 +537,7 @@ class Admin extends CI_Controller
             } else {
                 $message = 'No changes were made.';
             }
+
             $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
             redirect('admin/users');
         }
@@ -471,7 +545,7 @@ class Admin extends CI_Controller
         $data['config'] = $this->bw_config->load_admin('users');
         $data['page'] = 'admin/edit_users';
         $data['title'] = $this->nav['users']['heading'];
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -495,7 +569,7 @@ class Admin extends CI_Controller
             'review_count' => $this->bw_config->trusted_user_review_count);
         $data['page'] = 'admin/items';
         $data['title'] = $this->nav['items']['heading'];
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -514,9 +588,9 @@ class Admin extends CI_Controller
         $this->load->library('form_validation');
         $this->load->model('categories_model');
         $data['nav'] = $this->generate_nav();
-        $data['categories_add_select'] = $this->categories_model->generate_select_list('category_parent', 'span10', FALSE, array('root' => TRUE));
-        $data['categories_rename_select'] = $this->categories_model->generate_select_list('rename_id', 'span10');
-        $data['categories_delete_select'] = $this->categories_model->generate_select_list('delete_id', 'span10');
+        $data['categories_add_select'] = $this->categories_model->generate_select_list('category_parent', 'form-control', FALSE, array('root' => TRUE));
+        $data['categories_rename_select'] = $this->categories_model->generate_select_list('rename_id', 'form-control');
+        $data['categories_delete_select'] = $this->categories_model->generate_select_list('delete_id', 'form-control');
         $data['config'] = $this->bw_config->load_admin('items');
 
         // If the Add Category form has been submitted:
@@ -552,12 +626,12 @@ class Admin extends CI_Controller
                 $category = $this->bw_config->categories[$this->input->post('delete_id')];
 
                 // Check if items or categories are orphaned by this action, redirect to move these.
-                if ($category['count_child_items'] > 0 || $category['count_child_cats'] > 0) {
+                if ($category['count_child_items'] > 0 OR $category['count_child_cats'] > 0) {
                     redirect('admin/category/orphans/' . $category['hash']);
                 } else {
                     // Otherwise it's empty and can be deleted.
                     if ($this->categories_model->delete($category['id']) == TRUE) {
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'That category has been deleted..')));
+                        $this->current_user->set_return_message("The chosen category has been deleted.", TRUE);
                         redirect('admin/edit/items');
                     }
                 }
@@ -565,7 +639,7 @@ class Admin extends CI_Controller
         }
         $data['page'] = 'admin/edit_items';
         $data['title'] = $this->nav['items']['heading'];
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -598,7 +672,7 @@ class Admin extends CI_Controller
         }
         $data['page'] = 'admin/trusted_user';
         $data['title'] = 'Trusted User Settings';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -627,7 +701,7 @@ class Admin extends CI_Controller
             $data['page'] = 'admin/log';
             $data['title'] = "Log Record: {$data['log']['id']}";
         }
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -720,7 +794,7 @@ class Admin extends CI_Controller
 
         $data['page'] = 'admin/category_orphans';
         $data['title'] = 'Fix Orphans';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -766,7 +840,7 @@ class Admin extends CI_Controller
         $data['tokens'] = $this->users_model->list_registration_tokens();
         $data['page'] = 'admin/user_tokens';
         $data['title'] = 'Registration Tokens';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -798,7 +872,7 @@ class Admin extends CI_Controller
         $data['tokens'] = $this->users_model->list_registration_tokens();
         $data['page'] = 'admin/user_tokens';
         $data['title'] = 'Registration Tokens';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -837,7 +911,7 @@ class Admin extends CI_Controller
                 $data['returnMessage'] = 'Unable to delete that item at this time.';
             }
         }
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -861,20 +935,23 @@ class Admin extends CI_Controller
         $data['title'] = 'Ban User';
         $data['page'] = 'admin/ban_user';
 
-        if ($this->form_validation->run('admin_ban_user') == TRUE) {
-            if ($this->input->post('ban_user') != $data['user']['banned']) {
-                if ($this->accounts_model->toggle_ban($data['user']['id'], $this->input->post('ban_user'))) {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => $data['user']['user_name'] . " has now been " . (($this->input->post('ban_user') == '1') ? 'banned.' : 'unbanned.'))));
-                    redirect('user/' . $data['user']['user_hash']);
+        if($this->input->post('submit_ban_toggle') == 'Submit') {
+            if ($this->form_validation->run('admin_ban_user') == TRUE) {
+                if($this->input->post('ban_user') == '1') {
+                    $new = (string)((int)$data['user']['banned']+1)%2;
+                    if($this->accounts_model->toggle_ban($data['user']['id'], "$new")){
+                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => "{$data['user']['user_name']} has now been " . (($new == 1) ? 'banned.' : 'unbanned.'))));
+                        redirect('user/' . $data['user']['user_hash']);
+                    } else {
+                        $data['returnMessage'] = 'Unable to alter this user right now, please try again later.';
+                    }
                 } else {
-                    $data['returnMessage'] = 'Unable to alter this user right now, please try again later.';
+                    redirect('user/' . $data['user']['user_hash']);
                 }
-            } else {
-                redirect('user/' . $data['user']['user_hash']);
             }
         }
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -982,7 +1059,7 @@ class Admin extends CI_Controller
                 }
             }
         }
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -1014,7 +1091,7 @@ class Admin extends CI_Controller
 
         $data['links'] = $this->pagination->create_links();
         $data['records'] = $this->bitcoin_model->get_key_usage_page($pagination['per_page'], $start);
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -1085,7 +1162,7 @@ class Admin extends CI_Controller
         $data['fees'] = $this->fees_model->fees_list();
         $data['page'] = 'admin/fees';
         $data['title'] = 'Order Fees';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -1123,7 +1200,7 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Maintenance Settings';
         $data['page'] = 'admin/maintenance';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -1152,7 +1229,7 @@ class Admin extends CI_Controller
         $data['orders'] = $this->order_model->admin_order_page($pagination['per_page'], $start);
         $data['page'] = 'admin/order_list';
         $data['title'] = 'Order List';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -1201,7 +1278,7 @@ class Admin extends CI_Controller
                     $data['search_fail'] = TRUE;
             }
 
-        } else if ($this->input->post('list_options') == 'Search') {
+        } else if ($this->input->post('list_options') == 'Advanced Search') {
             // If the user is listing users
             $data['links'] = '';
             if ($this->form_validation->run('admin_search_user_list') == TRUE) {
@@ -1272,35 +1349,7 @@ class Admin extends CI_Controller
 
         $data['page'] = 'admin/user_list';
         $data['title'] = 'User List';
-        $this->load->library('Layout', $data);
-    }
-
-    /**
-     * User Delete
-     *
-     * This page allows an administrator to delete a user.
-     *
-     * @param    string $user_hash
-     */
-    public function user_delete($user_hash)
-    {
-
-        $this->load->model('users_model');
-        $data['user'] = $this->users_model->get(array('user_hash' => $user_hash));
-        if ($data['user'] == FALSE)
-            redirect('admin/users/list');
-
-        if ($this->input->post('admin_delete_user') == 'Confirm') {
-            if ($this->form_validation->run('admin_delete_user') == TRUE) {
-                if ($this->users_model->delete($user_hash) == TRUE) {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('returnMessage' => $data['user']['user_name'] . ' has been deleted.', 'success' => TRUE)));
-                    redirect('admin/users/list');
-                }
-            }
-        }
-        $data['page'] = 'admin/user_delete';
-        $data['title'] = 'Delete Account: ' . $data['user']['user_name'];
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -1337,7 +1386,7 @@ class Admin extends CI_Controller
 
         $data['title'] = 'Terms Of Service';
         $data['page'] = 'admin/tos';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -1359,15 +1408,19 @@ class Admin extends CI_Controller
         if ($this->input->post('update_location_list_source') == 'Submit') {
             if ($this->form_validation->run('admin_update_location_list_source') == TRUE) {
                 $changes = array();
-                $changes['location_list_source'] = ($this->input->post('location_source') !== $this->bw_config->location_list_source) ? $this->input->post('location_source') : NULL;
+                $changes['location_list_source'] = ($this->input->post('location_source') != $this->bw_config->location_list_source) ? $this->input->post('location_source') : NULL;
 
                 if ($changes['location_list_source'] && count($this->location_model->get_list('Custom')) == 0) {
                     $data['returnMessage'] = 'There are no locations on this list - add some first!';
                     unset($changes['location_list_source']);
                 }
 
-                if (count($changes) > 0 && $this->config_model->update($changes) == TRUE)
+                if (count($changes) > 0 && $this->config_model->update($changes) == TRUE) {
+                    $this->current_user->set_return_message('Changed location list.', TRUE);
                     redirect('admin/locations');
+                } else {
+                    $data['returnMessage'] = 'No changes were made.';
+                }
             }
         }
 
@@ -1376,31 +1429,33 @@ class Admin extends CI_Controller
                 $location = array('location' => $this->input->post('create_location'),
                     'hash' => $this->general->unique_hash('locations_custom_list', 'hash'),
                     'parent_id' => $this->input->post('location'));
-                if ($this->location_model->add_custom_location($location) == TRUE)
+                if ($this->location_model->add_custom_location($location) == TRUE) {
+                    $this->current_user->set_return_message('Your new location has been saved',TRUE);
                     redirect('admin/locations');
+                }
             }
         }
 
         if ($this->input->post('delete_custom_location') == 'Submit') {
             if ($this->form_validation->run('admin_delete_custom_location') == TRUE) {
-                if ($this->location_model->delete_custom_location($this->input->post('location_delete')) == TRUE)
+                if ($this->location_model->delete_custom_location($this->input->post('location_delete')) == TRUE){
+                    $this->current_user->set_return_message('Your location has been deleted', TRUE);
                     redirect('admin/locations');
+                }
             }
         }
 
         $data['list_source'] = $this->bw_config->location_list_source;
-        $data['locations_parent'] = $this->location_model->generate_select_list('Custom', 'location', 'span8', FALSE, array('root' => TRUE));
+        $data['locations_parent'] = $this->location_model->generate_select_list('Custom', 'location', 'form-control', FALSE, array('root' => TRUE));
         $custom_locations_array = $this->location_model->get_list('Custom', TRUE);
-        $data['locations_human_readable'] = $this->location_model->menu_human_readable($custom_locations_array, 0, '');
-        $data['locations_delete'] = $this->location_model->generate_select_list('Custom', 'location_delete', 'span8');
+        $data['locations_human_readable'] = $this->location_model->menu_human_readable($custom_locations_array, 0, 'form-control');
+        $data['locations_delete'] = $this->location_model->generate_select_list('Custom', 'location_delete', 'form-control');
         $data['page'] = 'admin/locations';
         $data['title'] = 'Configure Locations';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
-}
-
-;
+};
 
 /* End of file: Admin.php */
 /* Location: application/controllers/Admin.php */

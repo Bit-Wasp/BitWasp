@@ -253,7 +253,11 @@ class Categories_model extends CI_Model
         // Add all categories to $menu[] array.
         foreach ($categories as $result) {
             // Only need the count for this.
-            $count_item_children = $this->items_model->get_count(array('category' => $result['id']));
+            $joins = array(
+                array('table'=>'users',
+                    'on' => "users.user_hash = items.vendor_hash AND users.banned='0'")
+            );
+            $count_item_children = $this->items_model->get_count(array('category' => $result['id']), $joins);
             $count_menu_children = count($this->get_children($result['id']));
 
             $menu[$result['id']] = array(

@@ -271,7 +271,7 @@ class Location_model extends CI_Model
         if (isset($array['children']) AND is_array($array['children'])) {
             $select_txt = '';
             if ($selected !== FALSE AND $array['id'] == $selected) $select_txt = ' selected="selected" ';
-            $output = "<option style=\"font-weight:bold;\" value=\"{$array['id']}\"{$select_txt}>{$array['location']}</option>\n";
+            $output = "<option style=\"font-weight:bold;\" value=\"{$array['id']}\"{$select_txt}>".htmlspecialchars($array['location'], ENT_XHTML, 'UTF-8')."</option>\n";
             foreach ($array['children'] as $child) {
                 $output .= $this->generate_select_list_recurse($child, $selected);
             }
@@ -279,7 +279,7 @@ class Location_model extends CI_Model
             $select_txt = ' ';
             if ($selected !== FALSE AND $array['id'] == $selected) $select_txt = ' selected="selected" ';
             if ($array['parent_id'] == '0') $select_txt .= "style=\"font-weight:bold;\" ";
-            $output = "<option value=\"{$array['id']}\"{$select_txt}>{$array['location']}</option>\n";
+            $output = "<option value=\"{$array['id']}\"{$select_txt}>".htmlspecialchars($array['location'], ENT_XHTML, 'UTF-8')."</option>\n";
         }
         return $output;
     }

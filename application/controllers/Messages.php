@@ -11,7 +11,7 @@
  * @author        BitWasp
  *
  */
-class Messages extends CI_Controller
+class Messages extends MY_Controller
 {
 
     /**
@@ -55,8 +55,6 @@ class Messages extends CI_Controller
         $data['title'] = $data['message']['subject'];
         $data['page'] = 'messages/read';
 
-        $this->load->library('Layout', $data);
-
         // Mark message 'read' if it's currently unread.
         if ($data['message']['viewed'] == '0')
             $this->messages_model->set_viewed($data['message']['id']);
@@ -64,6 +62,8 @@ class Messages extends CI_Controller
         // If 'remove on read' is set, delete the message now that it's been displayed.
         if ($data['message']['remove_on_read'] == '1')
             $this->messages_model->delete($data['message']['id']);
+
+        $this->_render($data['page'], $data);
     }
 
 
@@ -81,7 +81,7 @@ class Messages extends CI_Controller
         $data['messages'] = $this->bw_messages->prepare_output($messages);
         $data['page'] = 'messages/inbox';
         $data['title'] = 'Inbox';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -124,7 +124,7 @@ class Messages extends CI_Controller
         $messages = $this->messages_model->inbox();
         $data['messages'] = $this->bw_messages->prepare_output($messages);
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -153,7 +153,7 @@ class Messages extends CI_Controller
             redirect('inbox');
         }
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -216,7 +216,7 @@ class Messages extends CI_Controller
         $data['page'] = 'messages/send';
         $data['title'] = 'Send Message';
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -266,7 +266,7 @@ class Messages extends CI_Controller
         $data['title'] = 'Message PIN';
         $data['page'] = 'messages/pin';
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
 };

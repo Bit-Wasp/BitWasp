@@ -10,7 +10,7 @@ use BitWasp\BitcoinLib\BitcoinLib;
  * @category    Accounts
  * @author        BitWasp
  */
-class Accounts extends CI_Controller
+class Accounts extends MY_Controller
 {
 
     /**
@@ -63,7 +63,7 @@ class Accounts extends CI_Controller
         if ($data['user']['user_role'] == 'Vendor')
             $data['items'] = $this->items_model->get_list(array('vendor_hash' => $data['user']['user_hash']));
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -92,7 +92,7 @@ class Accounts extends CI_Controller
         $data['page'] = 'accounts/vendor_public_keys';
         $data['title'] = 'Bitcoin Public Keys';
         $data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -124,10 +124,11 @@ class Accounts extends CI_Controller
         $data['two_factor_setting'] = $data['two_factor']['totp'];
         if (isset($data['user']['pgp'])) {
             $data['two_factor']['pgp'] = (bool)$data['user']['pgp_two_factor'];
-            $data['two_factor_setting'] = $data['two_factor_setting'] OR $data['two_factor']['totp'];
+            if($data['two_factor']['pgp'])
+                $data['two_factor_setting'] = TRUE;
         }
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -165,7 +166,7 @@ class Accounts extends CI_Controller
         // Load own user profile.
         $data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
         $data['currencies'] = $this->bw_config->currencies;
-        $data['location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'span5', $data['user']['location']);
+        $data['location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'form-control', $data['user']['location']);
 
         // Check if the user is forced to user PGP. If so, display the 'Replace' link instead of 'Delete'
         $data['option_replace_pgp'] = (($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor')
@@ -198,7 +199,7 @@ class Accounts extends CI_Controller
             }
         }
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -217,7 +218,8 @@ class Accounts extends CI_Controller
         $data['two_factor_setting'] = $data['two_factor']['totp'];
         if (isset($data['user']['pgp'])) {
             $data['two_factor']['pgp'] = (bool)$data['user']['pgp_two_factor'];
-            $data['two_factor_setting'] = $data['two_factor_setting'] OR $data['two_factor']['totp'];
+            if($data['two_factor']['pgp'])
+                $data['two_factor_setting'] = TRUE;
         }
 
         // If two factor is not enabled..
@@ -269,7 +271,7 @@ class Accounts extends CI_Controller
         }
 
         $data['title'] = 'Disable Two Factor Authentication';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
 
     }
 
@@ -306,7 +308,7 @@ class Accounts extends CI_Controller
         if ($data['challenge'] == FALSE)
             $this->logs_model->add('Two Factor Auth', 'Unable to generate two factor challenge', 'Unable to generate two factor authentication token.', 'Error');
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
 
@@ -327,7 +329,8 @@ class Accounts extends CI_Controller
         $data['two_factor_setting'] = $data['two_factor']['totp'];
         if (isset($data['user']['pgp'])) {
             $data['two_factor']['pgp'] = (bool)$data['user']['pgp_two_factor'];
-            $data['two_factor_setting'] = $data['two_factor_setting'] OR $data['two_factor']['totp'];
+            if($data['two_factor']['pgp'])
+                $data['two_factor_setting'] = TRUE;
         }
 
         $new_qr = TRUE;
@@ -335,17 +338,16 @@ class Accounts extends CI_Controller
         // Process TOTP - PGP is done in enabe_pgp_factor.
         if ($this->input->post('submit_totp_token') == 'Setup') {
             // If PGP is enabled, they can't enable TOTP.
-            if ($data['two_factor']['pgp'] == TRUE) {
+            if (isset($data['two_factor']['pgp']) AND $data['two_factor']['pgp'] == TRUE) {
                 $data['returnMessage'] = 'You must disable PGP authentication before enabling app-based two factor authentication.';
             } else {
                 $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
-                $this->form_validation->set_rules("password", "your password", "required");
-                $this->form_validation->set_rules("totp_token", "a valid token", "required");
+                $this->form_validation->set_rules("password", "password", "required");
+                $this->form_validation->set_rules("totp_token", "token", "required");
 
                 if ($this->form_validation->run() == TRUE) {
                     // Work out if submitted password has been hashed by javascript already
-                    $password = ($this->input->post('js_disabled') == '1') ? $this->general->hash($this->input->post('password')) : $this->input->post('password');
-                    $password = $this->general->password($password, $user_info['salt']);
+                    $password = $this->general->password($this->general->hash($this->input->post('password')), $user_info['salt']);
 
                     $check_login = $this->users_model->check_password($this->current_user->user_name, $password);
 
@@ -386,7 +388,7 @@ class Accounts extends CI_Controller
         $data['page'] = 'accounts/two_factor';
         $data['title'] = 'Two Factor Authentication';
         $data['header_meta'] = $this->load->view('accounts/password_hash_header', NULL, true);
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -430,7 +432,7 @@ class Accounts extends CI_Controller
         $data['page'] = 'accounts/delete_pgp';
         $data['title'] = 'Delete PGP Key';
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -474,7 +476,7 @@ class Accounts extends CI_Controller
         $data['page'] = 'accounts/replace_pgp';
         $data['title'] = 'Replace PGP Key';
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -518,18 +520,16 @@ class Accounts extends CI_Controller
                     'fingerprint' => $import['fingerprint'],
                     'public_key' => $import['clean_key']
                 ));
-                $this->session->set_flashdata('PGP public key has been saved.');
+                $this->session->set_flashdata('returnMessage',json_encode(array('message' => 'PGP public key has been saved.')));
                 redirect('account');
             } else {
                 $data['returnMessage'] = 'Failed to import that public key.';
             }
         }
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
-}
-
-;
+};
 
 /* End of file: Accounts.php */
 /* Location: ./application/controllers/Accounts.php */

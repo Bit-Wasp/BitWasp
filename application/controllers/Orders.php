@@ -14,7 +14,7 @@ use BitWasp\BitcoinLib\RawTransaction;
  * @author        BitWasp
  *
  */
-class Orders extends CI_Controller
+class Orders extends MY_Controller
 {
 
     /**
@@ -86,9 +86,9 @@ class Orders extends CI_Controller
             $id_list[] = $t_order['id'];
         }
         $data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
-        $data['page'] = 'orders/vendor_orders';
+        $data['page'] = 'orders/order_list';
         $data['title'] = 'My Orders';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -114,37 +114,44 @@ class Orders extends CI_Controller
 
         $this->load->model('review_model');
         $data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
-        $data['fees']['shipping_cost'] = $data['order']['shipping_costs'];
-        $data['fees']['fee'] = $data['order']['fees'];
-        $data['fees']['total'] = $data['order']['shipping_costs'] + $data['order']['fees'];
+        $data['fees']['shipping_cost'] = number_format($data['order']['shipping_costs'],8);
+        $data['fees']['fee'] = number_format($data['order']['fees'],8);
 
         $data['request_order_type'] = $this->order_model->requested_order_type($data['order']);
         $data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
         $data['order_type'] = ($data['trusted_vendor'] AND $data['request_order_type'] == 'upfront') ? 'upfront' : 'escrow';
 
+        if ($data['order_type'] == 'escrow') {
+            $data['fees']['vendor_fees'] = number_format($data['fees']['fee']+((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->escrow_rate),8);
+        } else {
+            $data['fees']['vendor_fees'] = number_format($data['fees']['fee']+((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->upfront_rate),8);
+        }
+
         if ($this->input->post('vendor_accept_order') == 'Accept Order') {
-            if ($data['available_public_keys'] == FALSE) {
-                $data['returnMessage'] = 'You have no available public keys to use in this order!';
-            } else {
-                $accept_details = array('vendor_public_keys' => $data['available_public_keys'],
-                    'order_type' => $data['order_type'],
-                    'order' => $data['order'],
-                    'initiating_user' => 'vendor',
-                    'update_fields' => array());
+            if($this->form_validation->run('checkable') == TRUE) {
+                if ($data['available_public_keys'] == FALSE) {
+                    $data['returnMessage'] = 'You have no available public keys to use in this order!';
+                } else {
+                    $accept_details = array('vendor_public_keys' => $data['available_public_keys'],
+                        'order_type' => $data['order_type'],
+                        'order' => $data['order'],
+                        'initiating_user' => 'vendor',
+                        'update_fields' => array());
 
-                $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
+                    $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
 
-                if ($vendor_accept == TRUE) {
-                    redirect('orders');
-                } else if (is_string($vendor_accept) == TRUE) {
-                    $data['returnMessage'] = $vendor_accept;
+                    if ($vendor_accept == TRUE) {
+                        redirect('orders');
+                    } else if (is_string($vendor_accept) == TRUE) {
+                        $data['returnMessage'] = $vendor_accept;
+                    }
                 }
             }
         }
 
         $data['title'] = 'Accept Order #' . $data['order']['id'];
         $data['page'] = 'orders/vendor_accept';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -195,7 +202,7 @@ class Orders extends CI_Controller
 
         $data['page'] = 'orders/vendor_finalize_early';
         $data['title'] = 'Request Early Finalization';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -256,7 +263,7 @@ class Orders extends CI_Controller
 
         $data['page'] = 'orders/vendor_refund';
         $data['title'] = 'Issue Refund';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     // Buyer pages
@@ -332,10 +339,10 @@ class Orders extends CI_Controller
         $data['page'] = 'orders/buyer_confirm_purchase';
         $data['header_meta'] = $this->load->view('orders/encryption_header', NULL, true);
 
-        $data['fees']['shipping_cost'] = $this->shipping_costs_model->costs_to_location($data['order']['items'], $data['order']['buyer']['location']);
-        $data['fees']['fee'] = $this->fees_model->calculate(($data['order']['price'] + $data['fees']['shipping_cost']));
-        $data['fees']['total'] = $data['fees']['shipping_cost'] + $data['fees']['fee'];
-        $data['total'] = $data['order']['price'] + $data['fees']['total'];
+        $data['fees']['shipping_cost'] = number_format($this->shipping_costs_model->costs_to_location($data['order']['items'], $data['order']['buyer']['location']),8);
+        $data['fees']['fee'] = number_format($this->fees_model->calculate(($data['order']['price'] + $data['fees']['shipping_cost'])),8);
+        $data['fees']['total'] = number_format($data['fees']['shipping_cost'] + $data['fees']['fee'],8);
+        $data['total'] = number_format($data['order']['price'] + $data['fees']['total'],8);
 
         $data['vendor_public_keys'] = $this->accounts_model->bitcoin_public_keys($data['order']['vendor']['id']);
         $data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
@@ -419,7 +426,7 @@ class Orders extends CI_Controller
         }
 
         $data['orders'] = $this->order_model->buyer_orders();
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -528,9 +535,9 @@ class Orders extends CI_Controller
             $data['review_auth'] = $this->review_auth_model->user_tokens_by_order($id_list);
         }
 
-        $data['page'] = 'orders/buyer_orders';
+        $data['page'] = 'orders/order_list';
         $data['title'] = 'My Purchases';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     // All users can view these pages
@@ -622,7 +629,7 @@ class Orders extends CI_Controller
 
         $data['page'] = 'orders/dispute';
         $data['title'] = 'Raise Dispute';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -779,15 +786,14 @@ class Orders extends CI_Controller
         $data['fees']['total'] = $data['order']['shipping_costs'] + $data['order']['fees'];
 
         if ($this->current_user->user_role == 'Buyer'
-            && ($data['order']['paid_time'] == '')
-        ) {
+            && ($data['order']['paid_time'] == '')) {
             $this->load->library('ciqrcode');
             $data['payment_url'] = "bitcoin:{$data['order']['address']}?amount={$data['order']['order_price']}&message=Order+{$data['order']['id']}&label=Order+{$data['order']['id']}";
             $data['qr'] = $this->ciqrcode->generate_base64(array('data' => $data['payment_url']));
         }
         $data['page'] = 'orders/details';
         $data['title'] = 'Order Details: #' . $data['order']['id'];
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
 }

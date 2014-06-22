@@ -11,7 +11,7 @@
  * @author        BitWasp
  *
  */
-class Listings extends CI_Controller
+class Listings extends MY_Controller
 {
 
     /**
@@ -42,7 +42,7 @@ class Listings extends CI_Controller
         $data['title'] = 'Manage Listings';
         $data['page'] = 'listings/manage';
         $data['items'] = $this->listings_model->my_listings();
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -98,11 +98,11 @@ class Listings extends CI_Controller
 
         $data['page'] = 'listings/edit';
         $data['title'] = 'Edit ' . $data['item']['name'];
-        $data['categories'] = $this->categories_model->generate_select_list('category', 'span5', $data['item']['category']);
+        $data['categories'] = $this->categories_model->generate_select_list('category', 'form-control', $data['item']['category']);
         $data['currencies'] = $this->bw_config->currencies;
 
-        $data['item_location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'span5', $data['item']['ship_from']);
-        $this->load->library('Layout', $data);
+        $data['item_location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'form-control', $data['item']['ship_from']);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -126,7 +126,7 @@ class Listings extends CI_Controller
 
         $data['page'] = 'listings/add';
         $data['title'] = 'Add a Listing';
-        $data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'span5');
+        $data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'ship_from', 'form-control');
 
         if ($this->form_validation->run('add_listing') == TRUE) {
             $hash = $this->general->unique_hash('items', 'hash');
@@ -164,10 +164,10 @@ class Listings extends CI_Controller
         }
 
         if ($data['page'] == 'listings/add') {
-            $data['categories'] = $this->categories_model->generate_select_list('category', 'span5');
+            $data['categories'] = $this->categories_model->generate_select_list('category', 'form-control');
             $data['currencies'] = $this->bw_config->currencies;
         }
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -238,7 +238,7 @@ class Listings extends CI_Controller
         $data['page'] = 'listings/images';
 
         // If the Add Image form has been submitted:
-        if ($this->input->post('add_image') == 'Create') {
+        if ($this->input->post('add_image') == 'Upload') {
             if ($this->form_validation->run('add_image') == TRUE) {
                 if (!$this->upload->do_upload()) {
                     // If there is an error with the file, display the errors.
@@ -252,7 +252,7 @@ class Listings extends CI_Controller
                         return array('image_library' => 'gd2',
                         'source_image' => $upload_data['full_path'],
                         //'create_thumb' => TRUE,
-                        //'maintain_ratio' => TRUE,
+                        'maintain_ratio' => FALSE,
                         'return_base64' => TRUE,
                         'width'         => $w,
                         'height'       => $h);
@@ -288,7 +288,7 @@ class Listings extends CI_Controller
         // Reload images after adding new ones.
         $data['images'] = $this->images_model->by_item($item_hash);
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -334,6 +334,7 @@ class Listings extends CI_Controller
                     }
                 }
             }
+
             redirect($redirect_to);
         }
 
@@ -357,12 +358,12 @@ class Listings extends CI_Controller
         $data['shipping_costs'] = $this->shipping_costs_model->for_item_raw($data['item']['id'], TRUE);
 
         $this->load->model('location_model');
-        $data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'add_location', 'span8');
+        $data['locations'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'add_location', 'form-control');
         $data['account'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
 
         $data['title'] = 'Shipping Costs';
         $data['page'] = 'listings/shipping_costs';
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
