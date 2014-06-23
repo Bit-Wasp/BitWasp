@@ -907,7 +907,16 @@ CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+--
+--
+--  Table structure for table `bw_used_public_keys`
+--
+CREATE TABLE IF NOT EXISTS `bw_used_public_keys` (
+  `id` int(9) NOT NULL,
+  `public_key_sha256` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 --
 -- Table structure for table `bw_users`
