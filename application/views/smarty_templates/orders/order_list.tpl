@@ -53,7 +53,7 @@
                                             {foreach from=$order.items item=item}
                                                 {capture name="t_item_url"}item/{$item.hash}{/capture}
                                                 {if $order.progress == '0'}
-                                                    <select name="quantity[{$item.hash}" autocomplete="off">
+                                                    <select name="quantity[{$item.hash}]" autocomplete="off">
                                                         {for $i=0 to 10}
                                                             <option value='{$i}' {if $i == $item.quantity}selected="selected" {/if}>{$i}</option>
                                                         {/for}
@@ -73,9 +73,18 @@
                             </div>
                             <div class="col-md-3">
                                 {if $order.progress == 0}
-                                    <input type="submit" class="btn btn-default btn-block" name="recount[{$order.id}]" value="Update" /> <input type="submit" class="btn btn-primary btn-block" name="place_order[{$order.id}]" value="Confirm" />
+
+                                    <input type="submit" class="btn btn-default btn-block" name="recount" value="Update" />
+                                    <input type="submit" class="btn btn-primary btn-block" name="place_order" value="Confirm" />
+                                    <input type="hidden" name="recount_order__id" value="{$order.id}" />
+                                    <input type="hidden" name="place_order_id" value="{$order.id}" />
                                 {else}
                                     {url type="anchor" url=$smarty.capture.t_order_details_url text="Details" attr='class="btn btn-primary btn-block"'}
+                                {/if}
+
+                                {if $current_user.user_role == 'Buyer' AND $order.progress == '1'}
+                                    <input type="submit" class="btn btn-primary btn-block" name="cancel_order" value="Cancel" />
+                                    <input type="hidden" name="cancel_order_id" value="{$order.id}" />
                                 {/if}
 
                                 {if $current_user.user_role == 'Vendor' AND $order.progress == 1}
@@ -88,7 +97,8 @@
                                 {/if}
 
                                 {if $order.progress == 5 AND $order.vendor_selected_upfront == TRUE}
-                                    <input type="submit" name="received[{$order.id}]" value="Confirm Receipt" class="btn btn-mini" />
+                                    <input type="submit" class="btn btn-primary btn-block" name="received_upfront_order" value="Received" />
+                                    <input type="hidden" name="received_upfront_order_id" value="{$order.id}" />
                                 {/if}
 
                                 {if $order.progress == 6 }
@@ -104,8 +114,47 @@
                             </div>
                             <!-- Order Body -->
                             <div class="col-md-12">
-                                <div class="col-md-6">{$order.progress_message}</div>
-                                <div class="col-md-6">* * * * *</div>
+                                <div class="col-xs-12 col-md-10 col-md-offset-2">{$order.progress_message}</div>
+                                <div class="col-xs-12 col-md-10">
+
+                                    <div class="row bs-wizard" style="border-bottom:0;">
+                                        <div class="col-xs-3 bs-wizard-step {if $order.progress > 1}complete{else}active{/if}">
+                                            <div class="text-center bs-wizard-stepnum">Step 1</div>
+                                            <div class="progress"><div class="progress-bar"></div></div>
+                                            <a href="#" class="bs-wizard-dot"></a>
+                                            <div class="bs-wizard-info text-center">Order accepted</div>
+                                        </div>
+
+                                        <div class="col-xs-3 bs-wizard-step {if $order.progress > 2}complete{else}disabled{/if}"><!-- complete -->
+                                            <div class="text-center bs-wizard-stepnum">Step 2</div>
+                                            <div class="progress"><div class="progress-bar"></div></div>
+                                            <a href="#" class="bs-wizard-dot"></a>
+                                            <div class="bs-wizard-info text-center">Payment made</div>
+                                        </div>
+                                        {if $order.refund_time !== ''}
+                                            <div class="col-xs-3 bs-wizard-step {if $order.progress == 7}complete{else}disabled{/if}">
+                                                <div class="text-center bs-wizard-stepnum">Step 3</div>
+                                                <div class="progress"><div class="progress-bar"></div></div>
+                                                <a href="#" class="bs-wizard-dot"></a>
+                                                <div class="bs-wizard-info text-center">Refund complete</div>
+                                            </div>
+                                        {else}
+                                            <div class="col-xs-3 bs-wizard-step {if $order.progress > 4}complete{else}disabled{/if}"><!-- complete -->
+                                                <div class="text-center bs-wizard-stepnum">Step 3</div>
+                                                <div class="progress"><div class="progress-bar"></div></div>
+                                                <a href="#" class="bs-wizard-dot"></a>
+                                                <div class="bs-wizard-info text-center">Item dispatched</div>
+                                            </div>
+
+                                            <div class="col-xs-3 bs-wizard-step {if $order.progress == 7}complete{else}disabled{/if}"><!-- active -->
+                                                <div class="text-center bs-wizard-stepnum">Step 4</div>
+                                                <div class="progress"><div class="progress-bar"></div></div>
+                                                <a href="#" class="bs-wizard-dot"></a>
+                                                <div class="bs-wizard-info text-center">Order complete</div>
+                                            </div>
+                                        {/if}
+                                    </div>
+                                </div>
                             </div>
 
                         </div>

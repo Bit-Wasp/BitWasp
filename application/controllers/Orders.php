@@ -400,7 +400,6 @@ class Orders extends MY_Controller
 
         if ($this->input->post('submit_purchase') == 'Purchase') {
             if ($this->form_validation->run('submit_buyer_purchase') == TRUE) {
-
                 // Process Form Submission
                 $item_info = $this->items_model->get($this->input->post('item_hash'), FALSE);
                 if ($item_info == FALSE) {
@@ -445,87 +444,88 @@ class Orders extends MY_Controller
         }
 
         // Check if we are Proceeding an order, or Recounting it.
-        $place_order = $this->input->post('place_order');
-        $recount = $this->input->post('recount');
-        if (is_array($place_order) || is_array($recount)) {
+        if ($this->input->post('place_order') == 'Confirm' || $this->input->post('recount') == 'Update') {
+            $submission = ($this->input->post('recount') == 'Update')
+                ? 'recount'
+                : 'place';
 
-            // Load the ID of the order.
-            $id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount);
-            $id = $id[0];
-            if (!(is_numeric($id) && $id >= 0))
-                redirect('purchases');
+            $rule = ($submission == 'recount')
+                ? 'submit_buyer_order_recount'
+                : 'submit_buyer_order_place';
 
-            // If the order cannot be loaded (progress == 0), redirect to Purchases page.
-            $current_order = $this->order_model->load_order($id, array('0'));
-            if ($current_order == FALSE)
-                redirect('purchases');
+            if($this->form_validation->run($rule) == TRUE) {
+                $id = ($submission == 'recount')
+                                ? $this->input->post('recount_order_id')
+                                : $this->input->post('place_order_id');
 
-            // Loop through items in order, and update each.
-            $list = $this->input->post('quantity');
-            foreach ($list as $hash => $quantity) {
-                $item_info = $this->items_model->get($hash);
+                // If the order cannot be loaded (progress == 0), redirect to Purchases page.
+                $current_order = $this->order_model->load_order($id, array('0'));
+                if ($current_order == FALSE) {
+                    $this->current_user->set_return_message('Unable to find this order.', FALSE);
+                    redirect('purchases');
+                }
 
-                if ($item_info !== FALSE) {
-                    $update = array('item_hash' => $hash,
-                        'quantity' => $quantity);
+                // Loop through items in order, and update each.
+                $list = $this->input->post('quantity');
+                foreach ($list as $hash => $quantity) {
+                    $item_info = $this->items_model->get($hash);
+                    if ($item_info !== FALSE) {
+                        $update = array('item_hash' => $hash,
+                            'quantity' => $quantity);
+                        $this->order_model->update_items($current_order['id'], $update, 'force');
+                    }
+                }
 
-                    $this->order_model->update_items($current_order['id'], $update, 'force');
+                // If the order is being placed, redirect to there.
+                $url = ($submission == 'recount')
+                    ? 'purchases'
+                    : 'purchases/confirm/' . $current_order['id'];
+
+                redirect($url);
+            }
+        }
+
+        if($this->input->post('cancel_order') == 'Cancel') {
+            if($this->form_validation->run('submit_buyer_cancel_order') == TRUE) {
+                $current_order = $this->order_model->load_order($this->input->post('order_cancel_id'), array('1'));
+                if ($current_order == FALSE){
+                    $this->current_user->set_return_message('Order could not be found.',FALSE);
+                    redirect('purchases');
+                }
+
+                if ($this->order_model->buyer_cancel($this->input->post('order_cancel_id')) == TRUE){
+                    $this->current_user->set_return_message('This order has been canelled.',FALSE);
+                    redirect('purchases');
                 }
             }
-
-            // If the order is being placed, redirect to there.
-            $url = (is_array($place_order))
-                ? 'purchases/confirm/' . $current_order['id']
-                : 'purchases';
-
-            redirect($url);
         }
 
+        if($this->input->post('received_upfront_order') == 'Received') {
+            if($this->form_validation->run('submit_buyer_received_upfront_order') == TRUE) {
+                $current_order = $this->order_model->load_order($this->input->post('received_upfront_order_id'), array('5'));
+                if ($current_order == FALSE){
+                    $this->current_user->set_return_message('That order could not be found!', FALSE);
+                    redirect('purchases');
+                }
 
-        // Process 'cancelled' orders
-        $cancel = $this->input->post('cancel');
-        if (is_array($cancel)) {
-            $id = array_keys($cancel);
-            $id = $id[0];
-            if (!(is_numeric($id) && $id >= 0))
-                redirect('purchases');
+                // Prevent escrow orders from being marked as 'received'.
+                if ($current_order['vendor_selected_upfront'] == '0') {
+                    $this->current_user->set_return_message('You must sign and broadcast the transaction to finalize the order', FALSE);
+                    redirect('purchases');
+                }
 
-            $current_order = $this->order_model->load_order($id, array('1'));
-            if ($current_order == FALSE)
-                redirect('purchases');
-
-            if ($this->order_model->buyer_cancel($id) == TRUE)
-                $data['returnMessage'] = 'This order has been cancelled';
-        }
-
-        // Process 'received' orders during up-front payments
-        $received = $this->input->post('received');
-        if (is_array($received)) {
-            $id = array_keys($received);
-            $id = $id[0];
-            if (!(is_numeric($id) && $id >= 0))
-                redirect('purchases');
-
-            $current_order = $this->order_model->load_order($id, array('5'));
-            if ($current_order == FALSE)
-                redirect('purchases');
-
-            // Prevent escrow orders from being marked as 'received'.
-            if ($current_order['vendor_selected_upfront'] == '0') {
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You must sign & broadcast this transaction!')));
-                redirect('purchases');
-            }
-
-            if ($this->order_model->progress_order($id, '5', '7', array('received_time' => time())) == TRUE) {
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been marked as received. Please leave feedback for this user!')));
-                redirect('purchases');
+                if ($this->order_model->progress_order($this->input->post('received_upfront_order_id'), '5', '7', array('received_time' => time(), 'time'=>time())) == TRUE) {
+                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been marked as received. Please leave feedback for this user!')));
+                    redirect('purchases');
+                }
             }
         }
 
         // Page Data
         // Load information about orders.
-
         $data['orders'] = $this->order_model->buyer_orders();
+
+        // Load review auth tokens
         if ($data['orders'] !== FALSE) {
             $id_list = array();
             foreach ($data['orders'] as $t_order) {

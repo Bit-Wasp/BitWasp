@@ -569,6 +569,38 @@ $config = array('register_form' => array(
             'label' => 'public keys',
             'rules' => 'required|alpha_numeric'
         )
+    ),
+    'submit_buyer_order_recount' => array(
+        array('field' => 'recount_order_id',
+            'label' => '',
+            'rules' => 'is_numeric'
+        ),
+        array('field' => 'quantity[]',
+            'label' => 'quantity',
+            'rules' => 'is_numeric'
+        )
+    ),
+    'submit_buyer_order_place' => array(
+        array('field' => 'order_place_id',
+            'label' => '',
+            'rules' => 'is_numeric'
+        ),
+        array('field' => 'quantity[]',
+            'label' => 'quantity',
+            'rules' => 'is_numeric'
+        )
+    ),
+    'submit_buyer_cancel_order' => array(
+        array('field' => 'order_cancel_id',
+            'label' => '',
+            'rules' => 'is_numeric'
+        )
+    ),
+    'submit_buyer_received_upfront_order' => array(
+        array('field' => 'order_received_upront_id',
+            'label' => '',
+            'rules' => 'is_numeric'
+        )
     )
 );
 
