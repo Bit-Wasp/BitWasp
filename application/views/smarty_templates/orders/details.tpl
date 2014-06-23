@@ -44,18 +44,24 @@
                                             <td>Fees</td>
                                             <td>{$coin.code} {$order.vendor_fees|escape:"html":"UTF-8"}</td>
                                         </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td><strong>Earnings</strong></td>
+                                            <td>{$coin.code} {$order.order_price|escape:"html":"UTF-8"}</td>
+                                        </tr>
                                     {else}
                                         <tr>
                                             <td></td>
                                             <td>Fees</td>
                                             <td>{$coin.code} {$fees.fee|escape:"html":"UTF-8"}</td>
                                         </tr>
-                                    {/if}
                                         <tr>
                                             <td></td>
                                             <td><strong>Total</strong></td>
                                             <td>{$coin.code} {$order.order_price|escape:"html":"UTF-8"}</td>
                                         </tr>
+                                    {/if}
+
                                     </tbody>
                                 </table>
                             </div>

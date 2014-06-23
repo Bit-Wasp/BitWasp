@@ -601,6 +601,31 @@ $config = array('register_form' => array(
             'label' => '',
             'rules' => 'is_numeric'
         )
+    ),
+    'submit_vendor_accept_order' => array(
+        array('field' => 'vendor_accept_order_id',
+            'label' => '',
+            'rules' => 'is_numeric'
+        )
+    ),
+    'submit_delete_message' => array(
+        array('field' => 'delete_message_hash',
+            'label' => '',
+            'rules' => 'required|alpha_numeric'
+        )
+    ),
+    'submit_delete_all_messages' => array(
+        array('field' => 'delete_message',
+            'label' => '',
+            'rules' => 'required|alpha_numeric'
+        )
+    ),
+    'submit_vendor_delete_listing' => array(
+        array('field' => 'delete_listing_hash',
+            'label' => '',
+            'rules' => 'required|alpha_numeric'
+        )
     )
+
 );
 

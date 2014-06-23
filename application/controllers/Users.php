@@ -195,11 +195,12 @@ class Users extends MY_Controller
             // Ensure password has been treated with first round of hashing.
             $salt = $this->general->generate_salt();
             $password = $this->general->password($this->general->hash($this->input->post('password0')), $salt);
+            $private_key_Salt = $this->general->generate_salt();
 
             // Generate OpenSSL keys for the users private messages.
             if ($data['encrypt_private_messages'] == TRUE) {
                 $pin = $this->input->post('message_pin0');
-                $message_password = $this->general->password($this->input->post('message_pin0'), $salt);
+                $message_password = $this->general->password($this->input->post('message_pin0'), $private_key_salt);
                 $message_keys = $this->openssl->keypair($message_password);
                 unset($message_password);
             } else {
@@ -221,6 +222,7 @@ class Users extends MY_Controller
                 'user_role' => $data['role'],
                 'public_key' => $message_keys['public_key'],
                 'private_key' => $message_keys['private_key'],
+                'private_key_salt' => $private_key_salt,
                 'local_currency' => $this->input->post('local_currency'));
 
             $add_user = $this->users_model->add($register_info, $data['token_info']);

@@ -39,6 +39,35 @@ class Listings extends MY_Controller
      */
     public function manage()
     {
+        if($this->input->post('delete_listing') == 'Delete') {
+            if($this->form_validation->run('submit_vendor_delete_listing') == TRUE) {
+                $item = $this->listings_model->get($this->input->post('delete_listing_hash'));
+
+                // Abort if the listing does not exist.
+                if ($item == FALSE){
+                    $this->current_user->set_return_message('This listing does not exist!', FALSE);
+                    redirect('listings');
+                }
+
+                // Delete an items images as well.
+                if ($this->listings_model->delete($item['hash'])) {
+                    // Delete each image.
+                    if (count($item['images']) > 0) {
+                        foreach ($item['images'] as $image) {
+                            $this->images_model->delete_item_img($item['hash'], $image['hash']);
+                        }
+                    }
+                    $message = 'Your listing has been removed.';
+                    $success = TRUE;
+                } else {
+                    $message = 'Unable to remove your listing';
+                    $success = FALSE;
+                }
+                echo $message;
+                $this->current_user->set_return_message($message, $success);
+                redirect('listings');
+            }
+        }
         $data['title'] = 'Manage Listings';
         $data['page'] = 'listings/manage';
         $data['items'] = $this->listings_model->my_listings();
@@ -168,37 +197,6 @@ class Listings extends MY_Controller
             $data['currencies'] = $this->bw_config->currencies;
         }
         $this->_render($data['page'], $data);
-    }
-
-    /**
-     * Delete an item along with it's images.
-     * URI: /listings/delete/$hash
-     *
-     * @access    public
-     * @see        Models/Listings_Model
-     * @see        Models/Images_Model
-     *
-     * @param    string $hash
-     * @return    void
-     */
-    public function delete($hash)
-    {
-        $item = $this->listings_model->get($hash);
-
-        // Abort if the listing does not exist.
-        if ($item == FALSE)
-            redirect('listings');
-
-        // Delete an items images as well.
-        if ($this->listings_model->delete($hash) !== FALSE) {
-            if (count($item['images']) > 0) {
-                // Delete each image.
-                foreach ($item['images'] as $image) {
-                    $this->images_model->delete_item_img($hash, $image['hash']);
-                }
-            }
-        }
-        redirect('listings');
     }
 
     /**

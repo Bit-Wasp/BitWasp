@@ -213,9 +213,7 @@ class Bw_messages
                 }
                 // decrypt AES key with openssl
                 $aes_key = $this->CI->openssl->decrypt($message['aes_key'], $key_data['private_key'], $this->CI->current_user->message_password);
-                //var_dump($aes_key);
                 $content = trim($this->decrypt($content, $aes_key, $message['aes_iv']));
-
             }
 
             $content = json_decode($content);

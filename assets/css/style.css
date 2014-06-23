@@ -106,5 +106,5 @@ li.padd { margin-left: 10px; }
 .bs-wizard > .bs-wizard-step.disabled > .bs-wizard-dot:after {opacity: 0;}
 .bs-wizard > .bs-wizard-step:first-child  > .progress {left: 50%; width: 50%;}
 .bs-wizard > .bs-wizard-step:last-child  > .progress {width: 50%;}
-.bs-wizard > .bs-wizard-step.disabled a.bs-wizard-dot{ pointer-events: none; }
+.bs-wizard > .bs-wizard-step.disabled a.bs-wizard-dot{ pointer-evfonents: none; }
 /*END Form Wizard*/

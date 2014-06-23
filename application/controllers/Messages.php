@@ -76,83 +76,40 @@ class Messages extends MY_Controller
      */
     public function inbox()
     {
+        if($this->input->post('delete_all_messages') == 'Delete All') {
+            if($this->form_validation->run('submit_delete_all_messages') == TRUE) {
+                if($this->input->post('delete_message') == 'all') {
+                    if ($this->messages_model->delete_all() == TRUE) {
+                        $this->current_user->set_return_message('Inbox has been emptied.',TRUE);
+                        redirect('inbox');
+                    } else {
+                        $data['returnMessage'] = 'Error deleting messages, please try again later.';
+                    }
+                }
+            }
+        }
+
+        if($this->input->post('delete_message') == 'Delete') {
+            if($this->form_validation->run('submit_delete_message') == TRUE) {
+                $get = $this->messages_model->get($this->input->post('delete_message_hash'));
+                if ($get !== FALSE) {
+                    if ($this->messages_model->delete($get['id']) == TRUE) {
+                        $this->current_user->set_return_message('Message has been deleted.',TRUE);
+                        redirect('inbox');
+                    } else {
+                        $data['returnMessage'] = 'Error deleting message, please try again later.';
+                    }
+                } else {
+                    redirect('inbox');
+                }
+            }
+        }
+
         // Load inbox and pass through preparation function.
         $messages = $this->messages_model->inbox();
         $data['messages'] = $this->bw_messages->prepare_output($messages);
         $data['page'] = 'messages/inbox';
         $data['title'] = 'Inbox';
-        $this->_render($data['page'], $data);
-    }
-
-    /**
-     * Delete a specified message, or all of them if $hash=='all'
-     * URI: /messages/delete/$hash
-     *
-     * @access    public
-     * @see        Libraries/Bw_Messages
-     * @see        Models/Messages_Model
-     *
-     * @param    string $hash
-     * @return    void
-     */
-    public function delete($hash)
-    {
-        if ($hash == 'all') {
-            if ($this->messages_model->delete_all() == TRUE) {
-                $this->session->set_flashdata('msgs_delete', 'true');
-                redirect('message/deleted');
-            } else {
-                $data['returnMessage'] = 'Error deleting messages, try again later.';
-            }
-        } else {
-            $get = $this->messages_model->get($hash);
-            if ($get !== FALSE) {
-                if ($this->messages_model->delete($get['id']) == TRUE) {
-                    $this->session->set_flashdata('msg_delete', 'true');
-                    redirect('message/deleted');
-                } else {
-                    $data['returnMessage'] = 'Error deleting message, try again later.';
-                }
-            } else {
-                redirect('inbox');
-            }
-        }
-
-        // Reload inbox with error message.
-        $data['title'] = 'Inbox';
-        $data['page'] = 'messages/inbox';
-        $messages = $this->messages_model->inbox();
-        $data['messages'] = $this->bw_messages->prepare_output($messages);
-
-        $this->_render($data['page'], $data);
-    }
-
-    /**
-     * Page to handle deleted messages, to avoid user resubmitting URI's.
-     * URI: /messages/deleted
-     *
-     * @access    public
-     * @see        Libraries/Bw_Messages
-     * @see        Models/Messages_Model
-     *
-     * @return    void
-     */
-    public function deleted()
-    {
-
-        $data['title'] = 'Inbox';
-        $data['page'] = 'messages/inbox';
-        $messages = $this->messages_model->inbox();
-        $data['messages'] = $this->bw_messages->prepare_output($messages);
-
-        if ($this->session->flashdata('msg_delete') == TRUE) {
-            $data['returnMessage'] = 'Message has been deleted';
-        } else if ($this->session->flashdata('msgs_delete') == TRUE) {
-            $data['returnMessage'] = 'All messages have been deleted.';
-        } else {
-            redirect('inbox');
-        }
-
         $this->_render($data['page'], $data);
     }
 
@@ -171,7 +128,6 @@ class Messages extends MY_Controller
      */
     public function send($identifier = NULL)
     {
-
         $this->load->library('form_validation');
 
         $data['to_name'] = '';
@@ -208,7 +164,7 @@ class Messages extends MY_Controller
             $data['from'] = $this->current_user->user_id;
             $message = $this->bw_messages->prepare_input($data);
             if ($this->messages_model->send($message)) {
-                $this->session->set_flashdata('returnMessage', json_encode(array('message'=>'Your message has been sent!')));
+                $this->current_user->set_return_message('Your message has been sent!', TRUE);
                 redirect('inbox');
             }
         }
@@ -246,7 +202,7 @@ class Messages extends MY_Controller
         if ($this->form_validation->run('message_pin_form') == TRUE) {
             // Load the users salt, public key, and private key.
             $user = $this->users_model->message_data(array('user_hash' => $this->current_user->user_hash));
-            $message_password = $this->general->password($this->input->post('pin'), $user['salt']);
+            $message_password = $this->general->password($this->input->post('pin'), $user['private_key_salt']);
 
             $test = openssl_pkey_get_private($user['private_key'], $message_password);
 

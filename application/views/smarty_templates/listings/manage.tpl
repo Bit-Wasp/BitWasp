@@ -6,6 +6,7 @@
 
             {if $items == TRUE}
                 {foreach from=$items item=item}
+                    {form method="open" action="listings"}
                     {capture name='t_item_url'}item/{$item.hash}{/capture}
                     {capture name='t_listing_edit_url'}listings/edit/{$item.hash}{/capture}
                     {capture name='t_listing_images_url'}listings/images/{$item.hash}{/capture}
@@ -19,10 +20,12 @@
                                 {if $item.hidden == '1'}[hidden]{/if}
                                 {url type="anchor" url=$smarty.capture.t_listing_edit_url text='Edit' attr='class="btn btn-default btn-block"'}
                                 {url type="anchor" url=$smarty.capture.t_listing_images_url text='Images' attr='class="btn btn-default btn-block"'}
-                                {url type="anchor" url=$smarty.capture.t_listing_delete_url text='Delete' attr='class="btn btn-danger btn-block"'}
+                                <input type="submit" name="delete_listing" value="Delete" class="btn btn-danger btn-block">
+                                <input type="hidden" name="delete_listing_hash" value="{$item.hash}" />
                             </div>
                         </div>
                     </div>
+                    </form>
                 {/foreach}
             {else}
                 You have no listings!

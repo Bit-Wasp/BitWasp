@@ -934,6 +934,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `password` varchar(128) NOT NULL,
   `public_key` blob NOT NULL,
   `private_key` blob NOT NULL,
+  `private_key_salt` varchar(64) NOT NULL,
   `register_time` int(20) NOT NULL,
   `salt` varchar(128) NOT NULL,
   `user_hash` varchar(16) NOT NULL,

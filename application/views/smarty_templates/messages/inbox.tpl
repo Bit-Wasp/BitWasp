@@ -18,7 +18,11 @@
                             </tr>
                         </thead>
                         <tbody>
+
+
+
                         {foreach from=$messages item=message}
+                            {form method="open" action="inbox" class="form-horizontal"}
                             {capture name="t_from_user_url"}user/{$message.from.user_hash}{/capture}
                             {capture name="t_msg_url"}message/{$message.hash}{/capture}
                             {capture name="t_msg_send_url"}message/send/{$message.hash}{/capture}
@@ -32,8 +36,11 @@
                                 <td>{url type="anchor" url=$smarty.capture.t_msg_url text="View" attr='class="btn btn-primary"'}
                                 {if $message.viewed == '1'}
                                     {url type="anchor" url=$smarty.capture.t_msg_send_url text='Reply' attr='class="btn btn-success"'}
-                                    {url type="anchor" url=$smarty.capture.t_msg_delete_url text='Delete' attr='class="btn btn-danger"'}{/if}</td>
+                                    <input type='submit' name='delete_message' value='Delete' class="btn btn-danger"/>
+                                    <input type='hidden' name="delete_message_hash" value="{$message.hash}" />
+                                {/if}</td>
                             </tr>
+                            </form>
                         {/foreach}
                         </tbody>
                     </table>
@@ -41,10 +48,17 @@
                         <p>No messages in your inbox.</p>
                     {/if}
 
-                    <form class="form-horizontal">
-                        <div class="form-actions">
-                            {url type="anchor" url="message/send" text="Compose" attr='class="btn btn-primary"'}
-                            {url type="anchor" url="message/delete/all" text="Delete All" attr='class="btn btn-danger"'}
+                    {form method="open" action="inbox" class="form-horizontal"}
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-2 col-lg-2 col-md-2" for="submit"></label>
+                            <div class="col-sm-5 col-lg-5 col-md-5">
+                                <p align="center">
+                                    {url type="anchor" url="message/send" text="Compose" attr='class="btn btn-primary"'}
+                                    <input type='submit' name='delete_all_messages' value='Delete All' class="btn btn-danger"/>
+                                    <input type='hidden' name="delete_message" value="all" />
+                                </p>
+                            </div>
                         </div>
                     </form>
 		        </div>

@@ -128,8 +128,10 @@ class Orders extends MY_Controller
         }
 
         if ($this->input->post('vendor_accept_order') == 'Accept Order') {
-            if ($this->form_validation->run('checkable') == TRUE) {
-                if ($data['available_public_keys'] == FALSE) {
+            if ($this->form_validation->run('submit_vendor_accept_order') == TRUE) {
+                if($data['order']['id'] !== $this->input->post('vendor_accept_order_id')){
+                    $data['returnMessage'] = 'An error occured during form submission.';
+                } else if ($data['available_public_keys'] == FALSE) {
                     $data['returnMessage'] = 'You have no available public keys to use in this order!';
                 } else {
                     $accept_details = array('vendor_public_keys' => $data['available_public_keys'],
@@ -171,8 +173,7 @@ class Orders extends MY_Controller
         $this->load->model('review_model');
 
         if ($this->review_model->decide_trusted_user($data['order'], 'vendor') == FALSE
-            OR $data['order']['vendor_selected_upfront'] == '1'
-        ) {
+            OR $data['order']['vendor_selected_upfront'] == '1') {
             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to finalize this order early!')));
             redirect('orders/details/' . $data['order']['id']);
         }
@@ -485,6 +486,7 @@ class Orders extends MY_Controller
             }
         }
 
+        // Cancel order at progress 1.
         if($this->input->post('cancel_order') == 'Cancel') {
             if($this->form_validation->run('submit_buyer_cancel_order') == TRUE) {
                 $current_order = $this->order_model->load_order($this->input->post('order_cancel_id'), array('1'));
@@ -494,12 +496,13 @@ class Orders extends MY_Controller
                 }
 
                 if ($this->order_model->buyer_cancel($this->input->post('order_cancel_id')) == TRUE){
-                    $this->current_user->set_return_message('This order has been canelled.',FALSE);
+                    $this->current_user->set_return_message('This order has been cancelled.',FALSE);
                     redirect('purchases');
                 }
             }
         }
 
+        // Handle received upfront order
         if($this->input->post('received_upfront_order') == 'Received') {
             if($this->form_validation->run('submit_buyer_received_upfront_order') == TRUE) {
                 $current_order = $this->order_model->load_order($this->input->post('received_upfront_order_id'), array('5'));
