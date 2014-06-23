@@ -66,6 +66,7 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
+
     /**
      * Public Keys
      * URI: /account/public_keys
@@ -78,15 +79,35 @@ class Accounts extends MY_Controller
         if ($this->current_user->user_role !== 'Vendor')
             redirect('');
 
+        $this->load->model('used_pubkeys_model');
         if ($this->input->post('submit_public_keys') == 'Upload Public Keys') {
-            $keys = explode("\n", $this->input->post('public_key_list'));
+            if($this->form_validation->run('submit_public_keys')){
+                $keys = explode("\n", $this->input->post('public_key_list'));
 
-            foreach ($keys as $key) {
-                $key = trim($key);
-                if (BitcoinLib::validate_public_key($key) == TRUE)
-                    $this->accounts_model->add_bitcoin_public_key($key);
+                $valid_keys = array();
+                foreach ($keys as $key) {
+                    $key = trim($key);
+                    if (BitcoinLib::validate_public_key($key) == TRUE)
+                        $valid_keys[] = $key;
+                }
+
+                if(count($valid_keys) > 0) {
+                    $unused_keys = $this->used_pubkeys_model->remove_used_keys($valid_keys);
+                    $c = count($unused_keys);
+                    if($c > 0) {
+                        $this->accounts_model->add_bitcoin_public_key($unused_keys);
+                        $this->used_pubkeys_model->log_public_key($unused_keys);
+
+                        $this->current_user->set_return_message(  (($c>1) ? $c." keys were":'1 key was'). ' added to your list.');
+                        redirect('accounts/public_keys');
+                    } else {
+                        $data['returnMessage'] = 'The supplied key'.((count($keys)>1)?'s have':' has').' already been used. Please generate some more.';
+                    }
+                } else {
+                    $data['returnMessage'] = 'Public key list was invalid, please try again.';
+                }
+
             }
-            redirect('accounts/public_keys');
         }
 
         $data['page'] = 'accounts/vendor_public_keys';
@@ -94,6 +115,8 @@ class Accounts extends MY_Controller
         $data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
         $this->_render($data['page'], $data);
     }
+
+
 
     /**
      * View own user profile

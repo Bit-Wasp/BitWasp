@@ -557,6 +557,12 @@ $config = array('register_form' => array(
             'label' => 'solution',
             'rules' => 'required'
         )
+    ),
+    'submit_public_keys' => array(
+       array('field' => 'public_key_list',
+        'label' => 'public keys',
+        'rules' => 'required'
     )
+)
 );
 
