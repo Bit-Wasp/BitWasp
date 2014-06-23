@@ -410,7 +410,6 @@ class Accounts extends MY_Controller
 
         $data['page'] = 'accounts/two_factor';
         $data['title'] = 'Two Factor Authentication';
-        $data['header_meta'] = $this->load->view('accounts/password_hash_header', NULL, true);
         $this->_render($data['page'], $data);
     }
 

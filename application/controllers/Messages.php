@@ -248,11 +248,9 @@ class Messages extends MY_Controller
             $user = $this->users_model->message_data(array('user_hash' => $this->current_user->user_hash));
             $message_password = $this->general->password($this->input->post('pin'), $user['salt']);
 
-            // Encrypt with public key, attempt to decrypt with private key & password.
-            $solution = $this->general->generate_salt();
-            $challenge = $this->openssl->encrypt($solution, $user['public_key']);
-            $answer = $this->openssl->decrypt($challenge, $user['private_key'], $message_password);
-            if ($answer == $solution) {
+            $test = openssl_pkey_get_private($user['private_key'], $message_password);
+
+            if (is_resource($test)) {
                 $this->current_user->set_message_password($message_password);
                 unset($message_password);
                 $redirect_url = $this->session->userdata('before_msg_pin');

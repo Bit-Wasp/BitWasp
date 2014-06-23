@@ -562,7 +562,13 @@ $config = array('register_form' => array(
        array('field' => 'public_key_list',
         'label' => 'public keys',
         'rules' => 'required'
+       )
+    ),
+    'submit_buyer_purchase' => array(
+        array('field' => 'item_hash',
+            'label' => 'public keys',
+            'rules' => 'required|alpha_numeric'
+        )
     )
-)
 );
 

@@ -180,6 +180,7 @@ class Items extends MY_Controller
      */
     public function get($hash)
     {
+        $this->load->helper('form');
         $this->load->model('shipping_costs_model');
         $this->load->model('review_model');
 

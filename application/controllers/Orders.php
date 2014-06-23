@@ -114,21 +114,21 @@ class Orders extends MY_Controller
 
         $this->load->model('review_model');
         $data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
-        $data['fees']['shipping_cost'] = number_format($data['order']['shipping_costs'],8);
-        $data['fees']['fee'] = number_format($data['order']['fees'],8);
+        $data['fees']['shipping_cost'] = number_format($data['order']['shipping_costs'], 8);
+        $data['fees']['fee'] = number_format($data['order']['fees'], 8);
 
         $data['request_order_type'] = $this->order_model->requested_order_type($data['order']);
         $data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
         $data['order_type'] = ($data['trusted_vendor'] AND $data['request_order_type'] == 'upfront') ? 'upfront' : 'escrow';
 
         if ($data['order_type'] == 'escrow') {
-            $data['fees']['vendor_fees'] = number_format($data['fees']['fee']+((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->escrow_rate),8);
+            $data['fees']['vendor_fees'] = number_format($data['fees']['fee'] + ((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->escrow_rate), 8);
         } else {
-            $data['fees']['vendor_fees'] = number_format($data['fees']['fee']+((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->upfront_rate),8);
+            $data['fees']['vendor_fees'] = number_format($data['fees']['fee'] + ((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->upfront_rate), 8);
         }
 
         if ($this->input->post('vendor_accept_order') == 'Accept Order') {
-            if($this->form_validation->run('checkable') == TRUE) {
+            if ($this->form_validation->run('checkable') == TRUE) {
                 if ($data['available_public_keys'] == FALSE) {
                     $data['returnMessage'] = 'You have no available public keys to use in this order!';
                 } else {
@@ -246,9 +246,10 @@ class Orders extends MY_Controller
                     $tx_outs[$buyer_address] = (float)$data['order']['total_paid'] - 0.0001;
 
                     $create_spend_transaction = $this->order_model->create_spend_transaction($data['order']['address'], $tx_outs, $data['order']['redeemScript']);
-                    if($create_spend_transaction == TRUE) {
+                    if ($create_spend_transaction == TRUE) {
                         if ($this->order_model->update_order($data['order']['id'], array('progress' => '8',
-                                'refund_time' => time())) == TRUE) {
+                                'refund_time' => time())) == TRUE
+                        ) {
                             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'A refund has been issued for this order. Please sign to ensure the funds can be claimed ASAP.')));
                             redirect('orders/details/' . $data['order']['id']);
                         } else {
@@ -267,53 +268,6 @@ class Orders extends MY_Controller
     }
 
     // Buyer pages
-
-    /**
-     * Purchase an item/add item to order.
-     * User Role: Buyer
-     * URI: /purchase/$item_hash
-     *
-     * @param    string $item_hash
-     * @return    void
-     */
-    public function purchase_item($item_hash)
-    {
-        $this->load->model('items_model');
-        $this->load->model('shipping_costs_model');
-        $item_info = $this->items_model->get($item_hash, FALSE);
-        if ($item_info == FALSE)
-            redirect('items');
-
-        $account = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash));
-        $shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $account['location']);
-
-        if ($shipping_costs == FALSE) {
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'This item is not available in your location. Message the vendor to discuss availability.')));
-            redirect('item/' . $item_info['hash']);
-        }
-
-        $order = $this->order_model->load($item_info['vendor_hash'], '0');
-        if ($order == FALSE) {
-            // New order; Need to create
-            $new_order = array('buyer_id' => $this->current_user->user_id,
-                'vendor_hash' => $item_info['vendor_hash'],
-                'items' => $item_info['hash'] . "-1",
-                'price' => $item_info['price_b'],
-                'currency' => '0');
-            $this->session->set_flashdata('returnMessage',
-                json_encode(array('message' => (($this->order_model->add($new_order) == TRUE) ? 'Your order has been created!' : 'Unable to add your order at this time, please try again later.'))));
-        } else {
-            // Already have order, update it
-            if ($order['progress'] == '0') {
-                $update = array('item_hash' => $item_hash,
-                    'quantity' => '1');
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => (($this->order_model->update_items($order['id'], $update) == TRUE) ? 'Your order has been updated.' : 'Unable to update your order at this time.'))));
-            } else {
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has already been created, please contact your vendor to discuss any further changes')));
-            }
-        }
-        redirect('purchases');
-    }
 
     /**
      * Confirm Order
@@ -339,10 +293,10 @@ class Orders extends MY_Controller
         $data['page'] = 'orders/buyer_confirm_purchase';
         $data['header_meta'] = $this->load->view('orders/encryption_header', NULL, true);
 
-        $data['fees']['shipping_cost'] = number_format($this->shipping_costs_model->costs_to_location($data['order']['items'], $data['order']['buyer']['location']),8);
-        $data['fees']['fee'] = number_format($this->fees_model->calculate(($data['order']['price'] + $data['fees']['shipping_cost'])),8);
-        $data['fees']['total'] = number_format($data['fees']['shipping_cost'] + $data['fees']['fee'],8);
-        $data['total'] = number_format($data['order']['price'] + $data['fees']['total'],8);
+        $data['fees']['shipping_cost'] = number_format($this->shipping_costs_model->costs_to_location($data['order']['items'], $data['order']['buyer']['location']), 8);
+        $data['fees']['fee'] = number_format($this->fees_model->calculate(($data['order']['price'] + $data['fees']['shipping_cost'])), 8);
+        $data['fees']['total'] = number_format($data['fees']['shipping_cost'] + $data['fees']['fee'], 8);
+        $data['total'] = number_format($data['order']['price'] + $data['fees']['total'], 8);
 
         $data['vendor_public_keys'] = $this->accounts_model->bitcoin_public_keys($data['order']['vendor']['id']);
         $data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
@@ -442,8 +396,53 @@ class Orders extends MY_Controller
     {
         $this->load->model('items_model');
         $this->load->model('review_auth_model');
+        $this->load->model('shipping_costs_model');
 
-        // Process Form Submission
+        if ($this->input->post('submit_purchase') == 'Purchase') {
+            if ($this->form_validation->run('submit_buyer_purchase') == TRUE) {
+
+                // Process Form Submission
+                $item_info = $this->items_model->get($this->input->post('item_hash'), FALSE);
+                if ($item_info == FALSE) {
+                    $this->current_user->set_return_message('Unable to find this item', FALSE);
+                    redirect('items');
+                }
+
+                $shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $this->current_user->location['id']);
+
+                if ($shipping_costs == FALSE) {
+                    $this->current_user->set_return_message('This item is not available in your location. Message the vendor to discuss availability.', FALSE);
+                    redirect('item/' . $item_info['hash']);
+                }
+
+                $order = $this->order_model->load($item_info['vendor_hash'], '0');
+                if ($order == FALSE) {
+                    // New order; Need to create
+                    $new_order = array('buyer_id' => $this->current_user->user_id,
+                        'vendor_hash' => $item_info['vendor_hash'],
+                        'items' => $item_info['hash'] . "-1",
+                        'price' => $item_info['price_b'],
+                        'currency' => '0');
+
+                    $add = $this->order_model->add($new_order);
+                    $message = (($add == TRUE) ? 'Your order has been created!' : 'Unable to add your order at this time, please try again later.');
+                    $this->current_user->set_return_message($message, $add);
+
+                } else {
+                    // Already have order, update it
+                    if ($order['progress'] == '0') {
+                        $update = array('item_hash' => $item_hash,
+                            'quantity' => '1');
+                        $res = $this->order_model->update_items($order['id'], $update);
+                        $message = (($res == TRUE) ? 'Your order has been updated.' : 'Unable to update your order at this time.');
+                        $this->current_user->set_return_message($message, $res);
+                    } else {
+                        $this->current_user->set_return_message('Your order has already been created, please contact your vendor to discuss any further changes');
+                    }
+                }
+                redirect('purchases');
+            }
+        }
 
         // Check if we are Proceeding an order, or Recounting it.
         $place_order = $this->input->post('place_order');
@@ -454,7 +453,7 @@ class Orders extends MY_Controller
             $id = (is_array($place_order)) ? array_keys($place_order) : array_keys($recount);
             $id = $id[0];
             if (!(is_numeric($id) && $id >= 0))
-                 redirect('purchases');
+                redirect('purchases');
 
             // If the order cannot be loaded (progress == 0), redirect to Purchases page.
             $current_order = $this->order_model->load_order($id, array('0'));
@@ -685,10 +684,10 @@ class Orders extends MY_Controller
         // - The order is progress 4, escrow, and the role is the vendor.
         // - The order has been disputed, and anyone may sign.
         $data['display_form'] = (($data['order']['partially_signed_transaction'] == '' AND $data['order']['unsigned_transaction'] != '')
-        AND ($data['order']['progress'] == '3' AND $this->current_user->user_role == 'Buyer'
-            OR $data['order']['progress'] == '4' AND $data['order']['vendor_selected_escrow'] == '1' AND $this->current_user->user_role == 'Vendor'
-            OR $data['order']['progress'] == '6'
-            OR $data['order']['progress'] == '8'));
+            AND ($data['order']['progress'] == '3' AND $this->current_user->user_role == 'Buyer'
+                OR $data['order']['progress'] == '4' AND $data['order']['vendor_selected_escrow'] == '1' AND $this->current_user->user_role == 'Vendor'
+                OR $data['order']['progress'] == '6'
+                OR $data['order']['progress'] == '8'));
 
         if ($data['order']['partially_signed_transaction'] == '' && $data['order']['unsigned_transaction'] !== '')
             if ($data['order']['progress'] == '3' && $this->current_user->user_role == 'Buyer'
@@ -747,8 +746,8 @@ class Orders extends MY_Controller
         }
 
         // Only allow a vendor to refund, if the progress is either 3 or 4 (not yet dispatched)
-        $data['can_refund'] =($this->current_user->user_role == 'Vendor'
-            AND in_array($data['order']['progress'], array('3','4')));
+        $data['can_refund'] = ($this->current_user->user_role == 'Vendor'
+            AND in_array($data['order']['progress'], array('3', '4')));
         // Only allow a vendor to finalize early, if they are trusted (given admins definition),
         // if the progress is 4 (awaiting dispatch), and the order was initially escrow,
         // and they haven't already asked for the order to be finalized early.
@@ -772,10 +771,10 @@ class Orders extends MY_Controller
 
         $checkStrangeAddress = function () use ($data) {
             $tx_addrs = array();
-            foreach($data['raw_tx']['vout'] as $vout){
+            foreach ($data['raw_tx']['vout'] as $vout) {
                 $tx_addrs[] = $vout['scriptPubKey']['addresses'][0];
             }
-            return count($tx_addrs)!=count(array_intersect($tx_addrs, array_keys($data['addrs'])));
+            return count($tx_addrs) != count(array_intersect($tx_addrs, array_keys($data['addrs'])));
         };
 
         $data['strange_address'] = (isset($data['raw_tx'])) ? $checkStrangeAddress() : FALSE;
@@ -786,7 +785,8 @@ class Orders extends MY_Controller
         $data['fees']['total'] = $data['order']['shipping_costs'] + $data['order']['fees'];
 
         if ($this->current_user->user_role == 'Buyer'
-            && ($data['order']['paid_time'] == '')) {
+            && ($data['order']['paid_time'] == '')
+        ) {
             $this->load->library('ciqrcode');
             $data['payment_url'] = "bitcoin:{$data['order']['address']}?amount={$data['order']['order_price']}&message=Order+{$data['order']['id']}&label=Order+{$data['order']['id']}";
             $data['qr'] = $this->ciqrcode->generate_base64(array('data' => $data['payment_url']));

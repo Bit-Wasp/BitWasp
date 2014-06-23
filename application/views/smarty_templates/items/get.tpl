@@ -12,6 +12,10 @@
             {assign var="defaultMessage" value=""}
             {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
 
+            {if $current_user.logged_in == TRUE AND $current_user.user_role == 'Buyer'}
+            {form method="open" action="purchases" attr=''}
+            {/if}
+
             <div class="thumbnail">
                 {if $item.main_image.hash !== 'default'}
                     {capture name="t_img_uri"}image/{$item.main_image.hash}{/capture}
@@ -29,7 +33,11 @@
                                 {url type="anchor" url=$smarty.capture.t_message_vendor_url text="Message" attr='class="btn btn-default"'}<br />
                             {/if}
                             {if $current_user.user_role == 'Buyer'}
-                                {url type="anchor" url=$smarty.capture.t_item_purchase_url text='Purchase' attr='class="btn btn-primary"'}
+
+                                <input type="hidden" name="item_hash" value="{$item.hash}" style="display:none" />
+                                <input type="submit" name="submit_purchase" value="Purchase" class="btn btn-primary">
+
+
                             {/if}
                         {/if}
                     </p>
@@ -120,5 +128,8 @@
                 </div>
                 {/foreach}
             </div>
+            {/if}
+            {if $current_user.logged_in == TRUE AND $current_user.user_role == 'Buyer'}
+            </form>
             {/if}
         </div>
