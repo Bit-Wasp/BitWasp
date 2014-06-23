@@ -26,7 +26,7 @@ class Callback extends CI_Controller
         parent::__construct();
 
         // Prevent access via web. Uncomment when enough people have changed.
-        if (!$this->input->is_cli_request())
+        if (!is_cli())
             die("Not Allowed");
     }
 
