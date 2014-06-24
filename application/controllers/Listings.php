@@ -63,7 +63,6 @@ class Listings extends MY_Controller
                     $message = 'Unable to remove your listing';
                     $success = FALSE;
                 }
-                echo $message;
                 $this->current_user->set_return_message($message, $success);
                 redirect('listings');
             }

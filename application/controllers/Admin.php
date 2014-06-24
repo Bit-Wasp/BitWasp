@@ -811,10 +811,28 @@ class Admin extends MY_Controller
         $this->load->model('users_model');
         $this->load->library('form_validation');
 
+        if($this->input->post('delete_token') == 'Delete Token') {
+
+            if($this->form_validation->run('admin_delete_token')) {
+                // Abort if the token does not exist.
+                $token = $this->users_model->check_registration_token($this->input->post('delete_token_content'));
+                if ($token == FALSE) {
+                    $this->current_user->set_return_message('This token does not exist', FALSE);
+                    redirect('admin/user_tokens');
+                }
+
+                $data['returnMessage'] = 'Unable to delete the specified token, please try again.';
+                if ($this->users_model->delete_registration_token($token['id']) == TRUE) {
+                    // Display a message if the token is successfully deleted.
+                    $this->current_user->set_return_message('The selected token has been deleted', FALSE);
+                    redirect('admin/user_tokens');
+                }
+            }
+        }
+
         // If the Create Token form has been submitted:
         if ($this->input->post('create_token') == "Create") {
             if ($this->form_validation->run('admin_create_token') == TRUE) {
-
                 // Get the registration fee for the chosen user role, and
                 // if it does not exist then set the default to 0.0000000 ($config_val)
                 // If the admin has chosen the default fee, use that $config_val,
@@ -834,38 +852,6 @@ class Admin extends MY_Controller
                     redirect('admin/user_tokens');
                 }
             }
-        }
-
-        // Load a list of registration tokens.
-        $data['tokens'] = $this->users_model->list_registration_tokens();
-        $data['page'] = 'admin/user_tokens';
-        $data['title'] = 'Registration Tokens';
-        $this->_render($data['page'], $data);
-    }
-
-    /**
-     * Delete a User Token
-     * URI: /admin/tokens/delete/$token
-     *
-     * Allows a user to delete the registration token.
-     *
-     * @param    string $token
-     */
-    public function delete_token($token)
-    {
-        $this->load->library('form_validation');
-        $this->load->model('users_model');
-
-        // Abort if the token does not exist.
-        $token = $this->users_model->check_registration_token($token);
-        if ($token == FALSE)
-            redirect('admin/tokens');
-
-        $data['returnMessage'] = 'Unable to delete the specified token, please try again later.';
-        if ($this->users_model->delete_registration_token($token['id']) == TRUE) {
-            // Display a message if the token is successfully deleted.
-            $this->session->set_flashdata('returnMessage', json_encode(array('success' => TRUE, 'message' => 'The selected token has been deleted')));
-            redirect('admin/tokens');
         }
 
         // Load a list of registration tokens.
@@ -905,7 +891,7 @@ class Admin extends MY_Controller
                 $message = $this->bw_messages->prepare_input($info, $details);
                 $this->messages_model->send($message);
 
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'The selected item has been removed')));
+                $this->current_user->set_return_message('The selected item has been removed', TRUE);
                 redirect('items');
             } else {
                 $data['returnMessage'] = 'Unable to delete that item at this time.';
@@ -1006,55 +992,58 @@ class Admin extends MY_Controller
             $data['transaction_fee'] = 0.0001;
             $data['admin_fee'] = $data['current_order']['fees'] + $data['current_order']['extra_fees'] - $data['transaction_fee'];
             $data['user_funds'] = (float)($data['current_order']['order_price'] - $data['admin_fee'] - $data['transaction_fee']);
-            if (in_array($this->input->post('resolve_dispute'), array('Close Dispute', 'Propose Resolution'))) {
-                // Craft the raw transaction if it was escrow.
-                // If up-front, just close the dispute.
-                if ($data['current_order']['vendor_selected_escrow'] == '1') {
-                    $pay_buyer_amount = $this->input->post('pay_buyer');
-                    $pay_vendor_amount = $this->input->post('pay_vendor');
-                    $sum = $pay_buyer_amount + $pay_vendor_amount;
 
-                    $epsilon = 0.00000001;
+            if($this->input->post('resolve_dispute') !== null) {
+                if($this->form_validation->run('admin_resolve_dispute') == TRUE) {
+                    if($this->input->post('resolve_dispute_id') == $data['current_order']['id']){
+                        if ($data['current_order']['vendor_selected_escrow'] == '1') {
+                            $pay_buyer_amount = $this->input->post('pay_buyer');
+                            $pay_vendor_amount = $this->input->post('pay_vendor');
+                            $sum = $pay_buyer_amount + $pay_vendor_amount;
 
-                    if (abs($sum - $data['user_funds']) < $epsilon) {
-                        $tx_outs = array();
+                            $epsilon = 0.00000001;
 
-                        // Add outputs for the sites fee, buyer, and vendor.
-                        $admin_address = BitcoinLib::public_key_to_address($data['current_order']['admin_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
-                        $tx_outs[$admin_address] = (float)$data['admin_fee'];
-                        if ($pay_buyer_amount > 0) {
-                            $buyer_address = BitcoinLib::public_key_to_address($data['current_order']['buyer_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
-                            $tx_outs[$buyer_address] = (float)$pay_buyer_amount;
-                        }
-                        if ($pay_vendor_amount > 0) {
-                            $vendor_address = BitcoinLib::public_key_to_address($data['current_order']['vendor_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
-                            $tx_outs[$vendor_address] = (float)$pay_vendor_amount;
-                        }
+                            if (abs($sum - $data['user_funds']) < $epsilon) {
+                                $tx_outs = array();
 
-                        // Create spend transaction and redirect, otherwise display an error
-                        $create_spend_transaction = $this->order_model->create_spend_transaction($data['current_order']['address'], $tx_outs, $data['current_order']['redeemScript']);
-                        if($create_spend_transaction == TRUE){
-                            // Notify users by way of a dispute update
-                            $this->disputes_model->post_dispute_update(array('posting_user_id' => '',
-                                'order_id' => $order_id,
-                                'dispute_id' => $data['dispute']['id'],
-                                'message' => 'New transaction on order page.'));
-                            redirect('admin/dispute/' . $order_id);
+                                // Add outputs for the sites fee, buyer, and vendor.
+                                $admin_address = BitcoinLib::public_key_to_address($data['current_order']['admin_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
+                                $tx_outs[$admin_address] = (float)$data['admin_fee'];
+                                if ($pay_buyer_amount > 0) {
+                                    $buyer_address = BitcoinLib::public_key_to_address($data['current_order']['buyer_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
+                                    $tx_outs[$buyer_address] = (float)$pay_buyer_amount;
+                                }
+                                if ($pay_vendor_amount > 0) {
+                                    $vendor_address = BitcoinLib::public_key_to_address($data['current_order']['vendor_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
+                                    $tx_outs[$vendor_address] = (float)$pay_vendor_amount;
+                                }
+
+                                // Create spend transaction and redirect, otherwise display an error
+                                $create_spend_transaction = $this->order_model->create_spend_transaction($data['current_order']['address'], $tx_outs, $data['current_order']['redeemScript']);
+                                if($create_spend_transaction == TRUE){
+                                    // Notify users by way of a dispute update
+                                    $this->disputes_model->post_dispute_update(array('posting_user_id' => '',
+                                        'order_id' => $order_id,
+                                        'dispute_id' => $data['dispute']['id'],
+                                        'message' => 'New transaction on order page.'));
+                                    redirect('admin/dispute/' . $order_id);
+                                } else {
+                                    $data['returnMessage'] = $create_spend_transaction;
+                                }
+                            } else {
+                                $data['amount_error'] = 'The User Funds amount must be completely spread between both users.';
+                            }
                         } else {
-                            $data['returnMessage'] = $create_spend_transaction;
+                            if ($this->order_model->progress_order($data['current_order']['id'], '6') == TRUE) {
+                                $update = array('posting_user_id' => '',
+                                    'order_id' => $order_id,
+                                    'dispute_id' => $data['dispute']['id'],
+                                    'message' => 'Dispute closed by admin.');
+                                $this->disputes_model->post_dispute_update($update);
+                                $this->disputes_model->set_final_response($data['current_order']['id']);
+                                redirect('admin/dispute/' . $order_id);
+                            }
                         }
-                    } else {
-                        $data['amount_error'] = 'The User Funds amount must be completely spread between both users.';
-                    }
-                } else {
-                    if ($this->order_model->progress_order($data['current_order']['id'], '6') == TRUE) {
-                        $update = array('posting_user_id' => '',
-                            'order_id' => $order_id,
-                            'dispute_id' => $data['dispute']['id'],
-                            'message' => 'Dispute closed by admin.');
-                        $this->disputes_model->post_dispute_update($update);
-                        $this->disputes_model->set_final_response($data['current_order']['id']);
-                        redirect('admin/dispute/' . $order_id);
                     }
                 }
             }
@@ -1126,19 +1115,12 @@ class Admin extends MY_Controller
             }
         }
 
-        $delete_rate = $this->input->post('delete_rate');
-        if (is_array($delete_rate)) {
-            $key = array_keys($delete_rate);
-            $key = $key[0];
-            if (is_numeric($key)) {
-                $id = array_keys($delete_rate);
-                $id = $id[0];
+        if($this->input->post('delete_rate') == 'Delete') {
+            if($this->form_validation->run('admin_delete_fee_rate') == TRUE) {
                 if ($this->fees_model->delete($id) == TRUE) {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'The selected fee has been deleted.')));
+                    $this->current_user->set_return_message('The selected fee has been deleted.',FALSE);
                     redirect('admin/items/fees');
                 }
-            } else {
-                $data['returnMessage'] = 'You must select a valid fee to delete.';
             }
         }
 

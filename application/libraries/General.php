@@ -37,8 +37,7 @@ class General {
 	 * @return		string
 	 */
 	public function random_data($length) {
-		$data = mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
-		return $data;
+		return openssl_random_pseudo_bytes($length);
 	}
 	
 	/**
@@ -49,51 +48,38 @@ class General {
 	 * @return		string
 	 */
 	public function generate_salt() {
-		return $this->hash($this->random_data('128'));
+		return bin2hex($this->random_data('32'));
 	}
-	
-	/**
-	 * Hash
-	 * 
-	 * Generate the sha512 hash of a supplied string, along with
-	 * an optional salt. Performs this several times. This is done
-	 * on passwords if javascript was disabled.
-	 * 
-	 * @param		string	$password
-	 * @return		string
-	 */
-	public function hash($password) {
-		$sha_limit_loop = 10;
-		
-		$hash = $password;
-		for($i = 0; $i < $sha_limit_loop; $i++) {
-			$hash = hash('sha512', $hash);
-		}
-		return $hash;
-	}
-			
-	/**
-	 * Password
-	 * 
-	 * This function is used to create a hash based on a password and
-	 * a salt. This is used in the second step of generating the password
-	 * hash and is only done server side as it uses the salt.
-	 * 
-	 * @param	string	$password
-	 * @param	string	$salt
-	 * @return	string
-	 */
-	public function password($password, $salt = NULL) {
-		$sha_limit_loop = 10;
-		
-		$hash = $password;
-		for($i = 0; $i < $sha_limit_loop; $i++) {
-			$hash = hash('sha512', $hash.$salt);
-		}
-		return $hash;
-	}
-	
-	/**
+
+    /**
+     * New Password
+     *
+     * Given $password, return the salt and hash.
+     *
+     * @param $password
+     * @return array
+     */
+    public function new_password($password) {
+        $rounds = '10';
+
+        $salt = '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
+        $hash = crypt($password, $salt);
+        return array('hash' => $hash,
+                    'salt' => $salt);
+    }
+
+    /**
+     * Password
+     *
+     * Takes $given_password, the $salt, and returns a hash.
+     * @param $given_password
+     * @param $salt
+     * @return string
+     */
+    public function password($given_password, $salt) {
+        return crypt($given_password, $salt);
+    }
+    /**
 	 * Unique Hash
 	 * 
 	 * Generates a unique hash, in the $table table, and column $column.
@@ -108,12 +94,12 @@ class General {
 	 */ 
 	public function unique_hash($table, $column, $length = 16) {
 
-		$hash = substr($this->hash($this->generate_salt()), 0, $length);
+		$hash = substr($this->generate_salt(), 0, $length);
 		// Test the DB, see if the hash is unique. 
 		$test = $this->CI->general_model->check_unique_entry($table, $column, $hash);
 
 		while($test == FALSE) {
-			$hash = substr($this->hash($this->generate_salt()), 0, $length);
+            $hash = substr($this->generate_salt(), 0, $length);
 
 			// Perform the test again, and see if the loop goes on.
 			$test = $this->CI->general_model->check_unique_entry($table, $column, $hash);	

@@ -625,7 +625,24 @@ $config = array('register_form' => array(
             'label' => '',
             'rules' => 'required|alpha_numeric'
         )
+    ),
+    'admin_delete_token' => array(
+        array('field' => 'delete_token_content',
+            'label' => '',
+            'rules' => 'required|alpha_numeric'
+        )
+    ),
+    'admin_delete_fee_rate' => array(
+        array('field' => 'token_id',
+            'label' => '',
+            'rules' => 'required|is_numeric'
+        )
+    ),
+    'admin_resolve_dispute' => array(
+        array('field'=>'resolve_dispute_id',
+            'label' => '',
+            'rules' => 'required|is_numeric'
+        )
     )
-
 );
 

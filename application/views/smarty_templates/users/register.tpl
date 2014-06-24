@@ -37,9 +37,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-xs-2" for="message_pin0">Message PIN</label>
-                        <div class="col-xs-5">
-                            <input type='password' class="form-control" name='message_pin0' id="message_pin0" value='' autocomplete="off" />
+                        <div class="col-xs-12">
+                            <label class="control-label col-xs-2" for="message_pin0">Message PIN</label>
+                            <div class="col-xs-5">
+                                <input type='password' class="form-control" name='message_pin0' id="message_pin0" value='' autocomplete="off" />
+                            </div>
                         </div>
                         <div class="col-xs-10 col-xs-offset-2">{form method="form_error" field="message_pin0"}</div>
                     </div>

@@ -66,7 +66,7 @@
 
                 <div class="row">
                     <div class="col-xs-6"><strong>Registration Tokens</strong></div>
-                    <div class="col-xs-6">{url type="anchor" url="admin/tokens" text="Manage" attr=''}</div>
+                    <div class="col-xs-6">{url type="anchor" url="admin/user_tokens" text="Manage" attr=''}</div>
                 </div>
 
                 <div class="row">

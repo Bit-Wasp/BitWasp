@@ -67,14 +67,16 @@
                     <tbody>
                     {foreach from=$tokens item=token}
                     {capture name="t_registration_url"}register/{$token.token_content}{/capture}
-                    {capture name="t_delete_token_url"}admin/tokens/delete/{$token.token_content}{/capture}
+                        {form method="open" action="admin/user_tokens" attr=''}
                         <tr>
                             <td>{url type="anchor" url=$smarty.capture.t_registration_url text="Right click to copy" attr='class="btn btn-default btn-sm"'}</td>
-                            <td>{url type="anchor" url=$smarty.capture.t_delete_token_url text="Delete Token" attr='class="btn btn-danger btn-sm"'}</td>
+                            <td><input type="submit" name="delete_token" value="Delete Token" class="btn btn-danger btn-sm" />
+                                <input type="hidden" name="delete_token_content" value="{$token.token_content}" />
                             <td>{$token.role}</td>
                             <td>{$coin.symbol} {$token.entry_payment|escape:"html":"UTF-8"}</td>
                             <td>{$token.comment|escape:"html":"UTF-8"}</td>
                         </tr>
+                        </form>
                     {/foreach}
                     </tbody>
                 </table>

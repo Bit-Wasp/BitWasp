@@ -34,8 +34,8 @@ class Users_model extends CI_Model
      */
     public function add($data, $token_info = NULL)
     {
-        $sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location, local_currency) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $query = $this->db->query($sql, array($data['user_name'], $data['password'], $data['salt'], $data['user_hash'], $data['user_role'], time(), $data['public_key'], $data['private_key'], $data['location'], $data['local_currency']));
+        $sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location, local_currency, private_key_salt) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = $this->db->query($sql, array($data['user_name'], $data['password'], $data['salt'], $data['user_hash'], $data['user_role'], time(), $data['public_key'], $data['private_key'], $data['location'], $data['local_currency'], $data['private_key_salt']));
         if ($query) {
             if ($token_info !== FALSE)
                 $this->delete_registration_token($token_info['id']);
@@ -107,7 +107,6 @@ class Users_model extends CI_Model
         $key = array_keys($user);
         $key = $key[0];
         if (in_array($key, array('user_hash', 'id', 'user_name'))) {
-            // Duplicate the select statement to prevent weird errors later on.
             $query = $this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, public_key, pgp_two_factor, totp_two_factor, entry_paid')
                 ->get_where('users', array($key => $user[$key]));
         } else {

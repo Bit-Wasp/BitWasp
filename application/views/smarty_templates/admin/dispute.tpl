@@ -151,6 +151,7 @@
                                 <div class="col-xs-5">
                                     <p align="center">
                                         <input type="submit" name="resolve_dispute" value="{if $current_order.vendor_selected_upfront == "1"}Close Dispute{else}Propose Resolution{/if}" class="btn btn-primary" />
+                                        <input type="hidden" name="resolve_dispute_id" value="{$current_order.id}" />
                                     </p>
                                 </div>
                             </div>

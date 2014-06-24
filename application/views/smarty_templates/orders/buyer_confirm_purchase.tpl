@@ -55,7 +55,7 @@
 
                     <div class="col-md-12">
 
-                    {form method="open" action=$smarty.capture.t_purchase_url attr=['name'=>'placeOrderForm','class'=>'form-horizontal']}
+                    {form method="open" action=$smarty.capture.t_purchase_url attr=['name'=>'placeOrderForm','id'=>'placeOrderForm','class'=>'form-horizontal']}
 
                         <div class="row">
                             <div class="row">
@@ -96,7 +96,7 @@
                             <label class="control-label col-sm-2 col-lg-2 col-md-2" for="submit"></label>
                             <div class="col-sm-5 col-lg-5 col-md-5">
                                 <p align="center">
-                                    <input type='submit' class="btn btn-primary" value='Place Order' onclick='messageEncrypt()' />
+                                    <input type="submit" class="btn btn-primary" value='Place Order' onclick='messageEncrypt()' />
                                     {url type="anchor" url='order/list' text="Cancel" attr='class="btn btn-default"'}
                                 </p>
                             </div>

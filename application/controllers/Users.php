@@ -84,8 +84,7 @@ class Users extends MY_Controller
                 $user_info = $this->users_model->get(array('user_name' => $user_name));
 
                 if ($user_info !== FALSE) {
-                    $password = $this->general->password($this->general->hash($this->input->post('password')), $user_info['salt']);
-
+                    $password = $this->general->password($this->input->post('password'), $user_info['salt']);
                     $check_login = $this->users_model->check_password($user_name, $password);
 
                     // Check the login went through OK.
@@ -192,10 +191,9 @@ class Users extends MY_Controller
 
             $user_name = $this->input->post('user_name');
 
-            // Ensure password has been treated with first round of hashing.
-            $salt = $this->general->generate_salt();
-            $password = $this->general->password($this->general->hash($this->input->post('password0')), $salt);
-            $private_key_Salt = $this->general->generate_salt();
+            $password = $this->general->new_password($this->input->post('password0'));
+
+            $private_key_salt = $this->general->generate_salt();
 
             // Generate OpenSSL keys for the users private messages.
             if ($data['encrypt_private_messages'] == TRUE) {
@@ -213,10 +211,10 @@ class Users extends MY_Controller
             $user_hash = $this->general->unique_hash('users', 'user_hash');
 
             // Build the array for the model.
-            $register_info = array('password' => $password,
+            $register_info = array('password' => $password['hash'],
                 'location' => $this->input->post('location'),
                 'register_time' => time(),
-                'salt' => $salt,
+                'salt' => $password['salt'],
                 'user_hash' => $user_hash,
                 'user_name' => $user_name,
                 'user_role' => $data['role'],
@@ -238,12 +236,12 @@ class Users extends MY_Controller
 
                     // Create a fees address, and record the entry payment
                     $address = $this->bitcoin_model->get_fees_address($user_hash, $this->bw_config->currencies[0]['crypto_magic_byte']);
-                    $entry_fee = $data['token_info']['entry_payment'];
+                    $amount = (is_array($data['token_info']) ? $data['token_info']['entry_payment'] : $this->bw_config->$entry_fee);
                     $info = array('user_hash' => $user_hash,
-                        'amount' => $data['token_info']['entry_payment'],
+                        'amount' => $amount,
                         'bitcoin_address' => $address);
                     $this->users_model->set_entry_payment($info);
-                    $message = "Your account has been created, but this site requires you pay an entry fee. Please send {$this->coin['symbol']} {$entry_fee} to {$address}. You can log in to view these details again.";
+                    $message = "Your account has been created, but this site requires you pay an entry fee. Please send {$this->bw_config->currencies[0]['symbol']} {$amount} to {$address}. You can log in to view these details again.";
                 } else {
                     // Allow the user immediate access.
                     $this->users_model->set_entry_paid($user_hash);

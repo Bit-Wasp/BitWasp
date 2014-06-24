@@ -66,16 +66,8 @@ class Ciqrcode
 		if (!defined('QR_PNG_MAXIMUM_SIZE')) define('QR_PNG_MAXIMUM_SIZE',  $this->size);
 	
 		// call original library
-		include "qrcode/qrconst.php";
-		include "qrcode/qrtools.php";
-		include "qrcode/qrspec.php";
-		include "qrcode/qrimage.php";
-		include "qrcode/qrinput.php";
-		include "qrcode/qrbitstream.php";
-		include "qrcode/qrsplit.php";
-		include "qrcode/qrrscode.php";
-		include "qrcode/qrmask.php";
-		include "qrcode/qrencode.php";
+		include "_inc_phpqrcode.php";
+
 	}
 
 
