@@ -98,7 +98,7 @@ class General {
 		$test = $this->CI->general_model->check_unique_entry($table, $column, $hash);
 
 		while($test == FALSE) {
-            $hash = substr($this->generate_salt(), 0, $length);
+            $hash = bin2hex($this->random_data(11));
 
 			// Perform the test again, and see if the loop goes on.
 			$test = $this->CI->general_model->check_unique_entry($table, $column, $hash);	

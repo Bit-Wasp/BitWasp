@@ -221,7 +221,7 @@ class Users extends MY_Controller
                 'user_role' => $data['role'],
                 'public_key' => $message_keys['public_key'],
                 'private_key' => $message_keys['private_key'],
-                'private_key_salt' => $private_key_salt,
+                'private_key_salt' => $message_keys['private_key_salt'],
                 'local_currency' => $this->input->post('local_currency'));
 
             $add_user = $this->users_model->add($register_info, $data['token_info']);
@@ -249,8 +249,7 @@ class Users extends MY_Controller
                     $message = "Your account has been created, please login below: ";
                 }
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
-                echo 'registered';
-#                redirect('login');
+                redirect('login');
             } else {
                 // Unsuccessful submission, show form again.
                 $data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
