@@ -23,7 +23,43 @@ class Database {
 		return true;
 	}
 
-	// Function to create the tables and fill them with the default data
+    public function password($password) {
+        $rounds = '10';
+
+        $salt = '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
+        $hash = crypt($password, $salt);
+        return array('password' => $hash,
+            'salt' => $salt);
+    }
+
+    function handle_enc_pms($data) {
+        if($data['encrypt_private_messages'] == '1') {
+            $message_password = $this->password($data['admin_pm_password']);
+
+            $openssl_config = array(	"digest_alg" => 'sha512',
+                "private_key_bits" => 2048,
+                "private_key_type" => OPENSSL_KEYTYPE_RSA);
+            $keypair = openssl_pkey_new($openssl_config);
+
+            /* Extract the private key from $res to $private_key */
+            openssl_pkey_export($keypair, $private_key, $message_password['password'], $openssl_config);
+
+            // Extract the public key from $res to $public_key
+            $public_key = openssl_pkey_get_details($keypair);
+            $public_key = $public_key['key'];
+            return array('public_key' => base64_encode($public_key),
+                'private_key' => base64_encode($private_key),
+                'private_key_salt' => $message_password['salt']);
+        } else {
+            $salt_only = $this->password('');
+            return array('public_key' => '0',
+                'private_key' => '0',
+                'private_key_salt' => $salt_only['salt']);
+        }
+    }
+
+
+    // Function to create the tables and fill them with the default data
 	function create_tables($data)
 	{
 		// Connect to the database
@@ -37,44 +73,9 @@ class Database {
 		// Open the default SQL file
 		$query = file_get_contents('assets/install.sql');
 
-		$password = function($password) {
-            $rounds = '10';
+		$pw = $this->password($data['admin_password']);
 
-            $salt = '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
-            $hash = crypt($password, $salt);
-            return array('password' => $hash,
-                'salt' => $salt);
-        };
-
-		$pw = $password($data['admin_password']);
-
-		$handle_enc_pms = function($data) {
-			if($data['encrypt_private_messages'] == '1') {
-                $message_password = $password($data['admin_pm_password']);
-
-				$openssl_config = array(	"digest_alg" => 'sha512',
-								"private_key_bits" => 2048,
-								"private_key_type" => OPENSSL_KEYTYPE_RSA);
-				$keypair = openssl_pkey_new($openssl_config);
-
-				/* Extract the private key from $res to $private_key */
-				openssl_pkey_export($keypair, $private_key, $message_password['password'], $openssl_config);
-				
-				// Extract the public key from $res to $public_key
-				$public_key = openssl_pkey_get_details($keypair);
-				$public_key = $public_key['key'];
-				return array('public_key' => base64_encode($public_key),
-							 'private_key' => base64_encode($private_key),
-                             'private_key_salt' => $message_password['salt']);
-			} else {
-                $salt_only = $password('');
-				return array('public_key' => '0',
-							 'private_key' => '0',
-                             'private_key_salt' => $salt_only['salt']);
-			}
-		};
-
-		$handled_enc = $handle_enc_pms($data);
+		$handled_enc = $this->handle_enc_pms($data);
 
 		$new  = str_replace("%ENCRYPT_PRIVATE_MESSAGES%",$data['encrypt_private_messages'],$query);
 		$new  = str_replace("%ALLOW_GUESTS%",$data['allow_guests'],$new);
