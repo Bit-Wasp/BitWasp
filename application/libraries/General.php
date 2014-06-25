@@ -48,7 +48,8 @@ class General {
 	 * @return		string
 	 */
 	public function generate_salt() {
-		return bin2hex($this->random_data('32'));
+        $rounds = '10';
+        return '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
 	}
 
     /**
@@ -60,9 +61,7 @@ class General {
      * @return array
      */
     public function new_password($password) {
-        $rounds = '10';
-
-        $salt = '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
+        $salt = $this->generate_salt();
         $hash = crypt($password, $salt);
         return array('hash' => $hash,
                     'salt' => $salt);

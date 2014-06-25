@@ -38,23 +38,19 @@ class Database {
 		$query = file_get_contents('assets/install.sql');
 
 		$password = function($password) {
-			$salt = hash('sha512', mcrypt_create_iv(512, MCRYPT_DEV_URANDOM));
-			$hash = $password;
-			for($i = 0; $i < 10; $i++) {
-				$hash = hash('sha512', $hash);
-			}
-			
-			for($i = 0; $i < 10; $i++) {
-				$hash = hash('sha512', $hash.$salt);
-			}
-			return array('password' => $hash,
-						 'salt' => $salt);
-		};
+            $rounds = '10';
+
+            $salt = '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
+            $hash = crypt($password, $salt);
+            return array('password' => $hash,
+                'salt' => $salt);
+        };
 
 		$pw = $password($data['admin_password']);
 
 		$handle_enc_pms = function($data, $salt) {
 			if($data['encrypt_private_messages'] == '1') {
+                $private_key_salt = bin2hex($this->random_data('32'));
 				$hash = $data['admin_pm_password'];
 				for($i = 0; $i < 10; $i++) {
 					$hash = hash('sha512', $hash.$salt);
@@ -72,7 +68,8 @@ class Database {
 				$public_key = openssl_pkey_get_details($keypair);
 				$public_key = $public_key['key'];
 				return array('public_key' => base64_encode($public_key),
-							 'private_key' => base64_encode($private_key));
+							 'private_key' => base64_encode($private_key),
+                             'private_key_salt');
 			} else {
 				return array('public_key' => '0',
 							 'private_key' => '0');

@@ -134,13 +134,13 @@ class Users_model extends CI_Model
     {
 
         if (isset($user['user_hash'])) {
-            $query = $this->db->select('public_key, private_key, salt')
+            $query = $this->db->select('public_key, private_key, private_key_salt')
                 ->get_where('users', array('user_hash' => $user['user_hash']));
         } elseif (isset($user['id'])) {
-            $query = $this->db->select('public_key, private_key, salt')
+            $query = $this->db->select('public_key, private_key, private_key_salt')
                 ->get_where('users', array('id' => $user['id']));
         } elseif (isset($user['user_name'])) {
-            $query = $this->db->select('public_key, private_key, salt')
+            $query = $this->db->select('public_key, private_key, private_key_salt')
                 ->get_where('users', array('user_name' => $user['user_name']));
         } else {
             return FALSE; //No suitable field found.
@@ -149,7 +149,7 @@ class Users_model extends CI_Model
         if ($query->num_rows() > 0) {
             $row = $query->row_array();
 
-            $results = array('salt' => $row['salt'],
+            $results = array('private_key_salt' => $row['private_key_salt'],
                 'public_key' => base64_decode($row['public_key']),
                 'private_key' => base64_decode($row['private_key']));
             return $results;

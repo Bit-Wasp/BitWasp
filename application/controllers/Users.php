@@ -80,12 +80,11 @@ class Users extends MY_Controller
             }
 
             if ($valid) {
-                $user_name = $this->input->post('user_name');
-                $user_info = $this->users_model->get(array('user_name' => $user_name));
+                $user_info = $this->users_model->get(array('user_name' => $this->input->post('user_name')));
 
                 if ($user_info !== FALSE) {
                     $password = $this->general->password($this->input->post('password'), $user_info['salt']);
-                    $check_login = $this->users_model->check_password($user_name, $password);
+                    $check_login = $this->users_model->check_password($this->input->post('user_name'), $password);
 
                     // Check the login went through OK.
                     if ($check_login !== FALSE AND $check_login['id'] == $user_info['id']) {
@@ -248,7 +247,8 @@ class Users extends MY_Controller
                     $message = "Your account has been created, please login below: ";
                 }
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
-                redirect('login');
+                echo 'registered';
+#                redirect('login');
             } else {
                 // Unsuccessful submission, show form again.
                 $data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
