@@ -31,7 +31,7 @@ class Database {
     public function password($password) {
         $salt = $this->generate_salt();
         $hash = crypt($password, $salt);
-        return array('password' => $hash,
+        return array('hash' => $hash,
             'salt' => $salt);
     }
 
@@ -45,7 +45,7 @@ class Database {
             $keypair = openssl_pkey_new($openssl_config);
 
             /* Extract the private key from $res to $private_key */
-            openssl_pkey_export($keypair, $private_key, $message_password['password'], $openssl_config);
+            openssl_pkey_export($keypair, $private_key, $message_password['hash'], $openssl_config);
 
             // Extract the public key from $res to $public_key
             $public_key = openssl_pkey_get_details($keypair);
@@ -84,7 +84,7 @@ class Database {
 		$new  = str_replace("%ALLOW_GUESTS%",$data['allow_guests'],$new);
 		$new  = str_replace("%FORCE_VENDOR_PGP%",$data['force_vendor_pgp'],$new);
 		$new  = str_replace("%ELECTRUM_MPK%",$data['electrum_mpk'],$new);
-		$new  = str_replace("%PASSWORD%", $pw['password'], $new);
+		$new  = str_replace("%PASSWORD%", $pw['hash'], $new);
 		$new  = str_replace("%PUBLIC_KEY%", $handled_enc['public_key'], $new);
 		$new  = str_replace("%PRIVATE_KEY%", $handled_enc['private_key'], $new);
         $new  = str_replace("%PRIVATE_KEY_SALT%", $handled_enc['private_key_salt'], $new);

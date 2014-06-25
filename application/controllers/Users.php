@@ -197,7 +197,7 @@ class Users extends MY_Controller
                 $pin = $this->input->post('message_pin0');
                 $msg_password = $this->general->new_password($this->input->post('message_pin0'));
 
-                $message_keys = $this->openssl->keypair($msg_password['password']);
+                $message_keys = $this->openssl->keypair($msg_password['hash']);
                 $message_keys['private_key_salt'] = $msg_password['salt'];
 
             } else {
