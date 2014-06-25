@@ -158,22 +158,21 @@ class Listings extends MY_Controller
 
         if ($this->form_validation->run('add_listing') == TRUE) {
             $hash = $this->general->unique_hash('items', 'hash');
-
+            $add =$this->listings_model->add(array('add_time' => time(),
+                'category' => $this->input->post('category'),
+                'currency' => $this->current_user->currency['id'],
+                'description' => $this->input->post('description'),
+                'hash' => $hash,
+                'hidden' => $this->input->post('hidden'),
+                'main_image' => 'default',
+                'name' => $this->input->post('name'),
+                'price' => $this->input->post('price'),
+                'vendor_hash' => $this->current_user->user_hash,
+                'prefer_upfront' => $this->input->post('prefer_upfront'),
+                'ship_from' => $this->input->post('ship_from')
+            ));
             // Add the listing
-            if ($this->listings_model->add(array('add_time' => time(),
-                    'category' => $this->input->post('category'),
-                    'currency' => $this->current_user->currency['id'],
-                    'description' => $this->input->post('description'),
-                    'hash' => $hash,
-                    'hidden' => $this->input->post('hidden'),
-                    'main_image' => 'default',
-                    'name' => $this->input->post('name'),
-                    'price' => $this->input->post('price'),
-                    'vendor_hash' => $this->current_user->user_hash,
-                    'prefer_upfront' => $this->input->post('prefer_upfront'),
-                    'ship_from' => $this->input->post('ship_from')
-                )) == TRUE
-            ) {
+            if ($add == TRUE){
                 $listing = $this->listings_model->get($hash);
 
                 $this->load->model('shipping_costs_model');

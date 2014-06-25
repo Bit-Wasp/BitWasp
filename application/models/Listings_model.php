@@ -33,7 +33,11 @@ class Listings_model extends CI_Model
      */
     public function add($properties)
     {
-        return $this->db->insert('items', $properties) == TRUE;
+        $add = $this->db->insert('items', $properties);
+        if($add == TRUE)
+            return $this->db->insert_id();
+
+        return FALSE;
     }
 
     /**
