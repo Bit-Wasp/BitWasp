@@ -93,7 +93,7 @@ class General {
 	 */ 
 	public function unique_hash($table, $column, $length = 16) {
 
-		$hash = substr($this->generate_salt(), 0, $length);
+		$hash = bin2hex($this->random_data(11));
 		// Test the DB, see if the hash is unique. 
 		$test = $this->CI->general_model->check_unique_entry($table, $column, $hash);
 
