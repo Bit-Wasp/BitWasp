@@ -48,35 +48,33 @@ class Database {
 
 		$pw = $password($data['admin_password']);
 
-		$handle_enc_pms = function($data, $salt) {
+		$handle_enc_pms = function($data) {
 			if($data['encrypt_private_messages'] == '1') {
-                $private_key_salt = bin2hex($this->random_data('32'));
-				$hash = $data['admin_pm_password'];
-				for($i = 0; $i < 10; $i++) {
-					$hash = hash('sha512', $hash.$salt);
-				}
-				
+                $message_password = $password($data['admin_pm_password']);
+
 				$openssl_config = array(	"digest_alg" => 'sha512',
 								"private_key_bits" => 2048,
 								"private_key_type" => OPENSSL_KEYTYPE_RSA);
 				$keypair = openssl_pkey_new($openssl_config);
 
 				/* Extract the private key from $res to $private_key */
-				openssl_pkey_export($keypair, $private_key, $hash, $openssl_config);
+				openssl_pkey_export($keypair, $private_key, $message_password['password'], $openssl_config);
 				
 				// Extract the public key from $res to $public_key
 				$public_key = openssl_pkey_get_details($keypair);
 				$public_key = $public_key['key'];
 				return array('public_key' => base64_encode($public_key),
 							 'private_key' => base64_encode($private_key),
-                             'private_key_salt');
+                             'private_key_salt' => $message_password['salt']);
 			} else {
+                $salt_only = $password('');
 				return array('public_key' => '0',
-							 'private_key' => '0');
+							 'private_key' => '0',
+                             'private_key_salt' => $salt_only['salt']);
 			}
 		};
 
-		$handled_enc = $handle_enc_pms($data, $pw['salt']);
+		$handled_enc = $handle_enc_pms($data);
 
 		$new  = str_replace("%ENCRYPT_PRIVATE_MESSAGES%",$data['encrypt_private_messages'],$query);
 		$new  = str_replace("%ALLOW_GUESTS%",$data['allow_guests'],$new);
@@ -85,6 +83,7 @@ class Database {
 		$new  = str_replace("%PASSWORD%", $pw['password'], $new);
 		$new  = str_replace("%PUBLIC_KEY%", $handled_enc['public_key'], $new);
 		$new  = str_replace("%PRIVATE_KEY%", $handled_enc['private_key'], $new);
+        $new  = str_replace("%PRIVATE_KEY_SALT%", $handled_enc['private_key_salt'], $new);
 		$new  = str_replace("%REGISTER_TIME%", time(), $new);
 		$new  = str_replace("%USER_HASH%", substr(hash('sha512', mcrypt_create_iv(32, MCRYPT_DEV_URANDOM)), 0, 16), $new);
 		$new  = str_replace("%SALT%", $pw['salt'], $new);
