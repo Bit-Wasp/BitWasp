@@ -23,16 +23,19 @@ class Database {
 		return true;
 	}
 
-    public function password($password) {
+    public function generate_salt() {
         $rounds = '10';
+        return '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
+    }
 
-        $salt = '$2a$'.$rounds.'$'.str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
+    public function password($password) {
+        $salt = $this->generate_salt();
         $hash = crypt($password, $salt);
         return array('password' => $hash,
             'salt' => $salt);
     }
 
-    function handle_enc_pms($data) {
+    public function handle_enc_pms($data) {
         if($data['encrypt_private_messages'] == '1') {
             $message_password = $this->password($data['admin_pm_password']);
 
@@ -60,7 +63,7 @@ class Database {
 
 
     // Function to create the tables and fill them with the default data
-	function create_tables($data)
+	public function create_tables($data)
 	{
 		// Connect to the database
 		$mysqli = new mysqli($data['db_hostname'],$data['db_username'],$data['db_password'],$data['db_database']);

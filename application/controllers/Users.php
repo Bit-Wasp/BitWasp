@@ -192,18 +192,20 @@ class Users extends MY_Controller
 
             $password = $this->general->new_password($this->input->post('password0'));
 
-            $private_key_salt = $this->general->generate_salt();
-
             // Generate OpenSSL keys for the users private messages.
             if ($data['encrypt_private_messages'] == TRUE) {
                 $pin = $this->input->post('message_pin0');
-                $message_password = $this->general->password($this->input->post('message_pin0'), $private_key_salt);
+                $password = $this->general->new_password($this->input->post('message_pin0'));
+
                 $message_keys = $this->openssl->keypair($message_password);
-                unset($message_password);
+                $message_keys['private_key_salt'] = $password['salt'];
+
             } else {
+                $salt_only = $this->general->new_password($this->input->post('message_pin0'));
                 // Set default values for the message keys.
                 $message_keys = array('public_key' => '0',
-                    'private_key' => '0');
+                    'private_key' => '0',
+                    'private_key_salt' => $salt_only['salt']);
             }
 
             // Generate a user hash.
