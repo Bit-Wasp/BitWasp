@@ -417,6 +417,14 @@ class Order_model extends CI_Model
         if ($raw_transaction == FALSE) {
             return 'An error occurred creating the transaction!';
         } else {
+            // Embed redeem script into all tx's
+            $new_tx = RawTransaction::decode($raw_transaction);
+
+            foreach($new_tx['vin'] as &$input_ref){
+                $empty_input = "004c".RawTransaction::_encode_vint(strlen($script)/2).$script;
+                $input_ref['scriptSig']['hex'] = $empty_input;
+            }
+            $raw_transaction = RawTransaction::encode($new_tx);
             $decoded_transaction = RawTransaction::decode($raw_transaction);
 
             if($this->update_order($order_id, array('unsigned_transaction' => $raw_transaction . " ",

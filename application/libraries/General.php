@@ -91,9 +91,9 @@ class General {
 	 * @param		int		$length
 	 * @return		string
 	 */ 
-	public function unique_hash($table, $column, $length = 16) {
+	public function unique_hash($table, $column, $length = 10) {
 
-		$hash = bin2hex($this->random_data(10));
+		$hash = bin2hex($this->random_data($length));
 		// Test the DB, see if the hash is unique. 
 		$test = $this->CI->general_model->check_unique_entry($table, $column, $hash);
 
