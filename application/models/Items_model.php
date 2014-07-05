@@ -80,9 +80,9 @@ class Items_model extends CI_Model
      * @param    $opt
      * @return    int
      */
-    public function get_count($opt = array())
+    public function get_count($opt = array(), $joins = null)
     {
-        $this->db->select('id')
+        $this->db->select('id, vendor_hash')
             ->where('hidden', '0');
 
         // Add on extra options.
@@ -100,9 +100,17 @@ class Items_model extends CI_Model
                 $this->db->where("$key", "$val");
             }
         }
+        if(is_array($joins)){
+            foreach($joins as $join){
+                (isset($join['type']))
+                    ? $this->db->join($join['table'], $join['on'], $join['type'])
+                    : $this->db->join($join['table'], $join['on']);
+            }
+        }
         $this->db->order_by('add_time DESC');
         $this->db->from("items");
         return $this->db->count_all_results();
+
     }
 
     /**
@@ -135,10 +143,14 @@ class Items_model extends CI_Model
         if(!$hidden_allowed)
             $this->db->where('hidden','0');
 
-        $this->db->select('items.id, items.hash, price, vendor_hash, currency, description, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code')
+        $this->db->select('items.id, items.hash, price, vendor_hash, currency, description, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code, (SELECT count(bw_reviews.id)) as review_count')
             ->order_by('add_time DESC')
+            ->select_avg('reviews.average_rating')
+            ->from('items')
             ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
-            ->join('images', 'images.hash = items.main_image')
+            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\'', 'left')
+            ->group_by('items.id')
+            ->join('images', 'images.hash = items.main_image','left')
             ->join('currencies', 'currencies.id = items.currency')
             ->limit($limit, $start);
 
@@ -163,7 +175,7 @@ class Items_model extends CI_Model
         }
 
         // Get the list of items.
-        $query = $this->db->get('items');
+        $query = $this->db->get();
 
         $results = array();
 
@@ -221,14 +233,18 @@ class Items_model extends CI_Model
         if ($hidden == TRUE)
             $this->db->where('hidden', '0');
 
-        $this->db->select('items.id, items.hash, price, vendor_hash, prefer_upfront, currency, hidden, category, items.name, ship_from, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.id as vendor_id, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width')
+        $this->db->select('items.id, items.hash, price, vendor_hash, prefer_upfront, currency, hidden, category, items.name, ship_from, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.id as vendor_id, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, , (SELECT count(bw_reviews.id)) as review_count')
             ->where('items.hash', $hash)
+            ->from('items')
             ->order_by('add_time DESC')
+            ->select_avg('reviews.average_rating')
             ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
             ->join('images', 'images.hash = items.main_image')
+            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\'', 'left')
+            ->group_by('items.id')
             ->limit(1, 'id desc');
 
-        $query = $this->db->get('items');
+        $query = $this->db->get();
         if ($query->num_rows() > 0) {
             $row = $query->row_array();
 
@@ -258,7 +274,7 @@ class Items_model extends CI_Model
             $row['price_l'] = ($this->current_user->currency['id'] != '0')
                 ? number_format((float)($row['price_b'] * $this->current_user->currency['rate']), 2)
                 : number_format((float)($row['price_b'] * $this->current_user->currency['rate']), 8);
-            $row['price_f'] = $this->current_user->currency['symbol'] . ' ' . $row['price_l'];
+            $row['price_f'] = $this->current_user->currency['symbol'] . ' ' . htmlentities($row['price_l']);
 
             $row['images'] = $this->images_model->by_item($row['hash']);
 

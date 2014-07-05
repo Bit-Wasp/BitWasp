@@ -72,12 +72,12 @@ CREATE TABLE IF NOT EXISTS `bw_blocks` (
 CREATE TABLE IF NOT EXISTS `bw_categories` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `description` varchar(100) NOT NULL,
-  `hash` varchar(20) NOT NULL,
+  `hash` varchar(25) NOT NULL,
   `name` varchar(40) NOT NULL,
   `parent_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`),
-  KEY `hash_2` (`hash`,`parent_id`)
+  KEY `hash_2` (`hash`, `parent_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 
@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS `bw_disputes_updates` (
 
 CREATE TABLE IF NOT EXISTS `bw_entry_payment` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `user_hash` varchar(20) NOT NULL,
+  `user_hash` varchar(25) NOT NULL,
   `amount` decimal(20,8) NOT NULL,
   `time` varchar(20) NOT NULL,
   `bitcoin_address` varchar(40) NOT NULL,
@@ -272,7 +272,7 @@ INSERT INTO `bw_fees` (`id`, `low`, `high`, `rate`) VALUES
 
 CREATE TABLE IF NOT EXISTS `bw_images` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `hash` varchar(20) NOT NULL,
+  `hash` varchar(25) NOT NULL,
   `encoded` longtext NOT NULL,
   `height` int(11) NOT NULL,
   `width` int(11) NOT NULL,
@@ -296,8 +296,8 @@ INSERT INTO `bw_images` (`id`, `hash`, `encoded`, `height`, `width`) VALUES
 
 CREATE TABLE IF NOT EXISTS `bw_items` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `hash` varchar(20) NOT NULL,
-  `vendor_hash` varchar(20) NOT NULL,
+  `hash` varchar(25) NOT NULL,
+  `vendor_hash` varchar(25) NOT NULL,
   `price` decimal(20,8) NOT NULL,
   `currency` int(5) NOT NULL,
   `category` int(5) NOT NULL,
@@ -322,8 +322,8 @@ CREATE TABLE IF NOT EXISTS `bw_items` (
 
 CREATE TABLE IF NOT EXISTS `bw_item_images` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `image_hash` varchar(20) NOT NULL,
-  `item_hash` varchar(29) NOT NULL,
+  `image_hash` varchar(25) NOT NULL,
+  `item_hash` varchar(25) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `item_hash` (`item_hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -336,13 +336,13 @@ CREATE TABLE IF NOT EXISTS `bw_item_images` (
 
 CREATE TABLE IF NOT EXISTS `bw_key_usage` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
-  `usage` varchar(20) NOT NULL,
+  `usage` varchar(25) NOT NULL,
   `mpk` varchar(150) NOT NULL,
   `iteration` varchar(150) NOT NULL,
   `public_key` varchar(150) NOT NULL,
   `address` varchar(40) NOT NULL,
   `order_id` int(9) NOT NULL,
-  `fees_user_hash` varchar(20) NOT NULL,
+  `fees_user_hash` varchar(25) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
@@ -634,7 +634,7 @@ CREATE TABLE IF NOT EXISTS `bw_logs` (
   `title` varchar(50) NOT NULL,
   `time` varchar(20) NOT NULL,
   `info_level` varchar(20) NOT NULL,
-  `hash` varchar(20) NOT NULL,
+  `hash` varchar(25) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`),
   KEY `time` (`time`,`info_level`,`hash`)
@@ -654,7 +654,7 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
   `rsa_encrypted` enum('0','1') DEFAULT '0',
   `aes_iv` mediumblob,
   `aes_key` mediumblob,
-  `hash` varchar(16) NOT NULL,
+  `hash` varchar(25) NOT NULL,
   `remove_on_read` enum('0','1') NOT NULL,
   `time` int(20) NOT NULL,
   `to` int(9) NOT NULL,
@@ -682,7 +682,7 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
   `time` varchar(20) NOT NULL,
   `progress` int(1) NOT NULL,
   `buyer_id` int(9) NOT NULL,
-  `vendor_hash` varchar(20) NOT NULL,
+  `vendor_hash` varchar(25) NOT NULL,
   `finalized` enum('0','1') NOT NULL,
   `confirmed_time` varchar(20) NOT NULL,
   `vendor_selected_escrow` enum('0','1') NOT NULL DEFAULT '0',
@@ -807,7 +807,7 @@ CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
 CREATE TABLE IF NOT EXISTS `bw_reviews` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `review_type` varchar(10) NOT NULL,
-  `subject_hash` varchar(20) NOT NULL,
+  `subject_hash` varchar(25) NOT NULL,
   `json` text NOT NULL,
   `average_rating` varchar(4) NOT NULL,
   `timestamp` varchar(20) NOT NULL,
@@ -825,7 +825,7 @@ CREATE TABLE IF NOT EXISTS `bw_reviews` (
 CREATE TABLE IF NOT EXISTS `bw_review_auth_tokens` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `auth_token` varchar(64) NOT NULL,
-  `user_hash` varchar(20) NOT NULL,
+  `user_hash` varchar(25) NOT NULL,
   `review_type` varchar(20) NOT NULL,
   `order_id` int(9) NOT NULL,
   PRIMARY KEY (`id`),
@@ -890,9 +890,8 @@ CREATE TABLE IF NOT EXISTS `bw_transactions_payments_cache` (
   `pkScript` varchar(150),
   `order_id` int(9) DEFAULT NULL,
   `purpose` varchar(20) NOT NULL,
-  `fees_user_hash` varchar(20) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `tx_id` (`tx_id`,`vout`,`address`,`order_id`,`fees_user_hash`)
+  `fees_user_hash` varchar(25) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
@@ -907,7 +906,16 @@ CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
+--
+--
+--  Table structure for table `bw_used_public_keys`
+--
+CREATE TABLE IF NOT EXISTS `bw_used_public_keys` (
+  `id` int(9) NOT NULL,
+  `public_key_sha256` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 
 --
 -- Table structure for table `bw_users`
@@ -925,9 +933,10 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `password` varchar(128) NOT NULL,
   `public_key` blob NOT NULL,
   `private_key` blob NOT NULL,
+  `private_key_salt` varchar(64) NOT NULL,
   `register_time` int(20) NOT NULL,
   `salt` varchar(128) NOT NULL,
-  `user_hash` varchar(16) NOT NULL,
+  `user_hash` varchar(25) NOT NULL,
   `user_name` varchar(40) NOT NULL,
   `user_role` enum('Buyer','Vendor','Admin') NOT NULL,
   `local_currency` int(11) NOT NULL,
@@ -940,8 +949,8 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   KEY `user_name` (`user_name`,`user_hash`,`banned`,`entry_paid`,`register_time`,`user_role`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
-INSERT INTO `bw_users` (`banned`, `block_non_pgp`, `entry_paid`, `force_pgp_messages`, `location`, `login_time`, `display_login_time`, `password`, `public_key`, `private_key`, `register_time`, `salt`, `pgp_two_factor`, `user_hash`, `user_name`, `user_role`, `local_currency`, `completed_order_count`, `totp_two_factor`, `totp_secret`) VALUES
-('0', '0', '1', '0', 1, 0, '0', '%PASSWORD%', '%PUBLIC_KEY%', '%PRIVATE_KEY%', %REGISTER_TIME%, '%SALT%', '0', '%USER_HASH%', 'admin', 'Admin', 0, 0, '0', '');
+INSERT INTO `bw_users` (`banned`, `block_non_pgp`, `entry_paid`, `force_pgp_messages`, `location`, `login_time`, `display_login_time`, `password`, `public_key`, `private_key`, `private_key_salt`, `register_time`, `salt`, `pgp_two_factor`, `user_hash`, `user_name`, `user_role`, `local_currency`, `completed_order_count`, `totp_two_factor`, `totp_secret`) VALUES
+('0', '0', '1', '0', 1, 0, '0', '%PASSWORD%', '%PUBLIC_KEY%', '%PRIVATE_KEY%', '%PRIVATE_KEY_SALT%', %REGISTER_TIME%, '%SALT%', '0', '%USER_HASH%', 'admin', 'Admin', 0, 0, '0', '');
 
 --
 -- Table structure for table `bw_watched_addresses`

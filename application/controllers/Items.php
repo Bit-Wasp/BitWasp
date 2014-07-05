@@ -11,7 +11,7 @@
  * @author        BitWasp
  *
  */
-class Items extends CI_Controller
+class Items extends MY_Controller
 {
 
     /**
@@ -44,8 +44,7 @@ class Items extends CI_Controller
         $data['page'] = 'items/index';
         $data['links'] = $this->items_model->pagination_links(array(), site_url('items'), $this->items_per_page, 2);
         $data['items'] = $this->items_model->get_list_pages(array(), $page, $this->items_per_page);
-
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -77,7 +76,7 @@ class Items extends CI_Controller
         $data['links'] = $this->items_model->pagination_links(array('category' => $data['category']['id']), site_url("category/$hash"), $this->items_per_page, 3);
         $data['items'] = $this->items_model->get_list_pages(array('category' => $data['category']['id']), $page, $this->items_per_page);
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -166,7 +165,7 @@ class Items extends CI_Controller
         } else {
             $data['page'] = 'welcome_message';
         }
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -181,10 +180,14 @@ class Items extends CI_Controller
      */
     public function get($hash)
     {
+        $this->load->helper('form');
         $this->load->model('shipping_costs_model');
         $this->load->model('review_model');
 
         $data['item'] = $this->items_model->get($hash, FALSE);
+        if($data['item'] == FALSE)
+            redirect('');
+
         $data['page'] = 'items/get';
         $data['title'] = $data['item']['name'];
         $data['shipping_costs'] = $this->shipping_costs_model->for_item($data['item']['id']);
@@ -196,7 +199,7 @@ class Items extends CI_Controller
         $data['average_rating'] = $this->review_model->current_rating('item', $hash);
         $data['vendor_rating'] = $this->review_model->current_rating('user', $data['item']['vendor']['user_hash']);
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
 };

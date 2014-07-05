@@ -26,7 +26,7 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Welcome extends CI_Controller {
+class Welcome extends MY_Controller {
 
 	/**
 	 * Construct
@@ -53,9 +53,8 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		$data['page'] = 'welcome_message';
 		$data['title'] = 'Welcome';
-		$this->load->library('layout',$data);
+		$this->_render('welcome_message', $data);
 	}
 }
 

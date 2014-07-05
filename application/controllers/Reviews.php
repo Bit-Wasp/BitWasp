@@ -11,7 +11,7 @@
  * @author        BitWasp
  *
  */
-class Reviews extends CI_Controller
+class Reviews extends MY_Controller
 {
 
     /**
@@ -75,7 +75,7 @@ class Reviews extends CI_Controller
             $data['page'] = 'reviews/not_found';
             $data['title'] = 'Error';
         }
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
     /**
@@ -244,12 +244,10 @@ class Reviews extends CI_Controller
             }
         }
 
-        $this->load->library('Layout', $data);
+        $this->_render($data['page'], $data);
     }
 
-}
-
-;
+};
 
 
 /* End of File: Reviews.php */

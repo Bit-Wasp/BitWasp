@@ -202,7 +202,10 @@ class Current_User {
 		$this->CI->session->set_userdata('message_password',$password);
 		$this->CI->session->set_userdata('message_password_granted', time());
 	}
-	
+
+    public function set_return_message($message, $success = FALSE) {
+        $this->CI->session->set_flashdata('returnMessage',json_encode(array('message' => $message, 'success' => $success)));
+    }
 };
 
 

@@ -290,6 +290,7 @@ class Accounts_model extends CI_Model
         return $result;
     }
 
+
     /**
      * Add Bitcoin Public Key
      *
@@ -301,7 +302,19 @@ class Accounts_model extends CI_Model
      */
     public function add_bitcoin_public_key($public_key)
     {
-        return ($this->db->insert('bitcoin_public_keys', array('user_id' => $this->current_user->user_id, 'public_key' => $public_key)) == TRUE) ? TRUE : FALSE;
+        if(is_array($public_key)) {
+            if(count($public_key) == 0)
+                return TRUE;
+
+            $insert = array();
+            foreach($public_key as $key) {
+                $insert[] = array('user_id' => $this->current_user->user_id,
+                    'public_key' => $key);
+            }
+            return $this->db->insert_batch('bitcoin_public_keys', $insert) == TRUE;
+        } else if(is_string($public_key)) {
+            return $this->db->insert('bitcoin_public_keys', array('user_id' => $this->current_user->user_id, 'public_key' => $public_key)) == TRUE;
+        }
     }
 
     /**

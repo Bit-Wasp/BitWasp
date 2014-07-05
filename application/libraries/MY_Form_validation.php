@@ -185,6 +185,18 @@ class MY_Form_validation extends CI_Form_validation {
 		return $this->is_natural_no_zero($str) && $this->less_than_equal_to($str, 15);
 	}
 
+    /**
+     * Check Checkable
+     *
+     * This function checks that the parameter == 'set'. This is a simple check
+     * for form submissions where only a CSRF check is required, rather than
+     * needing any data.
+     *
+     * @param $str
+     */
+    public function check_checkable($str) {
+        return $str == 'set';
+    }
 
 	/**
 	 * Check Custom Location Exists
@@ -648,14 +660,13 @@ class MY_Form_validation extends CI_Form_validation {
 	{
 		if ( ! $this->is_natural_no_zero($str))
 			return FALSE;
-			
+
 		$found = FALSE;
 		foreach ($this->CI->bw_config->categories as $cat)
 		{
 			if($cat['id'] == $str)
 				$found = TRUE;
 		}
-		
 		return $found;
 	}
 

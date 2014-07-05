@@ -85,7 +85,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
 
-$autoload['libraries'] = array('database','general','bw_config','current_user','bw_session');
+$autoload['libraries'] = array('database','general','bw_config','current_user','bw_session','smarty');
 
 
 /*

@@ -119,34 +119,34 @@ class Order_model extends CI_Model
                 // for the order, and lets the user progress to the next step.
                 switch ($order['progress']) {
                     case '0': // Buyer choses items. (1)
-                        $buyer_progress_message = '<input type="submit" class="btn btn-mini" name="recount[' . $order['id'] . ']" value="Update" /> <input type="submit" class="btn btn-mini" name="place_order[' . $order['id'] . ']" value="Proceed with Order" /> ';
+                        $buyer_progress_message = 'Confirm your order to proceed.';
                         $vendor_progress_message = '';
                         // no vendor progress message
                         break;
                     case '1': // Vendor must chose escrow, or up-front. (2)
                         $buyer_progress_message = 'Awaiting vendor response. <input type="submit" class="btn btn-mini" name="cancel[' . $order['id'] . ']" value="Cancel" /> ';
-                        $vendor_progress_message = anchor('orders/accept/' . $order['id'], 'Accept Order', 'class="btn btn-mini"');
+                        $vendor_progress_message = "Accept order to continue.";
                         break;
                     case '2': // Buyer must pay to address. Escrow: 4. Upfront: 3.
                         $buyer_progress_message = (($order['vendor_selected_escrow'] == '0') ? 'Early finalization requested. ' : 'Escrow Transaction: ') . 'Pay to address. ';
                         $vendor_progress_message = 'Waiting for buyer to pay to the order address. <input type="submit" class="btn btn-mini" name="cancel[' . $order['id'] . ']" value="Cancel" /> ';
                         break;
                     case '3': // An up-front payment. Buyer signs first.
-                        $buyer_progress_message = (($order['vendor_selected_upfront'] == '1') ? 'Vendor requested up-front payment.' : '') . " Please sign transaction. " . anchor('purchases/dispute/' . $order['id'], 'Raise Dispute', 'class="btn btn-mini"');;
+                        $buyer_progress_message = (($order['vendor_selected_upfront'] == '1') ? 'Vendor requested up-front payment.' : '') . " Please sign transaction. ";
                         $vendor_progress_message = "Waiting on buyer to sign. ";
                         break;
                     case '4': // Awaiting dispatch. Vendor must sign to indicate dispatch. (5)
-                        $buyer_progress_message = "Awaiting Dispatch. " . anchor('purchases/dispute/' . $order['id'], 'Raise Dispute', 'class="btn btn-mini"');
+                        $buyer_progress_message = "Awaiting Dispatch. ";
                         $vendor_progress_message = "Sign " . (($order['vendor_selected_upfront'] == '1') ? ' & broadcast' : '') . " the transaction to confirm the items dispatch. ";
                         break;
                     case '5': // Awaiting delivery. Escrow: buyer finalizes or disputes.
                         // Upfront: buyer can dispute or mark received.
-                        $buyer_progress_message = 'Order dispatched. ' . (($order['vendor_selected_upfront'] == '1') ? '<input type="submit" name="received[' . $order['id'] . ']" value="Confirm Receipt" class="btn btn-mini" /> or ' : 'Sign & broadcast once received, or ') . anchor('purchases/dispute/' . $order['id'], 'Raise Dispute', 'class="btn btn-mini"');
-                        $vendor_progress_message = 'Buyer awaiting delivery. ' . anchor('orders/dispute/' . $order['id'], 'Raise Dispute', 'class="btn btn-mini"');
+                        $buyer_progress_message = 'Order dispatched. ' . (($order['vendor_selected_upfront'] == '1') ? 'Click to confirm receipt of the goods, or raise a dispute' : 'Sign & broadcast once received, or raise a dispute');
+                        $vendor_progress_message = 'Buyer awaiting delivery. ';
                         break;
                     case '6': // Disputed transaction.
-                        $buyer_progress_message = "Disputed transaction. " . anchor('purchases/dispute/' . $order['id'], 'View Dispute', 'class="btn btn-mini"');
-                        $vendor_progress_message = "Disputed transaction. " . anchor('orders/dispute/' . $order['id'], 'View Dispute', 'class="btn btn-mini"');
+                        $buyer_progress_message = "Disputed transaction. ";
+                        $vendor_progress_message = "Disputed transaction. ";
                         break;
                     case '7':
                         $buyer_progress_message = ($order['refund_time'] !== '') ? "Payment refunded." : "Purchase complete.";
@@ -157,6 +157,8 @@ class Order_model extends CI_Model
                         $vendor_progress_message = "Awaiting refund.";
                 }
                 $currency = $this->bw_config->currencies[$order['currency']];
+
+
 
                 // Work out what price to display for the current user.
                 $order_price = ($this->current_user->user_role == 'Vendor') ? ($order['price'] + $order['shipping_costs'] - $order['extra_fees']) : ($order['price'] + $order['shipping_costs'] + $order['fees']);
@@ -175,6 +177,7 @@ class Order_model extends CI_Model
                 $tmp['buyer'] = $this->accounts_model->get(array('id' => $order['buyer_id']));
                 $tmp['items'] = $item_array;
                 $tmp['order_price'] = $order_price;
+                $tmp['vendor_fees'] = $order['fees']+$order['extra_fees'];
                 $tmp['total_paid'] = number_format($order['price'] + $order['shipping_costs'] + $order['fees'], 8);
                 $tmp['price_l'] = $price_l;
                 $tmp['currency'] = $currency;
@@ -334,6 +337,7 @@ class Order_model extends CI_Model
                 $info['update_fields']['redeemScript'] = $multisig_details['redeemScript'];
                 $info['update_fields']['selected_payment_type_time'] = time();
                 $info['update_fields']['progress'] = 2;
+                $info['update_fields']['time'] = time();
 
                 if ($info['order_type'] == 'escrow') {
                     $info['update_fields']['vendor_selected_escrow'] = '1';
@@ -348,11 +352,11 @@ class Order_model extends CI_Model
                     $this->bitcoin_model->add_watch_address($multisig_details['address'], 'order');
 
                     $subject = 'Confirmed Order #' . $info['order']['id'];
-                    $message = 'Your order with ' . $info['order']['vendor']['user_name'] . ' has been confirmed.\n' . (($info['order_type'] == 'escrow') ? 'Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You can raise a dispute if you have any issues.' : 'You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.');
+                    $message = "Your order with {$info['order']['vendor']['user_name']} has been confirmed.\n" . (($info['order_type'] == 'escrow') ? "Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You can raise a dispute if you have any issues." : "You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.");
                     $this->order_model->send_order_message($info['order']['id'], $info['order']['buyer']['user_name'], $subject, $message);
 
                     $subject = 'New Order #'.$info['order']['id'];
-                    $message = 'A new order from ' . $info['order']['buyer']['user_name'] . ' has been confirmed.\n' . (($info['order_type'] == 'escrow') ? 'Escrow was chosen for this order. Once paid, you will be asked to sign the transaction to indicate the goods have been dispatched.' : 'Up-front payment was chosen for this order based on your settings for one of the items. The buyer will be asked to sign the transaction paying you immediately after payment, which you can sign and broadcast to mark the order as dispatched.');
+                    $message = "A new order from {$info['order']['buyer']['user_name']} has been confirmed.\n" . (($info['order_type'] == 'escrow') ? "Escrow was chosen for this order. Once paid, you will be asked to sign the transaction to indicate the goods have been dispatched." : "Up-front payment was chosen for this order based on your settings for one of the items. The buyer will be asked to sign the transaction paying you immediately after payment, which you can sign and broadcast to mark the order as dispatched.");
                     $this->order_model->send_order_message($info['order']['id'], $info['order']['vendor']['user_name'], $subject, $message);
 
                     $msg = ($info['initiating_user'] == 'buyer')
@@ -413,6 +417,14 @@ class Order_model extends CI_Model
         if ($raw_transaction == FALSE) {
             return 'An error occurred creating the transaction!';
         } else {
+            // Embed redeem script into all tx's
+            $new_tx = RawTransaction::decode($raw_transaction);
+
+            foreach($new_tx['vin'] as &$input_ref){
+                $empty_input = "004c".RawTransaction::_encode_vint(strlen($script)/2).$script;
+                $input_ref['scriptSig']['hex'] = $empty_input;
+            }
+            $raw_transaction = RawTransaction::encode($new_tx);
             $decoded_transaction = RawTransaction::decode($raw_transaction);
 
             if($this->update_order($order_id, array('unsigned_transaction' => $raw_transaction . " ",
@@ -770,6 +782,7 @@ class Order_model extends CI_Model
 
             if ($order['progress'] == '8') {
                 $update = array('progress' => '7',
+                    'time' => time(),
                     'refund_completed_time' => time());
                 if ($this->update_order($order['id'], $update) == TRUE)
                     $complete = TRUE;
@@ -794,13 +807,14 @@ class Order_model extends CI_Model
                 // Otherwise, progress depending on whether the transaction is escrow, or upfront.
                 // Escrow
                 if ($order['vendor_selected_upfront'] == '0')
-                    if ($this->progress_order($order['id'], '5', '7', array('received_time' => time())) == TRUE)
+                    if ($this->progress_order($order['id'], '5', '7', array('received_time' => time(), 'time' => time())) == TRUE)
                         $complete = true;
 
                 // Upfront payment. Vendor takes money to confirm dispatch.
                 if ($order['vendor_selected_upfront'] == '1') {
                     $update = array('dispatched_time' => time(),
-                        'dispatched' => '1');
+                        'dispatched' => '1',
+                        'time' => time());
                     if ($this->progress_order($order['id'], '4', '5', $update) == TRUE)
                         $complete = true;
                 }

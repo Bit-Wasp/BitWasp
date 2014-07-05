@@ -77,8 +77,6 @@ class Auth_model extends CI_Model
         if ($query->num_rows() > 0)
             $result = TRUE;
 
-        $this->db->where('user_id', $this->current_user->user_id);
-        $this->db->delete('two_factor_tokens');
 
         return $result;
     }
@@ -94,8 +92,11 @@ class Auth_model extends CI_Model
      */
     public function add_two_factor_token($token)
     {
+        $this->db->where('user_id', $this->current_user->user_id);
+        $this->db->delete('two_factor_tokens');
+
         $array = array('solution' => $token,
             'user_id' => $this->current_user->user_id);
-        return ($this->db->insert('two_factor_tokens', $array) == TRUE) ? TRUE : FALSE;
+        return $this->db->insert('two_factor_tokens', $array) == TRUE;
     }
 };
