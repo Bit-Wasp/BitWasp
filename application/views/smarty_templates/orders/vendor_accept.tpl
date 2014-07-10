@@ -8,8 +8,8 @@
                 {assign var="defaultMessage" value=""}
                 {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
 
-                {if $available_public_keys == FALSE}
-                    You have no public keys available to complete this order. {url type="anchor" url=$smarty.capture.t_pubkeys_url text="Click here to add some" attr=""}
+                {if $vendor_public_key == FALSE}
+                    You cannot proceed with this order until you set up a source of public keys. {url type="anchor" url=$smarty.capture.t_pubkeys_url text="Click here to set this up" attr=""}
                 {else}
                     A public key will automatically be used to create the order address.
                 {/if}

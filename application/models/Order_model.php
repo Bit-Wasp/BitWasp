@@ -158,8 +158,6 @@ class Order_model extends CI_Model
                 }
                 $currency = $this->bw_config->currencies[$order['currency']];
 
-
-
                 // Work out what price to display for the current user.
                 $order_price = ($this->current_user->user_role == 'Vendor') ? ($order['price'] + $order['shipping_costs'] - $order['extra_fees']) : ($order['price'] + $order['shipping_costs'] + $order['fees']);
 
@@ -175,6 +173,7 @@ class Order_model extends CI_Model
                 $tmp = $order;
                 $tmp['vendor'] = $this->accounts_model->get(array('user_hash' => $order['vendor_hash']));
                 $tmp['buyer'] = $this->accounts_model->get(array('id' => $order['buyer_id']));
+                $tmp['public_keys'] = $this->load_public_keys($order['id']);
                 $tmp['items'] = $item_array;
                 $tmp['order_price'] = $order_price;
                 $tmp['vendor_fees'] = $order['fees']+$order['extra_fees'];
@@ -244,6 +243,18 @@ class Order_model extends CI_Model
         return $result[0];
     }
 
+    public function load_public_keys($order_id) {
+
+        $results = array();
+        $q = $this->db->get_where('bip32_user_keys', array('order_id' => $order_id))->result_array();
+        foreach($q as $res) {
+            $results[(strtolower($res['user_role']))] = $res;
+        }
+
+        return $results;
+
+    }
+
     /**
      * Load Order
      *
@@ -270,7 +281,8 @@ class Order_model extends CI_Model
                 break;
         }
 
-        $query = $this->db->where('id', "$id")
+        $query = $this->db->select("orders.*, ")
+            ->where('id', "$id")
             ->where_in('progress', $allowed_progress)
             ->limit(1)
             ->get('orders');
@@ -302,37 +314,64 @@ class Order_model extends CI_Model
      */
     public function vendor_accept_order($info)
     {
-
         $this->load->model('bitcoin_model');
+        $this->load->model('bip32_model');
         $this->load->model('accounts_model');
 
         if ($info['initiating_user'] == 'buyer') {
+            // Buyer public key is in $info.buyerpubkey array, also ID in update fields.
+
+            $buyer_public_key = $info['buyer_public_key'];
             $this->update_order($info['order']['id'], $info['update_fields']);
             foreach ($info['update_fields'] as $key => $field) {
                 $info['order'][$key] = $field;
             }
             $info['update_fields'] = array();
+        } else {
+            $buyer_public_key = $info['order']['public_keys']['buyer'];
         }
 
-        $buyer_public_key = $info['order']['buyer_public_key'];
-        $vendor_public_key = $info['vendor_public_keys'][0];
-        $admin_public_key = $this->bitcoin_model->get_next_key();
+        // Add vendors public key no matter what we're doing!
+        $vendor_public_key = $this->bip32_model->add_child_key(array(
+            'user_id' => $info['order']['vendor']['id'],
+            'user_role' => 'Vendor',
+            'order_id' => $info['order']['id'],
+            'order_hash' => '',
+            'parent_extended_public_key' => $info['vendor_public_key']['parent_extended_public_key'],
+            'provider' => $info['vendor_public_key']['provider'],
+            'extended_public_key' => $info['vendor_public_key']['extended_public_key'],
+            'public_key' => $info['vendor_public_key']['public_key'],
+            'key_index' => $info['vendor_public_key']['key_index']
+        ));
+
+        // Get vendors public key, stored by that function.
+        $admin_public_key = $this->bip32_model->get_next_admin_child();
 
         if ($admin_public_key == FALSE) {
             return 'An error occured, which prevented your order being created. Please notify an administrator.';
         } else {
-
-            $public_keys = array($buyer_public_key, $vendor_public_key['public_key'], $admin_public_key['public_key']);
-            $multisig_details = RawTransaction::create_multisig('2', $public_keys);
+            $admin_public_key = $this->bip32_model->add_child_key(array(
+                'user_id' => '0',
+                'user_role' => 'Admin',
+                'order_id' => $info['order']['id'],
+                'order_hash' => '',
+                'parent_extended_public_key' => $admin_public_key['parent_extended_public_key'],
+                'provider' => 'Manual',
+                'extended_public_key' => $admin_public_key['extended_public_key'],
+                'public_key' => $admin_public_key['public_key'],
+                'key_index' => $admin_public_key['key_index']
+            ));
+            $public_keys = array($buyer_public_key['public_key'], $vendor_public_key['public_key'], $admin_public_key['public_key']);
+            $sorted_keys = RawTransaction::sort_multisig_keys($public_keys);
+            $multisig_details = RawTransaction::create_multisig('2', $sorted_keys);
 
             // If no errors, we're good to create the order!
             if ($multisig_details !== FALSE) {
-                $this->bitcoin_model->log_key_usage('order', $this->bw_config->electrum_mpk, $admin_public_key['iteration'], $admin_public_key['public_key'], $info['order']['id']);
-                $this->accounts_model->delete_bitcoin_public_key($vendor_public_key['id'], $info['order']['vendor']['id']);
+                $this->bitcoin_model->log_key_usage('order', $this->bw_config->bip32_mpk, $admin_public_key['key_index'], $admin_public_key['public_key'], $info['order']['id']);
 
-                $info['update_fields']['vendor_public_key'] = $vendor_public_key['public_key'];
-                $info['update_fields']['admin_public_key'] = $admin_public_key['public_key'];
-                $info['update_fields']['buyer_public_key'] = $buyer_public_key;
+                $info['update_fields']['vendor_public_key'] = $vendor_public_key['id'];
+                $info['update_fields']['admin_public_key'] = $admin_public_key['id'];
+                $info['update_fields']['buyer_public_key'] = $buyer_public_key['id'];
                 $info['update_fields']['address'] = $multisig_details['address'];
                 $info['update_fields']['redeemScript'] = $multisig_details['redeemScript'];
                 $info['update_fields']['selected_payment_type_time'] = time();
@@ -673,8 +712,8 @@ class Order_model extends CI_Model
 
         foreach ($paid as $record) {
             $order = $this->get($record['order_id']);
-            $vendor_address = BitcoinLib::public_key_to_address($order['vendor_public_key'], $coin['crypto_magic_byte']);
-            $admin_address = BitcoinLib::public_key_to_address($order['admin_public_key'], $coin['crypto_magic_byte']);
+            $vendor_address = BitcoinLib::public_key_to_address($order['public_keys']['vendor']['public_key'], $coin['crypto_magic_byte']);
+            $admin_address = BitcoinLib::public_key_to_address($order['public_keys']['admin']['public_key'], $coin['crypto_magic_byte']);
 
             // Create the transaction outputs
             $tx_outs = array($admin_address => (string)number_format(($order['fees'] + $order['extra_fees'] - 0.0001), 8),

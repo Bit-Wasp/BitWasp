@@ -346,5 +346,123 @@ class Bw_bitcoin {
 		return (is_string($info['errors']) && strlen($info['errors']) > 0) ? array('message' => $info['errors'], 'source' => 'Bitcoin') : FALSE;
 	}
 
+    public function associate_sigs_with_keys($raw_tx, $json_string, $address_version = '00') {
+        $raw_tx = trim($raw_tx);
+        $json_string = str_replace("'",'',$json_string);
+        $decode = \BitWasp\BitcoinLib\RawTransaction::decode($raw_tx, $address_version);
+        if ($decode == FALSE)
+            return FALSE;
 
+        $json_arr = (array)json_decode($json_string);
+
+        $message_hash = \BitWasp\BitcoinLib\RawTransaction::_create_txin_signature_hash($raw_tx, $json_string);
+
+        $results = array();
+        foreach ($decode['vin'] as $i => $vin) {
+            // Decode previous scriptPubKey to learn tramsaction type.
+            $type_info = \BitWasp\BitcoinLib\RawTransaction::_get_transaction_type(\BitWasp\BitcoinLib\RawTransaction::_decode_scriptPubKey($json_arr[$i]->scriptPubKey));
+
+            if ($type_info['type'] == 'scripthash') {
+                // Pay-to-script-hash. Check OP_FALSE <sig> ... <redeemScript>
+                $redeem_script_found = FALSE;
+                $pubkey_found = FALSE;
+
+                $scripts = explode(" ", $vin['scriptSig']['asm']);
+
+                // Store the redeemScript, then remove OP_FALSE + the redeemScript from the array.
+                $redeemScript = \BitWasp\BitcoinLib\RawTransaction::decode_redeem_script($scripts[(count($scripts) - 1)]);
+                if ($redeemScript !== FALSE) // Die if we fail to decode a redeemScript from a P2SH
+                    $redeem_script_found = TRUE;
+
+                unset($scripts[(count($scripts) - 1)]); // Unset redeemScript
+                unset($scripts[0]); // Unset '0';
+
+                // Extract signatures, remove the "0" byte, and redeemScript.
+                // Loop through the remaining values - the signatures
+                foreach ($scripts as $signature) {
+                    // Test each signature with the public keys in the redeemScript.
+                    foreach ($redeemScript['keys'] as $public_key) {
+                        if (\BitWasp\BitcoinLib\RawTransaction::_check_sig($signature, $message_hash[$i], $public_key) == TRUE){
+                            echo 'a';
+                            $pubkey_found = TRUE;
+                            $results[$i][$public_key] = $signature;
+                        }
+                    }
+                }
+            }
+        }
+        return $results;
+    }
+
+    public function js_html($redeem_script, $raw_transaction) {
+        if( strlen($redeem_script) == '0' || strlen($raw_transaction) == '0')
+            return '';
+
+        $this->CI->load->model('transaction_cache_model');
+        $decode_rs = \BitWasp\BitcoinLib\RawTransaction::decode_redeem_script($redeem_script);
+        $pubkey_list = '';
+        foreach($decode_rs['keys'] as $i => $key)
+            $pubkey_list .= '    "'.$key.'"'.(($i < 2) ? ',':'')."\n";
+
+        $p2sh_info = \BitWasp\BitcoinLib\RawTransaction::create_multisig(2, $decode_rs['keys']);
+        $decode_tx = \BitWasp\BitcoinLib\RawTransaction::decode($raw_transaction);
+        $utxos = "";
+        foreach($decode_tx['vin'] as $vin => $input){
+            $tx_info = $this->CI->transaction_cache_model->get_payment($input['txid']);
+            $utxos .= "
+{
+    address: '{$p2sh_info['address']}',
+    txid: '{$tx_info['tx_id']}',
+    vout: {$tx_info['vout']},
+    scriptPubKey: '{$tx_info['pkScript']}',
+    confirmations: 10,
+    amount: ".$tx_info['value']."
+}".(($vin<count($decode_tx['vin'])-1)?',':'')."\n";
+//".($current_block-$tx_info['block_height']).",
+        }
+
+        $outs = '';
+        foreach($decode_tx['vout'] as $vout => $output){
+            $outs .= '{
+    address: "'.$output['scriptPubKey']['addresses'][0].'",
+    amount: '.$output['value']."
+}".($vout<(count($decode_tx['vout'])-1)?',':'');
+        }
+        $json = "
+var pubkeys = [
+{$pubkey_list}
+];
+
+var opts = {
+    nreq: 2,
+    pubkeys: pubkeys
+};
+
+var serialized_pubkeys = [];
+for (var i=0; i<3; i++) {
+    serialized_pubkeys.push(new bitcore.buffertools.Buffer(opts.pubkeys[i],'hex'));
+}
+
+var script = bitcore.Script.createMultisig(opts.nreq, serialized_pubkeys, {noSorting: true});
+var hash   = bitcore.util.sha256ripe160(script.getBuffer());
+
+
+var p2shScript = script.serialize().toString('hex');
+var p2shAddress = new bitcore.Address.fromScript(p2shScript).toString();
+console.log('got address: '+p2shAddress);
+
+var utxos = [
+{$utxos}
+];
+
+var outs = [
+{$outs}
+];
+
+var hashMap = {};
+hashMap[p2shAddress] = p2shScript;
+        ";
+
+        return $json;
+    }
 };

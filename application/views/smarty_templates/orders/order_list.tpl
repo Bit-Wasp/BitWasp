@@ -76,7 +76,7 @@
 
                                     <input type="submit" class="btn btn-default btn-block" name="recount" value="Update" />
                                     <input type="submit" class="btn btn-primary btn-block" name="place_order" value="Confirm" />
-                                    <input type="hidden" name="recount_order__id" value="{$order.id}" />
+                                    <input type="hidden" name="recount_order_id" value="{$order.id}" />
                                     <input type="hidden" name="place_order_id" value="{$order.id}" />
                                 {else}
                                     {url type="anchor" url=$smarty.capture.t_order_details_url text="Details" attr='class="btn btn-primary btn-block"'}

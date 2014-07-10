@@ -222,6 +222,7 @@ class Users extends MY_Controller
                 'public_key' => $message_keys['public_key'],
                 'private_key' => $message_keys['private_key'],
                 'private_key_salt' => $message_keys['private_key_salt'],
+                'wallet_salt' => $this->general->unique_hash('users', 'wallet_salt', '32'),
                 'local_currency' => $this->input->post('local_currency'));
 
             $add_user = $this->users_model->add($register_info, $data['token_info']);

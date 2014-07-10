@@ -85,12 +85,14 @@
                                         <label class="col-xs-3" for="redeem_script">Redeem Script</label>
                                         <div class="col-xs-9"><textarea id="redeem_script" class="form-control">{$order.redeemScript|escape:"html":"UTF-8"}</textarea></div>
                                     </div>
+                                    {if $my_multisig_key.provider == 'Manual'}
                                     <div class="row">
                                         <label class="col-xs-3" for="import_command">Import Command</label>
                                         <div class="col-xs-9">
-                                            <textarea id="import_command" class="form-control">addmultisigaddress 2 '["{$order.buyer_public_key|escape:"html":"UTF-8"}","{$order.vendor_public_key|escape:"html":"UTF-8"}","{$order.admin_public_key|escape:"html":"UTF-8"}"]'</textarea>
+                                            <textarea id="import_command" class="form-control">addmultisigaddress 2 '["{$redeem_script.keys.0|escape:"html":"UTF-8"}","{$redeem_script.keys.1|escape:"html":"UTF-8"}","{$redeem_script.keys.2|escape:"html":"UTF-8"}"]'</textarea>
                                         </div>
                                     </div>
+                                    {/if}
                                     {if $order.final_transaction_id !== ''}
                                     <div class="row">
                                         <label class="col-xs-3" for="import_command">Final Transaction</label>
@@ -115,7 +117,7 @@
 
                 {if $order.paid_time !== '' && $order.final_transaction_id == null}
                 <div class="row">
-                    {form method="open" action=$action_page attr='class="form-horizontal"'}
+                    {form method="open" action=$action_page attr='class="form-horizontal" name="sign_transaction" id="sign_transaction"'}
                         <div class="col-xs-12">
                             <div class="table-responsive">
                                 <div class="panel panel-default">
@@ -128,17 +130,21 @@
                                                 <div class='col-xs-9'>
                                                     {foreach from=$raw_tx.vout item=arr}
                                                         <div class='row'>
+
                                                         {$addr = $arr.scriptPubKey.addresses.0}
+
                                                         {if $addrs.{$addr} == 'admin'}
                                                             <div class='col-xs-2'>Fees</div>
                                                             <div class='col-xs-4'>{$coin.symbol} {$arr.value}</div>
                                                             <div class='col-xs-6'>{$addr}</div>
-                                                        {elseif in_array}
+                                                        {elseif in_array($addrs.{$addr}, ['buyer','vendor']) }
                                                             {capture name="t_pay_user_url"}user/{$order.{$addrs.{$addr}}.user_hash}{/capture}
                                                             {capture name="t_pay_user_name"}{{$addrs.{$addr}}|escape:"html":"UTF-8"}{/capture}
                                                             <div class='col-xs-2'>{url type="anchor" url=$smarty.capture.t_pay_user_url text=$smarty.capture.t_pay_user_name attr=''}</div>
                                                             <div class='col-xs-4'>{$coin.symbol} {$arr.value}</div>
                                                             <div class='col-xs-6'>{$addr}</div>
+                                                        {else}
+                                                            <div class='col-xs-2'>Unknown</div>
                                                         {/if}
                                                         </div>
                                                     {/foreach}
@@ -146,71 +152,7 @@
                                             </div>
                                             <!-- End Tx Info -->
 
-                                            <!-- Display Unsigned/Partially signed transaction -->
-                                            <div class='row'>
-                                                <label class="col-xs-3" for="display_transaction">{if $order.partially_signed_transaction !== ''}Partially Signed Transaction{else}Unsigned Transaction{/if}</label>
-                                                <div class="col-xs-9">
-                                                    <textarea id="display_transaction" class="form-control">{if $order.partially_signed_transaction !== ''}{$order.partially_signed_transaction} {$order.json_inputs}{else}{$order.unsigned_transaction}{$order.json_inputs}{/if}</textarea>
-
-                                                    {if $order.partially_signed_transaction !== ''}
-                                                        {if $order.partially_signing_user_id !== $current_user.user_id}
-                                                        {capture name="t_partially_signed_user_url"}user/{$signer.user_hash}{/capture}
-                                                        <div class="col-xs-12">
-                                                            Signed by {url type="anchor" url=$smarty.capture.t_partially_signed_user_url text=$signer.user_name|escape:"html":"UTF-8" attr=''} {$order.partially_signed_time_f}. Sign and broadcast to complete payment.
-                                                        </div>
-                                                        {else}
-                                                            You signed this transaction {$order.partially_signed_time_f}.
-                                                        {/if}
-                                                    {/if}
-
-                                                    {if $display_form == TRUE}
-                                                        {if $strange_address == TRUE}
-                                                    <div class="col-xs-12">
-                                                        <div class="col-xs-8">
-                                                            Warning! This transaction has been tampered with, do not sign, message an admin.
-                                                        </div>
-                                                    </div>
-                                                        {/if}
-                                                    {/if}
-                                                </div>
-                                            </div>
-                                            <!-- End Display Unsigned/Partially signed transaction -->
-
-                                            <!-- Paste Signed Transaction Row -->
-                                            <div class='row'>
-                                                {if $display_form == TRUE}
-                                                <label class="col-xs-3" for="paste_transaction">Paste Signed Transaction</label>
-                                                <div class="col-xs-9">
-                                                    <textarea name="partially_signed_transaction" id="paste_transaction" class="form-control"></textarea>
-                                                </div>
-                                                {else}
-                                                {if $order.partially_signed_transaction == null OR $order.partially_signing_user_id == $current_user.user_id}
-                                                <label class="col-xs-3" for="message"></label>
-                                                <div class="col-xs-9">
-                                                    Waiting on the other user to sign.
-                                                </div>
-                                                {/if}
-                                                {/if}
-                                            </div>
-                                            <!-- End Paste Signed Transaction Row -->
-
-                                            <!-- Buttons -->
-                                            <div class="row">
-                                                <label class="col-xs-3" for="submit"></label>
-                                                <div class="col-xs-9">
-                                                    {if $display_form == TRUE}<input type="submit" name="submit_signed_transaction" class="btn btn-primary" value="Submit Transaction" />{/if}
-                                                    {if $can_finalize_early == TRUE}
-                                                        {capture name='t_finalize_early_url'}orders/finalize_early/{$order.id}{/capture}
-                                                        {url type="anchor" url=$smarty.capture.t_finalize_early_url text='Finalize Early' attr='class="btn btn-default"'}
-                                                    {/if}
-                                                    {if $can_refund == TRUE}
-                                                        {capture name='t_refund_url'}orders/refund/{$order.id}{/capture}
-                                                        {url type="anchor" url=$smarty.capture.t_refund_url text='Issue Refund' attr='class="btn btn-success"'}
-                                                    {/if}
-                                                    {url type="anchor" url=$cancel_page text="Back" attr='title="Back" class="btn btn-default"'}
-                                                </div>
-                                            </div>
-                                            <!-- End Buttons -->
+                                            {$sign_form_output}
                                         </div>
                                     </div>
                                 </div>

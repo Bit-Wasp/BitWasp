@@ -772,6 +772,20 @@ class MY_Form_validation extends CI_Form_validation {
 	{
 		return in_array($str, (($this->CI->bw_config->vendor_registration_allowed == TRUE) ? array('1','2','3') : array('1','3')));
 	}
+
+    public function validate_bip32_key($str) {
+        return is_array(\BitWasp\BitcoinLib\BIP32::import($str)) == TRUE;;
+    }
+
+    public function validate_is_public_bip32($str) {
+        $decode = \BitWasp\BitcoinLib\BIP32::import($str);
+        return $decode['type'] == 'public';
+    }
+
+    public function validate_depth_bip32($str) {
+        $decode = \BitWasp\BitcoinLib\BIP32::import($str);
+        return $decode['depth'] == '1';
+    }
 }
 
 /* End of file MY_Form_validation.php */

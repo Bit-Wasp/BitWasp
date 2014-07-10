@@ -44,6 +44,8 @@ $lang['check_valid_location_shipto'] = 'Please select a valid shipping destinati
 $lang['check_valid_location_shipfrom'] = 'Please select a valid shipping origin.';
 $lang['check_valid_rating_choice'] = 'Please select a valid rating for %s.';
 $lang['check_valid_registration_role'] = 'Please select a valid user role.';
-
+$lang['validate_bip32_key'] = 'Enter a valid extended public key.';
+$lang['validate_is_public_bip32'] = 'You may only use public keys on this site.';
+$lang['validate_depth_bip32'] = 'Please supply a key that is one level deep, eg, M/9h';
 /* End of File: form_validation_lang.php */
 /* Location: aplication/language/english/form_validation_lang.php */

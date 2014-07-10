@@ -186,6 +186,9 @@ class Transaction_cache_model extends CI_Model
             ->count_all_results() > 0;
     }
 
+	public function get_payment($tx_id) {
+		return $this->db->get_where('transactions_payments_cache', array('tx_id' => $tx_id))->row_array();
+	}
     /**
      * Payments To Address
      *

@@ -34,8 +34,8 @@ class Users_model extends CI_Model
      */
     public function add($data, $token_info = NULL)
     {
-        $sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location, local_currency, private_key_salt) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $query = $this->db->query($sql, array($data['user_name'], $data['password'], $data['salt'], $data['user_hash'], $data['user_role'], time(), $data['public_key'], $data['private_key'], $data['location'], $data['local_currency'], $data['private_key_salt']));
+        $sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location, local_currency, private_key_salt, wallet_salt) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $query = $this->db->query($sql, array($data['user_name'], $data['password'], $data['salt'], $data['user_hash'], $data['user_role'], time(), $data['public_key'], $data['private_key'], $data['location'], $data['local_currency'], $data['private_key_salt'], $data['wallet_salt']));
         if ($query) {
             if ($token_info !== FALSE)
                 $this->delete_registration_token($token_info['id']);
@@ -156,6 +156,11 @@ class Users_model extends CI_Model
         }
 
         return FALSE;
+    }
+
+    public function wallet_salt($user_id) {
+        $row = $this->db->get_where('users', array('id' => $user_id))->row_array();
+        return $row['wallet_salt'];
     }
 
     /**

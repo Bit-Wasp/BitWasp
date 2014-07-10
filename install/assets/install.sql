@@ -46,8 +46,41 @@ CREATE TABLE IF NOT EXISTS `bw_bitcoin_public_keys` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `bw_bip32_keys`
+--
+
+
+CREATE TABLE IF NOT EXISTS `bw_bip32_keys` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `key` varchar(600) NOT NULL,
+  `user_id` int(9) NOT NULL,
+  `provider` enum('Manual','Onchain','JS') NOT NULL,
+  `time` varchar(20) NOT NULL,
+  `key_index` int(9) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `bw_bip32_user_keys`
+--
+
+CREATE TABLE IF NOT EXISTS `bw_bip32_user_keys` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `user_id` int(9) NOT NULL,
+  `order_id` int(9) NOT NULL,
+  `order_hash` varchar(30) NOT NULL,
+  `user_role` enum('Buyer','Vendor','Admin') NOT NULL,
+  `parent_extended_public_key` varchar(300) NOT NULL,
+  `provider` enum('Manual','Onchain','JS') NOT NULL,
+  `extended_public_key` varchar(300) NOT NULL,
+  `public_key` varchar(130) NOT NULL,
+  `key_index` int(9) NOT NULL,
+  `time` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=78 ;
 
 --
 -- Table structure for table `bw_blocks`
@@ -115,6 +148,8 @@ INSERT INTO `bw_config` (`parameter`, `value`) VALUES
 ('force_vendor_pgp','%FORCE_VENDOR_PGP%'),
 ('electrum_mpk', '%ELECTRUM_MPK%'),
 ('electrum_iteration', '0'),
+('bip32_mpk', '0'),
+('bip32_iteration', '0'),
 ('electrum_gap_limit', '10000'),
 ('delete_logs_after', '14'),
 ('entry_payment_vendor', '0'),
@@ -667,6 +702,22 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bw_onchain_requests`
+--
+
+CREATE TABLE IF NOT EXISTS `bw_onchain_requests` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `user_token` varchar(64) NOT NULL,
+  `totp_secret` varchar(50) NOT NULL,
+  `request_type` enum('mpk','sign') NOT NULL,
+  `sign_order_id` int(9) NOT NULL,
+  `user_id` int(9) NOT NULL,
+  `time` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+
+
+--
 -- Table structure for table `bw_orders`
 --
 
@@ -936,6 +987,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `private_key_salt` varchar(64) NOT NULL,
   `register_time` int(20) NOT NULL,
   `salt` varchar(128) NOT NULL,
+  `wallet_salt` varchar(128) NOT NULL,
   `user_hash` varchar(25) NOT NULL,
   `user_name` varchar(40) NOT NULL,
   `user_role` enum('Buyer','Vendor','Admin') NOT NULL,

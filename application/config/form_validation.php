@@ -506,12 +506,8 @@ $config = array('register_form' => array(
         array('field' => 'buyer_address',
             'label' => 'address',
             'rules' => 'required'
-        ),
-        // PHP checking done in controller.
-        array('field' => 'bitcoin_public_key',
-            'label' => 'public Key',
-            'rules' => 'required|check_bitcoin_public_key'
         )
+
     ),
     'vendor_submit_review' => array(
 
@@ -642,6 +638,18 @@ $config = array('register_form' => array(
         array('field'=>'resolve_dispute_id',
             'label' => '',
             'rules' => 'required|is_numeric'
+        )
+    ),
+    'submit_bip32_js' => array(
+        array('field' => 'js_extended_public_key',
+            'label' => 'wallet passphrase',
+            'rules' => 'required'
+        )
+    ),
+    'submit_bip32_manual' => array(
+        array('field' => 'manual_public_key',
+            'label' => 'extended public key',
+            'rules' => 'required|validate_bip32_key|validate_is_public_bip32'
         )
     )
 );

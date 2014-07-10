@@ -17,6 +17,7 @@
 class MY_Controller extends CI_Controller
 {
 
+	public $_partials;
 
     /**
      * constructor
@@ -24,6 +25,7 @@ class MY_Controller extends CI_Controller
     function __construct()
     {
         parent::__construct();
+        $this->_partials = array();
     }
 
     protected function _prepare_template()
@@ -108,7 +110,7 @@ class MY_Controller extends CI_Controller
                 } else if ($key == 'header_meta') {
                     $header_meta = $value;
                     continue;
-                }
+                } 
 
                 $this->smarty->assign($key, $value);
             }
@@ -124,10 +126,26 @@ class MY_Controller extends CI_Controller
             'exchange_rates' => $this->bw_config->exchange_rates,
             'currencies' => $this->bw_config->currencies));
 
+		$this->_handle_partials();
+
         $this->smarty->display('header.tpl');
         $this->smarty->display($template . ".tpl");
         $this->smarty->display('footer.tpl');
     }
+
+	public function _partial($view_access_name, $page) {
+		$this->_partials[$view_access_name] = $page;
+	}
+
+	public function _handle_partials() {
+		// Load partial templates now that preloading is done.
+		if(count($this->_partials) > 0) {
+			foreach($this->_partials as $variable_name => $page_to_render) {
+				$a = $this->smarty->fetch($page_to_render.".tpl");
+				$this->smarty->assign($variable_name, $a);
+			}
+		}
+	}
 
     /**
      * Menu

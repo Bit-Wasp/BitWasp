@@ -2,6 +2,7 @@
 
 use BitWasp\BitcoinLib\BitcoinLib;
 use BitWasp\BitcoinLib\Electrum;
+use BitWasp\BitcoinLib\BIP32;
 
 /**
  * Bitcoin Model
@@ -72,6 +73,7 @@ class Bitcoin_model extends CI_Model
         return array('public_key' => $public_key,
             'iteration' => $this->bw_config->electrum_iteration);
     }
+
 
     /**
      * Add Watch Address
