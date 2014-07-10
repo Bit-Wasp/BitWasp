@@ -431,7 +431,7 @@ class Orders extends MY_Controller
                 } else {
                     // Already have order, update it
                     if ($order['progress'] == '0') {
-                        $update = array('item_hash' => $item_hash,
+                        $update = array('item_hash' => $item_info['hash'],
                             'quantity' => '1');
                         $res = $this->order_model->update_items($order['id'], $update);
                         $message = (($res == TRUE) ? 'Your order has been updated.' : 'Unable to update your order at this time.');
