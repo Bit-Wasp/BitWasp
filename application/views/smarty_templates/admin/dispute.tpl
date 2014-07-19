@@ -99,22 +99,16 @@
                     {form method="open" action=$smarty.capture.t_dispute_url attr='class="form-horizontal"'}
                         <div class="row">
                             <div class="col-xs-6">
-                                <div class="row">
-                                    <div class="col-xs-6"><strong>Order Price:</strong></div>
-                                    <div class="col-xs-6">{$coin.symbol} {$current_order.order_price}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-6"><strong>Transaction Fee:</strong></div>
-                                    <div class="col-xs-6">{$coin.symbol} {$transaction_fee}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-6"><strong>Admin Fee's:</strong></div>
-                                    <div class="col-xs-6">{$coin.symbol} {$admin_fee}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-6"><strong>User Funds:</strong></div>
-                                    <div class="col-xs-6">{$coin.symbol} {$user_funds}</div>
-                                </div>
+
+                                <div class="col-xs-6"><strong>Order Price:</strong></div>
+                                <div class="col-xs-6">{$coin.symbol} {$current_order.order_price}</div>
+                                <div class="col-xs-6"><strong>Transaction Fee:</strong></div>
+                                <div class="col-xs-6">{$coin.symbol} {$transaction_fee}</div>
+                                <div class="col-xs-6"><strong>Admin Fee's:</strong></div>
+                                <div class="col-xs-6">{$coin.symbol} {$admin_fee}</div>
+                                <div class="col-xs-6"><strong>User Funds:</strong></div>
+                                <div class="col-xs-6">{$coin.symbol} {$user_funds}</div>
+                                <input type='checkbox' name='relinquish_fee' value='1' /> Release sites fee for users
                             </div>
 
                             <div class="col-xs-6">

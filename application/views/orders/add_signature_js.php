@@ -21,57 +21,39 @@ function sign_raw_transaction()
 	var password = document.getElementById('wallet_passphrase').value;
 	var salt = document.getElementById('wallet_salt').value;
 	var parent_pubkey = document.getElementById('extended_public_key').value;
-	var signed_tx = document.getElementById('partially_signed_transaction').value;
-	var unsigned_tx = document.getElementById('unsigned_transaction').value.trim();
-	
 	var signing_key_index = document.getElementById('key_index').value;
+
 	var seed = bitcore.util.sha256(salt+password);
 	var hkey = bitcore.HierarchicalKey.seed(seed);
-	
-	// child is the public key we stored!
-	var child = hkey.derive("m/0'/0");
-	if(child.extendedPublicKeyString() == parent_pubkey) {
-		var signing_key = hkey.derive("m/0'/0/6");
+	var child = hkey.derive("m/0'/0");      	// child is the public key we stored!
 
+    var optsb = opts;
+    optsb.spendUnconfirmed = true;
+
+	if(child.extendedPublicKeyString() == parent_pubkey) {
+
+		var signing_key = hkey.derive(signing_key_index);
 		var buf = new bitcore.buffertools.Buffer(signing_key.eckey.private, 'hex');
 		var priv_key = new bitcore.PrivateKey(bitcore.networks.livenet.privKeyVersion, buf, true);
 		var wallet_key = new bitcore.WalletKey({network: bitcore.networks.livenet});
 		var wif  = priv_key.as('base58');
 		wallet_key.fromObj({ priv: wif });
-		
-		var optsb = opts;
-		optsb.spendUnconfirmed = true;
-		
+
 		var b = new bitcore.TransactionBuilder(optsb)
 		  .setUnspent(utxos)
 		  .setHashToScriptMap(hashMap)
 		  .setOutputs(outs)
-		  .sign([wallet_key]);	
-		
-		if(signed_tx.length > 0) {						
-			// Stupid solution to getting working builder obj with:
-			// Duplicate now signed tx, which is set up by the builder, and replace all sigs.
-			var partial_builder = b;
-			var signed_builder = extract_tx(optsb, signed_tx);
-			var l = partial_builder.tx.ins.length;
-			for(var i = 0; i < l; i++) {
-				partial_builder.tx.ins[i].s = signed_builder.tx.ins[i].s;
-				partial_builder.signaturesAdded++;
-			}
-			
-			console.log(partial_builder);
-			b.merge(partial_builder);
-		} else {
-			alert("unsigned transaction. ");
-		}
-		console.log(b);
+		  .sign([wallet_key]);
+
 		var tx = b.build();
-		console.log(tx.serialize().toString('hex'));
+		var hex = tx.serialize().toString('hex');
+		unset_wallet_passphrase();
+        embed_tx('js_transaction', hex);
 	} else {
-		alert ('wrong passphrase');
+		alert ('Entered wrong passphrase!');
+        event.preventDefault();
 	}   
 }
-	
 
 	function check_wallet_passphrase_set(param) {
 		if (document.getElementById(param).value == ''){
@@ -80,9 +62,32 @@ function sign_raw_transaction()
 		return true;
 	}
 
-	function unset_wallet_passphrase(param) {
-		document.bip32Javascript.wallet_passphrase.value = '';
+	function unset_entry(field_id) {
+		document.getElementById(field_id).value = '';
 	}
+
+	function clear_form() {
+		unset_entry('wallet_passphrase');
+		unset_entry('extended_public_key');
+		unset_entry('unsigned_transaction');
+		unset_entry('partially_signed_transaction');
+		unset_entry('key_index');
+		unset_entry('wallet_salt');
+		unset_entry('wallet_passphrase');
+	}
+
+	function unset_wallet_passphrase() {
+		document.sign_transaction.wallet_passphrase.value = '';
+	}
+	function embed_tx(element_id, tx) {
+		var input = document.createElement("input");
+		input.setAttribute("type", "hidden");
+		input.setAttribute("name", element_id);
+		input.setAttribute("value", tx);
+		//append to form element that you want .
+		document.getElementById("sign_transaction").appendChild(input);
+	}
+
 
 	function embed_extended_pubkey(element_id, public_key) {
 		var input = document.createElement("input");

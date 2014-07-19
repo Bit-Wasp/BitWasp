@@ -96,7 +96,7 @@
                                     {url type="anchor" url=$smarty.capture.t_dispute_url text="Raise Dispute" attr='class="btn btn-default btn-block"'}
                                 {/if}
 
-                                {if $order.progress == 5 AND $order.vendor_selected_upfront == TRUE}
+                                {if $current_user.user_role == 'Buyer' AND $order.progress == 5 AND $order.vendor_selected_upfront == TRUE}
                                     <input type="submit" class="btn btn-primary btn-block" name="received_upfront_order" value="Received" />
                                     <input type="hidden" name="received_upfront_order_id" value="{$order.id}" />
                                 {/if}

@@ -16,7 +16,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-3" for="trusted_user_rating">Required rating:</label>
                             <div class="col-xs-7">
-                                <input type='text' class='form-control' id='trusted_user_rating' name='trusted_user_rating' value="{$config.trusted_user_rating|escape:"url"}" />
+                                <input type='text' class='form-control' id='trusted_user_rating' name='trusted_user_rating' value="{$config.trusted_user_rating|escape:"html":"UTF-8"}" />
                             </div>
                         </div>
                         <div class="col-xs-9 col-xs-offset-3">{form method="form_error" field="trusted_user_rating"}</div>
@@ -26,7 +26,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-3" for="review_count">Review count:</label>
                             <div class="col-xs-7">
-                                <input type='text' class='form-control' id='review_count' name='trusted_user_review_count' value="{$config.trusted_user_review_count|escape:"url"}" />
+                                <input type='text' class='form-control' id='review_count' name='trusted_user_review_count' value="{$config.trusted_user_review_count|escape:"html":"UTF-8"}" />
                             </div>
                         </div>
                         <div class="col-xs-9 col-xs-offset-3">{form method="form_error" field='trusted_user_review_count'}</div>
@@ -36,7 +36,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-3" for="completed_orders">Minimum complete orders:</label>
                             <div class="col-xs-7">
-                                <input type='text' class='form-control' id='completed_orders' name='trusted_user_order_count' value="{$config.trusted_user_order_count|escape:"url"}" />
+                                <input type='text' class='form-control' id='completed_orders' name='trusted_user_order_count' value="{$config.trusted_user_order_count|escape:"html":"UTF-8"}" />
                             </div>
                         </div>
                         <div class="col-xs-9 col-xs-offset-3">{form method="form_error" field='trusted_user_order_count'}</div>

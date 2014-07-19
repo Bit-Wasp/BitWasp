@@ -116,6 +116,11 @@ class MY_Form_validation extends CI_Form_validation {
 		return \BitWasp\BitcoinLib\BitcoinLib::validate_public_key($str);
 	}
 
+    public function check_bitcoin_address($str)
+    {
+        return \BitWasp\BitcoinLib\BitcoinLib::validate_address($str, '05');
+    }
+
 	/**
 	 * Check Bool Enabled
 	 * 

@@ -57,7 +57,7 @@ class Order_model extends CI_Model
     {
         $query = $this->db->where('vendor_hash', $this->current_user->user_hash)
             ->where('progress >', '0')
-            ->order_by('progress ASC, time desc')
+            ->order_by('time desc')
             ->get('orders');
 
         if ($query->num_rows() > 0) {
@@ -214,7 +214,8 @@ class Order_model extends CI_Model
     public function buyer_orders()
     {
         $query = $this->db->where('buyer_id', $this->current_user->user_id)
-            ->order_by('progress asc, time desc')
+            ->order_by('time desc')
+            //->order_by('progress asc, time desc')
             ->get('orders');
         #echo $this->db->last_query();
         return ($query->num_rows() > 0) ? $this->build_array($query->result_array()) : array();
@@ -460,7 +461,8 @@ class Order_model extends CI_Model
             $new_tx = RawTransaction::decode($raw_transaction);
 
             foreach($new_tx['vin'] as &$input_ref){
-                $empty_input = "004c".RawTransaction::_encode_vint(strlen($script)/2).$script;
+                $empty_input = '4c'.RawTransaction::_encode_vint(strlen($script)/2).$script;
+                //$empty_input = $script;
                 $input_ref['scriptSig']['hex'] = $empty_input;
             }
             $raw_transaction = RawTransaction::encode($new_tx);
@@ -471,6 +473,7 @@ class Order_model extends CI_Model
                 'partially_signed_transaction' => '',
                 'partially_signed_time' => '',
                 'partially_signing_user_id' => ''))) {
+
                 $this->transaction_cache_model->clear_expected_for_address($from_address);
                 $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $from_address, $order_id);
 
@@ -712,7 +715,7 @@ class Order_model extends CI_Model
 
         foreach ($paid as $record) {
             $order = $this->get($record['order_id']);
-            $vendor_address = BitcoinLib::public_key_to_address($order['public_keys']['vendor']['public_key'], $coin['crypto_magic_byte']);
+            $vendor_address = $order['vendor_payout'];
             $admin_address = BitcoinLib::public_key_to_address($order['public_keys']['admin']['public_key'], $coin['crypto_magic_byte']);
 
             // Create the transaction outputs

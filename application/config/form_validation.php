@@ -507,7 +507,6 @@ $config = array('register_form' => array(
             'label' => 'address',
             'rules' => 'required'
         )
-
     ),
     'vendor_submit_review' => array(
 
@@ -559,6 +558,22 @@ $config = array('register_form' => array(
         'label' => 'public keys',
         'rules' => 'required'
        )
+    ),
+    'submit_payout_address' => array(
+        array('field' => 'address',
+            'label' => 'address',
+            'rules' => 'required|check_bitcoin_address'
+        ),
+        array('field' => 'password',
+            'label' => 'password',
+            'rules' => 'required'
+        )
+    ),
+    'submit_dispute_refund_address' => array(
+        array('field' => 'refund_address',
+            'label' => 'refund address',
+            'rules' => 'required|check_bitcoin_address'
+        )
     ),
     'submit_buyer_purchase' => array(
         array('field' => 'item_hash',
@@ -650,6 +665,12 @@ $config = array('register_form' => array(
         array('field' => 'manual_public_key',
             'label' => 'extended public key',
             'rules' => 'required|validate_bip32_key|validate_is_public_bip32'
+        )
+    ),
+    'submit_js_signed_transaction' => array(
+		array('field' => 'js_transaction',
+			'label' => 'wallet passphrase',
+            'rules' => 'required'
         )
     )
 );

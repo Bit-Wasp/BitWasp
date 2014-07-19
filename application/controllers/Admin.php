@@ -929,28 +929,36 @@ class Admin extends MY_Controller
             $data['user_funds'] = (float)($data['current_order']['order_price'] - $data['admin_fee'] - $data['transaction_fee']);
 
             if($this->input->post('resolve_dispute') !== null) {
+
                 if($this->form_validation->run('admin_resolve_dispute') == TRUE) {
                     if($this->input->post('resolve_dispute_id') == $data['current_order']['id']){
+                        if($this->input->post('relinquish_fee') == '1'){
+                            $data['admin_fee'] = 0;
+                            $data['user_funds'] = (float)($data['current_order']['order_price'] - $data['admin_fee'] - $data['transaction_fee']);
+                        }
+
                         if ($data['current_order']['vendor_selected_escrow'] == '1') {
                             $pay_buyer_amount = $this->input->post('pay_buyer');
+
                             $pay_vendor_amount = $this->input->post('pay_vendor');
                             $sum = $pay_buyer_amount + $pay_vendor_amount;
 
                             $epsilon = 0.00000001;
 
+                            // Must total user funds available
                             if (abs($sum - $data['user_funds']) < $epsilon) {
                                 $tx_outs = array();
 
                                 // Add outputs for the sites fee, buyer, and vendor.
-                                $admin_address = BitcoinLib::public_key_to_address($data['current_order']['admin_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
-                                $tx_outs[$admin_address] = (float)$data['admin_fee'];
+                                if($data['admin_fee'] > 0){
+                                    $admin_address = BitcoinLib::public_key_to_address($data['current_order']['public_keys']['admin']['public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
+                                    $tx_outs[$admin_address] = (float)$data['admin_fee'];
+                                }
                                 if ($pay_buyer_amount > 0) {
-                                    $buyer_address = BitcoinLib::public_key_to_address($data['current_order']['buyer_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
-                                    $tx_outs[$buyer_address] = (float)$pay_buyer_amount;
+                                    $tx_outs[$data['current_order']['buyer_payout']] = (float)$pay_buyer_amount;
                                 }
                                 if ($pay_vendor_amount > 0) {
-                                    $vendor_address = BitcoinLib::public_key_to_address($data['current_order']['vendor_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
-                                    $tx_outs[$vendor_address] = (float)$pay_vendor_amount;
+                                    $tx_outs[$data['current_order']['vendor_payout']] = (float)$pay_vendor_amount;
                                 }
 
                                 // Create spend transaction and redirect, otherwise display an error
@@ -961,6 +969,7 @@ class Admin extends MY_Controller
                                         'order_id' => $order_id,
                                         'dispute_id' => $data['dispute']['id'],
                                         'message' => 'New transaction on order page.'));
+
                                     redirect('admin/dispute/' . $order_id);
                                 } else {
                                     $data['returnMessage'] = $create_spend_transaction;
@@ -1052,6 +1061,8 @@ class Admin extends MY_Controller
 
         if($this->input->post('delete_rate') == 'Delete') {
             if($this->form_validation->run('admin_delete_fee_rate') == TRUE) {
+                $key = array_keys($this->input->post('delete_rate'));
+                $id = $key[0];
                 if ($this->fees_model->delete($id) == TRUE) {
                     $this->current_user->set_return_message('The selected fee has been deleted.',FALSE);
                     redirect('admin/items/fees');

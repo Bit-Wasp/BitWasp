@@ -27,7 +27,6 @@ class OnchainLib
     {
         $request = $this->CI->onchain_model->require_request($this->CI->current_user->user_id, 'sign', $sign_order_id);
         $string = 'sign|' . $this->service_name . '|' . base_url('onchain/sign') . '|usertoken|' . $request['user_token'] . '|totptoken|' . $request['totp_token'] . '|crc|' . $tx_hash;
-        echo $string;
         $request['qr'] = $this->CI->ciqrcode->generate_base64(array('data' => $string));
         return $request;
     }
@@ -49,7 +48,9 @@ class OnchainLib
 
     public function handle_sign_post_request($post_request)
     {
+
         $this->CI->load->model('order_model');
+        $this->CI->load->model('bip32_model');
         $this->CI->load->library('bw_bitcoin');
 
         if (!isset($post_request['auth_id'])) {
@@ -64,19 +65,15 @@ class OnchainLib
         $order = $this->CI->order_model->get($post_request['sign_order_id']);
 
         $signing_user = ($post_request['user_id'] == $order['buyer']['id']) ? $order['buyer'] : $order['vendor'];
+        $signing_pubkey_id = $order[(strtolower($signing_user['user_role']).'_public_key')];
+        $user_key = $this->CI->bip32_model->get_child_key($signing_pubkey_id);
 
-        $req_sig_count = ($order['partially_signed_transaction'] !== '') ? 2 : 1;
+        $handle = $this->CI->bw_bitcoin->handle_order_tx_submission($order, $post_request['tx'], $user_key);
 
-        $assoc_sigs = $this->CI->bw_bitcoin->associate_sigs_with_keys($post_request['tx'], $order['json_inputs']);
-        print_r($decode_tx['vin'][0]['scriptSig']);
-        print_r($assoc_sigs);
-        if($order['partially_signed_transaction'] !== ''){
-            // Need to build txs together and submit to network.
-        } else {
-            // Need to submit to
-        }
-        
-        $this->CI->onchain_model->clear_auth($bip32_array['auth_id']);
+        if(is_string($handle))
+            echo $handle;
+
+        //$this->CI->onchain_model->clear_auth($post_request['auth_id']);
 
     }
 
@@ -84,7 +81,6 @@ class OnchainLib
     {
         $request = $this->CI->onchain_model->require_request($this->CI->current_user->user_id, 'mpk');
         $string = 'mpk|' . $this->service_name . '|' . base_url('onchain/mpk') . '|usertoken|' . $request['user_token'] . '|totptoken|' . $request['totp_token'];
-        echo $string;
         $request['qr'] = $this->CI->ciqrcode->generate_base64(array('data' => $string));
         return $request;
     }

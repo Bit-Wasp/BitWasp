@@ -66,6 +66,39 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
+    public function payout() {
+        if ($this->current_user->user_role == 'Admin')
+            redirect('');
+
+        $this->load->model('bitcoin_model');
+        $data['address'] = $this->bitcoin_model->get_payout_address($this->current_user->user_id);
+
+        if ($this->input->post('submit_payout_address') == 'Submit'){
+            if ($this->form_validation->run('submit_payout_address')){
+                $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+                $password = $this->general->password($this->input->post('password'), $user_info['salt']);
+                $check_login = $this->users_model->check_password($this->current_user->user_name, $password);
+
+                if ($check_login !== FALSE && $check_login['id'] == $this->current_user->user_id) {
+
+                    $set = $this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('address'));
+
+                    if($set){
+                        $this->current_user->set_return_message('Payout address has been saved', TRUE);
+                        redirect('account');
+                    } else {
+                        $data['returnMessage'] = 'Unable to update your address at this time.';
+                    }
+                } else {
+                    $data['returnMessage'] = 'Your password was incorrect.';
+                }
+            }
+        }
+
+        $data['page'] = 'accounts/payout';
+        $data['title'] = (($this->current_user->user_role == 'Vendor')?'Payout':'Refund').' Address';
+        $this->_render('accounts/payout', $data);
+    }
 
     /**
      * Public Keys
@@ -151,6 +184,10 @@ class Accounts extends MY_Controller
                 $data['two_factor_setting'] = TRUE;
         }
 
+        $this->load->model('bip32_model');
+        $this->load->model('bitcoin_model');
+        $data['bip32'] = $this->bip32_model->get($this->current_user->user_id);
+        $data['payout'] = $this->bitcoin_model->get_payout_address($this->current_user->user_id);
         $this->_render($data['page'], $data);
     }
 
@@ -370,7 +407,7 @@ class Accounts extends MY_Controller
 
                 if ($this->form_validation->run() == TRUE) {
                     // Work out if submitted password has been hashed by javascript already
-                    $password = $this->general->password($this->general->hash($this->input->post('password')), $user_info['salt']);
+                    $password = $this->general->password($this->input->post('password'), $user_info['salt']);
 
                     $check_login = $this->users_model->check_password($this->current_user->user_name, $password);
 

@@ -291,6 +291,61 @@ class Transaction_cache_model extends CI_Model
     }
 
     ////////////////////////////////////////////////////////////////
+    // Transaction broadcasting
+    ////////////////////////////////////////////////////////////////
+    /**
+     * To Broadcast
+     *
+     * Accepts a raw $transaction hex, and adds it to a cache of transactions
+     * to be broadcast whenever the process callback is run.
+     *
+     * @param $transaction
+     * @return bool
+     */
+    public function to_broadcast($transaction) {
+        return $this->db->insert('transactions_broadcast_cache', array('transaction' => $transaction)) == TRUE;
+    }
+
+    /**
+     * Broadcast List
+     *
+     * Obtains the list of transactions to broadcast from the database
+     * @return mixed
+     */
+    public function broadcast_list() {
+        return $this->db->get('transactions_broadcast_cache')->result_array();
+    }
+
+    /**
+     * Clear Broadcast List
+     *
+     * Accepts an array of id's of records in the transactions_broadcast_cache table
+     * which are to be deleted.
+     *
+     * @param $id_array
+     * @return bool
+     */
+    public function clear_broadcast_list($id_array) {
+        return $this->db->where_in('id', $id_array)->delete('transactions_broadcast_cache') == TRUE;
+    }
+
+    /**
+     * Update Broadcast List Remaining
+     *
+     * Update an array of id's for records in this table to a new 'attempts_remaining'
+     * value.
+     *
+     * @param $id_array
+     * @param $new_remaining
+     * @return bool
+     */
+    public function update_broadcast_list_remaining($id_array, $new_remaining){
+        return $this->db->where_in('id', $id_array)
+            ->set('attempts_remaining', $new_remaining)
+            ->update('transactions_broadcast_cache') == TRUE;
+    }
+
+    ////////////////////////////////////////////////////////////////
     // 'Complete Order' Trigger
     ////////////////////////////////////////////////////////////////
 
@@ -355,16 +410,13 @@ class Transaction_cache_model extends CI_Model
      */
     public function log_transaction($outputs, $multisig_address, $order_id)
     {
-        $outputs = $this->outputs_to_log_array($outputs);
-        $outputs_hash = hash('sha256', json_encode($outputs));
-
-        if ($this->search_log_hashes($outputs_hash) !== FALSE)
-            return FALSE;
-
-        $insert = array('outputs_hash' => $outputs_hash,
+        $outputs_arr = $this->outputs_to_log_array($outputs);
+        $json = json_encode($outputs_arr);
+        $hash = hash('sha256', $json);
+        $arr = array('outputs_hash' => $hash,
             'address' => $multisig_address,
             'order_id' => $order_id);
-        return $this->db->insert('transactions_expected_cache', $insert) == TRUE;
+        return $this->db->insert('transactions_expected_cache', $arr) == TRUE;
     }
 
     /**
@@ -384,8 +436,9 @@ class Transaction_cache_model extends CI_Model
         $array = array();
         foreach ($outputs as $vout => $output) {
             $array[] = array('address' => $output['scriptPubKey']['addresses'][0],
-                'value' => $output['value']);
+                'value' => number_format($output['value'],8));
         }
+
         return $array;
     }
 
@@ -398,10 +451,11 @@ class Transaction_cache_model extends CI_Model
      * @param    string $outputs_hash
      * @return    ARRAY/FALSE
      */
-    public function search_log_hashes($outputs_hash)
+    public function search_log_hashes($outputs_hash, $order_id)
     {
         $this->db->reset_query();
         $this->db->where('outputs_hash', "{$outputs_hash}");
+        $this->db->where('order_id', "{$order_id}");
         $query = $this->db->get('transactions_expected_cache');
         return ($query->num_rows() > 0) ? $query->row_array() : FALSE;
     }
@@ -436,9 +490,11 @@ class Transaction_cache_model extends CI_Model
      * @param    array $output
      * @return    boolean
      */
-    public function check_if_expected_spend($output)
+    public function check_if_expected_spend($output, $order_id)
     {
-        $search = $this->search_log_hashes(hash('sha256', json_encode($this->outputs_to_log_array($output))));
+        $hash = hash('sha256', json_encode($this->outputs_to_log_array($output)));
+        echo $hash."<br />";
+        $search = $this->search_log_hashes($hash, $order_id);
         return ($search === FALSE) ? FALSE : $search['address'];
     }
 

@@ -20,24 +20,19 @@
                 {if $item.main_image.hash !== 'default'}
                     {capture name="t_img_uri"}image/{$item.main_image.hash}{/capture}
                     {capture name="t_img"}{url type="site" url=$smarty.capture.t_img_uri}{/capture}
-                    {capture name="t_item_img"}<img class="img-responsive" src='{$smarty.capture.t_img}' height='300' title='{$item.name|escape:"url"}'>{/capture}
+                    {capture name="t_item_img"}<img class="img-responsive" src='{$smarty.capture.t_img}' height='300' title='{$item.name|escape:"html":"UTF-8"}'>{/capture}
                     {capture name="t_item_url"}item/{$item.hash}{/capture}
-                    {url type="anchor" url=$smarty.capture.t_item_url text=$smarty.capture.t_item_img attr='title="{$item.name|escape:"url"}"'}
+                    {url type="anchor" url=$smarty.capture.t_item_url text=$smarty.capture.t_item_img attr='title="{$item.name|escape:"html":"UTF-8"}"'}
                 {/if}
                 <div class="caption-full">
                     <h4 class="pull-right">{$item.price_f|escape:"none"}</h4>
-                    <h4>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr="title='{$item.name|escape:"url"}'"}</h4>
+                    <h4>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr="title='{$item.name|escape:"html":"UTF-8"}'"}</h4>
                     <p class="pull-right">
                         {if $current_user.logged_in == TRUE}
-                            {if $current_user.user_hash != $item.vendor.user_hash}
-                                {url type="anchor" url=$smarty.capture.t_message_vendor_url text="Message" attr='class="btn btn-default"'}<br />
-                            {/if}
+                            {if $current_user.user_hash != $item.vendor.user_hash}{url type="anchor" url=$smarty.capture.t_message_vendor_url text="Message" attr='class="btn btn-default"'}<br />{/if}
                             {if $current_user.user_role == 'Buyer'}
-
                                 <input type="hidden" name="item_hash" value="{$item.hash}" style="display:none" />
                                 <input type="submit" name="submit_purchase" value="Purchase" class="btn btn-primary">
-
-
                             {/if}
                         {/if}
                     </p>
@@ -53,26 +48,24 @@
                     <p class="pull-right">
                         {url type="anchor" url=$smarty.capture.t_reviews_url text=$smarty.capture.t_reviews_str attr=''}
                     </p>
-                    <p>{for $var1=1 to $item.average_rating}<span class="glyphicon glyphicon-star"></span>{/for}{for $var=$var1 to 5}<span class="glyphicon glyphicon-star-empty"></span>{/for}
-                    </p>
+                    <p>{rating rating=$item.average_rating}</p>
                 </div>
 
                 {if $shipping_costs == TRUE}
                 <div class="caption">
                     <div class="col-xs-12">
-                            <div class='col-xs-6'><strong>Available Locations</strong></div>
-                            <div class='col-xs-6'><strong>Cost</strong></div>
+                        <div class='col-xs-6'><strong>Available Locations</strong></div>
+                        <div class='col-xs-6'><strong>Cost</strong></div>
                     </div>
 
                     {foreach from=$shipping_costs item=shipping_charge}
                     <div class="col-xs-12">
-
                         <div class='col-xs-6'>{$shipping_charge.destination_f}</div>
                         <div class='col-xs-6'>
-                                {if $current_user.currency.id !== '0'}
-                                    {$current_user.currency.symbol} {number_format($shipping_charge.cost*$current_user.currency.rate,2)} /
-                                {/if}
-                                {$coin.symbol} {number_format($shipping_charge.cost|escape:"html":"UTF-8",8)}
+                            {if $current_user.currency.id !== '0'}
+                                {$current_user.currency.symbol} {number_format($shipping_charge.cost*$current_user.currency.rate,2)} /
+                            {/if}
+                            {$coin.symbol} {number_format($shipping_charge.cost|escape:"html":"UTF-8",8)}
                         </div>
                     </div>
                     {/foreach}
@@ -107,7 +100,7 @@
                                     {ucfirst($quality)}
                                 </div>
                                 <div class="col-md-5">
-                                    {for $var1=1 to $rating}<span class="glyphicon glyphicon-star"></span>{/for}{for $var=$var1 to 5}<span class="glyphicon glyphicon-star-empty"></span>{/for}
+                                    {rating rating=$rating}
                                 </div>
                             </div>
                             {/foreach}

@@ -19,7 +19,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-3" for="wallet_passphrase">Wallet passphrase:</label>
                             <div class="col-xs-7">
-                                <input type="text" class="form-control" name="wallet_passphrase" id="wallet_passphrase" value="" />
+                                <input type="password" class="form-control" name="wallet_passphrase" id="wallet_passphrase" value="" />
                             </div>
                             <div class="col-xs-2">
                                 <input type="submit" name="js_submit" value="Submit" class="btn btn-primary" onclick="generate_key()"/>
@@ -30,7 +30,7 @@
                     </div>
                 </form>
                 <div class="col-xs-12">&nbsp;</div>
-
+<!--
                 {form method="open" action="bip32" attr=['class'=>'form-horizontal', 'name' => 'authorizeForm']}
                     <legend>Using Onchain.io's transaction signer</legend>
                     <div class="row">
@@ -46,7 +46,7 @@
                     </div>
                 </form>
                 <div class="col-xs-12">&nbsp;</div>
-
+-->
                 {form method="open" action="bip32" attr=['class'=>'form-horizontal', 'name' => 'authorizeForm']}
                     <legend>Using an external wallet</legend>
                     <p align="justify">Using an external wallet is only recommended for advanced users, because most wallets don't support BIP32 yet. You can create BIP32 master keys on websites like {url type="anchor" url="http://bip32.org/" text="BIP32.org" attr='title="BIP32.org"'}, and importing the necessary private keys into Bitcoin Core to add a signature.</p>

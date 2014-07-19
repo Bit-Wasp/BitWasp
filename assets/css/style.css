@@ -48,7 +48,24 @@ footer {
   margin: 50px 0;
 }
 
-li.padd { margin-left: 10px; }	
+li.padd { margin-left: 10px; }
+
+.well {
+    border-radius: 0;
+}
+
+.well .nav-header {
+    font-size: 120%;
+    border-bottom: 1px dotted grey;
+}
+
+h2 {
+    padding-bottom: 1%;
+}
+
+.list-group-item:first-child, .list-group-item:last-child {
+    border-radius: 0px !important;
+}
 
 /* Hack to prevent indentation in a new row of items 3*/
 .row-fluid .span3:nth-child(4n+1) {

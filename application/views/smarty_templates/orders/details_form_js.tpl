@@ -9,13 +9,18 @@
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="col-xs-3" for="wallet_passphrase">Wallet Passphrase</label>
-                                                <div class="col-xs-9">
-                                                    <input type="text" name="wallet_passphrase" id="wallet_passphrase" class="form-control" value="" />
+                                                <div class="col-xs-12">
+                                                    <label class="col-xs-3" for="wallet_passphrase">Wallet Passphrase</label>
+                                                    <div class="col-xs-9">
+                                                        <input type="password" name="wallet_passphrase" id="wallet_passphrase" class="form-control" value="" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-9 col-xs-offset-3">
+                                                    {form method="form_error" field="js_transaction"}
                                                 </div>
                                             </div>
                                             {/if}
-                                            {if $order.partially_signed_transaction == null OR $order.partially_signing_user_id == $current_user.user_id}
+                                            {if ($display_sign_form == FALSE AND $order.partially_signed_transaction == null) OR $order.partially_signing_user_id == $current_user.user_id}
                                                 <label class="col-xs-3" for="message"></label>
                                                 <div class="col-xs-9">
                                                     Waiting on the other user to sign.
@@ -23,8 +28,6 @@
                                             {/if}
                                             <!-- End Display Unsigned/Partially signed transaction -->
                                             <input type="hidden" name="extended_public_key" id="extended_public_key" value="{$signing_info.parent_extended_public_key}" />
-                                            <input type="hidden" name="unsigned_transaction" id="unsigned_transaction" value="{$order.unsigned_transaction}" />
-                                            <input type="hidden" name="partially_signed_transaction" id="partially_signed_transaction" value="{$order.partially_signed_transaction}" />
                                             <input type="hidden" name="key_index" id="key_index" value="{$signing_info.key_index}" />
                                             <input type="hidden" name="wallet_salt" id="wallet_salt" value="{$wallet_salt}" />
 
@@ -33,8 +36,7 @@
                                                 <label class="col-xs-3" for="submit"></label>
                                                 <div class="col-xs-9">
                                                     {if $display_sign_form == TRUE}
-                                                        <button type="button" onclick="sign_raw_transaction()">click</button>
-                                                        <input type="submit" name="js_signed_transaction" class="btn btn-primary" value="Submit Transaction" onclick="sign_raw_transaction()" />{/if}
+                                                        <input type="submit" name="submit_js_signed_transaction" class="btn btn-primary" value="Submit Transaction" onclick="sign_raw_transaction()" />{/if}
                                                     {if $can_finalize_early == TRUE}
                                                         {capture name='t_finalize_early_url'}orders/finalize_early/{$order.id}{/capture}
                                                         {url type="anchor" url=$smarty.capture.t_finalize_early_url text='Finalize Early' attr='class="btn btn-default"'}

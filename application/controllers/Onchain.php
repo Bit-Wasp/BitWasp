@@ -80,9 +80,11 @@ class Onchain extends CI_Controller
         $this->auth = $this->onchain_model->app_auth($this->request, $user_token, $totp_token);
         if ($this->auth == FALSE) {
             echo 'Not Authorized. QR codes expire, please refresh the page!';
-            die();
+            exit(0);
         }
     }
+
+
 
     /**
      * MPK
@@ -130,6 +132,7 @@ class Onchain extends CI_Controller
                 'tx' => $this->input->post('tx'),
                 'crc' => $this->input->post('crc')
             );
+
             echo $this->onchainlib->handle_sign_post_request($post_request);
         }
         // Now have an authorized request

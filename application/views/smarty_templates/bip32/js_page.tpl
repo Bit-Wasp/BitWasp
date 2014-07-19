@@ -18,7 +18,7 @@
                         <div class="form-group">
                             <label class="control-label col-xs-12 col-md-3">Wallet Passphrase</label>
                             <div class="col-xs-12 col-md-7">
-                                <input type="text" class="form-control" name="wallet_passphrase" id="wallet_passphrase" value="" />
+                                <input type="password" class="form-control" name="wallet_passphrase" id="wallet_passphrase" value="" />
                             </div>
                             <div class="col-xs-12 col-md-1">
                                 <button type="button" class="btn btn-primary" onclick="get_master_key()">Submit</button>

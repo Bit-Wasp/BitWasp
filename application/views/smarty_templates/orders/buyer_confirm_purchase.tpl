@@ -63,14 +63,40 @@
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <label class="control-label col-xs-2" for="buyer_address">Shipping Address:</label>
-                                    <div class="col-xs-8">
+                                    <label class="control-label col-xs-3" for="buyer_address">Shipping Address:</label>
+                                    <div class="col-xs-7">
                                         <textarea name='buyer_address' rows='5' class='form-control'></textarea>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-xs-offset-2">{form method='form_error' field='buyer_address'}</div>
+                                <div class="col-xs-9 col-xs-offset-3">{form method='form_error' field='buyer_address'}</div>
                             </div>
                         </div>
+
+                        {if $buyer_payout == FALSE}
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-xs-10">You don't have a refund address set up at the moment. Please enter one now, along with your password, in case you need a refund at any point.</div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <label class="control-label col-xs-3" for="buyer_payout">Refund Address:</label>
+                                    <div class="col-xs-7">
+                                        <input type="text" name="buyer_payout" id="buyer_payout" class="form-control" value="">
+                                    </div>
+                                </div>
+                                <div class="col-xs-9 col-xs-offset-3">{form method='form_error' field='buyer_payout'}</div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <label class="control-label col-xs-3" for="password">Password:</label>
+                                    <div class="col-xs-7">
+                                        <input type="password" name="password" id="password" class="form-control" value="">
+                                    </div>
+                                </div>
+                                <div class="col-xs-9 col-xs-offset-3">{form method='form_error' field='password'}</div>
+                            </div>
+                        </div>
+                        {/if}
 
                         {if $order.vendor.pgp == TRUE}
                         <textarea style="display:none;" name="public_key">{$order.vendor.pgp.public_key|escape:"html":"UTF-8"}</textarea>
@@ -80,7 +106,7 @@
                             <label class="control-label col-sm-2 col-lg-2 col-md-2" for="submit"></label>
                             <div class="col-sm-5 col-lg-5 col-md-5">
                                 <p align="center">
-                                    <input type="submit" class="btn btn-primary" value='Place Order' onclick='messageEncrypt()' />
+                                    <input type="submit" class="btn btn-primary" value='Place Order' {if $order.vendor.pgp == TRUE}onclick='messageEncrypt()'{/if} />
                                     {url type="anchor" url='order/list' text="Cancel" attr='class="btn btn-default"'}
                                 </p>
                             </div>

@@ -132,25 +132,39 @@
                                                         <div class='row'>
 
                                                         {$addr = $arr.scriptPubKey.addresses.0}
-
-                                                        {if $addrs.{$addr} == 'admin'}
-                                                            <div class='col-xs-2'>Fees</div>
-                                                            <div class='col-xs-4'>{$coin.symbol} {$arr.value}</div>
-                                                            <div class='col-xs-6'>{$addr}</div>
-                                                        {elseif in_array($addrs.{$addr}, ['buyer','vendor']) }
-                                                            {capture name="t_pay_user_url"}user/{$order.{$addrs.{$addr}}.user_hash}{/capture}
-                                                            {capture name="t_pay_user_name"}{{$addrs.{$addr}}|escape:"html":"UTF-8"}{/capture}
-                                                            <div class='col-xs-2'>{url type="anchor" url=$smarty.capture.t_pay_user_url text=$smarty.capture.t_pay_user_name attr=''}</div>
+                                                        {if isset($addrs.{$addr}) == FALSE }
+                                                            <div class='col-xs-2'>Unknown!</div>
                                                             <div class='col-xs-4'>{$coin.symbol} {$arr.value}</div>
                                                             <div class='col-xs-6'>{$addr}</div>
                                                         {else}
-                                                            <div class='col-xs-2'>Unknown</div>
+                                                            {if $addrs.{$addr} == 'admin'}
+                                                                <div class='col-xs-2'>Fees</div>
+                                                                <div class='col-xs-4'>{$coin.symbol} {$arr.value}</div>
+                                                                <div class='col-xs-6'>{$addr}</div>
+                                                            {elseif in_array($addrs.{$addr}, ['buyer','vendor']) }
+                                                                {capture name="t_pay_user_url"}user/{$order.{$addrs.{$addr}}.user_hash}{/capture}
+                                                                {capture name="t_pay_user_name"}{$order.{$addrs.{$addr}}.user_name|escape:"html":"UTF-8"}{/capture}
+                                                                <div class='col-xs-2'>{url type="anchor" url=$smarty.capture.t_pay_user_url text=$smarty.capture.t_pay_user_name attr=''}</div>
+                                                                <div class='col-xs-4'>{$coin.symbol} {$arr.value}</div>
+                                                                <div class='col-xs-6'>{$addr}</div>
+                                                            {else}
+                                                                <div class='col-xs-2'>Unknown</div>
+                                                            {/if}
                                                         {/if}
+
+
                                                         </div>
                                                     {/foreach}
                                                 </div>
                                             </div>
                                             <!-- End Tx Info -->
+                                            {if isset($invalid_transaction_error) == TRUE}
+                                            <div class='row'>
+                                                <div class="col-xs-7 col-xs-offset-3">
+                                                    {$invalid_transaction_error}
+                                                </div>
+                                            </div>
+                                            {/if}
 
                                             {$sign_form_output}
                                         </div>

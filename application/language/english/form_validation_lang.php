@@ -6,6 +6,7 @@ $lang['check_bool_areyousure'] = 'Please make a valid selection!';
 $lang['check_bitcoin_amount'] = 'Please enter a valid %s.';
 $lang['check_bitcoin_amount_free'] = 'Please enter a valid %s - enter 0 if you want it to be free!';
 $lang['check_bitcoin_index'] = 'You must select a valid Bitcoin Index source';
+$lang['check_bitcoin_address'] = 'You must enter a valid address!';
 $lang['check_bitcoin_public_key'] = 'You must enter a valid public key.';
 $lang['check_bool_enabled'] = 'Select enabled or disabled for %s.';
 $lang['check_bool_areyousure'] = 'Select enabled or disabled.';

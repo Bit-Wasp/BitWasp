@@ -15,11 +15,11 @@
             var child = hkey.derive("m/0'/0").extendedPublicKeyString();
             if(child == extended_public_key) {
                 console.log(hkey.extendedPrivateKeyString());
-                document.getElementById('bip32panel').class="panel panel-danger";
-                document.getElementById('bip32panelheading').value="BIP32 key (private key)";
+                document.getElementById('bip32panel').className="panel panel-danger";
+                document.getElementById('bip32panelheading').innerHTML="BIP32 key (private key)";
                 document.getElementById('bip32key').value="Private Key: "+hkey.extendedPrivateKeyString();
             } else {
-                document.getElementById('panel_body').value="incorrect passphrase";
+                document.getElementById('bip32key').value="Incorrect passphrase..";
             }
 
         }

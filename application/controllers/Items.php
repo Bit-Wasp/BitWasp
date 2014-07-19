@@ -24,7 +24,7 @@ class Items extends MY_Controller
     {
         parent::__construct();
         $this->load->model('items_model');
-        $this->items_per_page = 44;
+        $this->items_per_page = 6;
     }
 
     /**
@@ -35,10 +35,10 @@ class Items extends MY_Controller
      * @access    public
      * @param        int $page
      */
-    public function index($page = 0)
+    public function index($page = 1)
     {
-        if (!(is_numeric($page) && $page >= 0))
-            $page = 0;
+        if (!(is_numeric($page) && $page > 0))
+            $page = 1;
 
         $data['title'] = 'Items';
         $data['page'] = 'items/index';
@@ -59,10 +59,10 @@ class Items extends MY_Controller
      * @param    int $page
      * @return    void
      */
-    public function category($hash, $page = 0)
+    public function category($hash, $page = 1)
     {
-        if (!(is_numeric($page) && $page >= 0))
-            $page = 0;
+        if (!(is_numeric($page) && $page > 0))
+            $page = 1;
 
         $this->load->model('categories_model');
         $data['category'] = $this->categories_model->get(array('hash' => "$hash"));
@@ -97,10 +97,10 @@ class Items extends MY_Controller
      * @param    string $location
      * @param    int $page
      */
-    public function location($source = '', $location = NULL, $page = 0)
+    public function location($source = '', $location = NULL, $page = 1)
     {
-        if (!(is_numeric($page) && $page >= 0))
-            $page = 0;
+        if (!(is_numeric($page) && $page > 0))
+            $page = 1;
 
         // Set location to NULL if invalid. Will cause later function to fail.
         if (!(is_numeric($location) && $location >= 0))

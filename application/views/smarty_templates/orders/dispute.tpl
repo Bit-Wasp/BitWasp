@@ -53,6 +53,7 @@
                             <div class="col-xs-9 col-xs-offset-3">{form method="form_error" field="dispute_message"}</div>
                         </div>
 
+
                         <div class="form-group">
                             <label class="control-label col-sm-2 col-lg-2 col-md-2" for="submit"></label>
                             <div class="col-sm-5 col-lg-5 col-md-5">
@@ -68,50 +69,71 @@
                 {capture name="t_disputing_user_url"}user/{$disputing_user.user_hash}{/capture}
                 {capture name="t_disputing_user_name"}{$disputing_user.user_name}{/capture}
 
+                    {form method="open" action=$dispute_page attr='class="form-horizontal"'}
                 <div class='well'>
                     <div class='row'>
                         <div class='col-xs-6'>
-                            <div class="col-xs-12">
-                                <div class="col-xs-4"><strong>Order Date</strong></div>
-                                <div class="col-xs-6">{$current_order.created_time_f}</div>
+
+                            <div class="col-xs-6"><strong>Order Date</strong></div>
+                            <div class="col-xs-6">{$current_order.created_time_f}</div>
+
+
+                            <div class="col-xs-6"><strong>Amount Paid</strong></div>
+                            <div class="col-xs-6">{$coin.symbol} {number_format($current_order.order_price, 8)}
+                                {if $current_order.currency.id !== '0'}
+                                    / {$current_order.currency.symbol} {$current_order.price_l}<br />
+                                {/if}
+                                {if $current_order.vendor_selected_upfront == 1}
+                                    upfront
+                                {elseif $current_order.vendor_selected_escrow == '1'}
+                                    escrow
+                                {/if}
                             </div>
-                            <div class="col-xs-12">
-                                <div class="col-xs-4"><strong>Amount Paid</strong></div>
-                                <div class="col-xs-6">{$coin.symbol} {number_format($current_order.order_price, 8)}
-                                    {if $current_order.currency.id !== '0'}
-                                        / {$current_order.currency.symbol} {$current_order.price_l}<br />
-                                    {/if}
-                                    {if $current_order.vendor_selected_upfront == 1}
-                                        upfront
-                                    {elseif $current_order.vendor_selected_escrow == '1'}
-                                        escrow
-                                    {/if}
-                                </div>
-                            </div>
-                            <div class="col-xs-12">
-                                <div class="col-xs-4"><strong>Disputing User</strong></div>
-                                <div class="col-xs-6">{url type="anchor" url=$smarty.capture.t_disputing_user_url text=$smarty.capture.t_disputing_user_name|escape:"html":"UTF-8" attr=''}</div>
-                            </div>
+
+
+                            <div class="col-xs-6"><strong>Disputing User</strong></div>
+                            <div class="col-xs-6">{url type="anchor" url=$smarty.capture.t_disputing_user_url text=$smarty.capture.t_disputing_user_name|escape:"html":"UTF-8" attr=''}</div>
+
                         </div>
 
                         <div class='col-xs-6'>
-                            <div class="col-xs-12">
-                                <div class="col-xs-3"><strong>Items:</strong></div>
-                                <div class="col-xs-6">
-                                    <ul>
-                                    {foreach from=$current_order.items item=item}
-                                        <li>{$item.quantity|escape:"html":"UTF-8"} x {$item.name|escape:"html":"UTF-8"}</li>
-                                    {/foreach}
-                                    </ul>
-                                </div>
+
+                            <div class="col-xs-1"><strong>Items:</strong></div>
+                            <div class="col-xs-9">
+                                <ul>
+                                {foreach from=$current_order.items item=item}
+                                    <li>{$item.quantity|escape:"html":"UTF-8"} x {$item.name|escape:"html":"UTF-8"}</li>
+                                {/foreach}
+                                </ul>
                             </div>
+
+
+                            {if $current_user.user_role == "Buyer" AND strlen($current_order.buyer_payout) == 0}
+                            <div class="col-xs-12">&nbsp;</div>
+                            <div class="col-xs-12">
+                                <div class="col-xs-12">
+                                    <strong>Refund Address</strong>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="col-xs-9">
+                                        <input type="text" name="refund_address" class="form-control" value="" >
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <input type="submit" name="submit_dispute_refund_address" value="Submit" class="btn btn-primary">
+                                    </div>
+                                </div>
+
+                            </div>
+                                {form method="form_error" field="refund_address"}
+                            {/if}
+
                         </div>
                     </div>
                 </div>
 
                 <div class='well'>
                     <h4>Messages</h4>
-                    {form method="open" action=$dispute_page attr='class="form-horizontal"'}
+
                         <div class='col-xs-12'>
                             <div class="col-xs-2"><strong>Initial Dispute</strong></div>
                             <div class="col-xs-5">{$dispute.dispute_message|escape:"html":"UTF-8"}</div>

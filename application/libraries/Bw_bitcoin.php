@@ -370,7 +370,8 @@ class Bw_bitcoin {
                 $scripts = explode(" ", $vin['scriptSig']['asm']);
 
                 // Store the redeemScript, then remove OP_FALSE + the redeemScript from the array.
-                $redeemScript = \BitWasp\BitcoinLib\RawTransaction::decode_redeem_script($scripts[(count($scripts) - 1)]);
+                $redeemScript = \BitWasp\BitcoinLib\RawTransaction::decode_redeem_script(end($scripts));
+
                 if ($redeemScript !== FALSE) // Die if we fail to decode a redeemScript from a P2SH
                     $redeem_script_found = TRUE;
 
@@ -383,7 +384,6 @@ class Bw_bitcoin {
                     // Test each signature with the public keys in the redeemScript.
                     foreach ($redeemScript['keys'] as $public_key) {
                         if (\BitWasp\BitcoinLib\RawTransaction::_check_sig($signature, $message_hash[$i], $public_key) == TRUE){
-                            echo 'a';
                             $pubkey_found = TRUE;
                             $results[$i][$public_key] = $signature;
                         }
@@ -392,6 +392,79 @@ class Bw_bitcoin {
             }
         }
         return $results;
+    }
+
+    public function handle_order_tx_submission($order, $incoming_tx, $user_bip32_key) {
+        $this->CI->load->model('transaction_cache_model');
+        $currently_unsigned = strlen($order['partially_signed_transaction']) == 0;
+
+        if($currently_unsigned){
+            $start_tx = trim($order['unsigned_transaction']);
+        } else {
+            $start_tx = trim($order['partially_signed_transaction']);
+        }
+
+        $json = str_replace("'",'',$order['json_inputs']);
+        $decode_current_tx = \BitWasp\BitcoinLib\RawTransaction::decode($start_tx);
+        $decode_incoming_tx = \BitWasp\BitcoinLib\RawTransaction::decode($incoming_tx);
+
+        // Does incoming tx match expected spend?
+        $check = $this->CI->transaction_cache_model->check_if_expected_spend($decode_incoming_tx['vout'], $order['id']);
+        if($check !== $order['address'])
+            return 'Invalid transaction.';
+
+        // General check that signatures match tx
+        $validate = \BitWasp\BitcoinLib\RawTransaction::validate_signed_transaction($incoming_tx, $json);
+        if($validate == FALSE){
+            return 'Invalid signature.';
+        }
+
+        $decode_redeem_script = \BitWasp\BitcoinLib\RawTransaction::decode_redeem_script($order['redeemScript']);
+
+        if(!$currently_unsigned AND $user_bip32_key['provider'] == 'JS'){
+            // Need to build the sig from this tx into the last.
+            $copy = $decode_incoming_tx;
+
+            foreach($copy['vin'] as $i => &$input){
+                $script = explode(" ",$input['scriptSig']['asm']);
+                $sig1 = \BitWasp\BitcoinLib\RawTransaction::_encode_vint((strlen($script[1]) / 2)) . $script[1];
+
+                $old_script = explode(" ", $decode_current_tx['vin'][$i]['scriptSig']['asm']);
+                $sig2 = \BitWasp\BitcoinLib\RawTransaction::_encode_vint((strlen($old_script[1]) / 2)) . $old_script[1];
+
+                $redeem_script = '4c'.\BitWasp\BitcoinLib\RawTransaction::_encode_vint( (strlen($order['redeemScript'])/2) ) . $order['redeemScript'];
+                $input['scriptSig']['hex'] = '00'.$sig1.$sig2.$redeem_script;
+            }
+            $incoming_tx = \BitWasp\BitcoinLib\RawTransaction::encode($copy);
+            // Now need to reorder sigs!
+            $assoc = $this->associate_sigs_with_keys($incoming_tx, $json, $this->CI->bw_config->currencies[0]['crypto_magic_byte']);
+            foreach($copy['vin'] as $i => &$input) {
+                $input['scriptSig']['hex'] = \BitWasp\BitcoinLib\RawTransaction::_apply_sig_scripthash_multisig( $assoc[$i], array('public_keys' => $decode_redeem_script['keys'], 'script' => $order['redeemScript']));
+            }
+            $incoming_tx = \BitWasp\BitcoinLib\RawTransaction::encode($copy);
+            $decode_incoming_tx = \BitWasp\BitcoinLib\RawTransaction::decode($incoming_tx);
+        }
+
+        // Compare signatures!
+        $old_sig_map = $this->associate_sigs_with_keys( $start_tx, $json, $this->CI->bw_config->currencies[0]['crypto_magic_byte']);
+
+        // Now check current signatures against users key. submittee must have signed.
+        $key_sig_map = $this->associate_sigs_with_keys( $incoming_tx, $json, $this->CI->bw_config->currencies[0]['crypto_magic_byte']);
+
+        foreach($key_sig_map as $i => $input_sig_map) {
+            // If the number of sigs hasn't increased, or no sig from the current user exists..
+            if(count($old_sig_map) > 0 && count($input_sig_map) <= count($old_sig_map[$i])
+            OR ! isset($input_sig_map[$user_bip32_key['public_key']]))
+                return 'Incorrect signature!';
+        }
+
+        // Broadcast tx if fully signed!
+        if(!$currently_unsigned){
+            $this->CI->transaction_cache_model->to_broadcast($incoming_tx);
+            $this->sendrawtransaction($incoming_tx);
+        }
+
+        return TRUE;
     }
 
     public function js_html($redeem_script, $raw_transaction) {
