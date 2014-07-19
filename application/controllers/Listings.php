@@ -21,6 +21,9 @@ class Listings extends MY_Controller
     public function __construct()
     {
         parent::__construct();
+
+        $this->current_user->setup_vendor_bitcoin();
+
         $this->load->library('form_validation');
         $this->load->model('items_model');
         $this->load->model('listings_model');

@@ -206,6 +206,17 @@ class Current_User {
     public function set_return_message($message, $success = FALSE) {
         $this->CI->session->set_flashdata('returnMessage',json_encode(array('message' => $message, 'success' => $success)));
     }
+
+    public function setup_vendor_bitcoin() {
+        $this->CI->load->model('bitcoin_model');
+        $this->CI->load->model('bip32_model');
+
+        if(! is_array($this->CI->bitcoin_model->get_payout_address($this->user_id))
+        OR ! is_array($this->CI->bip32_model->get($this->user_id))){
+            $this->set_return_message('You must configure a source of public keys, and a payout address, before you can add listings.', FALSE);
+            redirect('account');
+        }
+    }
 };
 
 

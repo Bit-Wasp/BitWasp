@@ -21,7 +21,7 @@
                     <div class="col-md-3"><strong>Bitcoin Public Keys</strong></div>
                     <div class="col-md-7">
                         {if $bip32 == FALSE}Not set up - {url type="anchor" url="bip32" text="do so now!" attr=""}
-                        {else}Provider: {$bip32.provider} {url type="anchor" url="bip32" text="Settings" attr=""}
+                        {else}Provider: {$bip32.provider} - {url type="anchor" url="bip32" text="Settings" attr=""}
                         {/if}
                     </div>
                 </div>
