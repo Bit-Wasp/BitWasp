@@ -74,7 +74,7 @@ class Bitcoin_model extends CI_Model
      */
     public function get_payout_address($user_id)
     {
-        $q = $this->db->limit(1)->order_by('time DESC')->get_where('payout_address',array('user_id' => $user_id));
+        $q = $this->db->limit(1)->order_by('time DESC')->get_where('payout_address', array('user_id' => $user_id));
         if ($q->num_rows() > 0) {
             $row = $q->row_array();
             $row['time_f'] = $this->general->format_time($row['time']);
@@ -240,7 +240,9 @@ class Bitcoin_model extends CI_Model
         return ($this->db->delete('watched_addresses') == TRUE) ? TRUE : FALSE;
     }
 
-};
+}
+
+;
 
 
 /* End of file: bitcoin_model.php */

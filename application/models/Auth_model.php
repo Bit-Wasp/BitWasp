@@ -26,7 +26,7 @@ class Auth_model extends CI_Model
      */
     public function check_auth($URI)
     {
-        $query = $this->db->select('auth_level')->get_where('page_authorization',array('URI' => $URI));
+        $query = $this->db->select('auth_level')->get_where('page_authorization', array('URI' => $URI));
 
         if ($query->num_rows() > 0) {
             $row = $query->row_array();
@@ -47,7 +47,7 @@ class Auth_model extends CI_Model
      */
     public function check_auth_timeout($URI)
     {
-        $query = $this->db->select('timeout')->get_where('page_authorization',array('URI' => $URI));
+        $query = $this->db->select('timeout')->get_where('page_authorization', array('URI' => $URI));
 
         if ($query->num_rows() > 0) {
             $row = $query->row_array();
@@ -99,4 +99,6 @@ class Auth_model extends CI_Model
             'user_id' => $this->current_user->user_id);
         return $this->db->insert('two_factor_tokens', $array) == TRUE;
     }
-};
+}
+
+;

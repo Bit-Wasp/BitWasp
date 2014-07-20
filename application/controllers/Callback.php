@@ -75,20 +75,21 @@ class Callback extends CI_Controller
             $this->transaction_cache_model->add_cache_list($txs);
     }
 
-    protected function broadcast() {
+    protected function broadcast()
+    {
         $this->load->library('bw_bitcoin');
         $this->load->model('transaction_cache_model');
         // Attempt to broadcast the stored transactions
         $broadcast_list = $this->transaction_cache_model->broadcast_list();
-        if(count($broadcast_list) > 0) {
+        if (count($broadcast_list) > 0) {
             $update_remaining = array('0' => array(), '1' => array(), '2' => array(), '3' => array(), '4' => array());
-            foreach($broadcast_list as $transaction_row){
+            foreach ($broadcast_list as $transaction_row) {
                 $send = $this->bw_bitcoin->sendrawtransaction($transaction_row['transaction']);
-                if($send !== null)
+                if ($send !== null)
                     $update_remaining[--$transaction_row['attempts_remaining']][] = $transaction_row['id'];
             }
-            foreach($update_remaining as $remaining => $id_list){
-                if(count($id_list) == 0)
+            foreach ($update_remaining as $remaining => $id_list) {
+                if (count($id_list) == 0)
                     continue;
 
                 // Update remaining, or delete if it's reache zero.
@@ -192,7 +193,7 @@ class Callback extends CI_Controller
         }
 
         // Delete payments from the block cache.
-        if (count($delete_cache) > 0){
+        if (count($delete_cache) > 0) {
             echo "Clearing cache (" . count($delete_cache) . ")\n";
             $this->transaction_cache_model->delete_cache_list($delete_cache);
         }

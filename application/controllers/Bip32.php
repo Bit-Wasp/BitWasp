@@ -44,8 +44,8 @@ class Bip32 extends MY_Controller
             // Onchain submitted out of band using totp tokens
 
             // JS submitted key
-            if($this->input->post('js_submit') == 'Submit') {
-                if($this->form_validation->run('submit_bip32_js') == TRUE) {
+            if ($this->input->post('js_submit') == 'Submit') {
+                if ($this->form_validation->run('submit_bip32_js') == TRUE) {
                     $insert_bip32_array = array(
                         'user_id' => $this->current_user->user_id,
                         'key' => $this->input->post('js_extended_public_key'),
@@ -54,8 +54,8 @@ class Bip32 extends MY_Controller
                 }
             }
 
-            if(isset($insert_bip32_array)) {
-                if($this->bip32_model->add($insert_bip32_array) == TRUE) {
+            if (isset($insert_bip32_array)) {
+                if ($this->bip32_model->add($insert_bip32_array) == TRUE) {
                     $this->current_user->set_return_message('Your key has been set up!', TRUE);
                     redirect('bip32');
                 }

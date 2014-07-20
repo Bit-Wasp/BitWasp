@@ -66,15 +66,16 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-    public function payout() {
+    public function payout()
+    {
         if ($this->current_user->user_role == 'Admin')
             redirect('');
 
         $this->load->model('bitcoin_model');
         $data['address'] = $this->bitcoin_model->get_payout_address($this->current_user->user_id);
 
-        if ($this->input->post('submit_payout_address') == 'Submit'){
-            if ($this->form_validation->run('submit_payout_address')){
+        if ($this->input->post('submit_payout_address') == 'Submit') {
+            if ($this->form_validation->run('submit_payout_address')) {
                 $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
                 $password = $this->general->password($this->input->post('password'), $user_info['salt']);
                 $check_login = $this->users_model->check_password($this->current_user->user_name, $password);
@@ -83,7 +84,7 @@ class Accounts extends MY_Controller
 
                     $set = $this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('address'));
 
-                    if($set){
+                    if ($set) {
                         $this->current_user->set_return_message('Payout address has been saved', TRUE);
                         redirect('account');
                     } else {
@@ -96,7 +97,7 @@ class Accounts extends MY_Controller
         }
 
         $data['page'] = 'accounts/payout';
-        $data['title'] = (($this->current_user->user_role == 'Vendor')?'Payout':'Refund').' Address';
+        $data['title'] = (($this->current_user->user_role == 'Vendor') ? 'Payout' : 'Refund') . ' Address';
         $this->_render('accounts/payout', $data);
     }
 
@@ -114,7 +115,7 @@ class Accounts extends MY_Controller
 
         $this->load->model('used_pubkeys_model');
         if ($this->input->post('submit_public_keys') == 'Upload Public Keys') {
-            if($this->form_validation->run('submit_public_keys')){
+            if ($this->form_validation->run('submit_public_keys')) {
                 $keys = explode("\n", $this->input->post('public_key_list'));
 
                 $valid_keys = array();
@@ -124,17 +125,17 @@ class Accounts extends MY_Controller
                         $valid_keys[] = $key;
                 }
 
-                if(count($valid_keys) > 0) {
+                if (count($valid_keys) > 0) {
                     $unused_keys = $this->used_pubkeys_model->remove_used_keys($valid_keys);
                     $c = count($unused_keys);
-                    if($c > 0) {
+                    if ($c > 0) {
                         $this->accounts_model->add_bitcoin_public_key($unused_keys);
                         $this->used_pubkeys_model->log_public_key($unused_keys);
 
-                        $this->current_user->set_return_message(  (($c>1) ? $c." keys were":'1 key was'). ' added to your list.');
+                        $this->current_user->set_return_message((($c > 1) ? $c . " keys were" : '1 key was') . ' added to your list.');
                         redirect('accounts/public_keys');
                     } else {
-                        $data['returnMessage'] = 'The supplied key'.((count($keys)>1)?'s have':' has').' already been used. Please generate some more.';
+                        $data['returnMessage'] = 'The supplied key' . ((count($keys) > 1) ? 's have' : ' has') . ' already been used. Please generate some more.';
                     }
                 } else {
                     $data['returnMessage'] = 'Public key list was invalid, please try again.';
@@ -148,7 +149,6 @@ class Accounts extends MY_Controller
         $data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
         $this->_render($data['page'], $data);
     }
-
 
 
     /**
@@ -180,7 +180,7 @@ class Accounts extends MY_Controller
         $data['two_factor_setting'] = $data['two_factor']['totp'];
         if (isset($data['user']['pgp'])) {
             $data['two_factor']['pgp'] = (bool)$data['user']['pgp_two_factor'];
-            if($data['two_factor']['pgp'])
+            if ($data['two_factor']['pgp'])
                 $data['two_factor_setting'] = TRUE;
         }
 
@@ -278,7 +278,7 @@ class Accounts extends MY_Controller
         $data['two_factor_setting'] = $data['two_factor']['totp'];
         if (isset($data['user']['pgp'])) {
             $data['two_factor']['pgp'] = (bool)$data['user']['pgp_two_factor'];
-            if($data['two_factor']['pgp'])
+            if ($data['two_factor']['pgp'])
                 $data['two_factor_setting'] = TRUE;
         }
 
@@ -389,7 +389,7 @@ class Accounts extends MY_Controller
         $data['two_factor_setting'] = $data['two_factor']['totp'];
         if (isset($data['user']['pgp'])) {
             $data['two_factor']['pgp'] = (bool)$data['user']['pgp_two_factor'];
-            if($data['two_factor']['pgp'])
+            if ($data['two_factor']['pgp'])
                 $data['two_factor_setting'] = TRUE;
         }
 
@@ -579,7 +579,7 @@ class Accounts extends MY_Controller
                     'fingerprint' => $import['fingerprint'],
                     'public_key' => $import['clean_key']
                 ));
-                $this->session->set_flashdata('returnMessage',json_encode(array('message' => 'PGP public key has been saved.')));
+                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'PGP public key has been saved.')));
                 redirect('account');
             } else {
                 $data['returnMessage'] = 'Failed to import that public key.';
@@ -588,7 +588,9 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-};
+}
+
+;
 
 /* End of file: Accounts.php */
 /* Location: ./application/controllers/Accounts.php */

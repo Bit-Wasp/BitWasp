@@ -106,7 +106,9 @@ class Fees_model extends CI_Model
         $query = $this->db->order_by('low', 'ASC')->get('fees');
         return ($query->num_rows() > 0) ? $query->result_array() : FALSE;
     }
-};
+}
+
+;
 
 /* End of File: Fees_model.php */
 /* Location: application/models/Fees_model.php */

@@ -127,4 +127,6 @@ class Bip32_model extends CI_Model
 
     }
 
-};
+}
+
+;

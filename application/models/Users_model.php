@@ -158,7 +158,8 @@ class Users_model extends CI_Model
         return FALSE;
     }
 
-    public function wallet_salt($user_id) {
+    public function wallet_salt($user_id)
+    {
         $row = $this->db->get_where('users', array('id' => $user_id))->row_array();
         return $row['wallet_salt'];
     }

@@ -186,9 +186,11 @@ class Transaction_cache_model extends CI_Model
             ->count_all_results() > 0;
     }
 
-	public function get_payment($tx_id) {
-		return $this->db->get_where('transactions_payments_cache', array('tx_id' => $tx_id))->row_array();
-	}
+    public function get_payment($tx_id)
+    {
+        return $this->db->get_where('transactions_payments_cache', array('tx_id' => $tx_id))->row_array();
+    }
+
     /**
      * Payments To Address
      *
@@ -302,7 +304,8 @@ class Transaction_cache_model extends CI_Model
      * @param $transaction
      * @return bool
      */
-    public function to_broadcast($transaction) {
+    public function to_broadcast($transaction)
+    {
         return $this->db->insert('transactions_broadcast_cache', array('transaction' => $transaction)) == TRUE;
     }
 
@@ -312,7 +315,8 @@ class Transaction_cache_model extends CI_Model
      * Obtains the list of transactions to broadcast from the database
      * @return mixed
      */
-    public function broadcast_list() {
+    public function broadcast_list()
+    {
         return $this->db->get('transactions_broadcast_cache')->result_array();
     }
 
@@ -325,7 +329,8 @@ class Transaction_cache_model extends CI_Model
      * @param $id_array
      * @return bool
      */
-    public function clear_broadcast_list($id_array) {
+    public function clear_broadcast_list($id_array)
+    {
         return $this->db->where_in('id', $id_array)->delete('transactions_broadcast_cache') == TRUE;
     }
 
@@ -339,7 +344,8 @@ class Transaction_cache_model extends CI_Model
      * @param $new_remaining
      * @return bool
      */
-    public function update_broadcast_list_remaining($id_array, $new_remaining){
+    public function update_broadcast_list_remaining($id_array, $new_remaining)
+    {
         return $this->db->where_in('id', $id_array)
             ->set('attempts_remaining', $new_remaining)
             ->update('transactions_broadcast_cache') == TRUE;
@@ -436,7 +442,7 @@ class Transaction_cache_model extends CI_Model
         $array = array();
         foreach ($outputs as $vout => $output) {
             $array[] = array('address' => $output['scriptPubKey']['addresses'][0],
-                'value' => number_format($output['value'],8));
+                'value' => number_format($output['value'], 8));
         }
 
         return $array;
@@ -493,7 +499,7 @@ class Transaction_cache_model extends CI_Model
     public function check_if_expected_spend($output, $order_id)
     {
         $hash = hash('sha256', json_encode($this->outputs_to_log_array($output)));
-        echo $hash."<br />";
+        echo $hash . "<br />";
         $search = $this->search_log_hashes($hash, $order_id);
         return ($search === FALSE) ? FALSE : $search['address'];
     }

@@ -114,7 +114,7 @@ class Review_model extends CI_Model
         // Load 30 latest reviews.
 
         $this->db->where('review_type', $review_type);
-        $this->db->where('timestamp <',time());
+        $this->db->where('timestamp <', time());
         $this->db->where('subject_hash', $subject_hash);
         if ($disputed !== FALSE && in_array($disputed, array('0', '1')))
             $this->db->where('disputed', $disputed);
@@ -187,7 +187,7 @@ class Review_model extends CI_Model
     {
         $this->db->where('review_type', $review_type);
         $this->db->where('subject_hash', $subject_hash);
-        $this->db->where('timestamp <',time());
+        $this->db->where('timestamp <', time());
         if ($disputed !== FALSE && in_array($disputed, array('0', '1')))
             $this->db->where('disputed', $disputed);
 
@@ -225,7 +225,7 @@ class Review_model extends CI_Model
         $this->db->select('id')
             ->where('review_type', $review_type)
             ->where('subject_hash', $subject_hash)
-            ->where('timestamp >',time());
+            ->where('timestamp >', time());
         if ($disputed !== FALSE && in_array($disputed, array('0', '1')))
             $this->db->where('disputed', "$disputed");
         $this->db->order_by('id', 'random');

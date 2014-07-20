@@ -237,11 +237,12 @@ class MY_Image_lib extends CI_Image_lib
      * and don't need to be stored in the database.. Returns FALSE if
      * the file cannot be found.
      *
-     * @param		string	$filename
-     * @return		string/FALSE
+     * @param        string $filename
+     * @return        string/FALSE
      */
-    public function b64encode_any_image($filename) {
-        $filename = '/tmp/'.$filename;
+    public function b64encode_any_image($filename)
+    {
+        $filename = '/tmp/' . $filename;
         return ($file = file_get_contents($filename)) ? base64_encode($file) : FALSE;
     }
 
@@ -250,42 +251,41 @@ class MY_Image_lib extends CI_Image_lib
      *
      * Resets values in case this class is used in a loop
      *
-     * @return	void
+     * @return    void
      */
     public function clear()
     {
         $props = array('thumb_marker', 'library_path', 'source_image', 'new_image', 'width', 'height', 'rotation_angle', 'x_axis', 'y_axis', 'wm_text', 'wm_overlay_path', 'wm_font_path', 'wm_shadow_color', 'source_folder', 'dest_folder', 'mime_type', 'orig_width', 'orig_height', 'image_type', 'size_str', 'full_src_path', 'full_dst_path');
 
-        foreach ($props as $val)
-        {
+        foreach ($props as $val) {
             $this->$val = '';
         }
 
-        $this->image_library 		= 'gd2';
-        $this->dynamic_output 		= FALSE;
-        $this->return_base64        = FALSE;
-        $this->quality 				= 90;
-        $this->create_thumb 		= FALSE;
-        $this->thumb_marker 		= '_thumb';
-        $this->maintain_ratio 		= TRUE;
-        $this->master_dim 			= 'auto';
-        $this->wm_type 				= 'text';
-        $this->wm_x_transp 			= 4;
-        $this->wm_y_transp 			= 4;
-        $this->wm_font_size 		= 17;
-        $this->wm_vrt_alignment 	= 'B';
-        $this->wm_hor_alignment 	= 'C';
-        $this->wm_padding 			= 0;
-        $this->wm_hor_offset 		= 0;
-        $this->wm_vrt_offset 		= 0;
-        $this->wm_font_color		= '#ffffff';
-        $this->wm_shadow_distance 	= 2;
-        $this->wm_opacity 			= 50;
-        $this->create_fnc 			= 'imagecreatetruecolor';
-        $this->copy_fnc 			= 'imagecopyresampled';
-        $this->error_msg 			= array();
-        $this->wm_use_drop_shadow 	= FALSE;
-        $this->wm_use_truetype 		= FALSE;
+        $this->image_library = 'gd2';
+        $this->dynamic_output = FALSE;
+        $this->return_base64 = FALSE;
+        $this->quality = 90;
+        $this->create_thumb = FALSE;
+        $this->thumb_marker = '_thumb';
+        $this->maintain_ratio = TRUE;
+        $this->master_dim = 'auto';
+        $this->wm_type = 'text';
+        $this->wm_x_transp = 4;
+        $this->wm_y_transp = 4;
+        $this->wm_font_size = 17;
+        $this->wm_vrt_alignment = 'B';
+        $this->wm_hor_alignment = 'C';
+        $this->wm_padding = 0;
+        $this->wm_hor_offset = 0;
+        $this->wm_vrt_offset = 0;
+        $this->wm_font_color = '#ffffff';
+        $this->wm_shadow_distance = 2;
+        $this->wm_opacity = 50;
+        $this->create_fnc = 'imagecreatetruecolor';
+        $this->copy_fnc = 'imagecopyresampled';
+        $this->error_msg = array();
+        $this->wm_use_drop_shadow = FALSE;
+        $this->wm_use_truetype = FALSE;
     }
 
     public function image_process_gd($action = 'resize')
@@ -295,7 +295,7 @@ class MY_Image_lib extends CI_Image_lib
         // If the target width/height match the source, AND if the new file name is not equal to the old file name
         // we'll simply make a copy of the original with the new name... assuming dynamic rendering is off.
         if ($this->dynamic_output === FALSE && $this->orig_width === $this->width && $this->orig_height === $this->height) {
-            if ($this->return_base64 == FALSE &&$this->source_image !== $this->new_image && @copy($this->full_src_path, $this->full_dst_path)) {
+            if ($this->return_base64 == FALSE && $this->source_image !== $this->new_image && @copy($this->full_src_path, $this->full_dst_path)) {
                 @chmod($this->full_dst_path, 0666);
             }
 
@@ -353,8 +353,7 @@ class MY_Image_lib extends CI_Image_lib
         // Show the image
         if ($this->dynamic_output === TRUE) {
             $this->image_display_gd($dst_img);
-        } elseif ($this->return_base64 === TRUE)
-        {
+        } elseif ($this->return_base64 === TRUE) {
             $this->t_image_base64 = $dst_img;
             $this->handle_base64_image();
 
@@ -368,13 +367,14 @@ class MY_Image_lib extends CI_Image_lib
         imagedestroy($src_img);
 
         // Set the file to 666
-        if(!$this->return_base64)
+        if (!$this->return_base64)
             @chmod($this->full_dst_path, 0666);
 
         return TRUE;
     }
 
-    public function handle_base64_image() {
+    public function handle_base64_image()
+    {
         ob_start();
         imagejpeg($this->t_image_base64);
         $image_data = base64_encode(ob_get_contents());
@@ -383,4 +383,5 @@ class MY_Image_lib extends CI_Image_lib
         return TRUE;
     }
 }
+
 ;

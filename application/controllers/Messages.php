@@ -76,11 +76,11 @@ class Messages extends MY_Controller
      */
     public function inbox()
     {
-        if($this->input->post('delete_all_messages') == 'Delete All') {
-            if($this->form_validation->run('submit_delete_all_messages') == TRUE) {
-                if($this->input->post('delete_message') == 'all') {
+        if ($this->input->post('delete_all_messages') == 'Delete All') {
+            if ($this->form_validation->run('submit_delete_all_messages') == TRUE) {
+                if ($this->input->post('delete_message') == 'all') {
                     if ($this->messages_model->delete_all() == TRUE) {
-                        $this->current_user->set_return_message('Inbox has been emptied.',TRUE);
+                        $this->current_user->set_return_message('Inbox has been emptied.', TRUE);
                         redirect('inbox');
                     } else {
                         $data['returnMessage'] = 'Error deleting messages, please try again later.';
@@ -89,12 +89,12 @@ class Messages extends MY_Controller
             }
         }
 
-        if($this->input->post('delete_message') == 'Delete') {
-            if($this->form_validation->run('submit_delete_message') == TRUE) {
+        if ($this->input->post('delete_message') == 'Delete') {
+            if ($this->form_validation->run('submit_delete_message') == TRUE) {
                 $get = $this->messages_model->get($this->input->post('delete_message_hash'));
                 if ($get !== FALSE) {
                     if ($this->messages_model->delete($get['id']) == TRUE) {
-                        $this->current_user->set_return_message('Message has been deleted.',TRUE);
+                        $this->current_user->set_return_message('Message has been deleted.', TRUE);
                         redirect('inbox');
                     } else {
                         $data['returnMessage'] = 'Error deleting message, please try again later.';
@@ -223,7 +223,9 @@ class Messages extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-};
+}
+
+;
 
 /* End of file: Messages.php */
 /* Location: application/controllers/Messages.php */

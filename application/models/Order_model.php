@@ -176,7 +176,7 @@ class Order_model extends CI_Model
                 $tmp['public_keys'] = $this->load_public_keys($order['id']);
                 $tmp['items'] = $item_array;
                 $tmp['order_price'] = $order_price;
-                $tmp['vendor_fees'] = $order['fees']+$order['extra_fees'];
+                $tmp['vendor_fees'] = $order['fees'] + $order['extra_fees'];
                 $tmp['total_paid'] = number_format($order['price'] + $order['shipping_costs'] + $order['fees'], 8);
                 $tmp['price_l'] = $price_l;
                 $tmp['currency'] = $currency;
@@ -244,11 +244,12 @@ class Order_model extends CI_Model
         return $result[0];
     }
 
-    public function load_public_keys($order_id) {
+    public function load_public_keys($order_id)
+    {
 
         $results = array();
         $q = $this->db->get_where('bip32_user_keys', array('order_id' => $order_id))->result_array();
-        foreach($q as $res) {
+        foreach ($q as $res) {
             $results[(strtolower($res['user_role']))] = $res;
         }
 
@@ -395,7 +396,7 @@ class Order_model extends CI_Model
                     $message = "Your order with {$info['order']['vendor']['user_name']} has been confirmed.\n" . (($info['order_type'] == 'escrow') ? "Escrow payment was chosen. Once you pay to the address, the vendor will ship the goods. You can raise a dispute if you have any issues." : "You must make payment up-front to complete this order. Once the full amount is sent to the address, you must sign a transaction paying the vendor.");
                     $this->order_model->send_order_message($info['order']['id'], $info['order']['buyer']['user_name'], $subject, $message);
 
-                    $subject = 'New Order #'.$info['order']['id'];
+                    $subject = 'New Order #' . $info['order']['id'];
                     $message = "A new order from {$info['order']['buyer']['user_name']} has been confirmed.\n" . (($info['order_type'] == 'escrow') ? "Escrow was chosen for this order. Once paid, you will be asked to sign the transaction to indicate the goods have been dispatched." : "Up-front payment was chosen for this order based on your settings for one of the items. The buyer will be asked to sign the transaction paying you immediately after payment, which you can sign and broadcast to mark the order as dispatched.");
                     $this->order_model->send_order_message($info['order']['id'], $info['order']['vendor']['user_name'], $subject, $message);
 
@@ -428,15 +429,16 @@ class Order_model extends CI_Model
      * @param string $script
      * @return bool|string
      */
-    public function create_spend_transaction($from_address, array $tx_outs = array(), $script) {
-        if(count($tx_outs) < 1)
+    public function create_spend_transaction($from_address, array $tx_outs = array(), $script)
+    {
+        if (count($tx_outs) < 1)
             return 'No outputs specified in transaction.';
 
         $this->load->model('transaction_cache_model');
 
         // Add the inputs at the multisig address.
         $payments = $this->transaction_cache_model->payments_to_address($from_address);
-        if(count($payments) == 0)
+        if (count($payments) == 0)
             return 'No spendable outputs found for this address';
 
         $order_id = $payments[0]['order_id'];
@@ -460,19 +462,20 @@ class Order_model extends CI_Model
             // Embed redeem script into all tx's
             $new_tx = RawTransaction::decode($raw_transaction);
 
-            foreach($new_tx['vin'] as &$input_ref){
-                $empty_input = '4c'.RawTransaction::_encode_vint(strlen($script)/2).$script;
+            foreach ($new_tx['vin'] as &$input_ref) {
+                $empty_input = '4c' . RawTransaction::_encode_vint(strlen($script) / 2) . $script;
                 //$empty_input = $script;
                 $input_ref['scriptSig']['hex'] = $empty_input;
             }
             $raw_transaction = RawTransaction::encode($new_tx);
             $decoded_transaction = RawTransaction::decode($raw_transaction);
 
-            if($this->update_order($order_id, array('unsigned_transaction' => $raw_transaction . " ",
+            if ($this->update_order($order_id, array('unsigned_transaction' => $raw_transaction . " ",
                 'json_inputs' => "'$json'",
                 'partially_signed_transaction' => '',
                 'partially_signed_time' => '',
-                'partially_signing_user_id' => ''))) {
+                'partially_signing_user_id' => ''))
+            ) {
 
                 $this->transaction_cache_model->clear_expected_for_address($from_address);
                 $this->transaction_cache_model->log_transaction($decoded_transaction['vout'], $from_address, $order_id);
@@ -723,9 +726,9 @@ class Order_model extends CI_Model
                 $vendor_address => (string)number_format(($order['price'] + $order['shipping_costs'] - $order['extra_fees']), 8));
 
             $create_spend_transaction = $this->create_spend_transaction($order['address'], $tx_outs, $order['redeemScript']);
-            if($create_spend_transaction == TRUE) {
+            if ($create_spend_transaction == TRUE) {
                 $next_progress = ($order['vendor_selected_escrow'] == '1') ? '4' : '3';
-                $this->progress_order($order['id'], '2', $next_progress, array('paid_time'=>time()));
+                $this->progress_order($order['id'], '2', $next_progress, array('paid_time' => time()));
             } else {
                 //$this->log_model->
             }

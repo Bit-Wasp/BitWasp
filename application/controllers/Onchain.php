@@ -29,7 +29,7 @@ class Onchain extends CI_Controller
         $this->load->helper('url');
 
         // Ensure request is valid
-        if (uri_string() == 'onchain/mpk'){
+        if (uri_string() == 'onchain/mpk') {
             $this->request = 'mpk';
         }
 
@@ -85,7 +85,6 @@ class Onchain extends CI_Controller
     }
 
 
-
     /**
      * MPK
      * This URI exposes the onchainlib\handle_mpk_request() function,
@@ -96,7 +95,7 @@ class Onchain extends CI_Controller
      */
     public function mpk()
     {
-        if(!$this->auth) return FALSE;
+        if (!$this->auth) return FALSE;
 
         $this->load->library('onchainlib');
         // Now have an authorized request
@@ -112,7 +111,7 @@ class Onchain extends CI_Controller
 
     public function sign()
     {
-        if(!$this->auth) return FALSE;
+        if (!$this->auth) return FALSE;
 
         if ($this->get_request) {
             // This is a request for the transaction to sign

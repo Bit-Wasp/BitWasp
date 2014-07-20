@@ -56,6 +56,8 @@ class Alerts_model extends CI_Model
         $query = $this->db->get_where('alerts', array('message' => "$string"));
         return $query->num_rows() > 0;
     }
-};
+}
+
+;
 
 /* End of File: alerts_model.php */

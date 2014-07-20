@@ -110,14 +110,14 @@ class Admin extends MY_Controller
         $nav .= '
         <div class="row">
             <ul class="nav nav-tabs">
-                <li class="col-xs-3"><h4>'.$self['heading'].'</h4></li>
+                <li class="col-xs-3"><h4>' . $self['heading'] . '</h4></li>
                 <li class="col-xs-1">';
 
-        if ($panel_url !== '/logs') $nav .= " ".anchor('admin/edit' . $panel_url, 'Edit', '');
+        if ($panel_url !== '/logs') $nav .= " " . anchor('admin/edit' . $panel_url, 'Edit', '');
 
         $nav .= '
                 </li>
-                <li class="col-xs-8">'.$links.'</li>
+                <li class="col-xs-8">' . $links . '</li>
             </ul>
         </div>
         <div class="row">&nbsp;</div>';
@@ -213,7 +213,7 @@ class Admin extends MY_Controller
     {
         $this->load->model('autorun_model');
         $data['page'] = 'admin/autorun';
-        $data['autorum_cmd'] = '*/1 * * * * php '.__DIR__.'/index.php callback autorun';
+        $data['autorum_cmd'] = '*/1 * * * * php ' . __DIR__ . '/index.php callback autorun';
         $data['title'] = $this->nav['autorun']['heading'];
         $data['jobs'] = $this->autorun_model->load_all();
         $data['config'] = $this->bw_config->load_admin('autorun');
@@ -236,20 +236,20 @@ class Admin extends MY_Controller
 
                 // Set the interval to zero if a job is disabled.
                 if ($data['jobs'][$index] !== '0' && (isset($disabled_jobs[$index]) && $disabled_jobs[$index] == '1')) {
-                    if ($this->autorun_model->set_interval($index, '0') == TRUE){
+                    if ($this->autorun_model->set_interval($index, '0') == TRUE) {
                         $update = TRUE;
                     }
                 } else {
                     // If the job exists, and the interval has changed..
                     if (isset($data['jobs'][$index]) && $data['jobs'][$index]['interval'] !== $interval) {
                         // Update the interval.
-                        if ($this->autorun_model->set_interval($index, $interval) == TRUE){
+                        if ($this->autorun_model->set_interval($index, $interval) == TRUE) {
                             $update = TRUE;
 
                         }
 
                         // If the interval has changed, rerun the job??
-                        if ($interval !== '0'){
+                        if ($interval !== '0') {
                             $this->autorun->jobs[$index]->job();
                         }
                     }
@@ -257,8 +257,8 @@ class Admin extends MY_Controller
             }
 
             // If the update happened successfully, redirect!
-            if ($update){
-                $this->current_user->set_return_message('Your changes have been saved',TRUE);
+            if ($update) {
+                $this->current_user->set_return_message('Your changes have been saved', TRUE);
                 redirect('admin/autorun');
             }
         }
@@ -333,7 +333,8 @@ class Admin extends MY_Controller
                 // Check if the selection exists.
                 if ($data['price_index'] != $this->input->post('price_index')) {
                     if (is_array($data['config']['price_index_config'][$this->input->post('price_index')])
-                    OR $this->input->post('price_index') == 'Disabled') {
+                        OR $this->input->post('price_index') == 'Disabled'
+                    ) {
 
                         $update = array('price_index' => $this->input->post('price_index'));
                         $this->config_model->update($update);
@@ -443,22 +444,24 @@ class Admin extends MY_Controller
             //   or (ii) admin hasn't checked disabled, but set post amount to 0.
             // - Otherwise, if the payment amount differs from what we have, create the change.
             if ($this->input->post('entry_payment_buyer_disabled') == '1' AND $this->bw_config->entry_payment_buyer !== '0'
-            OR  $this->input->post('entry_payment_buyer_disabled') == null AND $this->input->post('entry_payment_buyer') == '0'){
+                OR $this->input->post('entry_payment_buyer_disabled') == null AND $this->input->post('entry_payment_buyer') == '0'
+            ) {
                 echo 'a';
                 $changes['entry_payment_buyer'] = '0';
             } else {
-                if($this->input->post('entry_payment_buyer_disabled') == null AND $this->input->post('entry_payment_buyer') != $data['config']['entry_payment_buyer']) {
+                if ($this->input->post('entry_payment_buyer_disabled') == null AND $this->input->post('entry_payment_buyer') != $data['config']['entry_payment_buyer']) {
                     echo 'b';
                     $changes['entry_payment_buyer'] = $this->input->post('entry_payment_buyer');
                 }
             }
             // Same for vendor amount
             if ($this->input->post('entry_payment_vendor_disabled') == '1' AND $this->bw_config->entry_payment_vendor !== '0'
-                OR  $this->input->post('entry_payment_vendor_disabled') == null AND $this->input->post('entry_payment_vendor') == '0'){
-                    echo 'c';
-                    $changes['entry_payment_vendor'] = '0';
+                OR $this->input->post('entry_payment_vendor_disabled') == null AND $this->input->post('entry_payment_vendor') == '0'
+            ) {
+                echo 'c';
+                $changes['entry_payment_vendor'] = '0';
             } else {
-                if($this->input->post('entry_payment_vendor_disabled') == null AND $this->input->post('entry_payment_vendor') != $data['config']['entry_payment_vendor']) {
+                if ($this->input->post('entry_payment_vendor_disabled') == null AND $this->input->post('entry_payment_vendor') != $data['config']['entry_payment_vendor']) {
                     echo 'd';
                     $changes['entry_payment_vendor'] = $this->input->post('entry_payment_vendor');
                 }
@@ -592,7 +595,7 @@ class Admin extends MY_Controller
         if ($this->input->post('trusted_user_update') == 'Update') {
             if ($this->form_validation->run('admin_trusted_user_update') == TRUE) {
                 $changes = array();
-                $changes['trusted_user_rating'] = ($data['config']['trusted_user_rating'] != $this->input->post('trusted_user_rating')) ? $this->input->post('trusted_user_rating'): NULL;
+                $changes['trusted_user_rating'] = ($data['config']['trusted_user_rating'] != $this->input->post('trusted_user_rating')) ? $this->input->post('trusted_user_rating') : NULL;
                 $changes['trusted_user_review_count'] = ($data['config']['trusted_user_review_count'] != $this->input->post('trusted_user_review_count')) ? $this->input->post('trusted_user_review_count') : NULL;
                 $changes['trusted_user_order_count'] = ($data['config']['trusted_user_order_count'] != $this->input->post('trusted_user_order_count')) ? $this->input->post('trusted_user_order_count') : NULL;
                 $changes = array_filter($changes, 'strlen');
@@ -746,9 +749,9 @@ class Admin extends MY_Controller
         $this->load->model('users_model');
         $this->load->library('form_validation');
 
-        if($this->input->post('delete_token') == 'Delete Token') {
+        if ($this->input->post('delete_token') == 'Delete Token') {
 
-            if($this->form_validation->run('admin_delete_token')) {
+            if ($this->form_validation->run('admin_delete_token')) {
                 // Abort if the token does not exist.
                 $token = $this->users_model->check_registration_token($this->input->post('delete_token_content'));
                 if ($token == FALSE) {
@@ -781,9 +784,10 @@ class Admin extends MY_Controller
                 if ($this->users_model->add_registration_token(array('user_type' => $this->input->post('user_role'),
                         'token_content' => $this->general->unique_hash('registration_tokens', 'token_content', 128),
                         'comment' => $this->input->post('token_comment'),
-                        'entry_payment' => $entry_payment)) == TRUE) {
+                        'entry_payment' => $entry_payment)) == TRUE
+                ) {
                     // If token is successfully added, display error message.
-                    $this->session->set_flashdata('returnMessage',json_encode(array('success' => TRUE, 'message' => 'Your token has been created.')));
+                    $this->session->set_flashdata('returnMessage', json_encode(array('success' => TRUE, 'message' => 'Your token has been created.')));
                     redirect('admin/user_tokens');
                 }
             }
@@ -856,11 +860,11 @@ class Admin extends MY_Controller
         $data['title'] = 'Ban User';
         $data['page'] = 'admin/ban_user';
 
-        if($this->input->post('submit_ban_toggle') == 'Submit') {
+        if ($this->input->post('submit_ban_toggle') == 'Submit') {
             if ($this->form_validation->run('admin_ban_user') == TRUE) {
-                if($this->input->post('ban_user') == '1') {
-                    $new = (string)((int)$data['user']['banned']+1)%2;
-                    if($this->accounts_model->toggle_ban($data['user']['id'], "$new")){
+                if ($this->input->post('ban_user') == '1') {
+                    $new = (string)((int)$data['user']['banned'] + 1) % 2;
+                    if ($this->accounts_model->toggle_ban($data['user']['id'], "$new")) {
                         $this->session->set_flashdata('returnMessage', json_encode(array('message' => "{$data['user']['user_name']} has now been " . (($new == 1) ? 'banned.' : 'unbanned.'))));
                         redirect('user/' . $data['user']['user_hash']);
                     } else {
@@ -928,11 +932,11 @@ class Admin extends MY_Controller
             $data['admin_fee'] = $data['current_order']['fees'] + $data['current_order']['extra_fees'] - $data['transaction_fee'];
             $data['user_funds'] = (float)($data['current_order']['order_price'] - $data['admin_fee'] - $data['transaction_fee']);
 
-            if($this->input->post('resolve_dispute') !== null) {
+            if ($this->input->post('resolve_dispute') !== null) {
 
-                if($this->form_validation->run('admin_resolve_dispute') == TRUE) {
-                    if($this->input->post('resolve_dispute_id') == $data['current_order']['id']){
-                        if($this->input->post('relinquish_fee') == '1'){
+                if ($this->form_validation->run('admin_resolve_dispute') == TRUE) {
+                    if ($this->input->post('resolve_dispute_id') == $data['current_order']['id']) {
+                        if ($this->input->post('relinquish_fee') == '1') {
                             $data['admin_fee'] = 0;
                             $data['user_funds'] = (float)($data['current_order']['order_price'] - $data['admin_fee'] - $data['transaction_fee']);
                         }
@@ -950,7 +954,7 @@ class Admin extends MY_Controller
                                 $tx_outs = array();
 
                                 // Add outputs for the sites fee, buyer, and vendor.
-                                if($data['admin_fee'] > 0){
+                                if ($data['admin_fee'] > 0) {
                                     $admin_address = BitcoinLib::public_key_to_address($data['current_order']['public_keys']['admin']['public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']);
                                     $tx_outs[$admin_address] = (float)$data['admin_fee'];
                                 }
@@ -963,7 +967,7 @@ class Admin extends MY_Controller
 
                                 // Create spend transaction and redirect, otherwise display an error
                                 $create_spend_transaction = $this->order_model->create_spend_transaction($data['current_order']['address'], $tx_outs, $data['current_order']['redeemScript']);
-                                if($create_spend_transaction == TRUE){
+                                if ($create_spend_transaction == TRUE) {
                                     // Notify users by way of a dispute update
                                     $this->disputes_model->post_dispute_update(array('posting_user_id' => '',
                                         'order_id' => $order_id,
@@ -1059,12 +1063,12 @@ class Admin extends MY_Controller
             }
         }
 
-        if($this->input->post('delete_rate') == 'Delete') {
-            if($this->form_validation->run('admin_delete_fee_rate') == TRUE) {
+        if ($this->input->post('delete_rate') == 'Delete') {
+            if ($this->form_validation->run('admin_delete_fee_rate') == TRUE) {
                 $key = array_keys($this->input->post('delete_rate'));
                 $id = $key[0];
                 if ($this->fees_model->delete($id) == TRUE) {
-                    $this->current_user->set_return_message('The selected fee has been deleted.',FALSE);
+                    $this->current_user->set_return_message('The selected fee has been deleted.', FALSE);
                     redirect('admin/items/fees');
                 }
             }
@@ -1072,7 +1076,7 @@ class Admin extends MY_Controller
 
         if ($this->input->post('create_fee') == 'Add') {
             if ($this->form_validation->run('admin_add_fee') == TRUE) {
-                if($this->input->post('upper_limit') > $this->input->post('lower_limit')) {
+                if ($this->input->post('upper_limit') > $this->input->post('lower_limit')) {
                     $rate = array('low' => $this->input->post('lower_limit'),
                         'high' => $this->input->post('upper_limit'),
                         'rate' => $this->input->post('percentage_fee'));
@@ -1358,7 +1362,7 @@ class Admin extends MY_Controller
                     'hash' => $this->general->unique_hash('locations_custom_list', 'hash'),
                     'parent_id' => $this->input->post('location'));
                 if ($this->location_model->add_custom_location($location) == TRUE) {
-                    $this->current_user->set_return_message('Your new location has been saved',TRUE);
+                    $this->current_user->set_return_message('Your new location has been saved', TRUE);
                     redirect('admin/locations');
                 }
             }
@@ -1366,7 +1370,7 @@ class Admin extends MY_Controller
 
         if ($this->input->post('delete_custom_location') == 'Submit') {
             if ($this->form_validation->run('admin_delete_custom_location') == TRUE) {
-                if ($this->location_model->delete_custom_location($this->input->post('location_delete')) == TRUE){
+                if ($this->location_model->delete_custom_location($this->input->post('location_delete')) == TRUE) {
                     $this->current_user->set_return_message('Your location has been deleted', TRUE);
                     redirect('admin/locations');
                 }
@@ -1383,7 +1387,9 @@ class Admin extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-};
+}
+
+;
 
 /* End of file: Admin.php */
 /* Location: application/controllers/Admin.php */

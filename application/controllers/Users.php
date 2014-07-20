@@ -233,8 +233,9 @@ class Users extends MY_Controller
                 $entry_fee = 'entry_payment_' . strtolower($data['role']);
 
                 // User is registered. Work out if we charge a fee or let them login immediately.
-                if( (isset($data['token_info']) AND $data['token_info'] !== FALSE AND $data['token_info']['entry_payment'] > 0)
-                OR  (isset($this->bw_config->$entry_fee) AND $this->bw_config->$entry_fee > 0 )) {
+                if ((isset($data['token_info']) AND $data['token_info'] !== FALSE AND $data['token_info']['entry_payment'] > 0)
+                    OR (isset($this->bw_config->$entry_fee) AND $this->bw_config->$entry_fee > 0)
+                ) {
 
                     // Create a fees address, and record the entry payment
                     $address = $this->bitcoin_model->get_fees_address($user_hash, $this->bw_config->currencies[0]['crypto_magic_byte']);
@@ -258,7 +259,7 @@ class Users extends MY_Controller
         }
 
         $data['title'] = 'Register';
-        $data['page'] = $register_page.((isset($token) && $token !== NULL) ? '/'.$token : '');
+        $data['page'] = $register_page . ((isset($token) && $token !== NULL) ? '/' . $token : '');
         $data['token'] = $token;
         $data['captcha'] = $this->bw_captcha->generate();
         $data['display_captcha'] = $this->display_captcha;
@@ -452,7 +453,9 @@ class Users extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-};
+}
+
+;
 
 /* End of file: Users.php */
 /* Location: ./application/controllers/Users.php */

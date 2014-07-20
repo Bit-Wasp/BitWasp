@@ -42,12 +42,12 @@ class Listings extends MY_Controller
      */
     public function manage()
     {
-        if($this->input->post('delete_listing') == 'Delete') {
-            if($this->form_validation->run('submit_vendor_delete_listing') == TRUE) {
+        if ($this->input->post('delete_listing') == 'Delete') {
+            if ($this->form_validation->run('submit_vendor_delete_listing') == TRUE) {
                 $item = $this->listings_model->get($this->input->post('delete_listing_hash'));
 
                 // Abort if the listing does not exist.
-                if ($item == FALSE){
+                if ($item == FALSE) {
                     $this->current_user->set_return_message('This listing does not exist!', FALSE);
                     redirect('listings');
                 }
@@ -161,7 +161,7 @@ class Listings extends MY_Controller
 
         if ($this->form_validation->run('add_listing') == TRUE) {
             $hash = $this->general->unique_hash('items', 'hash');
-            $add =$this->listings_model->add(array('add_time' => time(),
+            $add = $this->listings_model->add(array('add_time' => time(),
                 'category' => $this->input->post('category'),
                 'currency' => $this->current_user->currency['id'],
                 'description' => $this->input->post('description'),
@@ -175,7 +175,7 @@ class Listings extends MY_Controller
                 'ship_from' => $this->input->post('ship_from')
             ));
             // Add the listing
-            if ($add == TRUE){
+            if ($add == TRUE) {
                 $listing = $this->listings_model->get($hash);
 
                 $this->load->model('shipping_costs_model');
@@ -249,21 +249,21 @@ class Listings extends MY_Controller
 
                     $return_config = function ($h, $w) use ($upload_data) {
                         return array('image_library' => 'gd2',
-                        'source_image' => $upload_data['full_path'],
-                        //'create_thumb' => TRUE,
-                        'maintain_ratio' => FALSE,
-                        'return_base64' => TRUE,
-                        'width'         => $w,
-                        'height'       => $h);
+                            'source_image' => $upload_data['full_path'],
+                            //'create_thumb' => TRUE,
+                            'maintain_ratio' => FALSE,
+                            'return_base64' => TRUE,
+                            'width' => $w,
+                            'height' => $h);
                     };
                     $hash = $this->general->unique_hash('images', 'hash');
 
                     // Resize to thumb and max size.
-                    $this->load->library('image_lib', $return_config(90,120));
+                    $this->load->library('image_lib', $return_config(90, 120));
                     $small = ($this->image_lib->resize()) ? $this->image_lib->base64_image : FALSE;
 
                     $this->image_lib->clear();
-                    $this->image_lib->initialize($return_config(900,1200));
+                    $this->image_lib->initialize($return_config(900, 1200));
                     $large = ($this->image_lib->resize()) ? $this->image_lib->base64_image : FALSE;
 
                     $main_image = FALSE;
@@ -273,7 +273,7 @@ class Listings extends MY_Controller
                     // If resizing fails, use the normal image.
                     ($small !== FALSE)
                         ? $this->images_model->add_to_item($hash, $small, $item_hash, $main_image)
-                        : $this->images_model->add_to_item($hash, $this->image_lib->b64encode_any_image($upload_data['full_path']),$item_hash, $main_image);
+                        : $this->images_model->add_to_item($hash, $this->image_lib->b64encode_any_image($upload_data['full_path']), $item_hash, $main_image);
                     #($large !== FALSE)
                     #    ? $this->images_model->add_to_item($hash . "_l", $large, $item_hash, $main_image)
                     #    : $this->images_model->add_to_item($hash . "_l", $this->image_lib->b64encode_any_image($upload_data['full_path']),$item_hash, $main_image);
@@ -411,7 +411,9 @@ class Listings extends MY_Controller
         redirect('listings/images/' . $item_hash);
     }
 
-};
+}
+
+;
 
 /* End of file Listings.php */
 /* Location: application/controllers/Listings.php */

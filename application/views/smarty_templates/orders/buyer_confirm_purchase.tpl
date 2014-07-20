@@ -5,10 +5,19 @@
 
                     {assign var="defaultMessage" value=""}
                     {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
-			
-                    <p>Review your orders details, and enter your address if you are happy to proceed.</p>
-                    <p>The orders full price including fee's will be displayed on the order page once confirmed.</p>
-                    <p>Once the vendor is set up correctly, you will be able to make payment immediately.</p>
+
+                {if $order_type == "upfront"}
+<p align="justify">{$order.vendor.username} has requested this order is paid up-front. After
+payment is made to the order address, you will need authorize release of the funds before the
+order is dispatched.</p>
+                    {else}
+<p align="justify">This order is proceeding via escrow. Once the payment has been processed the vendor will
+vendor will notify you once the order has been dispatched. When received you can release the funds to the vendor.
+</p>
+{/if}
+                    <p align="justify"></p>
+
+                    <p>Review the order details, and enter your address if you are happy to proceed. Once confirmed, you will be able to pay to the order address.</p>
 
                     {capture name='t_purchase_url'}purchases/confirm/{$order.id}{/capture}
                     {capture name="t_vendor_url"}user/{$order.vendor.user_hash}{/capture}

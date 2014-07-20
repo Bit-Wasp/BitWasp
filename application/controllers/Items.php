@@ -185,7 +185,7 @@ class Items extends MY_Controller
         $this->load->model('review_model');
 
         $data['item'] = $this->items_model->get($hash, FALSE);
-        if($data['item'] == FALSE)
+        if ($data['item'] == FALSE)
             redirect('');
 
         $data['page'] = 'items/get';
@@ -202,7 +202,9 @@ class Items extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-};
+}
+
+;
 
 /* End of File: Items.php */
 /* Location: application/controllers/Items.php */

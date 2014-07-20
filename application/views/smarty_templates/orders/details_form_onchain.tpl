@@ -27,11 +27,6 @@
                     <div class="row">
                         <label class="col-xs-3" for="submit"></label>
                         <div class="col-xs-9">
-
-                            {if $can_finalize_early == TRUE}
-                                {capture name='t_finalize_early_url'}orders/finalize_early/{$order.id}{/capture}
-                                {url type="anchor" url=$smarty.capture.t_finalize_early_url text='Finalize Early' attr='class="btn btn-default"'}
-                            {/if}
                             {if $can_refund == TRUE}
                                 {capture name='t_refund_url'}orders/refund/{$order.id}{/capture}
                                 {url type="anchor" url=$smarty.capture.t_refund_url text='Issue Refund' attr='class="btn btn-success"'}

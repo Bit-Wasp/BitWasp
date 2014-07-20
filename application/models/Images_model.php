@@ -214,7 +214,9 @@ class Images_model extends CI_Model
 
         return $results;
     }
-};
+}
+
+;
 
 /* End of File: Images_model.php */
 /* Location: application/models/images_model.php */

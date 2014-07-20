@@ -38,7 +38,7 @@ class OnchainLib
         if ($order == FALSE)
             return 'A general error occurred';
 
-        $tx = ($order['partially_signed_transaction'] !== '') ? $order['partially_signed_transaction'] : $order['unsigned_transaction'] ;
+        $tx = ($order['partially_signed_transaction'] !== '') ? $order['partially_signed_transaction'] : $order['unsigned_transaction'];
         $tx_crc = substr(hash('sha256', $tx), 0, 8);
         if ($tx_crc !== $get_request['crc'])
             return 'Transaction has changed, please refresh';
@@ -59,18 +59,18 @@ class OnchainLib
         }
 
         $decode_tx = \BitWasp\BitcoinLib\RawTransaction::decode($post_request['tx']);
-        if($decode_tx == FALSE)
+        if ($decode_tx == FALSE)
             return 'Invalid transaction';
 
         $order = $this->CI->order_model->get($post_request['sign_order_id']);
 
         $signing_user = ($post_request['user_id'] == $order['buyer']['id']) ? $order['buyer'] : $order['vendor'];
-        $signing_pubkey_id = $order[(strtolower($signing_user['user_role']).'_public_key')];
+        $signing_pubkey_id = $order[(strtolower($signing_user['user_role']) . '_public_key')];
         $user_key = $this->CI->bip32_model->get_child_key($signing_pubkey_id);
 
         $handle = $this->CI->bw_bitcoin->handle_order_tx_submission($order, $post_request['tx'], $user_key);
 
-        if(is_string($handle))
+        if (is_string($handle))
             echo $handle;
 
         //$this->CI->onchain_model->clear_auth($post_request['auth_id']);
@@ -96,7 +96,7 @@ class OnchainLib
         $check_key_valid = \BitWasp\BitcoinLib\BIP32::import($bip32_array['key']) !== FALSE;
 
         $insert = array(
-            'user_id'=> $bip32_array['user_id'],
+            'user_id' => $bip32_array['user_id'],
             'key' => $bip32_array['key'],
             'provider' => 'Onchain'
         );

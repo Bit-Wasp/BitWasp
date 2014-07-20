@@ -1,3 +1,4 @@
+<noscript><style> .jsonly { display: none } </style></noscript>
 
 <!--<script language="Javascript" src="<?php echo base_url(); ?>assets/js/bitcore.js" type="text/javascript"></script>-->
 <script language="Javascript" src="<?php echo base_url(); ?>assets/js/bitcore-0.1.26.js" type="text/javascript"></script>

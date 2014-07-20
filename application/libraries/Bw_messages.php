@@ -268,7 +268,9 @@ class Bw_messages
         }
         return FALSE;
     }
-};
+}
+
+;
 
 /* End of file Bw_messages.php */
 /* Location: application/libraries/Bw_messages.php */

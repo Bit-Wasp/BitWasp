@@ -254,7 +254,7 @@ class Categories_model extends CI_Model
         foreach ($categories as $result) {
             // Only need the count for this.
             $joins = array(
-                array('table'=>'users',
+                array('table' => 'users',
                     'on' => "users.user_hash = items.vendor_hash AND users.banned='0'")
             );
             $count_item_children = $this->items_model->get_count(array('category' => $result['id']), $joins);
@@ -339,7 +339,9 @@ class Categories_model extends CI_Model
         return $output;
     }
 
-};
+}
+
+;
 
 /* End of file Categories_model.php */
 /* Location: application/models/Categories_model.php */

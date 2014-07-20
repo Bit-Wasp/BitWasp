@@ -42,7 +42,7 @@ class Authorize extends MY_Controller
 
         $data['title'] = 'Authorize Request';
         $data['page'] = 'authorize/password';
-        
+
         $data['returnMessage'] = 'To access this page, you must enter your password.';
 
         if ($this->form_validation->run('authorize') == TRUE) {
