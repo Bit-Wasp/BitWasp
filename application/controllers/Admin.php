@@ -92,7 +92,7 @@ class Admin extends MY_Controller
     public function generate_nav()
     {
         $nav = '';
-        if ($this->bw_config->electrum_mpk == '')
+        if ($this->bw_config->bip32_mpk == '')
             $nav .= '<div class="alert alert-danger">You have not configured an electrum master public key. Please do so now ' . anchor('admin/edit/bitcoin', 'here') . '.</div>';
 
         $links = '';
