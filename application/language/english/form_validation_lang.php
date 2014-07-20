@@ -6,6 +6,7 @@ $lang['check_bool_areyousure'] = 'Please make a valid selection!';
 $lang['check_bitcoin_amount'] = 'Please enter a valid %s.';
 $lang['check_bitcoin_amount_free'] = 'Please enter a valid %s - enter 0 if you want it to be free!';
 $lang['check_bitcoin_index'] = 'You must select a valid Bitcoin Index source';
+$lang['check_bitcoin_address'] = 'You must enter a valid address!';
 $lang['check_bitcoin_public_key'] = 'You must enter a valid public key.';
 $lang['check_bool_enabled'] = 'Select enabled or disabled for %s.';
 $lang['check_bool_areyousure'] = 'Select enabled or disabled.';
@@ -44,6 +45,8 @@ $lang['check_valid_location_shipto'] = 'Please select a valid shipping destinati
 $lang['check_valid_location_shipfrom'] = 'Please select a valid shipping origin.';
 $lang['check_valid_rating_choice'] = 'Please select a valid rating for %s.';
 $lang['check_valid_registration_role'] = 'Please select a valid user role.';
-
+$lang['validate_bip32_key'] = 'Enter a valid extended public key.';
+$lang['validate_is_public_bip32'] = 'You may only use public keys on this site.';
+$lang['validate_depth_bip32'] = 'Please supply a key that is one level deep, eg, M/9h';
 /* End of File: form_validation_lang.php */
 /* Location: aplication/language/english/form_validation_lang.php */

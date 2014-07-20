@@ -40,7 +40,7 @@ class Callback extends CI_Controller
     {
         // Abort if no block hash is supplied.
         if ($block_hash == NULL)
-            return FALSE;
+            die();
 
         $this->load->library('bw_bitcoin');
         $this->load->model('bitcoin_model');
@@ -48,19 +48,19 @@ class Callback extends CI_Controller
 
         // Die if bitcoind is actually offline.
         if ($this->bw_bitcoin->getinfo() == NULL)
-            return FALSE;
+            die();
 
         // Reject already known blocks.
         if ($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
-            return FALSE;
+            die();
 
         $block = $this->bw_bitcoin->getblock($block_hash);
         if (!is_array($block) || !isset($block['tx']))
-            return FALSE;
+            die();
 
         $watched_addresses = $this->bitcoin_model->watch_address_list();
         if (count($watched_addresses) == 0)
-            return FALSE;
+            die();
 
         $txs = array();
         foreach ($block['tx'] as $id => $tx_id) {
@@ -75,6 +75,32 @@ class Callback extends CI_Controller
             $this->transaction_cache_model->add_cache_list($txs);
     }
 
+    protected function broadcast()
+    {
+        $this->load->library('bw_bitcoin');
+        $this->load->model('transaction_cache_model');
+        // Attempt to broadcast the stored transactions
+        $broadcast_list = $this->transaction_cache_model->broadcast_list();
+        if (count($broadcast_list) > 0) {
+            $update_remaining = array('0' => array(), '1' => array(), '2' => array(), '3' => array(), '4' => array());
+            foreach ($broadcast_list as $transaction_row) {
+                $send = $this->bw_bitcoin->sendrawtransaction($transaction_row['transaction']);
+                if ($send !== null)
+                    $update_remaining[--$transaction_row['attempts_remaining']][] = $transaction_row['id'];
+            }
+            foreach ($update_remaining as $remaining => $id_list) {
+                if (count($id_list) == 0)
+                    continue;
+
+                // Update remaining, or delete if it's reache zero.
+                ($remaining == 0)
+                    ? $this->transaction_cache_model->clear_broadcast_list($id_list)
+                    : $this->transaction_cache_model->update_broadcast_list_remaining($id_list, $remaining);
+
+            }
+        }
+    }
+
     /**
      * Process
      */
@@ -83,8 +109,8 @@ class Callback extends CI_Controller
 
         // Die if the callback is already running
         if ($this->bw_config->bitcoin_callback_running == 'true') {
-            // Hack to get the script running again if it's been running for over 10 minutes.
-            if ((time() - $this->bw_config->bitcoin_callback_starttime) > 1 * 60) {
+            // Hack to get the script running again if it's been running for over 5 minutes.
+            if ((time() - $this->bw_config->bitcoin_callback_starttime) > 5 * 60) {
                 echo "Reset callback running\n";
                 $this->config_model->update(array('bitcoin_callback_running' => 'false'));
             } else {
@@ -95,6 +121,7 @@ class Callback extends CI_Controller
         }
 
         $this->load->model('transaction_cache_model');
+        $this->broadcast();
 
         // Load the cached transactions to process. Die if nothing to do.
         $list = $this->transaction_cache_model->cache_list();
@@ -127,7 +154,7 @@ class Callback extends CI_Controller
                 $spending_transactions = $this->transaction_cache_model->check_inputs_against_payments($tx['vin'], $payments_list);
                 if (count($spending_transactions) > 0) {
                     foreach ($spending_transactions as $tmp) {
-                        $check = $this->transaction_cache_model->check_if_expected_spend($tx['vout']);
+                        $check = $this->transaction_cache_model->check_if_expected_spend($tx['vout'], $tmp['order_id']);
                         // Put transaction into scam or successful array.
                         $order_finalized[] = array('final_id' => $cached_tx['tx_id'],
                             'address' => $tmp['assoc_address'],
@@ -166,7 +193,7 @@ class Callback extends CI_Controller
         }
 
         // Delete payments from the block cache.
-        if (count($delete_cache) > 0){
+        if (count($delete_cache) > 0) {
             echo "Clearing cache (" . count($delete_cache) . ")\n";
             $this->transaction_cache_model->delete_cache_list($delete_cache);
         }

@@ -5,10 +5,19 @@
 
                     {assign var="defaultMessage" value=""}
                     {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
-			
-                    <p>Review your order details, and enter your address & public key if you are happy to proceed.</p>
-                    <p>Once you have confirmed your order, the order price will be updated to reflect the shipping costs and order fee's.</p>
-                    <p>Once the vendor is set up correctly, you will be able to see the payment address after completing this step. You will need to keep your private key, and be able to sign a transaction later.</p>
+
+                {if $order_type == "upfront"}
+<p align="justify">{$order.vendor.username} has requested this order is paid up-front. After
+payment is made to the order address, you will need authorize release of the funds before the
+order is dispatched.</p>
+                    {else}
+<p align="justify">This order is proceeding via escrow. Once the payment has been processed the vendor will
+vendor will notify you once the order has been dispatched. When received you can release the funds to the vendor.
+</p>
+{/if}
+                    <p align="justify"></p>
+
+                    <p>Review the order details, and enter your address if you are happy to proceed. Once confirmed, you will be able to pay to the order address.</p>
 
                     {capture name='t_purchase_url'}purchases/confirm/{$order.id}{/capture}
                     {capture name="t_vendor_url"}user/{$order.vendor.user_hash}{/capture}
@@ -59,34 +68,44 @@
 
                         <div class="row">
                             <div class="row">
-                                <div class="col-md-10">Generate a fresh private/public keypair, store them somewhere safe, and paste your public key below:</div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-xs-12">
-                                    <label class="control-label col-xs-2" for="bitcoin_public_key">Public Key</label>
-                                    <div class="col-xs-8">
-                                        <input type='text' class="form-control" id="bitcoin_public_key" name='bitcoin_public_key' value="{form method="set_value" field="user_name"}" />
-                                    </div>
-                                </div>
-                                <div class="col-xs-10 col-xs-offset-2">{form method='form_error' field='bitcoin_public_key'}</div>
-                            </div>
-                        </div>
-                        <br />
-
-                        <div class="row">
-                            <div class="row">
                                 <div class="col-xs-10">Enter your exact shipping address. {if $order.vendor.pgp == TRUE}It will be encrypted before it leaves your browser if you have javascript enabled.{/if}</div>
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <label class="control-label col-xs-2" for="buyer_address">Address</label>
-                                    <div class="col-xs-8">
+                                    <label class="control-label col-xs-3" for="buyer_address">Shipping Address:</label>
+                                    <div class="col-xs-7">
                                         <textarea name='buyer_address' rows='5' class='form-control'></textarea>
                                     </div>
                                 </div>
-                                <div class="col-xs-12 col-xs-offset-2">{form method='form_error' field='buyer_address'}</div>
+                                <div class="col-xs-9 col-xs-offset-3">{form method='form_error' field='buyer_address'}</div>
                             </div>
                         </div>
+
+                        {if $buyer_payout == FALSE}
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-xs-10">You don't have a refund address set up at the moment. Please enter one now, along with your password, in case you need a refund at any point.</div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <label class="control-label col-xs-3" for="buyer_payout">Refund Address:</label>
+                                    <div class="col-xs-7">
+                                        <input type="text" name="buyer_payout" id="buyer_payout" class="form-control" value="">
+                                    </div>
+                                </div>
+                                <div class="col-xs-9 col-xs-offset-3">{form method='form_error' field='buyer_payout'}</div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-12">
+                                    <label class="control-label col-xs-3" for="password">Password:</label>
+                                    <div class="col-xs-7">
+                                        <input type="password" name="password" id="password" class="form-control" value="">
+                                    </div>
+                                </div>
+                                <div class="col-xs-9 col-xs-offset-3">{form method='form_error' field='password'}</div>
+                            </div>
+                        </div>
+                        {/if}
 
                         {if $order.vendor.pgp == TRUE}
                         <textarea style="display:none;" name="public_key">{$order.vendor.pgp.public_key|escape:"html":"UTF-8"}</textarea>
@@ -96,7 +115,7 @@
                             <label class="control-label col-sm-2 col-lg-2 col-md-2" for="submit"></label>
                             <div class="col-sm-5 col-lg-5 col-md-5">
                                 <p align="center">
-                                    <input type="submit" class="btn btn-primary" value='Place Order' onclick='messageEncrypt()' />
+                                    <input type="submit" class="btn btn-primary" value='Place Order' {if $order.vendor.pgp == TRUE}onclick='messageEncrypt()'{/if} />
                                     {url type="anchor" url='order/list' text="Cancel" attr='class="btn btn-default"'}
                                 </p>
                             </div>

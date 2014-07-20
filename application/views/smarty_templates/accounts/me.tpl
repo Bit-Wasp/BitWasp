@@ -17,10 +17,25 @@
                     <div class="col-md-8">{url type="anchor" url=$smarty.capture.t_profile_url text="" attr=''}</div>
                 </div>
 
-                {if $user.user_role == 'Vendor'}
                 <div class="row">
                     <div class="col-md-3"><strong>Bitcoin Public Keys</strong></div>
-                    <div class="col-md-7">{$public_key_count} available. {url type="anchor" url="accounts/public_keys" text="Click here to add more" attr=''}</div>
+                    <div class="col-md-7">
+                        {if $bip32 == FALSE}Not set up - {url type="anchor" url="bip32" text="do so now!" attr=""}
+                        {else}Provider: {$bip32.provider} - {url type="anchor" url="bip32" text="Settings" attr=""}
+                        {/if}
+                    </div>
+                </div>
+
+                {if $user.user_role !== 'Admin'}
+                <div class="row">
+                    <div class="col-md-3"><strong>{if $user.user_role == 'Vendor'}Payout{else}Refund{/if} Address</strong></div>
+                    <div class="col-md-7">
+                        {if is_array($payout)}
+                            {$payout.address} - {url type="anchor" url="accounts/payout" text="Settings" attr=''}
+                        {else}
+                            Not set up - {url type="anchor" url="accounts/payout" text="do so now!" attr=''}
+                        {/if}
+                    </div>
                 </div>
                 {/if}
 

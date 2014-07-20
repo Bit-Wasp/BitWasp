@@ -5,12 +5,14 @@ class Core {
 	// Function to validate the post data
 	function validate_post($data)
 	{
+
 		if(empty($data['db_hostname']))
 			return FALSE;
 		if(empty($data['db_username']))
 			return FALSE;
 		if(empty($data['db_password']))
 			return FALSE;
+
 		if(empty($data['db_database']))
 			return FALSE;
 		if(empty($data['btc_ip']))
@@ -21,16 +23,19 @@ class Core {
 			return FALSE;
 		if(empty($data['btc_password']))
 			return FALSE;
+        echo 'a';
 		if(empty($data['admin_password']))
 			return FALSE;
 		if(!isset($data['allow_guests']) OR !in_array($data['allow_guests'], array('0','1')))
 			return FALSE;
 		if(!isset($data['tidy_urls']) OR !in_array($data['tidy_urls'], array('0','1')))
 			return FALSE;
-		if(empty($data['electrum_mpk']) OR strlen($data['electrum_mpk']) !== 128)
+        echo 'b';
+		if(empty($data['electrum_mpk']))
 			return FALSE;
 		if(!isset($data['force_vendor_pgp']) OR !in_array($data['force_vendor_pgp'], array('0','1')))
 			return FALSE;
+        echo 'c';
 		if(!isset($data['encrypt_private_messages']) OR !in_array($data['encrypt_private_messages'], array('0','1')))
 			return FALSE;
 		if($data['encrypt_private_messages'] == '1' AND empty($data['admin_pm_password']))

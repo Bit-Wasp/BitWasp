@@ -146,6 +146,22 @@ class Accounts_model extends CI_Model
     }
 
     /**
+     * Update
+     *
+     * Updates a user row with the indexes supplied in $changes. Make
+     * the changes to the table.
+     *
+     * @access    public
+     * @param    array $changes
+     * @return    bool
+     */
+    public function update($changes)
+    {
+        $this->db->where('id', $this->current_user->user_id);
+        return ($this->db->update('users', $changes)) ? TRUE : FALSE;
+    }
+
+    /**
      * Replace PGP key.
      *
      * Replace a PGP public key for $user_id. Return TRUE if successful,
@@ -192,7 +208,6 @@ class Accounts_model extends CI_Model
         $update = array('pgp_two_factor' => '0');
         return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
     }
-
 
     /**
      * Enable TOTP
@@ -246,92 +261,6 @@ class Accounts_model extends CI_Model
     {
         $this->db->where('id', $user_id);
         return ($this->db->update('users', array('banned' => $value)) == TRUE) ? TRUE : FALSE;
-    }
-
-    /**
-     * Update
-     *
-     * Updates a user row with the indexes supplied in $changes. Make
-     * the changes to the table.
-     *
-     * @access    public
-     * @param    array $changes
-     * @return    bool
-     */
-    public function update($changes)
-    {
-        $this->db->where('id', $this->current_user->user_id);
-        return ($this->db->update('users', $changes)) ? TRUE : FALSE;
-    }
-
-    /**
-     * Bitcoin Public Keys
-     *
-     * This function accepts a $user_id and returns all the public keys
-     * on record. Returns an empty array if none exist, otherwise will
-     * calculate the address for the public key as well.
-     *
-     * @param    int $user_id
-     * @return    array
-     */
-    public function bitcoin_public_keys($user_id)
-    {
-        $this->db->where('user_id', $user_id);
-        $query = $this->db->get('bitcoin_public_keys');
-        $result = $query->result_array();
-        if (count($result) == 0)
-            return FALSE;
-
-        $coin = $this->bw_config->currencies[0];
-
-        foreach ($result as &$res) {
-            $res['address'] = BitcoinLib::public_key_to_address($res['public_key'], $coin['crypto_magic_byte']);
-        }
-        return $result;
-    }
-
-
-    /**
-     * Add Bitcoin Public Key
-     *
-     * This function records the supplied $public_key and associates it
-     * with the currently logged in user.
-     *
-     * @param    string $public_key
-     * @return    boolean
-     */
-    public function add_bitcoin_public_key($public_key)
-    {
-        if(is_array($public_key)) {
-            if(count($public_key) == 0)
-                return TRUE;
-
-            $insert = array();
-            foreach($public_key as $key) {
-                $insert[] = array('user_id' => $this->current_user->user_id,
-                    'public_key' => $key);
-            }
-            return $this->db->insert_batch('bitcoin_public_keys', $insert) == TRUE;
-        } else if(is_string($public_key)) {
-            return $this->db->insert('bitcoin_public_keys', array('user_id' => $this->current_user->user_id, 'public_key' => $public_key)) == TRUE;
-        }
-    }
-
-    /**
-     * Delete Bitcoin Public Key
-     *
-     * Delete public key identified by its $public_key_id in the table.
-     * @param $public_key_id
-     * @param bool $user_id
-     * @return bool
-     */
-    public function delete_bitcoin_public_key($public_key_id, $user_id = FALSE)
-    {
-        $this->db->where('id', "$public_key_id");
-
-        ($user_id == FALSE) ? $this->db->where('user_id', "{$this->current_user->user_id}") : $this->db->where('user_id', $user_id);
-
-        return $this->db->delete('bitcoin_public_keys') == TRUE;
     }
 
     /**

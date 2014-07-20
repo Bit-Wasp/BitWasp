@@ -126,7 +126,7 @@ class Users extends MY_Controller
                     }
                 }
 
-                $this->session->set_userdata('failed_login', $this->session->userdata('failed_login') + 1);
+                $this->session->set_userdata('failed_login', ((int)$this->session->userdata('failed_login') + 1));
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your details were incorrect, try again.")));
                 redirect('login');
             }
@@ -194,7 +194,6 @@ class Users extends MY_Controller
 
             // Generate OpenSSL keys for the users private messages.
             if ($data['encrypt_private_messages'] == TRUE) {
-                $pin = $this->input->post('message_pin0');
                 $msg_password = $this->general->new_password($this->input->post('message_pin0'));
 
                 $message_keys = $this->openssl->keypair($msg_password['hash']);
@@ -222,6 +221,7 @@ class Users extends MY_Controller
                 'public_key' => $message_keys['public_key'],
                 'private_key' => $message_keys['private_key'],
                 'private_key_salt' => $message_keys['private_key_salt'],
+                'wallet_salt' => $this->general->unique_hash('users', 'wallet_salt', '32'),
                 'local_currency' => $this->input->post('local_currency'));
 
             $add_user = $this->users_model->add($register_info, $data['token_info']);
@@ -232,8 +232,9 @@ class Users extends MY_Controller
                 $entry_fee = 'entry_payment_' . strtolower($data['role']);
 
                 // User is registered. Work out if we charge a fee or let them login immediately.
-                if( (isset($data['token_info']) AND $data['token_info'] !== FALSE AND $data['token_info']['entry_payment'] > 0)
-                OR  (isset($this->bw_config->$entry_fee) AND $this->bw_config->$entry_fee > 0 )) {
+                if ((isset($data['token_info']) AND $data['token_info'] !== FALSE AND $data['token_info']['entry_payment'] > 0)
+                    OR (isset($this->bw_config->$entry_fee) AND $this->bw_config->$entry_fee > 0)
+                ) {
 
                     // Create a fees address, and record the entry payment
                     $address = $this->bitcoin_model->get_fees_address($user_hash, $this->bw_config->currencies[0]['crypto_magic_byte']);
@@ -257,7 +258,7 @@ class Users extends MY_Controller
         }
 
         $data['title'] = 'Register';
-        $data['page'] = $register_page.((isset($token) && $token !== NULL) ? '/'.$token : '');
+        $data['page'] = $register_page . ((isset($token) && $token !== NULL) ? '/' . $token : '');
         $data['token'] = $token;
         $data['captcha'] = $this->bw_captcha->generate();
         $data['display_captcha'] = $this->display_captcha;
@@ -451,7 +452,9 @@ class Users extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-};
+}
+
+;
 
 /* End of file: Users.php */
 /* Location: ./application/controllers/Users.php */

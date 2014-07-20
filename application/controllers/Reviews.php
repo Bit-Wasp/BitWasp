@@ -247,7 +247,9 @@ class Reviews extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-};
+}
+
+;
 
 
 /* End of File: Reviews.php */

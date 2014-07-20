@@ -305,12 +305,12 @@ $config = array('register_form' => array(
             'label' => 'price Index',
             'rules' => 'required'
         ),
-        array('field' => 'electrum_mpk',
+        array('field' => 'bip32_mpk',
             'label' => 'master public key',
-            'rules' => 'check_master_public_key'
+            'rules' => 'required|validate_bip32_key|validate_is_public_bip32'
         ),
-        array('field' => 'electrum_iteration',
-            'label' => 'electrum address index',
+        array('field' => 'bip32_iteration',
+            'label' => 'address index',
             'rules' => 'required|is_natural'
         )
     ),
@@ -506,11 +506,6 @@ $config = array('register_form' => array(
         array('field' => 'buyer_address',
             'label' => 'address',
             'rules' => 'required'
-        ),
-        // PHP checking done in controller.
-        array('field' => 'bitcoin_public_key',
-            'label' => 'public Key',
-            'rules' => 'required|check_bitcoin_public_key'
         )
     ),
     'vendor_submit_review' => array(
@@ -563,6 +558,22 @@ $config = array('register_form' => array(
         'label' => 'public keys',
         'rules' => 'required'
        )
+    ),
+    'submit_payout_address' => array(
+        array('field' => 'address',
+            'label' => 'address',
+            'rules' => 'required|check_bitcoin_address'
+        ),
+        array('field' => 'password',
+            'label' => 'password',
+            'rules' => 'required'
+        )
+    ),
+    'submit_dispute_refund_address' => array(
+        array('field' => 'refund_address',
+            'label' => 'refund address',
+            'rules' => 'required|check_bitcoin_address'
+        )
     ),
     'submit_buyer_purchase' => array(
         array('field' => 'item_hash',
@@ -642,6 +653,24 @@ $config = array('register_form' => array(
         array('field'=>'resolve_dispute_id',
             'label' => '',
             'rules' => 'required|is_numeric'
+        )
+    ),
+    'submit_bip32_js' => array(
+        array('field' => 'js_extended_public_key',
+            'label' => 'wallet passphrase',
+            'rules' => 'required'
+        )
+    ),
+    'submit_bip32_manual' => array(
+        array('field' => 'manual_public_key',
+            'label' => 'extended public key',
+            'rules' => 'required|validate_bip32_key|validate_is_public_bip32'
+        )
+    ),
+    'submit_js_signed_transaction' => array(
+		array('field' => 'js_transaction',
+			'label' => 'wallet passphrase',
+            'rules' => 'required'
         )
     )
 );

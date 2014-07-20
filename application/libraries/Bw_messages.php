@@ -95,7 +95,7 @@ class Bw_messages
         $pgp_encrypted = $this->CI->form_validation->check_pgp_encrypted($content['message']);
 
         // If the message isn't already encrypted with PGP..
-        if ($pgp_encrypted == FALSE) {
+        if ($pgp_encrypted == false) {
             // If the recipient has forced it,
             // encrypt the message with the recipients public key.
             // This only happens if the recipient has NOT blocked non-pgp messages.
@@ -103,7 +103,7 @@ class Bw_messages
                 $this->CI->load->model('accounts_model');
                 $pgp = $this->CI->accounts_model->get_pgp_key($to['id']);
                 $content['message'] = $this->CI->gpg->encrypt($pgp['fingerprint'], $content['message']);
-                $pgp_encrypted = TRUE;
+                $pgp_encrypted = true;
             }
         }
 
@@ -112,7 +112,7 @@ class Bw_messages
 
         // Try encrypt the message if the user has a public key.
         switch ($to['public_key'] !== '') {
-            case TRUE:
+            case true:
                 // Create a key for AES, and encrypt content
                 $key = openssl_random_pseudo_bytes(32);
                 $encrypt = $this->encrypt($content, $key);
@@ -171,7 +171,7 @@ class Bw_messages
             return array('aes_iv' => $iv,
                 'aes_message' => $cipherText); //base64 encoded later
         }
-        return FALSE;
+        return false;
     }
 
     /**
@@ -195,7 +195,7 @@ class Bw_messages
 
         // If there are no messages, return false.
         if ($messages == NULL)
-            return FALSE;
+            return false;
 
         $key_data = $this->CI->users_model->message_data(array('user_hash' => $this->CI->current_user->user_hash));
 
@@ -250,7 +250,7 @@ class Bw_messages
      * Decrypt
      *
      * Accept a $ciphertext, $key, and $iv, all as binary data. Returns
-     * decrypted plaintext if successful, otherwise returns FALSE.
+     * decrypted plaintext if successful, otherwise returns false.
      *
      * @param $ciphertext
      * @param $key
@@ -266,9 +266,11 @@ class Bw_messages
 
             return $plaintext;
         }
-        return FALSE;
+        return false;
     }
-};
+}
+
+;
 
 /* End of file Bw_messages.php */
 /* Location: application/libraries/Bw_messages.php */

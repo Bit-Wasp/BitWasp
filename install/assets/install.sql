@@ -46,8 +46,41 @@ CREATE TABLE IF NOT EXISTS `bw_bitcoin_public_keys` (
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+--
+-- Table structure for table `bw_bip32_keys`
+--
+
+
+CREATE TABLE IF NOT EXISTS `bw_bip32_keys` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `key` varchar(600) NOT NULL,
+  `user_id` int(9) NOT NULL,
+  `provider` enum('Manual','Onchain','JS') NOT NULL,
+  `time` varchar(20) NOT NULL,
+  `key_index` int(9) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `bw_bip32_user_keys`
+--
+
+CREATE TABLE IF NOT EXISTS `bw_bip32_user_keys` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `user_id` int(9) NOT NULL,
+  `order_id` int(9) NOT NULL,
+  `order_hash` varchar(30) NOT NULL,
+  `user_role` enum('Buyer','Vendor','Admin') NOT NULL,
+  `parent_extended_public_key` varchar(300) NOT NULL,
+  `provider` enum('Manual','Onchain','JS') NOT NULL,
+  `extended_public_key` varchar(300) NOT NULL,
+  `public_key` varchar(130) NOT NULL,
+  `key_index` int(9) NOT NULL,
+  `time` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=78 ;
 
 --
 -- Table structure for table `bw_blocks`
@@ -113,9 +146,8 @@ INSERT INTO `bw_config` (`parameter`, `value`) VALUES
 ('encrypt_private_messages', '%ENCRYPT_PRIVATE_MESSAGES%'),
 ('allow_guests','%ALLOW_GUESTS%'),
 ('force_vendor_pgp','%FORCE_VENDOR_PGP%'),
-('electrum_mpk', '%ELECTRUM_MPK%'),
-('electrum_iteration', '0'),
-('electrum_gap_limit', '10000'),
+('bip32_mpk', '%ELECTRUM_MPK%'),
+('bip32_iteration', '0'),
 ('delete_logs_after', '14'),
 ('entry_payment_vendor', '0'),
 ('entry_payment_buyer', '0'),
@@ -667,6 +699,22 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bw_onchain_requests`
+--
+
+CREATE TABLE IF NOT EXISTS `bw_onchain_requests` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `user_token` varchar(64) NOT NULL,
+  `totp_secret` varchar(50) NOT NULL,
+  `request_type` enum('mpk','sign') NOT NULL,
+  `sign_order_id` int(9) NOT NULL,
+  `user_id` int(9) NOT NULL,
+  `time` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=0 ;
+
+
+--
 -- Table structure for table `bw_orders`
 --
 
@@ -735,22 +783,23 @@ CREATE TABLE IF NOT EXISTS `bw_page_authorization` (
 -- Dumping data for table `bw_page_authorization`
 --
 
-INSERT INTO `bw_page_authorization` (`id`, `auth_level`, `system`, `timeout`, `URI`) VALUES
-(1, 'guestonly', '1', 0, 'login'),
-(2, 'guestonly', '1', 0, 'register'),
-(3, 'login', '1', 0, 'inbox'),
-(4, 'login', '1', 0, 'message'),
-(5, 'login', '1', 0, 'account'),
-(6, 'login', '1', 0, 'user'),
-(7, 'auth|all', '1', 5, 'pgp'),
-(8, 'login', '0', 0, 'home'),
-(9, 'vendor', '1', 0, 'listings'),
-(10, 'login', '1', 0, 'bitcoin'),
-(11, 'admin', '1', 0, 'admin'),
-(12, 'login', '', 0, 'items'),
-(13, 'buyer', '0', 0, 'purchase'),
-(14, 'vendor', '1', 0, 'orders'),
-(15, 'buyer', '0', 0, 'purchases');
+INSERT INTO `bw_page_authorization` (`auth_level`, `system`, `timeout`, `URI`) VALUES
+('guestonly', '1', 0, 'login'),
+('guestonly', '1', 0, 'register'),
+('login', '1', 0, 'inbox'),
+('login', '1', 0, 'message'),
+('login', '1', 0, 'account'),
+('login', '1', 0, 'user'),
+('auth|all', '1', 5, 'pgp'),
+('login', '0', 0, 'home'),
+('login', '0', 0, ''),
+('vendor', '1', 0, 'listings'),
+('login', '1', 0, 'bitcoin'),
+('admin', '1', 0, 'admin'),
+('login', '', 0, 'items'),
+('buyer', '0', 0, 'purchase'),
+('vendor', '1', 0, 'orders'),
+('buyer', '0', 0, 'purchases');
 
 -- --------------------------------------------------------
 
@@ -863,6 +912,17 @@ CREATE TABLE IF NOT EXISTS `bw_transactions_block_cache` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 --
+-- Table structure for table `bw_transactions_broadcast_cache`
+--
+
+CREATE TABLE IF NOT EXISTS `bw_transactions_broadcast_cache` (
+  `id` int(9) NOT NULL AUTO_INCREMENT,
+  `transaction` varchar(1024) NOT NULL,
+  `attempts_remaining` enum('1','2','3','4','5') NOT NULL DEFAULT '2',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+--
 -- Table structure for table `bw_transactions_expected_cache`
 --
 
@@ -913,7 +973,7 @@ CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
 CREATE TABLE IF NOT EXISTS `bw_used_public_keys` (
   `id` int(9) NOT NULL,
   `public_key_sha256` varchar(64) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
@@ -936,6 +996,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
   `private_key_salt` varchar(64) NOT NULL,
   `register_time` int(20) NOT NULL,
   `salt` varchar(128) NOT NULL,
+  `wallet_salt` varchar(128) NOT NULL,
   `user_hash` varchar(25) NOT NULL,
   `user_name` varchar(40) NOT NULL,
   `user_role` enum('Buyer','Vendor','Admin') NOT NULL,

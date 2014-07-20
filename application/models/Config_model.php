@@ -92,7 +92,9 @@ class Config_model extends CI_Model
         return ($this->db->insert('config', $insert) == TRUE) ? TRUE : FALSE;
     }
 
-};
+}
+
+;
 
 /* End of File: Config_Model.php */
 /* Location: application/models/Config_model.php */

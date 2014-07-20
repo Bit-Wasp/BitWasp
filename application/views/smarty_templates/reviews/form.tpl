@@ -85,7 +85,7 @@
                                     <label class="control-label col-xs-2" for="location">Comments</label>
                                     <div class="col-xs-7">
                                         <label class="radio-inline">
-                                            <input type='radio' class='form-control' name='vendor_comments_source' value='prepared' /> Use prepared statements?
+                                            <input type='radio' class='form-control' name='vendor_comments_source' value='prepared' /> Use prepared feedback?
                                         </label>
 
                                         <select name='vendor_prepared_comments' autocomplete='off' class='form-control'>

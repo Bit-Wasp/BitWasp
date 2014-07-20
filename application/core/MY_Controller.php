@@ -17,6 +17,7 @@
 class MY_Controller extends CI_Controller
 {
 
+    public $_partials;
 
     /**
      * constructor
@@ -24,6 +25,65 @@ class MY_Controller extends CI_Controller
     function __construct()
     {
         parent::__construct();
+        $this->_partials = array();
+    }
+
+    public function _partial($view_access_name, $page)
+    {
+        $this->_partials[$view_access_name] = $page;
+    }
+
+    /**
+     * final view codes for showing template
+     */
+    protected function _render($template, $data = NULL)
+    {
+        $this->_template_data_array = $data;
+
+        $info = json_decode($this->session->flashdata('returnMessage'));
+        if (!isset($this->_template_data_array['returnMessage']) && count($info) !== 0 && isset($info->message)) {
+            $this->smarty->assign('returnMessage', $info->message);
+            $this->smarty->assign('success', ((isset($info->success) && $info->success == TRUE)
+                ? TRUE : FALSE));
+        } else {
+            $this->smarty->assign('returnMessage', '');
+            $this->smarty->assign('success', '');
+        }
+
+        $this->_prepare_template();
+
+        $page_title = '';
+        $header_meta = '';
+        if ($data != NULL) {
+            //assigns all data as smarty variables. Reduces smarty assignment in controllers
+            foreach ($this->_template_data_array as $key => $value) {
+                if ($key == 'title') {
+                    $page_title = $value;
+                    continue;
+                } else if ($key == 'header_meta') {
+                    $header_meta = $value;
+                    continue;
+                }
+
+                $this->smarty->assign($key, $value);
+            }
+        }
+
+        $this->smarty->assign('header', array('title' => $page_title,
+            'site_title' => $this->bw_config->site_title,
+            'site_description' => $this->bw_config->site_description,
+            'maintenance_mode' => $this->bw_config->maintenance_mode,
+            'header_meta' => $header_meta));
+
+        $this->smarty->assign('footer', array('price_index' => $this->bw_config->price_index,
+            'exchange_rates' => $this->bw_config->exchange_rates,
+            'currencies' => $this->bw_config->currencies));
+
+        $this->_handle_partials();
+
+        $this->smarty->display('header.tpl');
+        $this->smarty->display($template . ".tpl");
+        $this->smarty->display('footer.tpl');
     }
 
     protected function _prepare_template()
@@ -79,57 +139,6 @@ class MY_Controller extends CI_Controller
     }
 
     /**
-     * final view codes for showing template
-     */
-    protected function _render($template, $data = NULL)
-    {
-        $this->_template_data_array = $data;
-
-        $info = json_decode($this->session->flashdata('returnMessage'));
-        if (!isset($this->_template_data_array['returnMessage']) && count($info) !== 0 && isset($info->message)) {
-            $this->smarty->assign('returnMessage', $info->message);
-            $this->smarty->assign('success', ((isset($info->success) && $info->success == TRUE)
-                ? TRUE : FALSE));
-        } else {
-            $this->smarty->assign('returnMessage', '');
-            $this->smarty->assign('success', '');
-        }
-
-        $this->_prepare_template();
-
-        $page_title = '';
-        $header_meta = '';
-        if ($data != NULL) {
-            //assigns all data as smarty variables. Reduces smarty assignment in controllers
-            foreach ($this->_template_data_array as $key => $value) {
-                if ($key == 'title') {
-                    $page_title = $value;
-                    continue;
-                } else if ($key == 'header_meta') {
-                    $header_meta = $value;
-                    continue;
-                }
-
-                $this->smarty->assign($key, $value);
-            }
-        }
-
-        $this->smarty->assign('header', array('title' => $page_title,
-            'site_title' => $this->bw_config->site_title,
-            'site_description' => $this->bw_config->site_description,
-            'maintenance_mode' => $this->bw_config->maintenance_mode,
-            'header_meta' => $header_meta));
-
-        $this->smarty->assign('footer', array('price_index' => $this->bw_config->price_index,
-            'exchange_rates' => $this->bw_config->exchange_rates,
-            'currencies' => $this->bw_config->currencies));
-
-        $this->smarty->display('header.tpl');
-        $this->smarty->display($template . ".tpl");
-        $this->smarty->display('footer.tpl');
-    }
-
-    /**
      * Menu
      *
      * A recursive function to generate a menu from an array of categories.
@@ -161,7 +170,7 @@ class MY_Controller extends CI_Controller
             $content .= "'>";
 
             // Display link if category contains items.
-            $content .= ($category['count'] == 0) ?  "<a href='#'>{$category['name']}   </a>"  : anchor('category/' . $category['hash'], $category['name'] . ' (' . $category['count'] . ")");
+            $content .= ($category['count'] == 0) ? "<a href='#'>{$category['name']}   </a>" : anchor('category/' . $category['hash'], $category['name'] . ' (' . $category['count'] . ")");
 
             // Check if we need to recurse into children.
             if (isset($category['children']))
@@ -174,5 +183,16 @@ class MY_Controller extends CI_Controller
             $content .= "</ul>\n";
 
         return $content;
+    }
+
+    public function _handle_partials()
+    {
+        // Load partial templates now that preloading is done.
+        if (count($this->_partials) > 0) {
+            foreach ($this->_partials as $variable_name => $page_to_render) {
+                $a = $this->smarty->fetch($page_to_render . ".tpl");
+                $this->smarty->assign($variable_name, $a);
+            }
+        }
     }
 }

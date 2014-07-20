@@ -54,7 +54,7 @@
                     {capture name='t_delete_image_url'}listings/delete_image/{$image.hash}{/capture}
                     <li class="col-md-4 image_box">
                         <div class="thumbnail">
-                            <img class="productImg" src="data:image/jpeg;base64,{$image.encoded}" title="{$item.name|escape:"url"}" width='150' />
+                            <img class="productImg" src="data:image/jpeg;base64,{$image.encoded}" title="{$item.name|escape:"html":"UTF-8"}" width='150' />
                             <div class="caption">
                                 <center>{url type="anchor" url=$smarty.capture.t_main_image_url text="Main Image" attr='class="btn btn-primary"'}
                                 {url type="anchor" url=$smarty.capture.t_delete_image_url text="<i class='icon-trash icon-white'></i>Delete" attr='class="btn btn-danger"'}

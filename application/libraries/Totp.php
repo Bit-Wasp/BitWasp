@@ -7,9 +7,8 @@
  * @copyright 2012 Michael Kliewe
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  * @link http://www.phpgangsta.de/
- * 
+ *
  */
-
 class TOTP
 {
     protected $_codeLength = 6;
@@ -49,7 +48,7 @@ class TOTP
         $secretkey = $this->_base32Decode($secret);
 
         // Pack time into binary string
-        $time = chr(0).chr(0).chr(0).chr(0).pack('N*', $timeSlice);
+        $time = chr(0) . chr(0) . chr(0) . chr(0) . pack('N*', $timeSlice);
         // Hash it with users secret key
         $hm = hash_hmac('SHA1', $time, $secretkey, true);
         // Use last nipple of result as index/offset
@@ -68,30 +67,19 @@ class TOTP
     }
 
     /**
-     * Get QR-Code URL for image, from google charts
-     *
-     * @param string $name
-     * @param string $secret
-     * @return string
-     */
-    public function getQRCodeGoogleUrl($name, $secret) {
-        
-        return 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl='.$urlencoded.'';
-    }
-    
-    /**
      * Print OTP Link
-     * 
-     * Returns an encoded OTPAuth link, suitable for embedding into QR 
+     *
+     * Returns an encoded OTPAuth link, suitable for embedding into QR
      * codes.
-     * 
-     * @param	string	$name
-     * @param	string	$secret
-     * @return	string
+     *
+     * @param    string $name
+     * @param    string $secret
+     * @return    string
      */
-    public function getOTPLink($name, $secret) {
-		return "otpauth://totp/$name?secret=$secret";
-	}
+    public function getOTPLink($name, $secret)
+    {
+        return "otpauth://totp/$name?secret=$secret";
+    }
 
     /**
      * Check if the code is correct. This will accept codes starting from $discrepancy*30sec ago to $discrepancy*30sec from now
@@ -107,7 +95,7 @@ class TOTP
 
         for ($i = -$discrepancy; $i <= $discrepancy; $i++) {
             $calculatedCode = $this->getCode($secret, $currentTimeSlice + $i);
-            if ($calculatedCode == $code ) {
+            if ($calculatedCode == $code) {
                 return true;
             }
         }
@@ -143,14 +131,15 @@ class TOTP
         $paddingCharCount = substr_count($secret, $base32chars[32]);
         $allowedValues = array(6, 4, 3, 1, 0);
         if (!in_array($paddingCharCount, $allowedValues)) return false;
-        for ($i = 0; $i < 4; $i++){
+        for ($i = 0; $i < 4; $i++) {
             if ($paddingCharCount == $allowedValues[$i] &&
-                substr($secret, -($allowedValues[$i])) != str_repeat($base32chars[32], $allowedValues[$i])) return false;
+                substr($secret, -($allowedValues[$i])) != str_repeat($base32chars[32], $allowedValues[$i])
+            ) return false;
         }
-        $secret = str_replace('=','', $secret);
+        $secret = str_replace('=', '', $secret);
         $secret = str_split($secret);
         $binaryString = "";
-        for ($i = 0; $i < count($secret); $i = $i+8) {
+        for ($i = 0; $i < count($secret); $i = $i + 8) {
             $x = "";
             if (!in_array($secret[$i], $base32chars)) return false;
             for ($j = 0; $j < 8; $j++) {
@@ -158,7 +147,7 @@ class TOTP
             }
             $eightBits = str_split($x, 8);
             for ($z = 0; $z < count($eightBits); $z++) {
-                $binaryString .= ( ($y = chr(base_convert($eightBits[$z], 2, 10))) || ord($y) == 48 ) ? $y:"";
+                $binaryString .= (($y = chr(base_convert($eightBits[$z], 2, 10))) || ord($y) == 48) ? $y : "";
             }
         }
         return $binaryString;
@@ -210,7 +199,7 @@ class TOTP
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', // 15
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', // 23
             'Y', 'Z', '2', '3', '4', '5', '6', '7', // 31
-            '='  // padding char
+            '=' // padding char
         );
     }
 }

@@ -11,7 +11,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-2" for="name">Name</label>
                             <div class="col-xs-5">
-                                <input type='text' name='name' id="name" class='form-control' value="{$item.name|escape:"url"}" />
+                                <input type='text' name='name' id="name" class='form-control' value="{$item.name|escape:"html":"UTF-8"}" />
                             </div>
                         </div>
                         <div class="col-xs-10 col-xs-offset-2">{form method="form_error" field="name"}</div>

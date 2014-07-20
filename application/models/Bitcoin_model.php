@@ -2,6 +2,7 @@
 
 use BitWasp\BitcoinLib\BitcoinLib;
 use BitWasp\BitcoinLib\Electrum;
+use BitWasp\BitcoinLib\BIP32;
 
 /**
  * Bitcoin Model
@@ -41,16 +42,46 @@ class Bitcoin_model extends CI_Model
      */
     public function get_fees_address($user_hash, $magic_byte)
     {
-        // Take the next electrum key.
-        $key_data = $this->get_next_key();
-        $address = BitcoinLib::public_key_to_address($key_data['public_key'], $magic_byte);
+        $this->load->model('bip32_model');
+        $key = $this->bip32_model->get_next_admin_child();
+        $address = BitcoinLib::public_key_to_address($key['public_key'], $magic_byte);
 
         // Log electrum usage
-        $this->bitcoin_model->log_key_usage('fees', $this->bw_config->electrum_mpk, $key_data['iteration'], $key_data['public_key'], FALSE, $user_hash);
+        $this->bitcoin_model->log_key_usage('fees', $this->bw_config->bip32_mpk, $key['key_index'], $key['public_key'], FALSE, $user_hash);
         // Add the address to the watch list.
         $this->add_watch_address($address, 'fees');
 
         return $address;
+    }
+
+    /**
+     * Set Payout Address
+     *
+     * @param $user_id
+     * @param $address
+     * @return bool
+     */
+    public function set_payout_address($user_id, $address)
+    {
+        return $this->db->insert('payout_address', array('user_id' => $user_id, 'address' => $address, 'time' => time())) == TRUE;
+    }
+
+    /**
+     * Get Payout Address
+     *
+     * @param $user_id
+     * @return bool
+     */
+    public function get_payout_address($user_id)
+    {
+        $q = $this->db->limit(1)->order_by('time DESC')->get_where('payout_address', array('user_id' => $user_id));
+        if ($q->num_rows() > 0) {
+            $row = $q->row_array();
+            $row['time_f'] = $this->general->format_time($row['time']);
+        } else {
+            $row = FALSE;
+        }
+        return $row;
     }
 
     /**
@@ -60,9 +91,11 @@ class Bitcoin_model extends CI_Model
      * config details.
      *
      * @return    $array
+     * @deprecated
      */
     public function get_next_key()
     {
+        // Deprecated!
         $i = $this->bw_config->electrum_iteration;
         $public_key = Electrum::public_key_from_mpk($this->bw_config->electrum_mpk, $this->bw_config->electrum_iteration, 0, FALSE);
         if ($public_key == FALSE)
@@ -72,6 +105,7 @@ class Bitcoin_model extends CI_Model
         return array('public_key' => $public_key,
             'iteration' => $this->bw_config->electrum_iteration);
     }
+
 
     /**
      * Add Watch Address
@@ -206,7 +240,9 @@ class Bitcoin_model extends CI_Model
         return ($this->db->delete('watched_addresses') == TRUE) ? TRUE : FALSE;
     }
 
-};
+}
+
+;
 
 
 /* End of file: bitcoin_model.php */

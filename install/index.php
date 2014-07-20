@@ -144,15 +144,16 @@ foreach($check as $key => $outcome) {
 			Your installation is now complete, but there are a number of things to do before you go live. <br /><br />
 			
 			<ul>
+                <li><b>You must update your database now</b> by running `php <?php echo $installdir; ?>/index.php db` </li>
 				<li>You can bookmark this page until you are finished. When you are done delete the /install directory.</li><br />
-				
+
 				<li>Edit your bitcoin.conf and crontab entry and remove the # symbols.</li><br />
-				
+
 				<li>Configure tidy URLs?<br />
 				Create a .htaccess file, and ensure your server has AllowOverride set to All.</li><br />
-				
+
 				<li>Set up categories for items<br />Admin Panel -> Items tab -> Edit button</li><br />
-				
+
 				<li>Set up custom locations, if you want to tailor the system to your locality<br />Admin Panel -> Edit -> Custom Locations</li><br />
 
 				<li>Set up fee's to charge for orders.<br />Admin Panel -> Items -> Configure Fees</li><br />
@@ -246,7 +247,7 @@ rpcconnect=127.0.0.1</pre><br />
 					$redir .= "://".$_SERVER['HTTP_HOST'];
 					$redir .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
 					$redir .= '?end';
-					header( 'Location: ' . $redir . '' ) ;
+				    header( 'Location: ' . $redir . '' ) ;
 				}
 
 			}

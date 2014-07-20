@@ -12,7 +12,7 @@
                             <label class="control-label col-xs-4" for="login_timeout">Session Timeout</label>
                             <div class="col-xs-3">
                                 <div class="input-group">
-                                    <input type='text' class='form-control' name='login_timeout' value='{$config.login_timeout|escape:"url"}' />
+                                    <input type='text' class='form-control' name='login_timeout' value='{$config.login_timeout|escape:"HTML":"UTF-8"}' />
                                     <span class="input-group-addon"><i>minutes</i></span>
                                 </div>
                             </div>
@@ -25,7 +25,7 @@
                             <label class="control-label col-xs-4" for="captcha_length">Captcha Length</label>
                             <div class="col-xs-3">
                                 <div class="input-group">
-                                    <input type='text' class='form-control' id='captcha_length' name='captcha_length' value='{$config.captcha_length|escape:"url"}' />
+                                    <input type='text' class='form-control' id='captcha_length' name='captcha_length' value='{$config.captcha_length|escape:"html":"UTF-8"}' />
                                     <span class="input-group-addon"><i>characters</i></span>
                                 </div>
                             </div>
@@ -69,7 +69,7 @@
                             <div class="col-xs-4">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i>{$coin.code}</i></span>
-                                    <input type='text' class='form-control' name='entry_payment_vendor' value='{if $config.entry_payment_vendor > 0}{$config.entry_payment_vendor|escape:"url"}{/if}' />
+                                    <input type='text' class='form-control' name='entry_payment_vendor' value='{if $config.entry_payment_vendor > 0}{$config.entry_payment_vendor|escape:"html":"UTF-8"}{/if}' />
                                 </div>
                             </div>
                             <div class="col-xs-4"><input type='checkbox' name='entry_payment_vendor_disabled'{if $config.entry_payment_vendor == 0} checked {/if} value="1"/> Disabled</div>
@@ -83,7 +83,7 @@
                             <div class="col-xs-4">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i>{$coin.code}</i></span>
-                                    <input type='text' class='form-control' name='entry_payment_buyer' value='{if $config.entry_payment_buyer > 0}{$config.entry_payment_buyer|escape:"url"}{/if}' />
+                                    <input type='text' class='form-control' name='entry_payment_buyer' value='{if $config.entry_payment_buyer > 0}{$config.entry_payment_buyer|escape:"html":"UTF-8"}{/if}' />
                                 </div>
                             </div>
                             <div class="col-xs-4"><input type='checkbox' name='entry_payment_buyer_disabled'{if $config.entry_payment_buyer == 0} checked {/if} value="1"/> Disabled</div>

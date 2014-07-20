@@ -100,8 +100,8 @@ class Items_model extends CI_Model
                 $this->db->where("$key", "$val");
             }
         }
-        if(is_array($joins)){
-            foreach($joins as $join){
+        if (is_array($joins)) {
+            foreach ($joins as $join) {
                 (isset($join['type']))
                     ? $this->db->join($join['table'], $join['on'], $join['type'])
                     : $this->db->join($join['table'], $join['on']);
@@ -136,23 +136,24 @@ class Items_model extends CI_Model
      * @param    int $per_page
      * @return    boolean
      */
-    public function get_list_pages($opt = array(), $start, $per_page, $hidden_allowed = FALSE)
+    public function get_list_pages($opt = array(), $page, $per_page, $hidden_allowed = FALSE)
     {
         $limit = $per_page;
 
-        if(!$hidden_allowed)
-            $this->db->where('hidden','0');
+        if (!$hidden_allowed)
+            $this->db->where('hidden', '0');
 
         $this->db->select('items.id, items.hash, price, vendor_hash, currency, description, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code, (SELECT count(bw_reviews.id)) as review_count')
             ->order_by('add_time DESC')
             ->select_avg('reviews.average_rating')
             ->from('items')
             ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
-            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\'', 'left')
+            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\' AND bw_reviews.timestamp < \'' . time() . '\'', 'left')
             ->group_by('items.id')
-            ->join('images', 'images.hash = items.main_image','left')
-            ->join('currencies', 'currencies.id = items.currency')
-            ->limit($limit, $start);
+            ->join('images', 'images.hash = items.main_image', 'left')
+            ->join('currencies', 'currencies.id = items.currency');
+
+        ($page > 1) ? $this->db->limit($limit, (($page - 1) * $per_page)) : $this->db->limit($limit);
 
         // Add on extra options.
         if (count($opt) > 0) {
@@ -240,7 +241,7 @@ class Items_model extends CI_Model
             ->select_avg('reviews.average_rating')
             ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
             ->join('images', 'images.hash = items.main_image')
-            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\'', 'left')
+            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\' AND bw_reviews.timestamp < \'' . time() . '\'', 'left')
             ->group_by('items.id')
             ->limit(1, 'id desc');
 

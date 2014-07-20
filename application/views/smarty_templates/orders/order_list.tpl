@@ -76,7 +76,7 @@
 
                                     <input type="submit" class="btn btn-default btn-block" name="recount" value="Update" />
                                     <input type="submit" class="btn btn-primary btn-block" name="place_order" value="Confirm" />
-                                    <input type="hidden" name="recount_order__id" value="{$order.id}" />
+                                    <input type="hidden" name="recount_order_id" value="{$order.id}" />
                                     <input type="hidden" name="place_order_id" value="{$order.id}" />
                                 {else}
                                     {url type="anchor" url=$smarty.capture.t_order_details_url text="Details" attr='class="btn btn-primary btn-block"'}
@@ -96,7 +96,7 @@
                                     {url type="anchor" url=$smarty.capture.t_dispute_url text="Raise Dispute" attr='class="btn btn-default btn-block"'}
                                 {/if}
 
-                                {if $order.progress == 5 AND $order.vendor_selected_upfront == TRUE}
+                                {if $current_user.user_role == 'Buyer' AND $order.progress == 5 AND $order.vendor_selected_upfront == TRUE}
                                     <input type="submit" class="btn btn-primary btn-block" name="received_upfront_order" value="Received" />
                                     <input type="hidden" name="received_upfront_order_id" value="{$order.id}" />
                                 {/if}

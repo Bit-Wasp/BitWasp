@@ -34,7 +34,7 @@ class Listings_model extends CI_Model
     public function add($properties)
     {
         $add = $this->db->insert('items', $properties);
-        if($add == TRUE)
+        if ($add == TRUE)
             return $this->db->insert_id();
 
         return FALSE;
@@ -151,7 +151,9 @@ class Listings_model extends CI_Model
         return $this->db->update('items', $changes) == TRUE;
     }
 
-};
+}
+
+;
 
 /* End of file Listings_model.php */
 /* Location: application/models/Listings_model.php */

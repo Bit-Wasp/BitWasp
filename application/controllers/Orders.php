@@ -47,6 +47,7 @@ class Orders extends MY_Controller
         $this->coin = $this->bw_config->currencies[0];
     }
 
+
     /**
      * Vendor Orders
      * User Role: Vendor
@@ -113,7 +114,11 @@ class Orders extends MY_Controller
         }
 
         $this->load->model('review_model');
-        $data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
+        $this->load->model('bip32_model');
+
+        $data['vendor_public_key'] = $this->bip32_model->get_next_bip32_child($this->current_user->user_id);
+        $data['vendor_payout'] = $this->bitcoin_model->get_payout_address($this->current_user->user_id);
+
         $data['fees']['shipping_cost'] = number_format($data['order']['shipping_costs'], 8);
         $data['fees']['fee'] = number_format($data['order']['fees'], 8);
 
@@ -129,18 +134,20 @@ class Orders extends MY_Controller
 
         if ($this->input->post('vendor_accept_order') == 'Accept Order') {
             if ($this->form_validation->run('submit_vendor_accept_order') == TRUE) {
-                if($data['order']['id'] !== $this->input->post('vendor_accept_order_id')){
+                if ($data['order']['id'] !== $this->input->post('vendor_accept_order_id')) {
                     $data['returnMessage'] = 'An error occured during form submission.';
-                } else if ($data['available_public_keys'] == FALSE) {
-                    $data['returnMessage'] = 'You have no available public keys to use in this order!';
+                } else if ($data['vendor_public_key'] == FALSE) {
+                    $data['returnMessage'] = 'You have not set up public keys for orders, ' . anchor('bip32', 'click here to do so now!');
+                } else if ($data['vendor_payout'] == FALSE) {
+                    $data['returnMessage'] = 'You have not set up a payout address for your earnings, ' . anchor('accounts/payout', 'click here to do so now!');
                 } else {
-                    $accept_details = array('vendor_public_keys' => $data['available_public_keys'],
+
+                    $vendor_accept = $this->order_model->vendor_accept_order(array('vendor_public_key' => $data['vendor_public_key'],
                         'order_type' => $data['order_type'],
                         'order' => $data['order'],
                         'initiating_user' => 'vendor',
-                        'update_fields' => array());
-
-                    $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
+                        'update_fields' => array('vendor_payout' => $data['vendor_payout']['address'])
+                    ));
 
                     if ($vendor_accept == TRUE) {
                         redirect('orders');
@@ -153,56 +160,6 @@ class Orders extends MY_Controller
 
         $data['title'] = 'Accept Order #' . $data['order']['id'];
         $data['page'] = 'orders/vendor_accept';
-        $this->_render($data['page'], $data);
-    }
-
-    /**
-     * Vendor Finalize Early
-     *
-     * This controller allows a vendor who is trusted to request early
-     * finalization of an escrow order.
-     *
-     * @param        int $order_id
-     */
-    public function vendor_finalize_early($order_id)
-    {
-        $data['order'] = $this->order_model->load_order($order_id, array('4'));
-        if ($data['order'] == FALSE)
-            redirect('orders');
-
-        $this->load->model('review_model');
-
-        if ($this->review_model->decide_trusted_user($data['order'], 'vendor') == FALSE
-            OR $data['order']['vendor_selected_upfront'] == '1') {
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to finalize this order early!')));
-            redirect('orders/details/' . $data['order']['id']);
-        }
-
-        $this->form_validation->set_rules('upfront', '', 'check_bool_areyousure');
-
-        if ($this->input->post('request_FE') == 'Continue') {
-            if ($this->form_validation->run() == TRUE) {
-                if ($this->input->post('upfront') == '0') {
-                    redirect('orders/details/' . $data['order']['id']);
-                } else {
-                    $update = array('progress' => '3',
-                        'vendor_selected_upfront_time' => time(),
-                        'vendor_selected_upfront' => '1',
-                        'partially_signed_transaction' => '',
-                        'partially_signed_time' => '',
-                        'partially_signing_user_id' => '');
-                    if ($this->order_model->update_order($data['order']['id'], $update) == TRUE) {
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You have requested to finalize the order early.')));
-                        redirect('orders/details/' . $data['order']['id']);
-                    } else {
-                        $data['returnMessage'] = 'An error occured processing your request.';
-                    }
-                }
-            }
-        }
-
-        $data['page'] = 'orders/vendor_finalize_early';
-        $data['title'] = 'Request Early Finalization';
         $this->_render($data['page'], $data);
     }
 
@@ -243,8 +200,7 @@ class Orders extends MY_Controller
 
                     $tx_outs = array();
                     // Add outputs for the sites fee, buyer, and vendor.
-                    $buyer_address = BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->coin['crypto_magic_byte']);
-                    $tx_outs[$buyer_address] = (float)$data['order']['total_paid'] - 0.0001;
+                    $tx_outs[$data['order']['buyer_payout']] = (float)$data['order']['total_paid'] - 0.0001;
 
                     $create_spend_transaction = $this->order_model->create_spend_transaction($data['order']['address'], $tx_outs, $data['order']['redeemScript']);
                     if ($create_spend_transaction == TRUE) {
@@ -280,8 +236,8 @@ class Orders extends MY_Controller
      */
     public function buyer_confirm($id)
     {
-
         $this->load->model('bitcoin_model');
+        $this->load->model('bip32_model');
         $this->load->model('fees_model');
         $this->load->model('shipping_costs_model');
         $this->load->model('review_model');
@@ -299,88 +255,133 @@ class Orders extends MY_Controller
         $data['fees']['total'] = number_format($data['fees']['shipping_cost'] + $data['fees']['fee'], 8);
         $data['total'] = number_format($data['order']['price'] + $data['fees']['total'], 8);
 
-        $data['vendor_public_keys'] = $this->accounts_model->bitcoin_public_keys($data['order']['vendor']['id']);
+        $data['public_key'] = $this->bip32_model->get_next_bip32_child($this->current_user->user_id);
+        $data['buyer_payout'] = $this->bitcoin_model->get_payout_address($data['order']['buyer']['id']);
+
+        $data['vendor_payout'] = $this->bitcoin_model->get_payout_address($data['order']['vendor']['id']);
+        $data['vendor_bip32_key'] = $this->bip32_model->get($data['order']['vendor']['id']);
         $data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
         $data['request_upfront'] = $this->order_model->requested_order_type($data['order']);
         $data['order_type'] = ($data['trusted_vendor'] && $data['request_upfront'] == 'upfront') ? 'upfront' : 'escrow';
 
         if ($this->form_validation->run('order_place') == TRUE) {
-            $continue = FALSE;
+            if ($data['public_key'] == FALSE) {
+                $data['returnMessage'] = 'You have no public keys available, ' . anchor('bip32', 'click here to get set up!');
+            } else {
+                $continue = FALSE;
 
-            if ($data['order']['vendor']['block_non_pgp'] == '1') {
-                $this->form_validation->set_rules("buyer_address", "Your address", 'check_pgp_encrypted');
+                if ($data['order']['vendor']['block_non_pgp'] == '1')
+                    $this->form_validation->set_rules("buyer_address", "Your address", 'check_pgp_encrypted');
 
+                if ($data['buyer_payout'] == FALSE) {
+                    $this->form_validation->set_rules("buyer_payout", "refund address", 'required|check_bitcoin_address');
+                    $this->form_validation->set_rules("password", "password", 'required');
+                }
+
+                // Validation rules will always pass if neither the above cases are true
+                // Otherwise, it's an opportunity to catch errors for these cases
                 if ($this->form_validation->run() == TRUE)
                     $continue = TRUE;
-            } else {
-                $continue = TRUE;
-            }
 
-
-            if ($continue == TRUE) {
-                // If the vendor has public keys, allow the order address to be created immediately.
-
-                if ($data['vendor_public_keys'] !== FALSE) {
-                    $accept_details = array('vendor_public_keys' => $data['vendor_public_keys'],
-                        'order_type' => $data['order_type'],
-                        'order' => $data['order'],
-                        'initiating_user' => 'buyer',
-                        'update_fields' => array(
-                            'price' => $data['order']['price'],
-                            'fees' => $data['fees']['fee'],
-                            'confirmed_time' => time(),
-                            'buyer_public_key' => $this->input->post('bitcoin_public_key'),
-                            'shipping_costs' => $data['fees']['shipping_cost']
-                        ));
-
-                    $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
-
-                    if ($vendor_accept == TRUE) {
-                        $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
-                        $message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
-                        for ($i = 0; $i < count($data['order']['items']); $i++) {
-                            $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+                if ($continue == TRUE) {
+                    if ($data['buyer_payout'] == FALSE) {
+                        // If buyer_payout is false, check password, add payout address, and drop in.
+                        $this->load->model('users_model');
+                        $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+                        $check_login = $this->users_model->check_password($this->current_user->user_name, $this->general->password($this->input->post('password'), $user_info['salt']));
+                        if ($check_login !== FALSE && $check_login['id'] == $this->current_user->user_id) {
+                            $this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('buyer_payout'));
+                            $buyer_payout = $this->input->post('buyer_payout');
+                        } else {
+                            $data['returnMessage'] = '';
                         }
-                        $message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n" . $this->input->post('buyer_address');
-                        $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
-
-                        redirect('purchases');
-                    } else if (is_string($vendor_accept) == TRUE) {
-                        $data['returnMessage'] = $vendor_accept;
-                    }
-                } else {
-                    // Eventually this will be deprecated as BIP0032 will ensure you have a key.
-                    // No public keys available, so just submit to the vendor for approval.
-                    $this->order_model->set_user_public_key($id, 'buyer', $this->input->post('bitcoin_public_key'));
-
-                    $update = array('price' => $data['order']['price'],
-                        'fees' => $data['fees']['fee'],
-                        'confirmed_time' => time(),
-                        'shipping_costs' => $data['fees']['shipping_cost']);
-
-                    // Simply progress order from step 0 to step 1.
-                    if ($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE) {
-                        $data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
                     } else {
-                        // Send message to vendor
-                        $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
-                        $message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
-                        for ($i = 0; $i < count($data['order']['items']); $i++) {
-                            $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+                        // Otherwise, take current payout address
+                        $buyer_payout = $data['buyer_payout']['address'];
+                    }
+
+                    // Buyer payout must be known.
+                    if (isset($buyer_payout)) {
+                        $insert_buyerkey = $this->bip32_model->add_child_key(array(
+                            'user_id' => $this->current_user->user_id,
+                            'user_role' => $this->current_user->user_role,
+                            'order_id' => $data['order']['id'],
+                            'order_hash' => '',
+                            'parent_extended_public_key' => $data['public_key']['parent_extended_public_key'],
+                            'provider' => $data['public_key']['provider'],
+                            'extended_public_key' => $data['public_key']['extended_public_key'],
+                            'public_key' => $data['public_key']['public_key'],
+                            'key_index' => $data['public_key']['key_index']
+                        ));
+                        // If the vendor has public keys, allow the order address to be created immediately.
+
+                        if ($data['vendor_bip32_key'] !== FALSE AND $data['vendor_payout'] !== FALSE) {
+                            $vendor_public_key = $this->bip32_model->get_next_bip32_child($data['order']['vendor']['id']);
+                            $accept_details = array('vendor_public_key' => $vendor_public_key,
+                                'buyer_public_key' => $insert_buyerkey,
+                                'order_type' => $data['order_type'],
+                                'order' => $data['order'],
+                                'initiating_user' => 'buyer',
+                                'update_fields' => array(
+                                    'price' => $data['order']['price'],
+                                    'fees' => $data['fees']['fee'],
+                                    'confirmed_time' => time(),
+                                    'buyer_public_key' => $insert_buyerkey['id'],
+                                    'vendor_payout' => $data['vendor_payout']['address'],
+                                    'buyer_payout' => $buyer_payout,
+                                    'shipping_costs' => $data['fees']['shipping_cost']
+                                )
+                            );
+
+                            $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
+
+                            if ($vendor_accept == TRUE) {
+                                $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
+                                $message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
+                                for ($i = 0; $i < count($data['order']['items']); $i++) {
+                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+                                }
+                                $message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n" . $this->input->post('buyer_address');
+                                $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
+                                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
+
+                                redirect('purchases');
+                            } else if (is_string($vendor_accept) == TRUE) {
+                                $data['returnMessage'] = $vendor_accept;
+                            }
+                        } else {
+                            // Vendor has no bip32 keys or payout address.
+                            $this->order_model->set_user_public_key($id, 'buyer', $insert_buyerkey['id']);
+
+                            $update = array('price' => $data['order']['price'],
+                                'fees' => $data['fees']['fee'],
+                                'confirmed_time' => time(),
+                                'buyer_payout' => $buyer_payout,
+                                'shipping_costs' => $data['fees']['shipping_cost']);
+
+                            // Simply progress order from step 0 to step 1.
+                            if ($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE) {
+                                $data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
+                            } else {
+                                // Send message to vendor
+                                $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
+                                $message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
+                                for ($i = 0; $i < count($data['order']['items']); $i++) {
+                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+                                }
+                                $message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n" . $this->input->post('buyer_address');
+                                $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
+
+                                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
+
+                                redirect('purchases');
+                            }
                         }
-                        $message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n" . $this->input->post('buyer_address');
-                        $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
-
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
-
-                        redirect('purchases');
                     }
                 }
             }
         }
 
-        $data['orders'] = $this->order_model->buyer_orders();
         $this->_render($data['page'], $data);
     }
 
@@ -431,7 +432,7 @@ class Orders extends MY_Controller
                 } else {
                     // Already have order, update it
                     if ($order['progress'] == '0') {
-                        $update = array('item_hash' => $item_hash,
+                        $update = array('item_hash' => $item_info['hash'],
                             'quantity' => '1');
                         $res = $this->order_model->update_items($order['id'], $update);
                         $message = (($res == TRUE) ? 'Your order has been updated.' : 'Unable to update your order at this time.');
@@ -454,10 +455,10 @@ class Orders extends MY_Controller
                 ? 'submit_buyer_order_recount'
                 : 'submit_buyer_order_place';
 
-            if($this->form_validation->run($rule) == TRUE) {
+            if ($this->form_validation->run($rule) == TRUE) {
                 $id = ($submission == 'recount')
-                                ? $this->input->post('recount_order_id')
-                                : $this->input->post('place_order_id');
+                    ? $this->input->post('recount_order_id')
+                    : $this->input->post('place_order_id');
 
                 // If the order cannot be loaded (progress == 0), redirect to Purchases page.
                 $current_order = $this->order_model->load_order($id, array('0'));
@@ -487,26 +488,26 @@ class Orders extends MY_Controller
         }
 
         // Cancel order at progress 1.
-        if($this->input->post('cancel_order') == 'Cancel') {
-            if($this->form_validation->run('submit_buyer_cancel_order') == TRUE) {
+        if ($this->input->post('cancel_order') == 'Cancel') {
+            if ($this->form_validation->run('submit_buyer_cancel_order') == TRUE) {
                 $current_order = $this->order_model->load_order($this->input->post('order_cancel_id'), array('1'));
-                if ($current_order == FALSE){
-                    $this->current_user->set_return_message('Order could not be found.',FALSE);
+                if ($current_order == FALSE) {
+                    $this->current_user->set_return_message('Order could not be found.', FALSE);
                     redirect('purchases');
                 }
 
-                if ($this->order_model->buyer_cancel($this->input->post('order_cancel_id')) == TRUE){
-                    $this->current_user->set_return_message('This order has been cancelled.',FALSE);
+                if ($this->order_model->buyer_cancel($this->input->post('order_cancel_id')) == TRUE) {
+                    $this->current_user->set_return_message('This order has been cancelled.', FALSE);
                     redirect('purchases');
                 }
             }
         }
 
         // Handle received upfront order
-        if($this->input->post('received_upfront_order') == 'Received') {
-            if($this->form_validation->run('submit_buyer_received_upfront_order') == TRUE) {
+        if ($this->input->post('received_upfront_order') == 'Received') {
+            if ($this->form_validation->run('submit_buyer_received_upfront_order') == TRUE) {
                 $current_order = $this->order_model->load_order($this->input->post('received_upfront_order_id'), array('5'));
-                if ($current_order == FALSE){
+                if ($current_order == FALSE) {
                     $this->current_user->set_return_message('That order could not be found!', FALSE);
                     redirect('purchases');
                 }
@@ -517,7 +518,7 @@ class Orders extends MY_Controller
                     redirect('purchases');
                 }
 
-                if ($this->order_model->progress_order($this->input->post('received_upfront_order_id'), '5', '7', array('received_time' => time(), 'time'=>time())) == TRUE) {
+                if ($this->order_model->progress_order($this->input->post('received_upfront_order_id'), '5', '7', array('received_time' => time(), 'time' => time())) == TRUE) {
                     $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been marked as received. Please leave feedback for this user!')));
                     redirect('purchases');
                 }
@@ -613,6 +614,19 @@ class Orders extends MY_Controller
         } else {
             $data['form'] = FALSE;
 
+            // Allow buyer to submit refund address
+            if ($this->current_user->user_role == 'Buyer' AND $data['current_order']['buyer_payout'] == NULL) {
+                if ($this->input->post('submit_dispute_refund_address') == 'Submit') {
+                    if ($this->form_validation->run('submit_dispute_refund_address') == TRUE) {
+                        $update = $this->order_model->update_order($data['current_order']['id'], array('buyer_payout' => $this->input->post('refund_address')));
+                        if ($update) {
+                            $this->current_user->set_return_message('Your refund address has been set.', TRUE);
+                            redirect($data['dispute_page']);
+                        }
+                    }
+                }
+            }
+
             // If the message is updated:
 
             if ($data['dispute']['final_response'] == '0' && $this->input->post('post_dispute_message') == 'Post Message') {
@@ -676,94 +690,169 @@ class Orders extends MY_Controller
         }
 
         $this->load->model('transaction_cache_model');
+        $this->load->model('bip32_model');
         $this->load->model('review_model');
 
-        $data['display_form'] = FALSE;
+        $child_key_id = $data['order'][(strtolower($this->current_user->user_role) . '_public_key')];
+        $data['my_multisig_key'] = $this->bip32_model->get_child_key($child_key_id);
+        $data['wallet_salt'] = $this->users_model->wallet_salt($this->current_user->user_id);
 
-        // This block works out if the 'input partially signed transaction'
-        // form should be displayed. This happens if the partially signed
-        // transaction is unset, and any of the following is true:
-        // - The order is progress 3, and the user is the buyer
-        // - The order is progress 4, escrow, and the role is the vendor.
-        // - The order has been disputed, and anyone may sign.
-        $data['display_form'] = (($data['order']['partially_signed_transaction'] == '' AND $data['order']['unsigned_transaction'] != '')
-            AND ($data['order']['progress'] == '3' AND $this->current_user->user_role == 'Buyer'
-                OR $data['order']['progress'] == '4' AND $data['order']['vendor_selected_escrow'] == '1' AND $this->current_user->user_role == 'Vendor'
-                OR $data['order']['progress'] == '6'
-                OR $data['order']['progress'] == '8'));
+        $this->load->library('bw_bitcoin');
+        $html = $this->bw_bitcoin->js_html($data['order']['redeemScript'], $data['order']['unsigned_transaction']);
 
-        if ($data['order']['partially_signed_transaction'] == '' && $data['order']['unsigned_transaction'] !== '')
-            if ($data['order']['progress'] == '3' && $this->current_user->user_role == 'Buyer'
-                || $data['order']['progress'] == '4' && $data['order']['vendor_selected_escrow'] == '1' && $this->current_user->user_role == 'Vendor'
-                || $data['order']['progress'] == '6'
-                || $data['order']['progress'] == '8'
-            )
-                $data['display_form'] = TRUE;
+        if (is_array($data['my_multisig_key'])) {
 
-        // Only allow access to the form handling script if the form is allowed to be displayed.
-        if ($data['display_form'] == TRUE && $this->input->post('submit_signed_transaction') == 'Submit Transaction') {
-            if ($this->form_validation->run('input_transaction') == TRUE) {
-                $validate = RawTransaction::validate_signed_transaction($this->input->post('partially_signed_transaction'), $data['order']['json_inputs']);
+            $data['signing_info'] = array(
+                'parent_extended_public_key' => $data['my_multisig_key']['parent_extended_public_key'],
+                'extended_public_key' => $data['my_multisig_key']['extended_public_key'],
+                'bip32_provider' => $data['my_multisig_key']['provider'],
+                'full_key_index' => "m/0'/0/" . $data['my_multisig_key']['key_index'],
+                'key_index' => "m/0'/0/" . $data['my_multisig_key']['key_index'],
+                'public_key' => $data['my_multisig_key']['public_key'],
+                'partially_signed_transaction' => $data['order']['partially_signed_transaction'],
+                'unsigned_transaction' => $data['order']['unsigned_transaction'],
+                'wallet_salt' => $data['wallet_salt'],
+                'crafted_html' => $html
+            );
+            $ident = strtolower($data['my_multisig_key']['provider']);
+            $this->_partial("sign_form_output", "orders/details_form_" . $ident);
+            if ($ident == 'js') {
+                $data['header_meta'] = $this->load->view('orders/add_signature_js', $data['signing_info'], TRUE);
+                $this->load->model('users_model');
 
-                if ($validate == FALSE) {
-                    $data['invalid_transaction_error'] = 'Enter a valid partially signed transaction.';
-                } else {
-                    $decode = RawTransaction::decode($this->input->post('partially_signed_transaction'));
-                    // Check that the outputs are acceptable.
-                    $check = $this->transaction_cache_model->check_if_expected_spend($decode['vout']);
-                    // $check will contain the order address if the vouts
-                    // lead to the same unique hash we store when generating the transaction.
-                    if ($check == $data['order']['address']) {
-                        if ($data['order']['progress'] == '3') {
-                            // Buyer must sign early before vendor dispatches.
-                            $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
-                                'partially_signing_user_id' => $this->current_user->user_id,
-                                'partially_signed_time' => time());
-                            $this->order_model->progress_order($order_id, '3', '4', $update);
-                        } else if ($data['order']['progress'] == '4') {
-                            // Vendor indicates they have dispatched.
-                            $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
-                                'partially_signing_user_id' => $this->current_user->user_id,
-                                'partially_signed_time' => time(),
-                                'dispatched_time' => time(),
-                                'dispatched' => '1');
-                            $this->order_model->progress_order($order_id, '4', '5', $update);
-                        } else if ($data['order']['progress'] == '6') {
-                            $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
-                                'partially_signing_user_id' => $this->current_user->user_id,
-                                'partially_signed_time' => time());
-                            $this->order_model->update_order($order_id, $update);
-                        } else if ($data['order']['progress'] == '8') {
-                            $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
-                                'partially_signing_user_id' => $this->current_user->user_id,
-                                'partially_signed_time' => time());
-                            $this->order_model->update_order($order_id, $update);
-                        }
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your partially signed transaction has been saved!')));
-                        redirect($data['action_page']);
-                    } else {
-                        $data['invalid_transaction_error'] = 'This transaction is invalid.';
-                    }
-                }
+            } elseif ($ident == 'onchain') {
+                $this->load->library('onchainlib');
+                $tx_crc = substr(hash('sha256', (($data['order']['partially_signed_transaction'] == '') ? $data['order']['unsigned_transaction'] : $data['order']['partially_signed_transaction'])), 0, 8);
+                $data['onchain_sign'] = $this->onchainlib->sign_request($data['order']['id'], $tx_crc);
+
             }
         }
 
         // Only allow a vendor to refund, if the progress is either 3 or 4 (not yet dispatched)
         $data['can_refund'] = ($this->current_user->user_role == 'Vendor'
             AND in_array($data['order']['progress'], array('3', '4')));
-        // Only allow a vendor to finalize early, if they are trusted (given admins definition),
-        // if the progress is 4 (awaiting dispatch), and the order was initially escrow,
-        // and they haven't already asked for the order to be finalized early.
-        $data['can_finalize_early'] = ($this->current_user->user_role == 'Vendor'
-            AND $this->review_model->decide_trusted_user($data['order'], 'vendor') == TRUE
-            AND $data['order']['progress'] == '4'
-            AND $data['order']['vendor_selected_escrow'] !== '0'
-            AND $data['order']['vendor_selected_upfront'] == '0'
+
+        $data['display_sign_form'] = (bool)(
+            // Order type upfront, and progress=3,role=Buyer, or progress=4,role=Vendor, allow user to sign.
+            (($data['order']['vendor_selected_upfront'] == '1' OR $data['order']['vendor_selected_escrow'] == '0') AND
+                ($data['order']['progress'] == '3' && $this->current_user->user_role == 'Buyer')
+                OR ($data['order']['progress'] == '4' && $this->current_user->user_role == 'Vendor'))
+            // Order type escrow, progress=4,role=Vendor, or progress=5,role=Buyer, allow user to sign.
+            OR ($data['order']['vendor_selected_escrow'] == '1' AND $data['order']['vendor_selected_upfront'] == '0' AND
+                ($data['order']['progress'] == '4' && $this->current_user->user_role == 'Vendor')
+                OR ($data['order']['progress'] == '5' && $this->current_user->user_role == 'Buyer'))
+            // Order disputed. Tx unsigned, or partially signing user was not current user.
+            OR ($data['order']['progress'] == '6' AND
+                ($data['order']['partially_signed_transaction'] == '')
+                OR ($data['order']['partially_signed_transaction'] !== '' AND $data['order']['partially_signing_user_id'] !== $this->current_user->user_id))
+            // Order refunded. Tx unsigned, or partially signing user was not current user.
+            OR ($data['order']['progress'] == '8' AND
+                ($data['order']['partially_signed_transaction'] == '')
+                OR ($data['order']['partially_signed_transaction'] !== '' AND $data['order']['partially_signing_user_id'] !== $this->current_user->user_id))
         );
 
-        $data['addrs'] = array(BitcoinLib::public_key_to_address($data['order']['buyer_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']) => 'buyer',
-            BitcoinLib::public_key_to_address($data['order']['vendor_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']) => 'vendor',
-            BitcoinLib::public_key_to_address($data['order']['admin_public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']) => 'admin');
+        $data['display_sign_msg'] = ($data['order']['partially_signed_transaction'] == '') ? 'Please add first signature.' : 'Please sign to complete transaction.';
+
+        // Only allow access to the form handling script if the form is allowed to be displayed.
+        if ($data['display_sign_form'] == TRUE) {
+            // JS
+            if ($this->input->post('submit_js_signed_transaction') == 'Submit Transaction') {
+
+                if ($this->form_validation->run('submit_js_signed_transaction') == TRUE) {
+                    $check = $this->bw_bitcoin->handle_order_tx_submission($data['order'], $this->input->post('js_transaction'), $data['my_multisig_key']);
+
+                    if (is_string($check)) {
+                        $data['invalid_transaction_error'] = $check;
+                    } else if ($check == TRUE) {
+                        if (strlen($data['order']['partially_signed_transaction']) > 0) {
+                            $this->current_user->set_return_message('The transaction has been broadcast, and will be displayed here once confirmed!');
+                            redirect($data['action_page']);
+                        } else {
+
+                            if ($data['order']['progress'] == '3') {
+                                // Buyer must sign early before vendor dispatches.
+                                $update = array('partially_signed_transaction' => $this->input->post('js_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time());
+                                $this->order_model->progress_order($order_id, '3', '4', $update);
+                            } else if ($data['order']['progress'] == '4') {
+                                // Vendor indicates they have dispatched.
+                                $update = array('partially_signed_transaction' => $this->input->post('js_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time(),
+                                    'dispatched_time' => time(),
+                                    'dispatched' => '1');
+                                $this->order_model->progress_order($order_id, '4', '5', $update);
+                            } else if ($data['order']['progress'] == '6') {
+                                $update = array('partially_signed_transaction' => $this->input->post('js_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time());
+                                $this->order_model->update_order($order_id, $update);
+                            } else if ($data['order']['progress'] == '8') {
+                                $update = array('partially_signed_transaction' => $this->input->post('js_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time());
+                                $this->order_model->update_order($order_id, $update);
+                            }
+                            $this->current_user->set_return_message('Your partially signed transaction has been saved!', TRUE);
+                            redirect($data['action_page']);
+                        }
+                    }
+                }
+            }
+
+            // Manual
+            if ($this->input->post('submit_signed_transaction') == 'Submit Transaction') {
+                if ($this->form_validation->run('input_transaction') == TRUE) {
+                    $validate = $this->bw_bitcoin->handle_order_tx_submission($data['order'], $this->input->post('partially_signed_transaction'), $data['my_multisig_key']);
+
+                    if (is_string($validate)) {
+                        $data['invalid_transaction_error'] = $validate;
+                    } else if ($validate == TRUE) {
+                        if (strlen($data['order']['partially_signed_transaction']) > 0) {
+                            $this->current_user->set_return_message('The transaction has been broadcast, and will be displayed here once confirmed!');
+                            redirect($data['action_page']);
+                        } else {
+                            if ($data['order']['progress'] == '3') {
+                                // Buyer must sign early before vendor dispatches.
+                                $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time());
+                                $this->order_model->progress_order($order_id, '3', '4', $update);
+                            } else if ($data['order']['progress'] == '4') {
+                                // Vendor indicates they have dispatched.
+                                $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time(),
+                                    'dispatched_time' => time(),
+                                    'dispatched' => '1');
+                                $this->order_model->progress_order($order_id, '4', '5', $update);
+                            } else if ($data['order']['progress'] == '6') {
+                                $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time());
+                                $this->order_model->update_order($order_id, $update);
+                            } else if ($data['order']['progress'] == '8') {
+                                $update = array('partially_signed_transaction' => $this->input->post('partially_signed_transaction'),
+                                    'partially_signing_user_id' => $this->current_user->user_id,
+                                    'partially_signed_time' => time());
+                                $this->order_model->update_order($order_id, $update);
+                            }
+                            $this->current_user->set_return_message('Your partially signed transaction has been saved!', TRUE);
+
+                            redirect($data['action_page']);
+                        }
+                    }
+                }
+            }
+        }
+
+        $data['redeem_script'] = RawTransaction::decode_redeem_script($data['order']['redeemScript']);
+
+        $data['addrs'] = array($data['order']['buyer_payout'] => 'buyer',
+            $data['order']['vendor_payout'] => 'vendor');
+        if (isset($data['order']['public_keys']['admin']))
+            $data['addrs'][(BitcoinLib::public_key_to_address($data['order']['public_keys']['admin']['public_key'], $this->bw_config->currencies[0]['crypto_magic_byte']))] = 'admin';
 
         if (strlen($data['order']['partially_signed_transaction']) > 0) {
             $data['raw_tx'] = RawTransaction::decode($data['order']['partially_signed_transaction']);
@@ -796,12 +885,11 @@ class Orders extends MY_Controller
         }
         $data['page'] = 'orders/details';
         $data['title'] = 'Order Details: #' . $data['order']['id'];
+
         $this->_render($data['page'], $data);
     }
 
-}
-
-;
+};
 
 /* End of File: Orders.php */
 /* Location: application/controllers/orders.php */

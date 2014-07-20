@@ -11,7 +11,7 @@
                     <div class="row">
                         <div class="col-md-9 btn-group">
                             <h2>
-                            {if $current_user.logged_in == TRUE}
+                            {if $current_user.logged_in == TRUE AND $current_user.user_id !== $user.id}
                             {url type="anchor" url=$smarty.capture.t_message_user_url text="Message" attr='class="btn btn-default"'}
                             {/if}
                             {if $current_user.user_role == 'Admin' && $user.user_role !== 'Admin'}
@@ -49,7 +49,6 @@
                     </div>
 
                     {if $reviews == TRUE}
-
                         <div class="well" style="background:white;">
                             <legend>Recent Reviews</legend>
                             {capture name='t_user_all_reviews_url'}reviews/view/user/{$user.user_hash}{/capture}
@@ -72,21 +71,13 @@
                                         <div class="col-md-6">
                                             {foreach from=$review.rating key=quality item=rating}
                                                 <div class="col-md-12">
-                                                    <div class="col-md-7">
-                                                        {ucfirst($quality)}
-                                                    </div>
-                                                    <div class="col-md-5">
-                                                        {for $var1=1 to $rating}<span class="glyphicon glyphicon-star"></span>{/for}{for $var=$var1 to 5}<span class="glyphicon glyphicon-star-empty"></span>{/for}
-                                                    </div>
+                                                    <div class="col-md-7">{ucfirst($quality)}</div>
+                                                    <div class="col-md-5">{rating rating=$rating}</div>
                                                 </div>
                                             {/foreach}
                                             <div class="col-md-12">
-                                                <div class="col-md-7">
-                                                    Average
-                                                </div>
-                                                <div class="col-md-5">
-                                                    {for $var1=1 to $review.average_rating}<span class="glyphicon glyphicon-star"></span>{/for}{for $var=$var1 to 5}<span class="glyphicon glyphicon-star-empty"></span>{/for}
-                                                </div>
+                                                <div class="col-md-7">Average</div>
+                                                <div class="col-md-5">{rating rating=$review.average_rating}</div>
                                             </div>
                                         </div>
                                         <div class="col-md-6"></div>
@@ -103,18 +94,14 @@
                     <div class='well' style="background:white">
                         <legend>Latest Listings</legend>
                         {$c = 0}
+                        {$last = count($items)-1}
                         {foreach from=$items item=item}
                         {capture name="t_item_url"}item/{$item.hash}{/capture}
-                        {$cal = $c++%4}
-                        {if $cal == 0}
-                            <div class="row">
-                                <div class='col-xs-3'>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=""}</div>
-                        {elseif $cal == 3}
-                                <div class='col-xs-3'>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=""}</div>
-                            </div>
-                        {else}
-                                <div class='col-xs-3'>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=""}</div>
-                        {/if}
+                            {$cal = $c%4}
+                        {if $cal == 0}<div class="row">{/if}
+                        <div class='col-xs-3'>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=""}</div>
+                        {if $cal == 3 OR $c == $last }</div>{/if}
+                            {$c = $c+1}
                         {/foreach}
                     </div>
                     {/if}
