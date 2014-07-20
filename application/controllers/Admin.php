@@ -178,8 +178,7 @@ class Admin extends MY_Controller
                 }
             }
 
-            if (!isset($data['proxy_error'])) {
-
+            if (isset($changes)) {
                 if (count($changes) > 0 && $this->config_model->update($changes) == TRUE) {
                     $log = $this->admin_model->format_config_changes($changes);
                     $this->logs_model->add('Admin: General Panel', 'General site configuration updated', 'The general configuration of the site has been updated:<br />' . $log, 'Info');
@@ -328,7 +327,7 @@ class Admin extends MY_Controller
 
         // If the Settings form was submitted:
         if ($this->input->post('submit_edit_bitcoin') == 'Update') {
-            if ($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
+                if ($this->form_validation->run('admin_edit_bitcoin') == TRUE) {
                 $changes = array();
                 // Check if the selection exists.
                 if ($data['price_index'] != $this->input->post('price_index')) {
@@ -342,27 +341,27 @@ class Admin extends MY_Controller
                         if ($this->input->post('price_index') !== 'Disabled') {
                             // If the price index was previously disabled, set the auto-run script interval back up..
                             if ($data['price_index'] == 'Disabled')
-                                $this->autorun_model->set_autorun_interval('price_index', '15');
+                                $this->autorun_model->set_interval('price_index', '15');
 
                             // And request new exchange rates.
                             $this->bw_bitcoin->ratenotify();
                         } else {
                             // When disabling BPI updates, set the interval to 0.
-                            $this->autorun_model->set_autorun_interval('price_index', '0');
+                            $this->autorun_model->set_interval('price_index', '0');
                         }
                         // Redirect when complete.
                         redirect('admin/bitcoin');
                     }
                 }
 
-                if ($data['config']['electrum_iteration'] !== $this->input->post('electrum_iteration'))
-                    $changes['electrum_iteration'] = $this->input->post('electrum_iteration');
+                if ($data['config']['bip32_iteration'] !== $this->input->post('bip32_iteration'))
+                    $changes['bip32_iteration'] = $this->input->post('bip32_iteration');
 
                 $changes = array_filter($changes, 'strlen');
 
                 // Since electrum mpk may be empty, do this after strlen filter
-                if ($data['config']['electrum_mpk'] !== $this->input->post('electrum_mpk'))
-                    $changes['electrum_mpk'] = $this->input->post('electrum_mpk');
+                if ($data['config']['bip32_mpk'] !== $this->input->post('bip32_mpk'))
+                    $changes['bip32_mpk'] = $this->input->post('bip32_mpk');
 
                 if (count($changes) > 0 && $this->config_model->update($changes) == TRUE) {
                     $log = $this->admin_model->format_config_changes($changes);
@@ -1270,7 +1269,7 @@ class Admin extends MY_Controller
                     $params['order_by'] = ($order_by !== '') ? $order_by : 'id';
 
                 // Load the user list based on the generated parameters.
-                $data['users'] = $this->users_model->user_list($params);
+                $data['users'] = $this->users_model->user_list($params, $pagination["per_page"], $start);
 
                 // If the search fails, show the failed search error.
                 if ($data['users'] == FALSE)
@@ -1300,6 +1299,8 @@ class Admin extends MY_Controller
 
         if ($this->input->post('tos_update') == 'Update') {
             if ($this->form_validation->run('admin_tos') == TRUE) {
+
+                $changes = array();
 
                 // If the toggle has changed, record it.
                 if ($data['tos'] != $this->input->post('terms_of_service_toggle'))

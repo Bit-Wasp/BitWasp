@@ -305,12 +305,12 @@ $config = array('register_form' => array(
             'label' => 'price Index',
             'rules' => 'required'
         ),
-        array('field' => 'electrum_mpk',
+        array('field' => 'bip32_mpk',
             'label' => 'master public key',
-            'rules' => 'check_master_public_key'
+            'rules' => 'required|validate_bip32_key|validate_is_public_bip32'
         ),
-        array('field' => 'electrum_iteration',
-            'label' => 'electrum address index',
+        array('field' => 'bip32_iteration',
+            'label' => 'address index',
             'rules' => 'required|is_natural'
         )
     ),

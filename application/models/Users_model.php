@@ -331,7 +331,7 @@ class Users_model extends CI_Model
      *
      * @param    string $user_hash
      * @param    string $address
-     * return    boolean
+     * @return    boolean
      */
     public function set_payment_address($user_hash, $address)
     {
@@ -348,7 +348,7 @@ class Users_model extends CI_Model
      * $address. Called when a watched address is found with a fee purpose
      *
      * @param    string $address
-     * return    string/FALSE
+     * @return    string/FALSE
      */
     public function get_payment_address_owner($address)
     {

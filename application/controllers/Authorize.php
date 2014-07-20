@@ -50,7 +50,7 @@ class Authorize extends MY_Controller
 
             // Check the user info exists.
             if ($user_info !== FALSE) {
-                $password = $this->general->password($this->general->hash($this->input->post('password')), $user_info['salt']);
+                $password = $this->general->password($this->input->post('password'), $user_info['salt']);
 
                 // Check the password is valid.
                 $check_login = $this->users_model->check_password($this->current_user->user_name, $password);

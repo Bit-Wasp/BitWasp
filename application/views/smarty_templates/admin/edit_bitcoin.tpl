@@ -23,22 +23,22 @@
 
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="control-label col-xs-4" for="electrum_mpk">Electrum MPK</label>
+                            <label class="control-label col-xs-4" for="bip32_mpk">BIP32 Extended Key</label>
                             <div class="col-xs-7">
-                                <input type='text' name='electrum_mpk' class="form-control" value='{$config.electrum_mpk|escape:"html":"UTF-8"}' />
+                                <input type='text' name='bip32_mpk' class="form-control" value='{$config.bip32_mpk|escape:"html":"UTF-8"}' />
                             </div>
                         </div>
-                        <div class='col-xs-8 col-xs-offset-4'>{form method="form_error" field="electrum_mpk"}</div>
+                        <div class='col-xs-8 col-xs-offset-4'>{form method="form_error" field="bip32_mpk"}</div>
                     </div>
 
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="control-label col-xs-4" for="electrum_mpk">Address Index</label>
+                            <label class="control-label col-xs-4" for="bip32_iteration">Address Index</label>
                             <div class="col-xs-7">
-                                <input type='text' name='electrum_iteration' class="form-control" value="{$config.electrum_iteration|escape:"html":"UTF-8"}" />
+                                <input type='text' name='bip32_iteration' class="form-control" value="{$config.bip32_iteration|escape:"html":"UTF-8"}" />
                             </div>
                         </div>
-                        <div class='col-xs-8 col-xs-offset-4'>{form method="form_error" field="electrum_iteration"}</div>
+                        <div class='col-xs-8 col-xs-offset-4'>{form method="form_error" field="bip32_iteration"}</div>
                         <div class="col-xs-8 col-xs-offset-4">Only change this if you know what you're doing!</div>
                     </div>
 

@@ -1,14 +1,28 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php
+/**
+ * Accounts.php
+ *
+ * Provides accounts functionality, and users profiles/settings
+
+ * @category   Accounts
+ * @package    BitWasp
+ * @licence    Unlicence
+ * @subpackage Controllers
+ * @author     Thomas Kerin <thomas@bitwasp.co>
+ */
+
+defined('BASEPATH') OR exit('No direct script access allowed');
 
 use BitWasp\BitcoinLib\BitcoinLib;
 
 /**
  * Accounts Management Controller
  *
- * @package        BitWasp
- * @subpackage    Controllers
- * @category    Accounts
- * @author        BitWasp
+ * @category   Accounts
+ * @package    BitWasp
+ * @licence    Unlicence
+ * @subpackage Controllers
+ * @author     Thomas Kerin <thomas@bitwasp.co>
  */
 class Accounts extends MY_Controller
 {
@@ -42,7 +56,7 @@ class Accounts extends MY_Controller
     {
         // Load the specified user, redirect if they don't exist.
         $data['user'] = $this->accounts_model->get(array('user_hash' => $hash));
-        if ($data['user'] == FALSE)
+        if ($data['user'] == false)
             redirect('');
 
         $this->load->model('items_model');
@@ -102,56 +116,6 @@ class Accounts extends MY_Controller
     }
 
     /**
-     * Public Keys
-     * URI: /account/public_keys
-     *
-     * This page allows vendors to add a list of public keys for use in
-     * orders.
-     */
-    public function public_keys()
-    {
-        if ($this->current_user->user_role !== 'Vendor')
-            redirect('');
-
-        $this->load->model('used_pubkeys_model');
-        if ($this->input->post('submit_public_keys') == 'Upload Public Keys') {
-            if ($this->form_validation->run('submit_public_keys')) {
-                $keys = explode("\n", $this->input->post('public_key_list'));
-
-                $valid_keys = array();
-                foreach ($keys as $key) {
-                    $key = trim($key);
-                    if (BitcoinLib::validate_public_key($key) == TRUE)
-                        $valid_keys[] = $key;
-                }
-
-                if (count($valid_keys) > 0) {
-                    $unused_keys = $this->used_pubkeys_model->remove_used_keys($valid_keys);
-                    $c = count($unused_keys);
-                    if ($c > 0) {
-                        $this->accounts_model->add_bitcoin_public_key($unused_keys);
-                        $this->used_pubkeys_model->log_public_key($unused_keys);
-
-                        $this->current_user->set_return_message((($c > 1) ? $c . " keys were" : '1 key was') . ' added to your list.');
-                        redirect('accounts/public_keys');
-                    } else {
-                        $data['returnMessage'] = 'The supplied key' . ((count($keys) > 1) ? 's have' : ' has') . ' already been used. Please generate some more.';
-                    }
-                } else {
-                    $data['returnMessage'] = 'Public key list was invalid, please try again.';
-                }
-
-            }
-        }
-
-        $data['page'] = 'accounts/vendor_public_keys';
-        $data['title'] = 'Bitcoin Public Keys';
-        $data['available_public_keys'] = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
-        $this->_render($data['page'], $data);
-    }
-
-
-    /**
      * View own user profile
      * URI: /account
      *
@@ -167,14 +131,9 @@ class Accounts extends MY_Controller
     public function me()
     {
         $data['page'] = 'accounts/me';
-        $data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => TRUE));
-        $data['title'] = $data['user']['user_name'];
 
-        // Load profile from the current_user object.
-        if ($this->current_user->user_role == 'Vendor') {
-            $keys = $this->accounts_model->bitcoin_public_keys($this->current_user->user_id);
-            $data['public_key_count'] = ($keys == FALSE) ? '0' : count($keys);
-        }
+        $data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => true));
+        $data['title'] = $data['user']['user_name'];
 
         $data['two_factor']['totp'] = (bool)$data['user']['totp_two_factor'];
         $data['two_factor_setting'] = $data['two_factor']['totp'];
@@ -229,7 +188,7 @@ class Accounts extends MY_Controller
         $data['location_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'form-control', $data['user']['location']);
 
         // Check if the user is forced to user PGP. If so, display the 'Replace' link instead of 'Delete'
-        $data['option_replace_pgp'] = (($this->bw_config->force_vendor_pgp == TRUE && $this->current_user->user_role == 'Vendor')
+        $data['option_replace_pgp'] = (($this->bw_config->force_vendor_pgp == true && $this->current_user->user_role == 'Vendor')
             OR $this->current_user->user_role == 'Admin');
 
         // Different form validation rules depending on if the user has a PGP key uploaded.
@@ -298,7 +257,6 @@ class Accounts extends MY_Controller
                         redirect('account/two_factor');
                     } else {
                         $data['returnMessage'] = 'You entered an invalid token!';
-                        $new_qr = FALSE;
                     }
                 }
             }

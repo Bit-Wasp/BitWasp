@@ -146,6 +146,22 @@ class Accounts_model extends CI_Model
     }
 
     /**
+     * Update
+     *
+     * Updates a user row with the indexes supplied in $changes. Make
+     * the changes to the table.
+     *
+     * @access    public
+     * @param    array $changes
+     * @return    bool
+     */
+    public function update($changes)
+    {
+        $this->db->where('id', $this->current_user->user_id);
+        return ($this->db->update('users', $changes)) ? TRUE : FALSE;
+    }
+
+    /**
      * Replace PGP key.
      *
      * Replace a PGP public key for $user_id. Return TRUE if successful,
@@ -192,7 +208,6 @@ class Accounts_model extends CI_Model
         $update = array('pgp_two_factor' => '0');
         return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
     }
-
 
     /**
      * Enable TOTP
@@ -246,22 +261,6 @@ class Accounts_model extends CI_Model
     {
         $this->db->where('id', $user_id);
         return ($this->db->update('users', array('banned' => $value)) == TRUE) ? TRUE : FALSE;
-    }
-
-    /**
-     * Update
-     *
-     * Updates a user row with the indexes supplied in $changes. Make
-     * the changes to the table.
-     *
-     * @access    public
-     * @param    array $changes
-     * @return    bool
-     */
-    public function update($changes)
-    {
-        $this->db->where('id', $this->current_user->user_id);
-        return ($this->db->update('users', $changes)) ? TRUE : FALSE;
     }
 
     /**

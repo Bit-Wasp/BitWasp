@@ -112,6 +112,14 @@ class Bw_config
     public $price_index = "Disabled";
 
     /**
+     * Price Index Config
+     * Contains config for available exchange rate sources
+     *
+     * @var array
+     */
+    public $price_index_config = array();
+
+    /**
      * Delete Messages After
      *
      * Administrators may chose to clear user messages after a certain period
@@ -258,6 +266,47 @@ class Bw_config
      */
     public $location_list_source = 'Default';
 
+
+    /**
+     * Currencies
+     * @var
+     */
+    public $currencies;
+    /**
+     * Categories
+     * @var
+     */
+    public $categories;
+    /**
+     * Exchange Rates
+     * @var
+     */
+    public $exchange_rates;
+    /**
+     * Locations
+     * @var
+     */
+    public $locations;
+
+    /**
+     * Trusted User Review Count
+     * Used to determine if a vendor can request up-front payment.
+     * @var int
+     */
+    public $trusted_user_review_count;
+    /**
+     * Trusted User Order Count
+     * Used to determine if a vendor can request up-front payment.
+     * @var int
+     */
+    public $trusted_user_order_count;
+    /**
+     * Trusted User Rating
+     * Used to determine if a vendor can request up-front payment.
+     * @var int
+     */
+    public $trusted_user_rating;
+
     /**
      * Constructor
      *
@@ -334,8 +383,8 @@ class Bw_config
         } else if ($panel == 'bitcoin') {
             $result = array('price_index' => $this->price_index,
                 'price_index_config' => $this->price_index_config,
-                'electrum_mpk' => $this->electrum_mpk,
-                'electrum_iteration' => $this->electrum_iteration);
+                'bip32_mpk' => $this->bip32_mpk,
+                'bip32_iteration' => $this->bip32_iteration);
         } else if ($panel == 'users') {
             $result = array('registration_allowed' => $this->registration_allowed,
                 'vendor_registration_allowed' => $this->vendor_registration_allowed,
