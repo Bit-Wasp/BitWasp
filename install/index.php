@@ -291,7 +291,7 @@ rpcconnect=127.0.0.1</pre><br />
           This password is for the 'admin' account, the default account with administrative powers - make it a good one. This account is required.
           <input type="password" id="hostname" class="input_text" name="admin_password" /><br /><br />
 
-          <label for="admin">Electrum MPK:</label><br />
+          <label for="admin">BIP32 public key (M/0'/x) (see <a href="http://bip32.org">Bip32.org</a>):</label><br />
           This is used to create determinstic addresses without needed private keys on the server. This MPK will receive fee's from orders and registrations, and will also be used to create public keys for multi-signature order addresses.
           <input type="text" id="hostname" class="input_text" name="electrum_mpk"  /><br /><br />
 
