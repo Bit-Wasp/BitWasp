@@ -21,7 +21,7 @@
                         <div class="col-xs-5">
                             <p align="center">
                                 <input type="submit" value="Submit" class="btn btn-primary" />
-                                {url type="anchor" url="account" text="Cancel" attr='title="Cancel" class="btn"'}
+                                {url type="anchor" url="account" text="Cancel" attr='title="Cancel" class="btn btn-default"'}
                             </p>
                         </div>
                     </div>

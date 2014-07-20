@@ -40,7 +40,7 @@ class Callback extends CI_Controller
     {
         // Abort if no block hash is supplied.
         if ($block_hash == NULL)
-            return FALSE;
+            die();
 
         $this->load->library('bw_bitcoin');
         $this->load->model('bitcoin_model');
@@ -48,19 +48,19 @@ class Callback extends CI_Controller
 
         // Die if bitcoind is actually offline.
         if ($this->bw_bitcoin->getinfo() == NULL)
-            return FALSE;
+            die();
 
         // Reject already known blocks.
         if ($this->transaction_cache_model->check_block_seen($block_hash) == TRUE)
-            return FALSE;
+            die();
 
         $block = $this->bw_bitcoin->getblock($block_hash);
         if (!is_array($block) || !isset($block['tx']))
-            return FALSE;
+            die();
 
         $watched_addresses = $this->bitcoin_model->watch_address_list();
         if (count($watched_addresses) == 0)
-            return FALSE;
+            die();
 
         $txs = array();
         foreach ($block['tx'] as $id => $tx_id) {
