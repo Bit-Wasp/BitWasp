@@ -2,6 +2,11 @@
 
 class MY_Image_lib extends CI_Image_lib
 {
+    /**
+     * CI
+     * @var
+     */
+    protected $CI;
 
     /**
      * Option: want to return a base64 image?
@@ -24,6 +29,12 @@ class MY_Image_lib extends CI_Image_lib
      */
     public $base64_image = '';
 
+    /**
+     * Dest Image
+     *
+     * @var
+     */
+    public $dest_image;
     /**
      * Construct
      */

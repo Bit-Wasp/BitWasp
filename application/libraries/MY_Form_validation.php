@@ -198,7 +198,8 @@ class MY_Form_validation extends CI_Form_validation
      * for form submissions where only a CSRF check is required, rather than
      * needing any data.
      *
-     * @param $str
+     * @param  $str
+     * @return bool
      */
     public function check_checkable($str)
     {
@@ -216,14 +217,14 @@ class MY_Form_validation extends CI_Form_validation
     public function check_custom_location_exists($str)
     {
         if (!$this->is_natural($str))
-            return FALSE;
+            return false;
 
         // Use custom list if we have it, to spare the DB query.
         if ($this->CI->bw_config->location_list_source == 'Custom') {
             return isset($this->CI->bw_config->locations[$str]);
         } else {
             $this->CI->load->model('location_model');
-            $custom = $this->CI->location_model->get_list('Custom', FALSE);
+            $custom = $this->CI->location_model->get_list('Custom', false);
             return isset($custom[$str]);
         }
     }
@@ -241,23 +242,23 @@ class MY_Form_validation extends CI_Form_validation
     public function check_custom_parent_location_exists($str)
     {
         if (!$this->is_natural($str))
-            return FALSE;
+            return false;
 
         if ($str == '0')
-            return TRUE;
+            return true;
 
         // Use custom list if we have it, to spare the DB query.
         if ($this->CI->bw_config->location_list_source == 'Custom') {
             $custom = $this->CI->bw_config->locations;
         } else {
             $this->CI->load->model('location_model');
-            $custom = $this->CI->location_model->get_list('Custom', FALSE);
+            $custom = $this->CI->location_model->get_list('Custom', false);
         }
 
-        $found = FALSE;
+        $found = false;
         foreach ($custom as $location) {
             if ($location['parent_id'] == $str)
-                $found = TRUE;
+                $found = true;
         }
         return $found;
     }
@@ -286,16 +287,16 @@ class MY_Form_validation extends CI_Form_validation
     public function check_is_parent_category($str)
     {
         if ($str == '0')
-            return TRUE;
+            return true;
 
         return isset($this->CI->bw_config->categories[$str])
         AND $this->CI->bw_config->categories[$str]['count_child_items'] == 0;
         /*
-                $found = FALSE;
+                $found = false;
                 foreach ($this->CI->bw_config->categories as $cat)
                 {
                     if($cat['parent_id'] == $str)
-                        $found = TRUE;
+                        $found = true;
                 }
 
                 return $found;*/
@@ -339,21 +340,21 @@ class MY_Form_validation extends CI_Form_validation
     public function check_not_parent_category($str)
     {
         if (!$this->is_natural_no_zero($str))
-            return FALSE;
+            return false;
 
         foreach ($this->CI->bw_config->categories as $cat) {
             if ($cat['parent_id'] == $str)
-                return TRUE;
+                return true;
         }
 
-        return FALSE;
+        return false;
     }
 
     /**
      * Check PGP Encrypted
      *
      * This function extracts the base64 encoded message from a PGP message,
-     * and checks the data against a regex. Returns TRUE if the input was
+     * and checks the data against a regex. Returns true if the input was
      * a valid PGP encrypted message (ie, headers match, and encoding is
      * correct. Maybe using a php library rather than extension would
      * allow us to verify this further?)
@@ -364,26 +365,26 @@ class MY_Form_validation extends CI_Form_validation
     public function check_pgp_encrypted($str)
     {
         $spos = stripos($str, '-----BEGIN PGP MESSAGE-----');
-        $spos = ($spos !== FALSE) ? $spos + 27 : FALSE;
+        $spos = ($spos !== false) ? $spos + 27 : false;
 
         $epos = stripos($str, '-----END PGP MESSAGE-----');
-        $epos = ($epos !== FALSE) ? $epos - 27 : FALSE;
+        $epos = ($epos !== false) ? $epos - 27 : false;
 
-        if ($spos == FALSE || $spos == FALSE)
-            return FALSE;
+        if ($spos == false || $spos == false)
+            return false;
 
         // Extract the ciphertext, and check against a regex.
         $cipher_text = preg_replace('/\s+/', '', substr($str, $spos, $epos));
-        return (preg_match('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$^', $cipher_text)) ? TRUE : FALSE;
+        return (preg_match('^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$^', $cipher_text)) ? true : false;
     }
 
     /**
      * Check PGP Required for this User
      *
      * Checks the provided users PGP settings.
-     * Returns TRUE if the user has not blocked non-PGP messages,
+     * Returns true if the user has not blocked non-PGP messages,
      * or if they have blocked such messages, but the message is encrypted.
-     * Returns FALSE otherwise.
+     * Returns false otherwise.
      *
      * @param        string $str
      * @param        string $post_name
@@ -393,8 +394,8 @@ class MY_Form_validation extends CI_Form_validation
     {
         $this->CI->load->model('accounts_model');
 
-        $block_non_pgp = $this->CI->accounts_model->user_requires_pgp_messages($this->input->post($post_name));
-        return $block_non_pgp == FALSE OR $block_non_pgp == TRUE AND $this->check_pgp_encrypted($str) == TRUE;
+        $block_non_pgp = $this->CI->accounts_model->user_requires_pgp_messages($this->CI->input->post($post_name));
+        return $block_non_pgp == false OR $block_non_pgp == true AND $this->check_pgp_encrypted($str) == true;
     }
 
     /**
@@ -458,7 +459,7 @@ class MY_Form_validation extends CI_Form_validation
      */
     public function check_price_index($str)
     {
-        $config = $this->bw_config->price_index_config;
+        $config = $this->CI->bw_config->price_index_config;
         return $str == 'Disabled' OR isset($config[$str]);
     }
 
@@ -480,8 +481,8 @@ class MY_Form_validation extends CI_Form_validation
      *
      * Checks the supplied ip:port against a regex. $str may be an
      * empty string if the proxy is disabled, otherwise it uses
-     * preg_match to verify the regex. Returns TRUE if $str is valid,
-     * and FALSE on invalid input.
+     * preg_match to verify the regex. Returns true if $str is valid,
+     * and false on invalid input.
      *
      * @param        string $str
      * @return        boolean
@@ -489,7 +490,7 @@ class MY_Form_validation extends CI_Form_validation
     public function check_proxy_url($str)
     {
         if ($str == '')
-            return TRUE;
+            return true;
 
         preg_match('/^([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3}):([0-9]{1,5})$/', $str, $match);
         return count($match) > 0;
@@ -573,7 +574,7 @@ class MY_Form_validation extends CI_Form_validation
      */
     public function check_user_exists($str)
     {
-        return $this->users_model->check_user_exists(array('user_name' => $str));
+        return $this->CI->users_model->check_user_exists(array('user_name' => $str));
     }
 
     /**
@@ -594,7 +595,7 @@ class MY_Form_validation extends CI_Form_validation
      * Check User Search For
      *
      * This checks if the search_for parameter is an allowed class of
-     * users. Returns TRUE on success, FALSE on failure.
+     * users. Returns true on success, false on failure.
      *
      * @param        string $str
      * @return        boolean
@@ -609,7 +610,7 @@ class MY_Form_validation extends CI_Form_validation
      *
      * This function checks if the order of the list (in order_by)
      * is allowed. It can be ascending, descending, or in random order.
-     * Returns TRUE on valid input, FALSE on failure.
+     * Returns true on valid input, false on failure.
      *
      * @param        string $str
      * @return        boolean
@@ -622,8 +623,8 @@ class MY_Form_validation extends CI_Form_validation
     /**
      * Check User Search Order By
      *
-     * This checks if the order_by parameter is allowed. Returns TRUE on
-     * valid input, FALSE on failure.
+     * This checks if the order_by parameter is allowed. Returns true on
+     * valid input, false on failure.
      *
      * @param        string $str
      * @return        boolean
@@ -638,7 +639,7 @@ class MY_Form_validation extends CI_Form_validation
      *
      * Checks if the with_property specifier for a search is an allowed
      * value. This narrows down the search to specific types of users.
-     * Returns TRUE on success, FALSE on failure.
+     * Returns true on success, false on failure.
      *
      * @param        string $str
      * @return        boolean
@@ -660,12 +661,12 @@ class MY_Form_validation extends CI_Form_validation
     public function check_valid_category($str)
     {
         if (!$this->is_natural_no_zero($str))
-            return FALSE;
+            return false;
 
-        $found = FALSE;
+        $found = false;
         foreach ($this->CI->bw_config->categories as $cat) {
             if ($cat['id'] == $str)
-                $found = TRUE;
+                $found = true;
         }
         return $found;
     }
@@ -770,12 +771,12 @@ class MY_Form_validation extends CI_Form_validation
      */
     public function check_valid_registration_role($str)
     {
-        return in_array($str, (($this->CI->bw_config->vendor_registration_allowed == TRUE) ? array('1', '2', '3') : array('1', '3')));
+        return in_array($str, (($this->CI->bw_config->vendor_registration_allowed == true) ? array('1', '2', '3') : array('1', '3')));
     }
 
     public function validate_bip32_key($str)
     {
-        return is_array(\BitWasp\BitcoinLib\BIP32::import($str)) == TRUE;;
+        return is_array(\BitWasp\BitcoinLib\BIP32::import($str)) == true;
     }
 
     public function validate_is_public_bip32($str)

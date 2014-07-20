@@ -121,8 +121,6 @@ class Openssl
         return $decrypted;
     }
 
-}
-
-;
+};
 
 /* End of File: Openssl.php */

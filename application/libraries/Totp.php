@@ -67,19 +67,6 @@ class TOTP
     }
 
     /**
-     * Get QR-Code URL for image, from google charts
-     *
-     * @param string $name
-     * @param string $secret
-     * @return string
-     */
-    public function getQRCodeGoogleUrl($name, $secret)
-    {
-
-        return 'https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' . $urlencoded . '';
-    }
-
-    /**
      * Print OTP Link
      *
      * Returns an encoded OTPAuth link, suitable for embedding into QR

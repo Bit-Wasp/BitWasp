@@ -320,7 +320,7 @@ class Listings extends MY_Controller
         $redirect_to = ($new_item == 'true') ? 'listings/images/' . $data['item']['hash'] : 'listings/shipping/' . $data['item']['hash'];
 
         if ($this->input->post('update_shipping_cost') == 'Update') {
-            $updates = array();
+
             foreach ($this->input->post('cost') as $cost_id => $cost_array) {
                 $this->form_validation->set_rules("cost[$cost_id][cost]", "Cost", "check_bitcoin_amount_free");
                 if ($this->form_validation->run() == TRUE) {

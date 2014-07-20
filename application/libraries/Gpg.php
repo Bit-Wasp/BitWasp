@@ -27,7 +27,7 @@ class GPG
      * This is used to determine whether the application has access to
      * the GPG functions
      */
-    public $have_GPG = TRUE;
+    public $have_GPG = true;
 
     /**
      * Stype
@@ -133,9 +133,9 @@ class GPG
     {
         if ($this->style == 'oop') {
 
-            if ($gpg->addencryptkey($fingerprint) == FALSE)
+            if ($this->gpg->addencryptkey($fingerprint) == FALSE)
                 return FALSE;
-            $ciphertext = $gpg->encrypt($gpg, "$plaintext\n");
+            $ciphertext = $this->gpg->encrypt($this->gpg, "$plaintext\n");
         } else if ($this->style == 'proc') {
 
             if (gnupg_addencryptkey($this->gpg, $fingerprint) == FALSE)

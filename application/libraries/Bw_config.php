@@ -146,12 +146,19 @@ class Bw_config
     public $index_page;
 
     /**
-     * Electrum MPK
+     * BIP32 MPK
      *
-     * This setting is for the electrum master key, from which bitcoin
-     * addresses are derived for backups
+     * This is the MPK which is used for admin multisig keys,
      */
-    public $electrum_mpk = "";
+    public $bip32_mpk = "";
+
+    /**
+     * BIP32 Iteration
+     *
+     * This setting is for the BIP32 master key - this is the next child
+     * to be derived.
+     */
+    public $bip32_iteration = 0;
 
     /**
      * Entry Payment Vendor
@@ -367,7 +374,7 @@ class Bw_config
      */
     public function load_admin($panel)
     {
-
+        $result = array();
         if ($panel == '') {
             $result = array('site_description' => $this->site_description,
                 'site_title' => $this->site_title,

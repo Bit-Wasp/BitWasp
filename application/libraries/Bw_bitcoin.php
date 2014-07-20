@@ -232,6 +232,20 @@ class Bw_bitcoin
      * @param    (opt)array    $account
      * @return    string
      */
+    /**
+     * Add Multisig Address
+     *
+     * This function is used to import a multisignature address into
+     * the bitcoin wallet. This is required by users when signing an
+     * unsigned/partially-signed transaction.
+     * $m determines how many keys out of the total are needed to redeem funds.
+     * $public_keys is an array containing the public keys. Order is important.
+     * $account - defaults to the main account.
+     * @param $m
+     * @param $public_keys
+     * @param string $account
+     * @return mixed
+     */
     public function addmultisigaddress($m, $public_keys, $account = "")
     {
         return $this->CI->jsonrpcclient->addmultisigaddress($m, $public_keys, $account);
@@ -264,9 +278,10 @@ class Bw_bitcoin
      * blockchain to search for transactions. This should be set to FALSE
      * if the key is only to be used for signing.
      *
-     * @param        string $wif
-     * @param        string $account
-     * @return        boolean?
+     * @param $wif
+     * @param string $account
+     * @param bool $rescan
+     * @return mixed
      */
     public function importprivkey($wif, $account = '', $rescan = TRUE)
     {
@@ -383,17 +398,9 @@ class Bw_bitcoin
 
             if ($type_info['type'] == 'scripthash') {
                 // Pay-to-script-hash. Check OP_FALSE <sig> ... <redeemScript>
-                $redeem_script_found = FALSE;
-                $pubkey_found = FALSE;
-
-                $scripts = explode(" ", $vin['scriptSig']['asm']);
-
                 // Store the redeemScript, then remove OP_FALSE + the redeemScript from the array.
+                $scripts = explode(" ", $vin['scriptSig']['asm']);
                 $redeemScript = \BitWasp\BitcoinLib\RawTransaction::decode_redeem_script(end($scripts));
-
-                if ($redeemScript !== FALSE) // Die if we fail to decode a redeemScript from a P2SH
-                    $redeem_script_found = TRUE;
-
                 unset($scripts[(count($scripts) - 1)]); // Unset redeemScript
                 unset($scripts[0]); // Unset '0';
 
@@ -402,10 +409,9 @@ class Bw_bitcoin
                 foreach ($scripts as $signature) {
                     // Test each signature with the public keys in the redeemScript.
                     foreach ($redeemScript['keys'] as $public_key) {
-                        if (\BitWasp\BitcoinLib\RawTransaction::_check_sig($signature, $message_hash[$i], $public_key) == TRUE) {
-                            $pubkey_found = TRUE;
+                        if (\BitWasp\BitcoinLib\RawTransaction::_check_sig($signature, $message_hash[$i], $public_key) == TRUE)
                             $results[$i][$public_key] = $signature;
-                        }
+
                     }
                 }
             }

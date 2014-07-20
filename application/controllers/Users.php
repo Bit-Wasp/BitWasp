@@ -126,7 +126,7 @@ class Users extends MY_Controller
                     }
                 }
 
-                $this->session->set_userdata('failed_login', $this->session->userdata('failed_login') + 1);
+                $this->session->set_userdata('failed_login', ((int)$this->session->userdata('failed_login') + 1));
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your details were incorrect, try again.")));
                 redirect('login');
             }
@@ -194,7 +194,6 @@ class Users extends MY_Controller
 
             // Generate OpenSSL keys for the users private messages.
             if ($data['encrypt_private_messages'] == TRUE) {
-                $pin = $this->input->post('message_pin0');
                 $msg_password = $this->general->new_password($this->input->post('message_pin0'));
 
                 $message_keys = $this->openssl->keypair($msg_password['hash']);

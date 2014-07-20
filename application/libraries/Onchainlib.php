@@ -73,6 +73,7 @@ class OnchainLib
         if (is_string($handle))
             echo $handle;
 
+        return $handle;
         //$this->CI->onchain_model->clear_auth($post_request['auth_id']);
 
     }
