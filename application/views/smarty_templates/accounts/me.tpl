@@ -17,6 +17,7 @@
                     <div class="col-md-8">{url type="anchor" url=$smarty.capture.t_profile_url text="" attr=''}</div>
                 </div>
 
+                {if $user.user_role !== 'Admin'}
                 <div class="row">
                     <div class="col-md-3"><strong>Bitcoin Public Keys</strong></div>
                     <div class="col-md-7">
@@ -26,12 +27,11 @@
                     </div>
                 </div>
 
-                {if $user.user_role !== 'Admin'}
                 <div class="row">
                     <div class="col-md-3"><strong>{if $user.user_role == 'Vendor'}Payout{else}Refund{/if} Address</strong></div>
                     <div class="col-md-7">
                         {if is_array($payout)}
-                            {$payout.address} - {url type="anchor" url="accounts/payout" text="Settings" attr=''}
+                            {$payout.address|escape:"html":"UTF-8"} - {url type="anchor" url="accounts/payout" text="Settings" attr=''}
                         {else}
                             Not set up - {url type="anchor" url="accounts/payout" text="do so now!" attr=''}
                         {/if}
