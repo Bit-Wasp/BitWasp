@@ -5,10 +5,8 @@
 
                 <div class="panel panel-default" id="bip32panel">
                     <div class="panel-heading" id="bip32panelheading">BIP32 key (watch only)</div>
-                    <textarea class="form-control" id="bip32key" name="bip32key" readonly>{$key.key}</textarea>
-
+                    <textarea class="form-control" id="bip32key" name="bip32key" readonly>{$key.key|escape:"html":"UTF-8"}</textarea>
                 </div>
-
 
                 {$key_usage_html}
             </div>

@@ -1,5 +1,5 @@
             {capture name="t_other_user_url"}user/{{$current_order.{$other_role}.user_hash}}{/capture}
-            {capture name="t_other_user_name"}{{$current_order.{$other_role}.user_name}}{/capture}
+            {capture name="t_other_user_name"}{{$current_order.{$other_role}.user_name|escape:"html":"UTF-8"}}{/capture}
 
             <div class="col-md-9" id="dispute-transaction">
                 <h2>Dispute: Order #{$current_order.id}</h2>
@@ -67,7 +67,7 @@
                 </form>
                 {else}
                 {capture name="t_disputing_user_url"}user/{$disputing_user.user_hash}{/capture}
-                {capture name="t_disputing_user_name"}{$disputing_user.user_name}{/capture}
+                {capture name="t_disputing_user_name"}{$disputing_user.user_name|escape:"html":"UTF-8"}{/capture}
 
                     {form method="open" action=$dispute_page attr='class="form-horizontal"'}
                 <div class='well'>
@@ -90,7 +90,6 @@
                                 {/if}
                             </div>
 
-
                             <div class="col-xs-6"><strong>Disputing User</strong></div>
                             <div class="col-xs-6">{url type="anchor" url=$smarty.capture.t_disputing_user_url text=$smarty.capture.t_disputing_user_name|escape:"html":"UTF-8" attr=''}</div>
 
@@ -106,26 +105,6 @@
                                 {/foreach}
                                 </ul>
                             </div>
-
-
-                            {if $current_user.user_role == "Buyer" AND strlen($current_order.buyer_payout) == 0}
-                            <div class="col-xs-12">&nbsp;</div>
-                            <div class="col-xs-12">
-                                <div class="col-xs-12">
-                                    <strong>Refund Address</strong>
-                                </div>
-                                <div class="col-xs-12">
-                                    <div class="col-xs-9">
-                                        <input type="text" name="refund_address" class="form-control" value="" >
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <input type="submit" name="submit_dispute_refund_address" value="Submit" class="btn btn-primary">
-                                    </div>
-                                </div>
-
-                            </div>
-                                {form method="form_error" field="refund_address"}
-                            {/if}
 
                         </div>
                     </div>

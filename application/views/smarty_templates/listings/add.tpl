@@ -60,7 +60,7 @@
 
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="control-label col-xs-2" for="hidden">Hidden Listing</label>
+                            <label class="control-label col-xs-2" for="hidden">Invisible Listing</label>
                             <div class="col-xs-5">
                                 <select name='hidden' class='form-control' autoselection='off'>
                                     <option value=''></option>

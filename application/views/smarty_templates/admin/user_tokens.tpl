@@ -13,7 +13,7 @@
                             <div class="col-xs-4">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i>Role</i></span>
-                                    <select class="form-control" name="user_role">
+                                    <select class="form-control" id="user_role" name="user_role">
                                         <option value=""></option>
                                         <option value="1">Buyer</option>
                                         <option value="2">Vendor</option>

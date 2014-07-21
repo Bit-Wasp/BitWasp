@@ -57,7 +57,7 @@
                                     <div class="col-md-6"></div>
 
                                     <span class="pull-right">{$review.time_f}</span>
-                                    <p>{$review.comments}</p>
+                                    <p>{$review.comments|escape:"html":"UTF-8"}</p>
                                 </div>
                             </div>
                         {/foreach}

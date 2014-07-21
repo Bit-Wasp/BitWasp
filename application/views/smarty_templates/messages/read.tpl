@@ -3,7 +3,7 @@
             {capture name='t_msg_delete_url'}message/delete/{$message.hash}{/capture}
 
             {if $message.encrypted == TRUE}
-                {capture name='t_message'}<pre>{nl2br(str_replace('<br/>','',$message.message|escape:"html":"UTF-8"))}))</pre>{/capture}
+                {capture name='t_message'}<pre>{$message.message|escape:"html":"UTF-8"}</pre>{/capture}
             {else}
                 {capture name='t_message'}{$message.message|escape:"html":"UTF-8"}{/capture}
             {/if}

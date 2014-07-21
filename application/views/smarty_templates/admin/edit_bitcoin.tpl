@@ -13,7 +13,7 @@
                             <div class="col-xs-7">
                                 <select name='price_index' class="form-control" autocomplete="off">
                                     {foreach from=$config.price_index_config key=key item=index_config}
-                                        <option value='{$key}' {if $key == $config['price_index']}selected="selected"{/if}>{$key}</option>
+                                        <option value='{$key}' {if $key == $config['price_index']}selected="selected"{/if}>{$key|escape:"html":"UTF-8"}</option>
                                     {/foreach}
                                 </select>
                             </div>

@@ -18,7 +18,7 @@
                     <div class="form-group">
                         <div class="col-xs-12">
                             <label class="control-label col-xs-2" for="userfile">Image File</label>
-                            <div class="col-xs-5">
+                            <div class="input-group">
                                 <span class="btn btn-default btn-file">
                                     <input type="file" name="userfile" />
                                 </span>
@@ -30,9 +30,7 @@
                     <div class="form-group">
                         <label class="control-label col-xs-2" for="main_image">Main Photo?</label>
                         <div class="col-xs-5">
-                            <label class="checkbox-inline">
-                                <input type="checkbox" class="form-control" name="main_image" value="true" />
-                            </label>
+                            <input type="checkbox" class="checkbox" name="main_image" value="true" />
                         </div>
                         <div class="col-xs-10 col-xs-offset-2">{form method="form_error" field="main_image"}</div>
                     </div>

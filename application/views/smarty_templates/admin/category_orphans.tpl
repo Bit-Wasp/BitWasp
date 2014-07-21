@@ -29,7 +29,7 @@
                             <label class="control-label col-xs-2" for="submit"></label>
                             <div class="col-xs-5">
                                 <p align="center">
-                                    <input type='submit' value='Update' class='btn btn-primary' />
+                                    <input type="submit" value="Update" class="btn btn-primary" />
                                     {url type="anchor" url="admin/edit/items" text="Cancel" attr='class="btn"'}
                                 </p>
                             </div>

@@ -4,7 +4,7 @@
 
 		<div class="col-md-9" id="manage_items">
             <div class="row">
-			    <h2>Shipping Costs: {$item.name}</h2>
+			    <h2>Shipping Costs: {$item.name|escape:"html":"UTF-8"}</h2>
 
                 {assign var="defaultMessage" value=""}
                 {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}

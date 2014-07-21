@@ -59,12 +59,12 @@
                                                         {/for}
                                                     </select> -
                                                     {if $item.hash == 'removed'}
-                                                        {$item.name}
+                                                        {$item.name|escape:"html":"UTF-8"}
                                                     {else}
                                                         {url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=''}
                                                     {/if}
                                                 {else}
-                                                    {$item.quantity} x {if $item.hash == 'removed'}{$item.name}{else}{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=''}{/if}
+                                                    {$item.quantity} x {if $item.hash == 'removed'}{$item.name|escape:"html":"UTF-8"}{else}{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=''}{/if}
                                                 {/if}
                                             {/foreach}
                                         </ul>

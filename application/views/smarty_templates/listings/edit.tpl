@@ -43,7 +43,7 @@
                             <div class="col-xs-5">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i>{$item.currency.code}</i></span>
-                                    <input type='text' class="form-control" name='price' value="{$item.price}" />
+                                    <input type='text' class="form-control" name='price' value="{$item.price|escape:"html":"UTF-8"}" />
                                 </div>
                             </div>
                         </div>
@@ -85,7 +85,7 @@
 
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="control-label col-xs-2" for="hidden">Hidding Listing</label>
+                            <label class="control-label col-xs-2" for="hidden">Invisible Listing</label>
                             <div class="col-xs-5">
                                 <select name="hidden" id="hidden" class="form-control" autocomplete="off">
                                     <option value=''></option>
