@@ -150,6 +150,35 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
+    public function password() {
+        $this->load->model('users_model');
+        $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+
+        if ($this->input->post('change_password') == 'Change Password') {
+
+            if ($this->form_validation->run('change_password') == TRUE) {
+
+                // Create test password hash
+                $password = $this->general->password($this->input->post('current_password'), $user_info['salt']);
+                $check_password = $this->users_model->check_password($this->current_user->user_name, $password);
+
+                if ($check_password !== FALSE && $check_password['id'] == $user_info['id']) {
+                    // Generate new hash + salt
+                    $new_password = $this->general->new_password($this->input->post('new_password0'));
+                    $update = $this->accounts_model->update_user_password($this->current_user->user_id, $new_password['hash'], $new_password['salt']);
+                    if($update == TRUE) {
+                        $this->current_user->set_return_message('Your password has been changed!', TRUE);
+                        redirect('account');
+                    } else {
+                        $data['returnMessage'] = 'Unable to update your password at this time.';
+                    }
+                }
+            }
+        }
+        $data['page'] = 'accounts/change_password';
+        $data['title'] = 'Change Password';
+        $this->_render('accounts/change_password', $data);
+    }
     /**
      * Edit own account settings
      * URI: /account/edit

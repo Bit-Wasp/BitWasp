@@ -228,6 +228,20 @@ class Accounts_model extends CI_Model
     }
 
     /**
+     * Update User Password
+     *
+     * This function accepts a users $user_id, and a $password_hash, and a $salt.
+     *
+     * @param $user_id
+     * @param $password_hash
+     * @param $salt
+     * @return bool
+     */
+    public function update_user_password($user_id, $password_hash, $salt) {
+        return $this->db->where('id', $user_id)->update('users', array('password'=>$password_hash,'salt'=>$salt)) == TRUE;
+    }
+
+    /**
      * Enable 2FA PGP
      *
      * Sets up PGP two factor authentication for the users account and

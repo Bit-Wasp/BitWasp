@@ -7,7 +7,7 @@
                     {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
 
                 {if $order_type == "upfront"}
-<p align="justify">{$order.vendor.username} has requested this order is paid up-front. After
+<p align="justify">{$order.vendor.user_name|escape:"html":"UTF-8"} has requested this order is paid up-front. After
 payment is made to the order address, you will need authorize release of the funds before the
 order is dispatched.</p>
                     {else}
@@ -15,7 +15,7 @@ order is dispatched.</p>
 vendor will notify you once the order has been dispatched. When received you can release the funds to the vendor.
 </p>
 {/if}
-                    <p align="justify"></p>
+                    <p align="justify">&nbsp;</p>
 
                     <p>Review the order details, and enter your address if you are happy to proceed. Once confirmed, you will be able to pay to the order address.</p>
 
@@ -35,7 +35,7 @@ vendor will notify you once the order has been dispatched. When received you can
                                             {capture name="t_item_url"}item/{$item.hash}{/capture}
                                             <tr>
                                                 <td>{$item.quantity|escape:"html":"UTF-8"} x</td>
-                                                <td>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name attr=''}</td>
+                                                <td>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=''}</td>
                                                 <td>{$coin.code} {$item.quantity*$item.price_b}</td>
                                             </tr>
                                         {/foreach}

@@ -52,7 +52,7 @@
                         <div class="well" style="background:white;">
                             <legend>Recent Reviews</legend>
                             {capture name='t_user_all_reviews_url'}reviews/view/user/{$user.user_hash}{/capture}
-                            {capture name='t_all_reviews_str'}[All Reviews: {$review_count.all}{/capture}
+                            {capture name='t_all_reviews_str'}[All Reviews: {$review_count.all}]{/capture}
 
                             {capture name='t_user_p_reviews_url'}reviews/view/user/{$user.user_hash}/0{/capture}
                             {capture name='t_p_reviews_str'}[Positive: {$review_count.positive}]{/capture}
@@ -83,7 +83,7 @@
                                         <div class="col-md-6"></div>
 
                                         <span class="pull-right">{$review.time_f}</span>
-                                        <p>{$review.comments}</p>
+                                        <p>{$review.comments|escape:"html":"UTF-8"}</p>
                                     </div>
                                 </div>
                             {/foreach}

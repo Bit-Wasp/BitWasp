@@ -672,6 +672,20 @@ $config = array('register_form' => array(
 			'label' => 'wallet passphrase',
             'rules' => 'required'
         )
+    ),
+    'change_password' => array(
+        array('field' => 'current_password',
+            'label' => 'password',
+            'rules' => 'required'
+        ),
+        array('field' => 'new_password0',
+            'label' => 'password',
+            'rules' => 'required'
+        ),
+        array('field' => 'new_password1',
+            'label' => 'confirmation',
+            'rules' => 'required|matches[new_password0]'
+        )
     )
 );
 

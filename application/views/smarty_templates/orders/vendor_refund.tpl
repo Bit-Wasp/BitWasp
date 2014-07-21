@@ -17,7 +17,7 @@
                                         <ul>
                                             {foreach from=$order.items item=item}
                                             {capture name="t_item_url"}item/{$item.hash}{/capture}
-                                            <li>{$item.quantity} x {if $item.hash == 'removed'}{$item.name}{else}{url type="anchor" url=$smarty.capture.t_item_url text=$item.name attr=''}{/if}</li>
+                                            <li>{$item.quantity|escape:"html":"UTF-8"} x {if $item.hash == 'removed'}{$item.name|escape:"html":"UTF-8"}{else}{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=''}{/if}</li>
                                             {/foreach}
                                         </ul>
                                     </div>

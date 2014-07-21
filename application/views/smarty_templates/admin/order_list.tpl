@@ -29,7 +29,7 @@
                                     <td>{url type="anchor" url=$smarty.capture.t_order_url text=$smarty.capture.t_order_str attr=''}</td>
                                     <td>{url type="anchor" url=$smarty.capture.t_vendor_url text=$order.vendor.user_name attr=''}</td>
                                     <td>{url type="anchor" url=$smarty.capture.t_buyer_url text=$order.buyer.user_name attr=''}</td>
-                                    <td>{$coin.symbol} {$order.order_price}</td>
+                                    <td>{$coin.symbol} {number_format($order.order_price,8)}</td>
                                     <td>{$order.progress}</td>
                                     <td>{$order.time_f}</td>
                                 </tr>

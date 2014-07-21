@@ -8,7 +8,7 @@
             <p>Your payout address is where funds should be sent when they are ready to be moved from the order address. Be sure to double check before you set this!</p>
 
             {if is_array($address) == TRUE}
-                <p>Your earnings are being sent to {$address.address} (as of {$address.time_f})</p>
+                <p>Your earnings are being sent to {$address.address|escape:"html":"UTF-8"} (as of {$address.time_f})</p>
             {/if}
 
             <div class="col-xs-12">&nbsp;</div>

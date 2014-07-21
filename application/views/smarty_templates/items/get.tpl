@@ -77,7 +77,7 @@
             <div class="well" style="background:white;">
                 <h4>Recent Reviews</h4>
                 {capture name='t_item_all_reviews_url'}reviews/view/item/{$item.hash}{/capture}
-                {capture name='t_all_reviews_str'}[All Reviews: {$review_count.all}{/capture}
+                {capture name='t_all_reviews_str'}[All Reviews: {$review_count.all}]{/capture}
 
                 {capture name='t_item_p_reviews_url'}reviews/view/item/{$item.hash}/0{/capture}
                 {capture name='t_p_reviews_str'}[Positive: {$review_count.positive}]{/capture}

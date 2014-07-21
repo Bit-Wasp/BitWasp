@@ -6,7 +6,7 @@
 
                 <p align="justify">In order to create your order addresses, you need to set up an extended public key. This lets us set up unique and secure payment addresses for each order. You can choose a number of ways to create one of these keys.</p>
                 <ul>
-                    <li>Using Onchain.io's transaction signer (Android)</li>
+                    <!--<li>Using Onchain.io's transaction signer (Android)</li>-->
                     <li>Using an external wallet</li>
                     <li>By entering a password on our website</li>
                 </ul>

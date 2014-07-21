@@ -28,7 +28,7 @@
                             <div class="col-xs-7">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i>%</i></span>
-                                    <input type="text" class="form-control" name="default_rate" id="default_rate" value='{$config.default_rate}' />
+                                    <input type="text" class="form-control" name="default_rate" id="default_rate" value='{$config.default_rate|escape:"html":"UTF-8"}' />
                                 </div>
                             </div>
                         </div>
@@ -41,7 +41,7 @@
                             <div class="col-xs-7">
                                 <div class="input-group">
                                     <span class="input-group-addon"><i>%</i></span>
-                                    <input type='text' class="form-control" name='escrow_rate' id="escrow_rate" value='{$config.escrow_rate}' />
+                                    <input type='text' class="form-control" name='escrow_rate' id="escrow_rate" value='{$config.escrow_rate|escape:"html":"UTF-8"}' />
                                 </div>
                             </div>
                         </div>
@@ -75,9 +75,9 @@
                             {foreach from=$fees item=fee}
                                 {form method="open" action='admin/items/fees'}
                                 <tr>
-                                    <td>{$fee.low}</td>
-                                    <td>{$fee.high}</td>
-                                    <td>{$fee.rate}</td>
+                                    <td>{$fee.low|escape:"html":"UTF-8"}</td>
+                                    <td>{$fee.high|escape:"html":"UTF-8"}</td>
+                                    <td>{$fee.rate|escape:"html":"UTF-8"}</td>
                                     <td><input type="submit" class="form-control btn btn-default" name="delete_rate[{$fee.id}]" value="Delete"  /></td>
                                 </tr>
                                 </form>

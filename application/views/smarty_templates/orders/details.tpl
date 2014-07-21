@@ -36,29 +36,29 @@
                                         <tr>
                                             <td></td>
                                             <td>Shipping to {$order.buyer.location_f}</td>
-                                            <td>{$coin.code} {$fees.shipping_cost|escape:"html":"UTF-8"}</td>
+                                            <td>{$coin.code} {number_format($fees.shipping_cost|escape:"html":"UTF-8",8)}</td>
                                         </tr>
                                     {if $current_user.user_role == 'Vendor'}
                                         <tr>
                                             <td></td>
                                             <td>Fees</td>
-                                            <td>{$coin.code} {$order.vendor_fees|escape:"html":"UTF-8"}</td>
+                                            <td>{$coin.code} {number_format($order.vendor_fees|escape:"html":"UTF-8",8)}</td>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td><strong>Earnings</strong></td>
-                                            <td>{$coin.code} {$order.order_price|escape:"html":"UTF-8"}</td>
+                                            <td>{$coin.code} {number_format($order.order_price|escape:"html":"UTF-8",8)}</td>
                                         </tr>
                                     {else}
                                         <tr>
                                             <td></td>
                                             <td>Fees</td>
-                                            <td>{$coin.code} {$fees.fee|escape:"html":"UTF-8"}</td>
+                                            <td>{$coin.code} {number_format($fees.fee|escape:"html":"UTF-8",8)}</td>
                                         </tr>
                                         <tr>
                                             <td></td>
                                             <td><strong>Total</strong></td>
-                                            <td>{$coin.code} {$order.order_price|escape:"html":"UTF-8"}</td>
+                                            <td>{$coin.code} {number_format($order.order_price|escape:"html":"UTF-8",8)}</td>
                                         </tr>
                                     {/if}
 
@@ -92,7 +92,7 @@
                                             <textarea id="import_command" class="form-control">addmultisigaddress 2 '["{$redeem_script.keys.0|escape:"html":"UTF-8"}","{$redeem_script.keys.1|escape:"html":"UTF-8"}","{$redeem_script.keys.2|escape:"html":"UTF-8"}"]'</textarea>
                                         </div>
                                     </div>
-                                    {else if $my_multisig_key.provider == 'JS'}
+                                    {elseif $my_multisig_key.provider == 'JS'}
                                     <noscript>
                                         <div class="row">
                                             <label class="col-xs-3" for="import_command">Import Command</label>
@@ -113,8 +113,7 @@
                                 </div>
                                 <div class="col-xs-12 col-md-2">
                                     {if isset($qr) == TRUE}
-                                        Scan to Pay:
-                                    <a href='{$payment_url}'><img style="width:100%" src='data:image/png;base64,{$qr}' /></a>
+                                        Scan to Pay: <a href='{$payment_url}'><img style="width:100%" src='data:image/png;base64,{$qr}' /></a>
                                         {$coin.code}{$order.order_price|escape:"html":"UTF-8"}
                                     {/if}
                                 </div>

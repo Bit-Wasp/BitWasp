@@ -264,6 +264,13 @@ class Orders extends MY_Controller
         $data['request_upfront'] = $this->order_model->requested_order_type($data['order']);
         $data['order_type'] = ($data['trusted_vendor'] && $data['request_upfront'] == 'upfront') ? 'upfront' : 'escrow';
 
+        // Work out vendors earnings - his expected earnings minus extra fees
+        $order_total = number_format($data['order']['price']+$data['fees']['shipping_cost']+$data['fees']['fee'],8);
+        $fees_total = number_format($data['fees']['fee'] + (($data['order_type'] == 'escrow')
+                ? ((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->escrow_rate)
+                : ((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->upfront_rate)),8);
+        $vendor_total = number_format($order_total - $fees_total,8);
+
         if ($this->form_validation->run('order_place') == TRUE) {
             if ($data['public_key'] == FALSE) {
                 $data['returnMessage'] = 'You have no public keys available, ' . anchor('bip32', 'click here to get set up!');
@@ -293,7 +300,7 @@ class Orders extends MY_Controller
                             $this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('buyer_payout'));
                             $buyer_payout = $this->input->post('buyer_payout');
                         } else {
-                            $data['returnMessage'] = '';
+                            $data['returnMessage'] = 'The password you entered was incorrect!';
                         }
                     } else {
                         // Otherwise, take current payout address
@@ -337,11 +344,11 @@ class Orders extends MY_Controller
 
                             if ($vendor_accept == TRUE) {
                                 $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
-                                $message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
+                                $message = "You have received a new order from {$this->current_user->user_name}.\nOrder ID: #{$data['order']['id']}\n\n";
                                 for ($i = 0; $i < count($data['order']['items']); $i++) {
-                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}\n";
                                 }
-                                $message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n" . $this->input->post('buyer_address');
+                                $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
                                 $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
                                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
 
@@ -351,6 +358,7 @@ class Orders extends MY_Controller
                             }
                         } else {
                             // Vendor has no bip32 keys or payout address.
+                            // Should not get to here..
                             $this->order_model->set_user_public_key($id, 'buyer', $insert_buyerkey['id']);
 
                             $update = array('price' => $data['order']['price'],
@@ -365,11 +373,11 @@ class Orders extends MY_Controller
                             } else {
                                 // Send message to vendor
                                 $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
-                                $message = "You have received a new order from {$this->current_user->user_name}.<br />\nOrder ID: #{$data['order']['id']}<br />\n";
+                                $message = "You have received a new order from {$this->current_user->user_name}.\nOrder ID: #{$data['order']['id']}\n\n";
                                 for ($i = 0; $i < count($data['order']['items']); $i++) {
-                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}<br />\n";
+                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}\n";
                                 }
-                                $message .= "<br />Total price: {$data['order']['currency']['symbol']}{$data['order']['price']}<br /><br />\nBuyer Address: <br />\n" . $this->input->post('buyer_address');
+                                $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
                                 $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
 
                                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));

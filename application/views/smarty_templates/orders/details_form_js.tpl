@@ -60,7 +60,7 @@
 </div>
 {/if}
 <!-- End Display Unsigned/Partially signed transaction -->
-<input type="hidden" name="extended_public_key" id="extended_public_key" value="{$signing_info.parent_extended_public_key}" />
+<input type="hidden" name="extended_public_key" id="extended_public_key" value="{$signing_info.parent_extended_public_key|escape:"html":"UTF-8"}" />
 <input type="hidden" name="key_index" id="key_index" value="{$signing_info.key_index}" />
 <input type="hidden" name="wallet_salt" id="wallet_salt" value="{$wallet_salt}" />
 
