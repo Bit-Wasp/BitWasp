@@ -190,13 +190,11 @@ class Users extends MY_Controller
             }
 
             $user_name = $this->input->post('user_name');
-
             $password = $this->general->new_password($this->input->post('password0'));
 
             // Generate OpenSSL keys for the users private messages.
             if ($data['encrypt_private_messages'] == TRUE) {
                 $msg_password = $this->general->new_password($this->input->post('message_pin0'));
-
                 $message_keys = $this->openssl->keypair($msg_password['hash']);
                 $message_keys['private_key_salt'] = $msg_password['salt'];
 
@@ -237,7 +235,7 @@ class Users extends MY_Controller
                     $this->load->library('email');
                     $service_name = preg_replace("/^[\w]{2,6}:\/\/([\w\d\.\-]+).*$/", "$1", $this->config->slash_item('base_url'));
 
-                    $this->email->from('do-not-reply@'.$service_name, 'Do Not Reply');
+                    $this->email->from('do-not-reply@'.$service_name, $this->bw_config->site_title);
                     $this->email->to($this->input->post('email_address'));
                     $this->email->subject('Email Activation: '.$service_name);
                     $this->email->message("To activate your account, please click the following link:\n".base_url('activate/email/'.$register_info['activation_id'].'/'.$register_info['activation_hash'])."\n\nIf you didn't make this request, feel free to ignore it.");
