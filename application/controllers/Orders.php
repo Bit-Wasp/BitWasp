@@ -271,119 +271,111 @@ class Orders extends MY_Controller
                 : ((($data['order']['price'] + $data['fees']['shipping_cost']) / 100) * $this->bw_config->upfront_rate)),8);
         $vendor_total = number_format($order_total - $fees_total,8);
 
+        if ($data['order']['vendor']['block_non_pgp'] == '1')
+            $this->form_validation->set_rules("buyer_address", "Your address", 'check_pgp_encrypted');
+
+        if ($data['buyer_payout'] == FALSE) {
+            $this->form_validation->set_rules("buyer_payout", "refund address", 'required|check_bitcoin_address');
+            $this->form_validation->set_rules("password", "password", 'required');
+        }
+
         if ($this->form_validation->run('order_place') == TRUE) {
             if ($data['public_key'] == FALSE) {
                 $data['returnMessage'] = 'You have no public keys available, ' . anchor('bip32', 'click here to get set up!');
             } else {
-                $continue = FALSE;
-
-                if ($data['order']['vendor']['block_non_pgp'] == '1')
-                    $this->form_validation->set_rules("buyer_address", "Your address", 'check_pgp_encrypted');
 
                 if ($data['buyer_payout'] == FALSE) {
-                    $this->form_validation->set_rules("buyer_payout", "refund address", 'required|check_bitcoin_address');
-                    $this->form_validation->set_rules("password", "password", 'required');
+                    // If buyer_payout is false, check password, add payout address, and drop in.
+                    $this->load->model('users_model');
+                    $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+                    $check_login = $this->users_model->check_password($this->current_user->user_name, $this->general->password($this->input->post('password'), $user_info['salt']));
+                    if ($check_login !== FALSE && $check_login['id'] == $this->current_user->user_id) {
+                        $this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('buyer_payout'));
+                        $buyer_payout = $this->input->post('buyer_payout');
+                    } else {
+                        $data['returnMessage'] = 'The password you entered was incorrect!';
+                    }
+                } else {
+                    // Otherwise, take current payout address
+                    $buyer_payout = $data['buyer_payout']['address'];
                 }
 
-                // Validation rules will always pass if neither the above cases are true
-                // Otherwise, it's an opportunity to catch errors for these cases
-                if ($this->form_validation->run() == TRUE)
-                    $continue = TRUE;
+                // Buyer payout must be known.
+                if (isset($buyer_payout)) {
+                    $insert_buyerkey = $this->bip32_model->add_child_key(array(
+                        'user_id' => $this->current_user->user_id,
+                        'user_role' => $this->current_user->user_role,
+                        'order_id' => $data['order']['id'],
+                        'order_hash' => '',
+                        'parent_extended_public_key' => $data['public_key']['parent_extended_public_key'],
+                        'provider' => $data['public_key']['provider'],
+                        'extended_public_key' => $data['public_key']['extended_public_key'],
+                        'public_key' => $data['public_key']['public_key'],
+                        'key_index' => $data['public_key']['key_index']
+                    ));
+                    // If the vendor has public keys, allow the order address to be created immediately.
 
-                if ($continue == TRUE) {
-                    if ($data['buyer_payout'] == FALSE) {
-                        // If buyer_payout is false, check password, add payout address, and drop in.
-                        $this->load->model('users_model');
-                        $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
-                        $check_login = $this->users_model->check_password($this->current_user->user_name, $this->general->password($this->input->post('password'), $user_info['salt']));
-                        if ($check_login !== FALSE && $check_login['id'] == $this->current_user->user_id) {
-                            $this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('buyer_payout'));
-                            $buyer_payout = $this->input->post('buyer_payout');
-                        } else {
-                            $data['returnMessage'] = 'The password you entered was incorrect!';
-                        }
-                    } else {
-                        // Otherwise, take current payout address
-                        $buyer_payout = $data['buyer_payout']['address'];
-                    }
-
-                    // Buyer payout must be known.
-                    if (isset($buyer_payout)) {
-                        $insert_buyerkey = $this->bip32_model->add_child_key(array(
-                            'user_id' => $this->current_user->user_id,
-                            'user_role' => $this->current_user->user_role,
-                            'order_id' => $data['order']['id'],
-                            'order_hash' => '',
-                            'parent_extended_public_key' => $data['public_key']['parent_extended_public_key'],
-                            'provider' => $data['public_key']['provider'],
-                            'extended_public_key' => $data['public_key']['extended_public_key'],
-                            'public_key' => $data['public_key']['public_key'],
-                            'key_index' => $data['public_key']['key_index']
-                        ));
-                        // If the vendor has public keys, allow the order address to be created immediately.
-
-                        if ($data['vendor_bip32_key'] !== FALSE AND $data['vendor_payout'] !== FALSE) {
-                            $vendor_public_key = $this->bip32_model->get_next_bip32_child($data['order']['vendor']['id']);
-                            $accept_details = array('vendor_public_key' => $vendor_public_key,
-                                'buyer_public_key' => $insert_buyerkey,
-                                'order_type' => $data['order_type'],
-                                'order' => $data['order'],
-                                'initiating_user' => 'buyer',
-                                'update_fields' => array(
-                                    'price' => $data['order']['price'],
-                                    'fees' => $data['fees']['fee'],
-                                    'confirmed_time' => time(),
-                                    'buyer_public_key' => $insert_buyerkey['id'],
-                                    'vendor_payout' => $data['vendor_payout']['address'],
-                                    'buyer_payout' => $buyer_payout,
-                                    'shipping_costs' => $data['fees']['shipping_cost']
-                                )
-                            );
-
-                            $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
-
-                            if ($vendor_accept == TRUE) {
-                                $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
-                                $message = "You have received a new order from {$this->current_user->user_name}.\nOrder ID: #{$data['order']['id']}\n\n";
-                                for ($i = 0; $i < count($data['order']['items']); $i++) {
-                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}\n";
-                                }
-                                $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
-                                $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
-                                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
-
-                                redirect('purchases');
-                            } else if (is_string($vendor_accept) == TRUE) {
-                                $data['returnMessage'] = $vendor_accept;
-                            }
-                        } else {
-                            // Vendor has no bip32 keys or payout address.
-                            // Should not get to here..
-                            $this->order_model->set_user_public_key($id, 'buyer', $insert_buyerkey['id']);
-
-                            $update = array('price' => $data['order']['price'],
+                    if ($data['vendor_bip32_key'] !== FALSE AND $data['vendor_payout'] !== FALSE) {
+                        $vendor_public_key = $this->bip32_model->get_next_bip32_child($data['order']['vendor']['id']);
+                        $accept_details = array('vendor_public_key' => $vendor_public_key,
+                            'buyer_public_key' => $insert_buyerkey,
+                            'order_type' => $data['order_type'],
+                            'order' => $data['order'],
+                            'initiating_user' => 'buyer',
+                            'update_fields' => array(
+                                'price' => $data['order']['price'],
                                 'fees' => $data['fees']['fee'],
                                 'confirmed_time' => time(),
+                                'buyer_public_key' => $insert_buyerkey['id'],
+                                'vendor_payout' => $data['vendor_payout']['address'],
                                 'buyer_payout' => $buyer_payout,
-                                'shipping_costs' => $data['fees']['shipping_cost']);
+                                'shipping_costs' => $data['fees']['shipping_cost']
+                            )
+                        );
 
-                            // Simply progress order from step 0 to step 1.
-                            if ($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE) {
-                                $data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
-                            } else {
-                                // Send message to vendor
-                                $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
-                                $message = "You have received a new order from {$this->current_user->user_name}.\nOrder ID: #{$data['order']['id']}\n\n";
-                                for ($i = 0; $i < count($data['order']['items']); $i++) {
-                                    $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}\n";
-                                }
-                                $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
-                                $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
+                        $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
 
-                                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
-
-                                redirect('purchases');
+                        if ($vendor_accept == TRUE) {
+                            $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
+                            $message = "You have received a new order from {$this->current_user->user_name}.\nOrder ID: #{$data['order']['id']}\n\n";
+                            for ($i = 0; $i < count($data['order']['items']); $i++) {
+                                $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}\n";
                             }
+                            $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
+                            $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
+                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
+
+                            redirect('purchases');
+                        } else if (is_string($vendor_accept) == TRUE) {
+                            $data['returnMessage'] = $vendor_accept;
+                        }
+                    } else {
+                        // Vendor has no bip32 keys or payout address.
+                        // Should not get to here..
+                        $this->order_model->set_user_public_key($id, 'buyer', $insert_buyerkey['id']);
+
+                        $update = array('price' => $data['order']['price'],
+                            'fees' => $data['fees']['fee'],
+                            'confirmed_time' => time(),
+                            'buyer_payout' => $buyer_payout,
+                            'shipping_costs' => $data['fees']['shipping_cost']);
+
+                        // Simply progress order from step 0 to step 1.
+                        if ($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE) {
+                            $data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
+                        } else {
+                            // Send message to vendor
+                            $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
+                            $message = "You have received a new order from {$this->current_user->user_name}.\nOrder ID: #{$data['order']['id']}\n\n";
+                            for ($i = 0; $i < count($data['order']['items']); $i++) {
+                                $message .= "{$data['order']['items'][$i]['quantity']} x {$data['order']['items'][$i]['name']}\n";
+                            }
+                            $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
+                            $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
+
+                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
+
+                            //redirect('purchases');
                         }
                     }
                 }
