@@ -345,7 +345,7 @@ class Orders extends MY_Controller
                             $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
                             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
 
-                            redirect('purchases');
+                            //redirect('purchases');
                         } else if (is_string($vendor_accept) == TRUE) {
                             $data['returnMessage'] = $vendor_accept;
                         }
@@ -375,7 +375,7 @@ class Orders extends MY_Controller
 
                             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
 
-                            //redirect('purchases');
+                            redirect('purchases');
                         }
                     }
                 }
