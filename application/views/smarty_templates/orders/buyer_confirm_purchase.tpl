@@ -68,7 +68,7 @@ vendor will notify you once the order has been dispatched. When received you can
 
                         <div class="row">
                             <div class="row">
-                                <div class="col-xs-10">Enter your exact shipping address. {if $order.vendor.pgp == TRUE}It will be encrypted before it leaves your browser if you have javascript enabled.{/if}</div>
+                                <div class="col-xs-10">Enter your exact shipping address. {if is_array($order.vendor.pgp) == TRUE}It will be encrypted before it leaves your browser if you have javascript enabled.{/if}</div>
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
@@ -106,8 +106,8 @@ vendor will notify you once the order has been dispatched. When received you can
                             </div>
                         </div>
                         {/if}
-{var_dump($order.vendor)}
-                        {if $order.vendor.pgp == TRUE}
+
+                        {if is_array($order.vendor.pgp) == TRUE}
                         <textarea style="display:none;" name="public_key">{$order.vendor.pgp.public_key|escape:"html":"UTF-8"}</textarea>
                         {/if}
 
