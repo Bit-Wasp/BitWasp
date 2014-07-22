@@ -98,7 +98,6 @@ class Bw_messages
             'subject' => $subject,
             'message' => $message);
 
-        $this->for_email = $content['message'];
         $pgp_encrypted = $this->CI->form_validation->check_pgp_encrypted($content['message']);
 
         // If the message isn't already encrypted with PGP..
@@ -113,6 +112,7 @@ class Bw_messages
                 $pgp_encrypted = true;
             }
         }
+        $this->for_email = $content['message'];
 
         // JSON encode the content array, and encrypt it if able.
         $content = json_encode($content);
