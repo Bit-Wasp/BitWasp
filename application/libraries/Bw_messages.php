@@ -29,6 +29,12 @@ class Bw_messages
      */
     protected $message_password;
 
+
+    /**
+     * @var
+     */
+    public $for_email;
+
     /**
      * Constructor
      *
@@ -92,6 +98,7 @@ class Bw_messages
             'subject' => $subject,
             'message' => $message);
 
+        $this->for_email = $content['message'];
         $pgp_encrypted = $this->CI->form_validation->check_pgp_encrypted($content['message']);
 
         // If the message isn't already encrypted with PGP..
