@@ -106,7 +106,7 @@ vendor will notify you once the order has been dispatched. When received you can
                             </div>
                         </div>
                         {/if}
-
+{var_dump($order.vendor)}
                         {if $order.vendor.pgp == TRUE}
                         <textarea style="display:none;" name="public_key">{$order.vendor.pgp.public_key|escape:"html":"UTF-8"}</textarea>
                         {/if}
