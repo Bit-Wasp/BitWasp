@@ -71,65 +71,62 @@ class Users extends MY_Controller
 
         $this->load->model('accounts_model');
 
+        if ($this->display_captcha)
+            $this->form_validation->set_rules("captcha", "required|check_captcha");
+
         if ($this->form_validation->run('login_form') == TRUE) {
-            $valid = TRUE;
-            if ($this->display_captcha) {
-                $this->form_validation->set_rules("captcha", "required|check_captcha");
-                if ($this->form_validation->run() !== TRUE)
-                    $valid = FALSE;
-            }
+            $user_info = $this->users_model->get(array('user_name' => $this->input->post('user_name')));
 
-            if ($valid) {
-                $user_info = $this->users_model->get(array('user_name' => $this->input->post('user_name')));
+            if ($user_info !== FALSE) {
+                $password = $this->general->password($this->input->post('password'), $user_info['salt']);
+                $check_login = $this->users_model->check_password($this->input->post('user_name'), $password);
 
-                if ($user_info !== FALSE) {
-                    $password = $this->general->password($this->input->post('password'), $user_info['salt']);
-                    $check_login = $this->users_model->check_password($this->input->post('user_name'), $password);
+                // Check the login went through OK.
+                if ($check_login !== FALSE AND $check_login['id'] == $user_info['id']) {
+                    $this->users_model->set_login($user_info['id']);
 
-                    // Check the login went through OK.
-                    if ($check_login !== FALSE AND $check_login['id'] == $user_info['id']) {
-                        $this->users_model->set_login($user_info['id']);
-
-                        if ($user_info['banned'] == '1') {
-                            // User is banned. Disallow.
-                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => "You have been banned from this site.")));
-                            redirect('login');
-                        } else if ($user_info['user_role'] !== 'Admin' AND $this->bw_config->maintenance_mode == TRUE) {
-                            // Maintainance mode active, but user isn't admin. Disallow.
-                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => "The site is in maintenance mode, please try again later.")));
-                            redirect('login');
-                        } else if ($user_info['entry_paid'] == '0') {
-                            // Registration payment required. Direct to details.
-                            $this->bw_session->create($user_info, 'entry_payment');
-                            redirect('register/payment');
-                        } else if ($user_info['totp_two_factor'] == '1') {
-                            // Redirect to TOTP two factor page.
-                            $this->bw_session->create($user_info, 'totp_factor');
-                            redirect('login/totp_factor');
-                        } else if ($user_info['pgp_two_factor'] == '1') {
-                            // Redirect for two-factor authentication.
-                            $this->bw_session->create($user_info, 'pgp_factor'); // TRUE, enables a half-session for two factor auth
-                            redirect('login/pgp_factor');
-                        } else if ($user_info['user_role'] == 'Vendor'
-                            AND $this->bw_config->force_vendor_pgp == TRUE
-                            AND $this->accounts_model->get_pgp_key($user_info['id']) == FALSE
-                        ) {
-                            // Redirect to register a PGP key.
-                            $this->bw_session->create($user_info, 'force_pgp'); // enable a half-session where the user registers a PGP key.
-                            redirect('register/pgp');
-                        } else {
-                            // Success! Log the user in.
-                            $this->bw_session->create($user_info);
-                            // Changed from redirect('/');
-                            redirect('');
-                        }
+                    if(strlen($user_info['email_address']) > 0 AND $user_info['email_activated'] == '0') {
+                        $this->current_user->set_return_message('You have not yet activated your email address. Please check your inbox.', FALSE);
+                        redirect('login');
+                    } else if ($user_info['banned'] == '1') {
+                        // User is banned. Disallow.
+                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => "You have been banned from this site.")));
+                        redirect('login');
+                    } else if ($user_info['user_role'] !== 'Admin' AND $this->bw_config->maintenance_mode == TRUE) {
+                        // Maintainance mode active, but user isn't admin. Disallow.
+                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => "The site is in maintenance mode, please try again later.")));
+                        redirect('login');
+                    } else if ($user_info['entry_paid'] == '0') {
+                        // Registration payment required. Direct to details.
+                        $this->bw_session->create($user_info, 'entry_payment');
+                        redirect('register/payment');
+                    } else if ($user_info['totp_two_factor'] == '1') {
+                        // Redirect to TOTP two factor page.
+                        $this->bw_session->create($user_info, 'totp_factor');
+                        redirect('login/totp_factor');
+                    } else if ($user_info['pgp_two_factor'] == '1') {
+                        // Redirect for two-factor authentication.
+                        $this->bw_session->create($user_info, 'pgp_factor'); // TRUE, enables a half-session for two factor auth
+                        redirect('login/pgp_factor');
+                    } else if ($user_info['user_role'] == 'Vendor'
+                        AND $this->bw_config->force_vendor_pgp == TRUE
+                        AND $this->accounts_model->get_pgp_key($user_info['id']) == FALSE
+                    ) {
+                        // Redirect to register a PGP key.
+                        $this->bw_session->create($user_info, 'force_pgp'); // enable a half-session where the user registers a PGP key.
+                        redirect('register/pgp');
+                    } else {
+                        // Success! Log the user in.
+                        $this->bw_session->create($user_info);
+                        // Changed from redirect('/');
+                        redirect('');
                     }
                 }
-
-                $this->session->set_userdata('failed_login', ((int)$this->session->userdata('failed_login') + 1));
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Your details were incorrect, try again.")));
-                redirect('login');
             }
+
+            $this->session->set_userdata('failed_login', ((int)$this->session->userdata('failed_login') + 1));
+            $this->current_user->set_return_message("Your details were incorrect, try again.", FALSE);
+            redirect('login');
         }
 
         $data['title'] = 'Login';
@@ -165,6 +162,7 @@ class Users extends MY_Controller
         $data['terms_of_service'] = ($this->bw_config->terms_of_service_toggle == TRUE) ? $this->bw_config->terms_of_service : FALSE;
         $data['force_vendor_pgp'] = $this->bw_config->force_vendor_pgp;
         $data['encrypt_private_messages'] = $this->bw_config->encrypt_private_messages;
+        $data['request_emails'] = $this->bw_config->request_emails;
         $data['vendor_registration_allowed'] = $this->bw_config->vendor_registration_allowed;
         $data['locations_select'] = $this->location_model->generate_select_list($this->bw_config->location_list_source, 'location', 'form-control');
         $data['currencies'] = $this->bw_config->currencies;
@@ -172,6 +170,9 @@ class Users extends MY_Controller
         // Different rules depending on whether a PIN must be entered.
         $register_page = ($data['encrypt_private_messages'] == TRUE) ? 'users/register' : 'users/register_no_pin';
         $register_validation = ($data['encrypt_private_messages'] == TRUE) ? 'register_form' : 'register_no_pin_form';
+
+        if($this->bw_config->request_emails == TRUE)
+            $this->form_validation->set_rules("email_address","email address","required|valid_email|is_unique[users.email_address]");
 
         if ($this->form_validation->run($register_validation) == TRUE) {
             $data['role'] = ($token == NULL) ? $this->general->role_from_id($this->input->post('user_type')) : $data['token_info']['user_type']['txt'];
@@ -215,6 +216,10 @@ class Users extends MY_Controller
                 'location' => $this->input->post('location'),
                 'register_time' => time(),
                 'salt' => $password['salt'],
+                'activation_hash' => bin2hex(openssl_random_pseudo_bytes(16)),
+                'activation_id' => bin2hex(openssl_random_pseudo_bytes(7)),
+                'email_address' => ($this->bw_config->request_emails) ? $this->input->post('email_address') : '',
+                'email_activated' => ($this->bw_config->request_emails) ? '0' : '1',
                 'user_hash' => $user_hash,
                 'user_name' => $user_name,
                 'user_role' => $data['role'],
@@ -228,6 +233,17 @@ class Users extends MY_Controller
 
             // Check the submission
             if ($add_user) {
+                if($this->bw_config->request_emails == TRUE){
+                    $this->load->library('email');
+                    $service_name = preg_replace("/^[\w]{2,6}:\/\/([\w\d\.\-]+).*$/", "$1", $this->config->slash_item('base_url'));
+
+                    $this->email->from('do-not-reply@'.$service_name, 'Do Not Reply');
+                    $this->email->to($this->input->post('email_address'));
+                    $this->email->subject('Email Activation: '.$service_name);
+                    $this->email->message("To activate your account, please click the following link:\n".base_url('activate/email/'.$register_info['activation_id'].'/'.$register_info['activation_hash'])."\n\nIf you didn't make this request, feel free to ignore it.");
+                    $this->email->send();
+                }
+
                 $this->load->model('bitcoin_model');
                 $entry_fee = 'entry_payment_' . strtolower($data['role']);
 
@@ -243,11 +259,15 @@ class Users extends MY_Controller
                         'amount' => $amount,
                         'bitcoin_address' => $address);
                     $this->users_model->set_entry_payment($info);
+
                     $message = "Your account has been created, but this site requires you pay an entry fee. Please send {$this->bw_config->currencies[0]['symbol']} {$amount} to {$address}. You can log in to view these details again.";
+                    $message.= ($this->bw_config->request_emails == TRUE) ? " An email has been sent to your address with an activation link - you'll need to click this before you can access your account." : '';
                 } else {
                     // Allow the user immediate access.
                     $this->users_model->set_entry_paid($user_hash);
-                    $message = "Your account has been created, please login below: ";
+                    $message = ($this->bw_config->request_emails)
+                        ? "Your account has been created! You'll need to verify your email address by clicking the link we just sent"
+                        : "Your account has been created, please login below: ";
                 }
                 $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
                 redirect('login');
@@ -255,6 +275,7 @@ class Users extends MY_Controller
                 // Unsuccessful submission, show form again.
                 $data['returnMessage'] = 'Your registration was unsuccessful, please try again.';
             }
+
         }
 
         $data['title'] = 'Register';

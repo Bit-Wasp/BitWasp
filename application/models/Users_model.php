@@ -34,16 +34,11 @@ class Users_model extends CI_Model
      */
     public function add($data, $token_info = NULL)
     {
-        $sql = "INSERT INTO bw_users (user_name, password, salt, user_hash, user_role, register_time, public_key, private_key, location, local_currency, private_key_salt, wallet_salt) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $query = $this->db->query($sql, array($data['user_name'], $data['password'], $data['salt'], $data['user_hash'], $data['user_role'], time(), $data['public_key'], $data['private_key'], $data['location'], $data['local_currency'], $data['private_key_salt'], $data['wallet_salt']));
-        if ($query) {
-            if ($token_info !== FALSE)
-                $this->delete_registration_token($token_info['id']);
+        $ret = $this->db->insert('users', $data) == TRUE;
+        if($token_info !== null)
+            $this->delete_registration_token($token_info['id']);
 
-            return TRUE;
-        }
-        return FALSE;
-
+        return $ret;
     }
 
     /**
@@ -103,11 +98,10 @@ class Users_model extends CI_Model
      */
     public function get(array $user)
     {
-
         $key = array_keys($user);
         $key = $key[0];
         if (in_array($key, array('user_hash', 'id', 'user_name'))) {
-            $query = $this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, public_key, pgp_two_factor, totp_two_factor, entry_paid')
+            $query = $this->db->select('id, banned, user_hash, user_name, local_currency, user_role, salt, force_pgp_messages, public_key, pgp_two_factor, totp_two_factor, entry_paid, email_address, email_activated, activation_hash, activation_id')
                 ->get_where('users', array($key => $user[$key]));
         } else {
             return FALSE; //No suitable field found.
@@ -486,6 +480,24 @@ class Users_model extends CI_Model
                 array_push($users, $user);
             }
             return $users;
+        }
+        return FALSE;
+    }
+
+    protected function _set_activated_email($user_id) {
+        $this->db->where('id', $user_id)->update('users', array('email_activated' => '1'));
+    }
+
+    public function attempt_email_activation($identifier, $subject, $activation_hash){
+        $q = $this->db->select('id, email_activated')->get_where('users', array($identifier=>$subject, 'activation_hash' => $activation_hash));
+        if($q->num_rows() > 0){
+            $row = $q->row_array();
+            if($row['email_activated'] == '1') {
+                return 'activated';
+            } else {
+                $this->_set_activated_email($row['id']);
+                return TRUE;
+            }
         }
         return FALSE;
     }

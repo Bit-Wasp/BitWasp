@@ -11,6 +11,11 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-xs-6"><strong>Request Emails</strong></div>
+                    <div class="col-xs-6">{if $config.request_emails == TRUE}Enabled{else}Disabled{/if}</div>
+                </div>
+
+                <div class="row">
                     <div class='col-xs-6'><strong>Session Timeout</strong></div>
                     <div class='col-xs-6'>{$config.login_timeout|escape:"html":"UTF-8"} minutes</div>
                 </div>

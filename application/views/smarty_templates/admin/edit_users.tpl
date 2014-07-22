@@ -22,6 +22,23 @@
 
                     <div class="form-group">
                         <div class="col-xs-12">
+                            <label class="control-label col-xs-4" for="request_emails">Request Emails?</label>
+                            <div class="col-xs-5">
+                                <div class="input-group">
+                                    <label class="radio-inline">
+                                        <input type='radio' name='request_emails' value='0' {if $config.request_emails == '0'}checked{/if} /> Disabled
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type='radio' name='request_emails' value='1' {if $config.request_emails == '1'}checked{/if} /> Enabled
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='col-xs-8 col-xs-offset-4'>{form method="form_error" field="login_timeout"}</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-12">
                             <label class="control-label col-xs-4" for="captcha_length">Captcha Length</label>
                             <div class="col-xs-3">
                                 <div class="input-group">

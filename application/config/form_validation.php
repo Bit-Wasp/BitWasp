@@ -271,6 +271,10 @@ $config = array('register_form' => array(
             'label' => 'session timeout',
             'rules' => 'required|greater_than_equal_to[5]'
         ),
+        array('field' => 'request_emails',
+            'label' => 'request emails',
+            'rules' => 'required|check_bool_enabled'
+        ),
         array('field' => 'captcha_length',
             'label' => 'captcha length',
             'rules' => 'required|greater_than[0]|less_than_equal_to[16]'
@@ -686,6 +690,17 @@ $config = array('register_form' => array(
             'label' => 'confirmation',
             'rules' => 'required|matches[new_password0]'
         )
+    ),
+    'submit_email_activation' => array(
+        array('field' => 'email_address',
+            'label' => 'email',
+            'rules' => 'required'
+        ),
+        array('field' => 'activation_hash',
+            'label' => 'activation token',
+            'rules' => 'required'
+        )
+
     )
 );
 

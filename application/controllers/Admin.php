@@ -431,6 +431,7 @@ class Admin extends MY_Controller
             // Determine what changes, if any, to make.
             $changes['login_timeout'] = ($this->input->post('login_timeout') != $data['config']['login_timeout']) ? $this->input->post('login_timeout') : NULL;
             $changes['captcha_length'] = ($this->input->post('captcha_length') != $data['config']['captcha_length']) ? $this->input->post('captcha_length') : NULL;
+            $changes['request_emails'] = ($this->input->post('request_emails') != $data['config']['request_emails']) ? $this->input->post('request_emails') : NULL;
             $changes['registration_allowed'] = ($this->input->post('registration_allowed') != $data['config']['registration_allowed']) ? $this->input->post('registration_allowed') : NULL;
             $changes['vendor_registration_allowed'] = ($this->input->post('vendor_registration_allowed') != $data['config']['vendor_registration_allowed']) ? $this->input->post('vendor_registration_allowed') : NULL;
             $changes['encrypt_private_messages'] = ($this->input->post('encrypt_private_messages') != $data['config']['encrypt_private_messages']) ? $this->input->post('encrypt_private_messages') : NULL;

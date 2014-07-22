@@ -87,6 +87,12 @@ class Bw_config
     public $force_vendor_pgp = TRUE;
 
     /**
+     * Request Emails
+     * @var bool
+     */
+    public $request_emails = FALSE;
+
+    /**
      * Captcha Length
      *
      * Administrators can set the length of the capthca using this setting.
@@ -394,6 +400,7 @@ class Bw_config
                 'bip32_iteration' => $this->bip32_iteration);
         } else if ($panel == 'users') {
             $result = array('registration_allowed' => $this->registration_allowed,
+                'request_emails' => $this->request_emails,
                 'vendor_registration_allowed' => $this->vendor_registration_allowed,
                 'encrypt_private_messages' => $this->encrypt_private_messages,
                 'force_vendor_pgp' => $this->force_vendor_pgp,
