@@ -344,8 +344,8 @@ class Orders extends MY_Controller
                             $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
                             $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
                             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
-
-                            redirect('purchases');
+echo 't';
+                          //  redirect('purchases');
                         } else if (is_string($vendor_accept) == TRUE) {
                             $data['returnMessage'] = $vendor_accept;
                         }
