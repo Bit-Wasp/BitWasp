@@ -53,7 +53,7 @@ class Accounts_model extends CI_Model
         if (isset($opt['own']) AND $opt['own'])
             $this->db->select('users.local_currency, users.totp_secret, users.totp_two_factor, users.pgp_two_factor');
 
-        $this->db->select('users.id, users.banned, users.email_address, users.completed_order_count, users.display_login_time, users.force_pgp_messages, users.block_non_pgp, users.login_time, users.location, users.register_time, users.user_name, users.user_hash, users.user_role, pgp_keys.public_key as pgp_public_key, pgp_keys.fingerprint as pgp_fingerprint')
+        $this->db->select('users.id, users.banned, users.email_address, users.email_updates, users.completed_order_count, users.display_login_time, users.force_pgp_messages, users.block_non_pgp, users.login_time, users.location, users.register_time, users.user_name, users.user_hash, users.user_role, pgp_keys.public_key as pgp_public_key, pgp_keys.fingerprint as pgp_fingerprint')
             ->join('pgp_keys', 'pgp_keys.user_id = users.id', 'left')
             ->where("users.{$key}", "{$identifier[$key]}");
         $query = $this->db->get('users');
