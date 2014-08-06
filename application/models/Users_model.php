@@ -35,7 +35,7 @@ class Users_model extends CI_Model
     public function add($data, $token_info = NULL)
     {
         $ret = $this->db->insert('users', $data) == TRUE;
-        if($token_info !== null)
+        if ($token_info !== null)
             $this->delete_registration_token($token_info['id']);
 
         return $ret;
@@ -484,15 +484,36 @@ class Users_model extends CI_Model
         return FALSE;
     }
 
-    protected function _set_activated_email($user_id) {
+    /**
+     * Set Activated Email
+     *
+     * This function takes a $user_id and marks that account as having its email activated.
+     *
+     * @param $user_id
+     */
+    protected function _set_activated_email($user_id)
+    {
         $this->db->where('id', $user_id)->update('users', array('email_activated' => '1'));
     }
 
-    public function attempt_email_activation($identifier, $subject, $activation_hash){
-        $q = $this->db->select('id, email_activated')->get_where('users', array($identifier=>$subject, 'activation_hash' => $activation_hash));
-        if($q->num_rows() > 0){
+    /**
+     * Attempt Email Activation
+     *
+     * This function is used to try activate a users account for the first time.  If successful,
+     * it will set the email as activated, and the function returns TRUE. If the details were invalid,
+     * FALSE is returned. If the email was already updated, then return 'activated'
+     *
+     * @param $identifier
+     * @param $subject
+     * @param $activation_hash
+     * @return bool|string
+     */
+    public function attempt_email_activation($identifier, $subject, $activation_hash)
+    {
+        $q = $this->db->select('id, email_activated')->get_where('users', array($identifier => $subject, 'activation_hash' => $activation_hash));
+        if ($q->num_rows() > 0) {
             $row = $q->row_array();
-            if($row['email_activated'] == '1') {
+            if ($row['email_activated'] == '1') {
                 return 'activated';
             } else {
                 $this->_set_activated_email($row['id']);

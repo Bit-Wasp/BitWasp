@@ -159,11 +159,18 @@ class Activate extends MY_Controller {
                 : 'The verification link was incorrect. You can request another, or try pasting the verification token below:';
             return FALSE;
         } else {
-            // Otherwise, user is verified. Determine message
-            $this->current_user->set_return_message(
-                (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified, please log in below!' )
-                , FALSE);
-            redirect('login');
+            if($this->current_user->logged_in()) {
+                $this->current_user->set_return_message(
+                    (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified.' )
+                    , FALSE);
+                redirect('account');
+            } else {
+                // Otherwise, user is verified. Determine message
+                $this->current_user->set_return_message(
+                    (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified, please log in below!' )
+                    , FALSE);
+                redirect('login');
+            }
         }
     }
 
