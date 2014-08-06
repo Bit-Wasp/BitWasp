@@ -15,7 +15,6 @@ order is dispatched.</p>
 vendor will notify you once the order has been dispatched. When received you can release the funds to the vendor.
 </p>
 {/if}
-                    <p align="justify">&nbsp;</p>
 
                     <p>Review the order details, and enter your address if you are happy to proceed. Once confirmed, you will be able to pay to the order address.</p>
 
@@ -67,9 +66,6 @@ vendor will notify you once the order has been dispatched. When received you can
                     {form method="open" action=$smarty.capture.t_purchase_url attr=['name'=>'placeOrderForm','id'=>'placeOrderForm','class'=>'form-horizontal']}
 
                         <div class="row">
-                            <div class="row">
-                                <div class="col-xs-10">Enter your exact shipping address. {if isset($order.vendor.pgp) == TRUE}It will be encrypted before it leaves your browser if you have javascript enabled.{/if}</div>
-                            </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <label class="control-label col-xs-3" for="buyer_address">Shipping Address:</label>

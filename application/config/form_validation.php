@@ -700,7 +700,16 @@ $config = array('register_form' => array(
             'label' => 'activation token',
             'rules' => 'required'
         )
-
+    ),
+    'submit_new_email_address' => array(
+        array('field' => 'email_address',
+            'label' => 'email address',
+            'rules' => 'required|valid_email|is_unique[users.email_address]'
+        ),
+        array('field' => 'password',
+            'label' => 'password',
+            'rules' => 'required'
+        )
     )
 );
 

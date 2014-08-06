@@ -140,6 +140,12 @@ class Users extends MY_Controller
 
     /**
      * Register new users on the system.
+     *
+     * If requested by admins users may need to:
+     * - verify their email address
+     * - enter a PGP key
+     * before they can access their account.
+     *
      * URI: /register
      *
      * @param    string /NULL    $token
@@ -238,7 +244,13 @@ class Users extends MY_Controller
                     $this->email->from('do-not-reply@'.$service_name, $this->bw_config->site_title);
                     $this->email->to($this->input->post('email_address'));
                     $this->email->subject('Email Activation: '.$service_name);
-                    $this->email->message("To activate your account, please click the following link:\n".base_url('activate/email/'.$register_info['activation_id'].'/'.$register_info['activation_hash'])."\n\nIf you didn't make this request, feel free to ignore it.");
+$msg = "Thanks for joining {$this->bw_config->site_title}!\n\n
+In order to activate your account, please visit the following link:\n"
+.anchor('activate/email/'.$register_info['activation_id'].'/'.$register_info['activation_hash'], 'Activate your account')."\n".
+"Alternatively, you can visit ".base_url('activate/email/'.$register_info['activation_id'].'/'.$register_info['activation_hash']).
+"and manually verify by entering your email address, and the verification token below:\n".
+"Token: {$register_info['activation_hash']}\n\nIf you didn't make this request, feel free to ignore it.";
+                    $this->email->message($msg);
                     $this->email->send();
                 }
 

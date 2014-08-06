@@ -249,15 +249,12 @@ class Orders extends MY_Controller
         $data['title'] = 'Place Order #' . $data['order']['id'];
         $data['page'] = 'orders/buyer_confirm_purchase';
         $data['header_meta'] = $this->load->view('orders/encryption_header', NULL, true);
-
         $data['fees']['shipping_cost'] = number_format($this->shipping_costs_model->costs_to_location($data['order']['items'], $data['order']['buyer']['location']), 8);
         $data['fees']['fee'] = number_format($this->fees_model->calculate(($data['order']['price'] + $data['fees']['shipping_cost'])), 8);
         $data['fees']['total'] = number_format($data['fees']['shipping_cost'] + $data['fees']['fee'], 8);
         $data['total'] = number_format($data['order']['price'] + $data['fees']['total'], 8);
-
         $data['public_key'] = $this->bip32_model->get_next_bip32_child($this->current_user->user_id);
         $data['buyer_payout'] = $this->bitcoin_model->get_payout_address($data['order']['buyer']['id']);
-
         $data['vendor_payout'] = $this->bitcoin_model->get_payout_address($data['order']['vendor']['id']);
         $data['vendor_bip32_key'] = $this->bip32_model->get($data['order']['vendor']['id']);
         $data['trusted_vendor'] = $this->review_model->decide_trusted_user($data['order'], 'vendor');
@@ -317,7 +314,7 @@ class Orders extends MY_Controller
 
                     if ($data['vendor_bip32_key'] !== FALSE AND $data['vendor_payout'] !== FALSE) {
                         $vendor_public_key = $this->bip32_model->get_next_bip32_child($data['order']['vendor']['id']);
-                        $accept_details = array('vendor_public_key' => $vendor_public_key,
+                        $vendor_accept = $this->order_model->vendor_accept_order(array('vendor_public_key' => $vendor_public_key,
                             'buyer_public_key' => $insert_buyerkey,
                             'order_type' => $data['order_type'],
                             'order' => $data['order'],
@@ -331,9 +328,7 @@ class Orders extends MY_Controller
                                 'buyer_payout' => $buyer_payout,
                                 'shipping_costs' => $data['fees']['shipping_cost']
                             )
-                        );
-
-                        $vendor_accept = $this->order_model->vendor_accept_order($accept_details);
+                        ));
 
                         if ($vendor_accept == TRUE) {
                             $subject = "New Order #{$data['order']['id']} from " . $this->current_user->user_name;
@@ -344,8 +339,7 @@ class Orders extends MY_Controller
                             $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
                             $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
                             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
-echo 't';
-                          //  redirect('purchases');
+                            redirect('purchases');
                         } else if (is_string($vendor_accept) == TRUE) {
                             $data['returnMessage'] = $vendor_accept;
                         }
@@ -354,14 +348,12 @@ echo 't';
                         // Should not get to here..
                         $this->order_model->set_user_public_key($id, 'buyer', $insert_buyerkey['id']);
 
-                        $update = array('price' => $data['order']['price'],
-                            'fees' => $data['fees']['fee'],
-                            'confirmed_time' => time(),
-                            'buyer_payout' => $buyer_payout,
-                            'shipping_costs' => $data['fees']['shipping_cost']);
-
                         // Simply progress order from step 0 to step 1.
-                        if ($this->order_model->progress_order($data['order']['id'], '0', '1', $update) == FALSE) {
+                        if ($this->order_model->progress_order($data['order']['id'], '0', '1', array('price' => $data['order']['price'],
+                                'fees' => $data['fees']['fee'],
+                                'confirmed_time' => time(),
+                                'buyer_payout' => $buyer_payout,
+                                'shipping_costs' => $data['fees']['shipping_cost'])) == FALSE) {
                             $data['returnMessage'] = 'Unable to place your order at this time, please try again later.';
                         } else {
                             // Send message to vendor
@@ -374,7 +366,6 @@ echo 't';
                             $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
 
                             $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
-
                             redirect('purchases');
                         }
                     }

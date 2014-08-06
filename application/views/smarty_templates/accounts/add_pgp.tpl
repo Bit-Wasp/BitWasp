@@ -13,7 +13,7 @@
                                 <textarea name="public_key" id="public_key" class="form-control" rows="10" ></textarea>
                             </div>
                         </div>
-                        <div class="col-xs-10 col-xs-offset-2"}{form method='form_error' field='public_key'}</div>
+                        <div class="col-xs-10 col-xs-offset-2">{form method='form_error' field='public_key'}</div>
                     </div>
 
                     <div class="form-group">
