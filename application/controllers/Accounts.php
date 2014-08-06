@@ -175,7 +175,44 @@ class Accounts extends MY_Controller
         $data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => true));
         $data['request_emails'] = $this->bw_config->request_emails;
         $data['action_type'] = ($data['user']['email_address'] == null) ? 'new' : 'update';
+        $data['pending_verification'] = $this->email_update_model->pending_verification($this->current_user->user_id);
 
+        // Function to check if the submitted ID is on the users pending verification list.
+        $check_is_users_request = function ($id) use ($data) {
+            $c = count($data['pending_verification']);
+            // Return FALSE if array empty
+            if ($c == 0)
+                return FALSE;
+
+            $f = FALSE;
+            for ($i = 0; $i < $c; $i++)
+                if ($data['pending_verification'][$i]['id'] == $id) $f = TRUE;
+
+            // Return TRUE if submitted ID matched one in the table
+            return $f;
+        };
+
+        // Delete requests if required
+        if (is_array($this->input->post('delete_request'))) {
+            if ($this->form_validation->run('delete_email_change_record') == TRUE) {
+                $id = array_keys($this->input->post('delete_request'));
+                $id = $id[0];
+
+                if ($check_is_users_request($id)) {
+                    $delete = $this->email_update_model->delete_request($this->current_user->user_id, $id);
+                    if ($delete) {
+                        $this->current_user->set_return_message('That email has been deleted', FALSE);
+                        redirect('accounts/email');
+                    } else {
+                        $data['returnMessage'] = 'Unable to delete this request, please try again later.';
+                    }
+                } else {
+                    $data['returnMessage'] = 'That record was not found';
+                }
+            }
+        }
+
+        // Allow user to submit new email addresses
         if ($this->input->post('submit_new_email_address') == 'Submit') {
             if ($this->form_validation->run('submit_new_email_address') == TRUE) {
 
@@ -185,23 +222,23 @@ class Accounts extends MY_Controller
                     $request = array('email_address' => $this->input->post('email_address'),
                         'user_id' => $this->current_user->user_id,
                         'time' => time(),
-                        'expire_time' => (time()+86400),
+                        'expire_time' => (time() + 86400),
                         'activation_hash' => bin2hex(openssl_random_pseudo_bytes(16)),
                         'activation_id' => bin2hex(openssl_random_pseudo_bytes(7)));
 
-                    if($this->email_update_model->new_update_request($request) == TRUE) {
+                    if ($this->email_update_model->new_update_request($request) == TRUE) {
 
                         $this->load->library('email');
                         $service_name = preg_replace("/^[\w]{2,6}:\/\/([\w\d\.\-]+).*$/", "$1", $this->config->slash_item('base_url'));
 
-                        $this->email->from('do-not-reply@'.$service_name, $this->bw_config->site_title);
+                        $this->email->from('do-not-reply@' . $service_name, $this->bw_config->site_title);
                         $this->email->to($request['email_address']);
-                        $this->email->subject('Email Activation: '.$service_name);
-$msg = "In order to confirm your new email address, please visit the following link:\n"
-.anchor('activate/change_email/'.$request['activation_id'].'/'.$request['activation_hash'], 'Activate your account')."\n".
-"Alternatively, you can visit ".base_url('activate/change_email/'.$request['activation_id'].'/'.$request['activation_hash']).
-"and manually verify by entering your email address, and the verification token below:\n".
-"Token: {$request['activation_hash']}\n\nIf you didn't make this request, feel free to ignore it - it will expire in 24 hours.";
+                        $this->email->subject('Email Activation: ' . $service_name);
+                        $msg = "In order to confirm your new email address, please visit the following link:\n"
+                            . anchor('activate/change_email/' . $request['activation_id'] . '/' . $request['activation_hash'], 'Activate your account') . "\n" .
+                            "Alternatively, you can visit " . base_url('activate/change_email/' . $request['activation_id'] . '/' . $request['activation_hash']) .
+                            "and manually verify by entering your email address, and the verification token below:\n" .
+                            "Token: {$request['activation_hash']}\n\nIf you didn't make this request, feel free to ignore it - it will expire in 24 hours.";
                         $this->email->message($msg);
                         $this->email->send();
 
@@ -220,7 +257,7 @@ $msg = "In order to confirm your new email address, please visit the following l
 
         // Feed into pending email updates
         $data['page'] = 'accounts/submit_new_email';
-        $data['title'] = (($data['action_type'] == 'new') ? 'Set' : 'Update').' Email Address';
+        $data['title'] = (($data['action_type'] == 'new') ? 'Set' : 'Update') . ' Email Address';
         $this->_render($data['page'], $data);
     }
 

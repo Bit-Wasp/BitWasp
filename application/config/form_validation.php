@@ -558,10 +558,10 @@ $config = array('register_form' => array(
         )
     ),
     'submit_public_keys' => array(
-       array('field' => 'public_key_list',
-        'label' => 'public keys',
-        'rules' => 'required'
-       )
+        array('field' => 'public_key_list',
+            'label' => 'public keys',
+            'rules' => 'required'
+        )
     ),
     'submit_payout_address' => array(
         array('field' => 'address',
@@ -654,7 +654,7 @@ $config = array('register_form' => array(
         )
     ),
     'admin_resolve_dispute' => array(
-        array('field'=>'resolve_dispute_id',
+        array('field' => 'resolve_dispute_id',
             'label' => '',
             'rules' => 'required|is_numeric'
         )
@@ -672,8 +672,8 @@ $config = array('register_form' => array(
         )
     ),
     'submit_js_signed_transaction' => array(
-		array('field' => 'js_transaction',
-			'label' => 'wallet passphrase',
+        array('field' => 'js_transaction',
+            'label' => 'wallet passphrase',
             'rules' => 'required'
         )
     ),
@@ -708,6 +708,12 @@ $config = array('register_form' => array(
         ),
         array('field' => 'password',
             'label' => 'password',
+            'rules' => 'required'
+        )
+    ),
+    'delete_email_change_record' => array(
+        array('field' => 'delete_request[]',
+            'label' => '',
             'rules' => 'required'
         )
     )

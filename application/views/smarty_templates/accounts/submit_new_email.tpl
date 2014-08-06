@@ -7,11 +7,37 @@
                 {else}
                     Use this form if you wish to change your email to something else.
                 {/if}
-                An email will be sent to the address, and will need to follow the activation link, or manually enter the given details details to confirm this change.
+                An email will be sent to the address, and will need to follow the activation link, or manually enter the given details to confirm this change.
                 </p>
 
                 {assign var="defaultMessage" value=""}
                 {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+
+                {if count($pending_verification) > 0}
+                {form method="open" action="accounts/email" attr=""}
+                    {form method="validation_errors"}
+                <div class='col-xs-10 col-xs-offset-1'>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Pending Verification: </div>
+
+                        <table class="table">
+                            <tbody>
+                            {foreach from=$pending_verification item=verification_record}
+
+                            <tr>
+                                <td>{$verification_record.email_address|escape:"html":"UTF-8"}</td>
+                                <td></td>
+                                <td>expires {format_time ts=$verification_record.expire_time}</td>
+                                <td><button type="submit" class="btn btn-default btn-xs" name="delete_request[{$verification_record.id}][]" value='1' title="delete"><i class="glyphicon glyphicon-trash"></i></button>
+
+                            </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </form>
+                {/if}
 
                 {form method="open" action="accounts/email" attr='class="form-horizontal"'}
                     <div class="form-group">

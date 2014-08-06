@@ -78,6 +78,8 @@ vendor will notify you once the order has been dispatched. When received you can
                         </div>
 
                         {if $buyer_payout == FALSE}
+                        <hr><br />
+
                         <div class="row">
                             <div class="row">
                                 <div class="col-xs-10">You don't have a refund address set up at the moment. Please enter one now, along with your password, in case you need a refund at any point.</div>

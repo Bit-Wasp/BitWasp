@@ -86,7 +86,7 @@ class Users extends MY_Controller
                     $this->users_model->set_login($user_info['id']);
 
                     if(strlen($user_info['email_address']) > 0 AND $user_info['email_activated'] == '0') {
-                        $this->current_user->set_return_message('You have not yet activated your email address. Please check your inbox.', FALSE);
+                        $this->current_user->set_return_message('You have not yet activated your email address. Please check your inbox, or '.anchor('activate/email', 'do it manually here'), FALSE);
                         redirect('login');
                     } else if ($user_info['banned'] == '1') {
                         // User is banned. Disallow.
