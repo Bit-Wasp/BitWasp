@@ -34,7 +34,7 @@ class Email_update_model extends CI_Model
     /**
      * Attempt Email Activation
      *
-     * This function attempts to verify the details given by the user (via form or link)
+     * This function atteemmpts to verify the details given by the user (via form or link)
      * and will update the users email address if they are correct.
      *
      * @param $identifier
@@ -81,6 +81,23 @@ class Email_update_model extends CI_Model
         return FALSE;
     }
 
+    /**
+     * Pending Verification
+     *
+     * This function takes a $user_id, and returns all emails which are pending verification.
+     * Returns an array of entries of they exist, otherwise an empty array.
+     *
+     * @param $user_id
+     * @return array
+     */
+    public function pending_verification($user_id) {
+        return $this->db
+            ->get_where('email_update_requests', array(
+                'user_id' => $user_id,
+                'expire_time >' => time(),
+                'activated' => '0'))
+            ->result_array();
+    }
 }
 
 ;
