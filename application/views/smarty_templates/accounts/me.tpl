@@ -48,19 +48,19 @@
                 <div class="row">&nbsp;</div>
                 <legend>Private Settings </legend>
 
-                {if $user.email_address !== NULL}
+                {if $request_emails == TRUE}
                 <div class="row">
                     <div class="col-md-4"><strong>Email Address</strong></div>
-                    <div class="col-md-8">{$user.email_address|escape:"html":"UTF-8"}</div>
+                    <div class="col-md-8">{if $user.email_address == ''}none{else}{$user.email_address|escape:"html":"UTF-8"}{/if}</div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-4"><strong>Forward messages to email?</strong></div>
-                    <div class="col-md-8">{if $user.email_updates == TRUE}Enabled{else}Disabled{/if}</div>
+                    <div class="col-md-8">{if $user.email_updates == TRUE AND (($user.email_address == '')==FALSE) }Enabled{else}Disabled{/if}</div>
                 </div>
                 {/if}
-                {if $user.user_role !== 'Admin'}
 
+                {if $user.user_role !== 'Admin'}
                 <div class="row">
                     <div class="col-md-4"><strong>Bitcoin Public Keys</strong></div>
                     <div class="col-md-8">
