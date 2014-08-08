@@ -338,6 +338,9 @@ class Accounts extends MY_Controller
         $data['option_replace_pgp'] = (($this->bw_config->force_vendor_pgp == true && $this->current_user->user_role == 'Vendor')
             OR $this->current_user->user_role == 'Admin');
 
+        if($data['user']['email_address'] !== '')
+            $this->form_validation->set_rules('email_updates', 'email updates', 'required|check_bool_enabled');
+
         // Different form validation rules depending on if the user has a PGP key uploaded.
         $form_rules = (isset($data['user']['pgp']) == TRUE) ? 'account_edit' : 'account_edit_no_pgp';
 
@@ -349,6 +352,10 @@ class Accounts extends MY_Controller
             $changes['location'] = ($data['user']['location'] == $this->input->post('location')) ? NULL : $this->input->post('location');
             $changes['display_login_time'] = ($data['user']['display_login_time'] == $this->input->post('display_login_time')) ? NULL : $this->input->post('display_login_time');
             $changes['local_currency'] = ($data['user']['currency'] == $this->input->post('local_currency')) ? NULL : $this->input->post('local_currency');
+
+            if($data['user']['email_address'] !== '') {
+                $changes['email_updates'] = ($data['user']['email_updates'] == $this->input->post('email_updates')) ? NULL : $this->input->post('email_updates');
+            }
 
             // Only consider these if the user has a PGP key uploaded.
             if (isset($data['user']['pgp'])) {
