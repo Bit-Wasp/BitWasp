@@ -235,8 +235,8 @@ class Accounts extends MY_Controller
                         $this->email->to($request['email_address']);
                         $this->email->subject('Email Activation: ' . $service_name);
                         $msg = "In order to confirm your new email address, please visit the following link:\n"
-                            . anchor('activate/change_email/' . $request['activation_id'] . '/' . $request['activation_hash'], 'Activate your account') . "\n" .
-                            "Alternatively, you can visit " . base_url('activate/change_email/' . $request['activation_id'] . '/' . $request['activation_hash']) .
+                            . anchor('activate/change_email/' . $request['activation_id'] . '/' . $request['activation_hash'], 'Activate your account') . "\n\n" .
+                            "Alternatively, you can visit " . base_url('activate/change_email') .
                             "and manually verify by entering your email address, and the verification token below:\n" .
                             "Token: {$request['activation_hash']}\n\nIf you didn't make this request, feel free to ignore it - it will expire in 24 hours.";
                         $this->email->message($msg);

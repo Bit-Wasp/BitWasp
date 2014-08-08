@@ -169,14 +169,15 @@ class Activate extends MY_Controller
                 $this->current_user->set_return_message(
                     (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified.')
                     , FALSE);
-
-                redirect('account');
+                echo 'redirect to account';
+                //redirect('account');
             } else {
                 // Inform user of outcome, redirect to login.
                 $this->current_user->set_return_message(
                     (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified, please log in below!')
                     , FALSE);
-                redirect('login');
+                echo 'redirect to login';
+                //redirect('login');
             }
         }
     }
