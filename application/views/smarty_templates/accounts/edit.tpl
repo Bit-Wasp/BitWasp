@@ -45,6 +45,21 @@
                         <div class="col-xs-8 col-xs-offset-4">{form method="form_error" field="display_login_time"}</div>
                     </div>
 
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <label class="control-label col-xs-4" for="email_updates">Forward messages to email?</label>
+                            <div class="col-xs-6">
+                                <label class="radio-inline">
+                                    <input type='radio' class="radio" name='email_updates' value='0' {if $user.email_updates == '0'}checked{/if} /> Disabled
+                                </label>
+
+                                <label class="radio-inline">
+                                    <input type='radio' class="radio" name='email_updates' value='1' {if $user.email_updates == '1'}checked{/if} /> Enabled
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                     {if isset($user.pgp) == TRUE}
                     <div class="form-group">
                         <label class="control-label col-xs-4" for="pgp_key">PGP Fingerprint</label>

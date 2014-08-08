@@ -16,6 +16,18 @@
                         <div class="col-xs-10 col-xs-offset-2">{form method="form_error" field="user_name"}</div>
                     </div>
 
+                    {if $request_emails == TRUE}
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <label class="control-label col-xs-2" for="email_address">Email Address</label>
+                            <div class="col-xs-5">
+                                <input type='email_address' class="form-control" id="email_address" name='email_address' value='' autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="col-xs-10 col-xs-offset-2">{form method="form_error" field="email_address"}</div>
+                    </div>
+                    {/if}
+
                     <div class="form-group">
                         <div class="col-xs-12">
                             <label class="control-label col-xs-2" for="password0">Password</label>

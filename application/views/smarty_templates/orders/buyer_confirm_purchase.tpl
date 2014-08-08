@@ -15,7 +15,6 @@ order is dispatched.</p>
 vendor will notify you once the order has been dispatched. When received you can release the funds to the vendor.
 </p>
 {/if}
-                    <p align="justify">&nbsp;</p>
 
                     <p>Review the order details, and enter your address if you are happy to proceed. Once confirmed, you will be able to pay to the order address.</p>
 
@@ -67,9 +66,6 @@ vendor will notify you once the order has been dispatched. When received you can
                     {form method="open" action=$smarty.capture.t_purchase_url attr=['name'=>'placeOrderForm','id'=>'placeOrderForm','class'=>'form-horizontal']}
 
                         <div class="row">
-                            <div class="row">
-                                <div class="col-xs-10">Enter your exact shipping address. {if $order.vendor.pgp == TRUE}It will be encrypted before it leaves your browser if you have javascript enabled.{/if}</div>
-                            </div>
                             <div class="form-group">
                                 <div class="col-xs-12">
                                     <label class="control-label col-xs-3" for="buyer_address">Shipping Address:</label>
@@ -82,6 +78,8 @@ vendor will notify you once the order has been dispatched. When received you can
                         </div>
 
                         {if $buyer_payout == FALSE}
+                        <hr><br />
+
                         <div class="row">
                             <div class="row">
                                 <div class="col-xs-10">You don't have a refund address set up at the moment. Please enter one now, along with your password, in case you need a refund at any point.</div>
@@ -107,7 +105,7 @@ vendor will notify you once the order has been dispatched. When received you can
                         </div>
                         {/if}
 
-                        {if $order.vendor.pgp == TRUE}
+                        {if isset($order.vendor.pgp) == TRUE}
                         <textarea style="display:none;" name="public_key">{$order.vendor.pgp.public_key|escape:"html":"UTF-8"}</textarea>
                         {/if}
 
@@ -115,7 +113,7 @@ vendor will notify you once the order has been dispatched. When received you can
                             <label class="control-label col-sm-2 col-lg-2 col-md-2" for="submit"></label>
                             <div class="col-sm-5 col-lg-5 col-md-5">
                                 <p align="center">
-                                    <input type="submit" class="btn btn-primary" value='Place Order' {if $order.vendor.pgp == TRUE}onclick='messageEncrypt()'{/if} />
+                                    <input type="submit" class="btn btn-primary" value='Place Order' {if isset($order.vendor.pgp) == TRUE}onclick='messageEncrypt()'{/if} />
                                     {url type="anchor" url='order/list' text="Cancel" attr='class="btn btn-default"'}
                                 </p>
                             </div>

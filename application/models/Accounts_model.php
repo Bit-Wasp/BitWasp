@@ -53,7 +53,7 @@ class Accounts_model extends CI_Model
         if (isset($opt['own']) AND $opt['own'])
             $this->db->select('users.local_currency, users.totp_secret, users.totp_two_factor, users.pgp_two_factor');
 
-        $this->db->select('users.id, users.banned, users.completed_order_count, users.display_login_time, users.force_pgp_messages, users.block_non_pgp, users.login_time, users.location, users.register_time, users.user_name, users.user_hash, users.user_role, pgp_keys.public_key as pgp_public_key, pgp_keys.fingerprint as pgp_fingerprint')
+        $this->db->select('users.id, users.banned, users.email_address, users.email_updates, users.completed_order_count, users.display_login_time, users.force_pgp_messages, users.block_non_pgp, users.login_time, users.location, users.register_time, users.user_name, users.user_hash, users.user_role, pgp_keys.public_key as pgp_public_key, pgp_keys.fingerprint as pgp_fingerprint')
             ->join('pgp_keys', 'pgp_keys.user_id = users.id', 'left')
             ->where("users.{$key}", "{$identifier[$key]}");
         $query = $this->db->get('users');
@@ -175,8 +175,8 @@ class Accounts_model extends CI_Model
     public function replace_pgp_key($user_id, $data)
     {
         $this->db->where('user_id', $user_id);
-        return ($this->db->update('pgp_keys', array('public_key' => $data['public_key'],
-                'fingerprint' => $data['fingerprint'])) == TRUE) ? TRUE : FALSE;
+        return $this->db->update('pgp_keys', array('public_key' => $data['public_key'],
+                'fingerprint' => $data['fingerprint'])) == TRUE;
     }
 
     /**
@@ -189,10 +189,10 @@ class Accounts_model extends CI_Model
      */
     public function disable_2fa_totp()
     {
-        $this->db->where('id', $this->current_user->user_id);
-        $update = array('totp_secret' => '',
-            'totp_two_factor' => '0');
-        return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+        return $this->db
+            ->where('id', $this->current_user->user_id)
+            ->update('users', array('totp_secret' => '',
+                'totp_two_factor' => '0')) == TRUE;
     }
 
     /**
@@ -206,7 +206,7 @@ class Accounts_model extends CI_Model
     {
         $this->db->where('id', $this->current_user->user_id);
         $update = array('pgp_two_factor' => '0');
-        return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+        return $this->db->update('users', $update) == TRUE;
     }
 
     /**
@@ -224,7 +224,7 @@ class Accounts_model extends CI_Model
         $update = array('totp_secret' => $secret,
             'totp_two_factor' => '1',
             'pgp_two_factor' => '0');
-        return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+        return $this->db->update('users', $update) == TRUE;
     }
 
     /**
@@ -237,8 +237,9 @@ class Accounts_model extends CI_Model
      * @param $salt
      * @return bool
      */
-    public function update_user_password($user_id, $password_hash, $salt) {
-        return $this->db->where('id', $user_id)->update('users', array('password'=>$password_hash,'salt'=>$salt)) == TRUE;
+    public function update_user_password($user_id, $password_hash, $salt)
+    {
+        return $this->db->where('id', $user_id)->update('users', array('password' => $password_hash, 'salt' => $salt)) == TRUE;
     }
 
     /**
@@ -256,7 +257,7 @@ class Accounts_model extends CI_Model
             'totp_two_factor' => '0',
             'totp_secret' => ''
         );
-        return ($this->db->update('users', $update) == TRUE) ? TRUE : FALSE;
+        return $this->db->update('users', $update) == TRUE;
     }
 
     /**
@@ -274,7 +275,7 @@ class Accounts_model extends CI_Model
     public function toggle_ban($user_id, $value)
     {
         $this->db->where('id', $user_id);
-        return ($this->db->update('users', array('banned' => $value)) == TRUE) ? TRUE : FALSE;
+        return $this->db->update('users', array('banned' => $value)) == TRUE;
     }
 
     /**

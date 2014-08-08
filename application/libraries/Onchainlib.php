@@ -20,7 +20,6 @@ class OnchainLib
         $this->CI->load->model('onchain_model');
         $this->CI->load->library('ciqrcode');
 
-        $this->service_name = preg_replace("/^[\w]{2,6}:\/\/([\w\d\.\-]+).*$/", "$1", $this->CI->config->slash_item('base_url'));
     }
 
     public function sign_request($sign_order_id, $tx_hash)

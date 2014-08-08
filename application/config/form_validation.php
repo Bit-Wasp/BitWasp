@@ -271,6 +271,10 @@ $config = array('register_form' => array(
             'label' => 'session timeout',
             'rules' => 'required|greater_than_equal_to[5]'
         ),
+        array('field' => 'request_emails',
+            'label' => 'request emails',
+            'rules' => 'required|check_bool_enabled'
+        ),
         array('field' => 'captcha_length',
             'label' => 'captcha length',
             'rules' => 'required|greater_than[0]|less_than_equal_to[16]'
@@ -554,10 +558,10 @@ $config = array('register_form' => array(
         )
     ),
     'submit_public_keys' => array(
-       array('field' => 'public_key_list',
-        'label' => 'public keys',
-        'rules' => 'required'
-       )
+        array('field' => 'public_key_list',
+            'label' => 'public keys',
+            'rules' => 'required'
+        )
     ),
     'submit_payout_address' => array(
         array('field' => 'address',
@@ -650,7 +654,7 @@ $config = array('register_form' => array(
         )
     ),
     'admin_resolve_dispute' => array(
-        array('field'=>'resolve_dispute_id',
+        array('field' => 'resolve_dispute_id',
             'label' => '',
             'rules' => 'required|is_numeric'
         )
@@ -668,8 +672,8 @@ $config = array('register_form' => array(
         )
     ),
     'submit_js_signed_transaction' => array(
-		array('field' => 'js_transaction',
-			'label' => 'wallet passphrase',
+        array('field' => 'js_transaction',
+            'label' => 'wallet passphrase',
             'rules' => 'required'
         )
     ),
@@ -685,6 +689,32 @@ $config = array('register_form' => array(
         array('field' => 'new_password1',
             'label' => 'confirmation',
             'rules' => 'required|matches[new_password0]'
+        )
+    ),
+    'submit_email_activation' => array(
+        array('field' => 'email_address',
+            'label' => 'email',
+            'rules' => 'required'
+        ),
+        array('field' => 'activation_hash',
+            'label' => 'activation token',
+            'rules' => 'required'
+        )
+    ),
+    'submit_new_email_address' => array(
+        array('field' => 'email_address',
+            'label' => 'email address',
+            'rules' => 'required|valid_email|is_unique[users.email_address]'
+        ),
+        array('field' => 'password',
+            'label' => 'password',
+            'rules' => 'required'
+        )
+    ),
+    'delete_email_change_record' => array(
+        array('field' => 'delete_request[]',
+            'label' => '',
+            'rules' => 'required'
         )
     )
 );

@@ -26,6 +26,7 @@ class MY_Controller extends CI_Controller
     {
         parent::__construct();
         $this->_partials = array();
+
     }
 
     public function _partial($view_access_name, $page)

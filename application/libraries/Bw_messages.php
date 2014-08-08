@@ -29,6 +29,12 @@ class Bw_messages
      */
     protected $message_password;
 
+
+    /**
+     * @var
+     */
+    public $for_email;
+
     /**
      * Constructor
      *
@@ -106,6 +112,7 @@ class Bw_messages
                 $pgp_encrypted = true;
             }
         }
+        $this->for_email = $content['message'];
 
         // JSON encode the content array, and encrypt it if able.
         $content = json_encode($content);

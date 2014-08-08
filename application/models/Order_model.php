@@ -691,7 +691,18 @@ class Order_model extends CI_Model
             'message' => $message);
         $message = $this->bw_messages->prepare_input(array('from' => $admin['id']), $details);
         $message['order_id'] = $order_id;
-        $this->messages_model->send($message);
+        if ($this->messages_model->send($message)) {
+            $recipient_ac = $this->accounts_model->get(array('user_name' => $recipient));
+            if (strlen($recipient_ac['email_address']) > 0 AND $recipient_ac['email_updates'] == 1) {
+                $this->load->library('email');
+                $service_name = preg_replace("/^[\w]{2,6}:\/\/([\w\d\.\-]+).*$/", "$1", $this->config->slash_item('base_url'));
+                $this->email->from('do-not-reply@' . $service_name, '');
+                $this->email->to($recipient_ac['email_address']);
+                $this->email->subject('Order Update on ' . $this->bw_config->site_title);
+                $this->email->message($this->bw_messages->for_email);
+                $this->email->send();
+            }
+        };
 
     }
 

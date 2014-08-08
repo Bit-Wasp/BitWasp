@@ -3,7 +3,6 @@
  * Accounts.php
  *
  * Provides accounts functionality, and users profiles/settings
-
  * @category   Accounts
  * @package    BitWasp
  * @licence    Unlicence
@@ -80,6 +79,14 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
+    /**
+     * Payout
+     *
+     * This page allows buyers/sellers to set up refund/payout addresses. These addresses
+     * are the destination for any funds meant for that user. Administrators do not have this.
+     *
+     * Users must enter their password to make this change.
+     */
     public function payout()
     {
         if ($this->current_user->user_role == 'Admin')
@@ -91,14 +98,11 @@ class Accounts extends MY_Controller
         if ($this->input->post('submit_payout_address') == 'Submit') {
             if ($this->form_validation->run('submit_payout_address')) {
                 $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
-                $password = $this->general->password($this->input->post('password'), $user_info['salt']);
-                $check_login = $this->users_model->check_password($this->current_user->user_name, $password);
+                $check_login = $this->users_model->check_password($this->current_user->user_name, $this->general->password($this->input->post('password'), $user_info['salt']));
 
-                if ($check_login !== FALSE && $check_login['id'] == $this->current_user->user_id) {
+                if (is_array($check_login) == TRUE && $check_login['id'] == $this->current_user->user_id) {
 
-                    $set = $this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('address'));
-
-                    if ($set) {
+                    if ($this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('address'))) {
                         $this->current_user->set_return_message('Payout address has been saved', TRUE);
                         redirect('account');
                     } else {
@@ -133,6 +137,7 @@ class Accounts extends MY_Controller
         $data['page'] = 'accounts/me';
 
         $data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => true));
+        $data['request_emails'] = $this->bw_config->request_emails;
         $data['title'] = $data['user']['user_name'];
 
         $data['two_factor']['totp'] = (bool)$data['user']['totp_two_factor'];
@@ -150,7 +155,119 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-    public function password() {
+    /**
+     * Email
+     *
+     * This page allows users to change the email address or their account. Passwords
+     * are required in order to authorize this.
+     *
+     * An activation hash and ID are generated and emailed to the user, which they must
+     * click to confirm. Once complete, the email will be updated.
+     *
+     * TODO: Email current email address about the change.
+     */
+    public function email()
+    {
+        $this->load->model('email_update_model');
+
+        // Allow user to set their email for the first time,
+        // or update their current email.
+        $data['user'] = $this->accounts_model->get(array('user_hash' => $this->current_user->user_hash), array('own' => true));
+        $data['request_emails'] = $this->bw_config->request_emails;
+        $data['action_type'] = ($data['user']['email_address'] == null) ? 'new' : 'update';
+        $data['pending_verification'] = $this->email_update_model->pending_verification($this->current_user->user_id);
+
+        // Function to check if the submitted ID is on the users pending verification list.
+        $check_is_users_request = function ($id) use ($data) {
+            $c = count($data['pending_verification']);
+            // Return FALSE if array empty
+            if ($c == 0)
+                return FALSE;
+
+            $f = FALSE;
+            for ($i = 0; $i < $c; $i++)
+                if ($data['pending_verification'][$i]['id'] == $id) $f = TRUE;
+
+            // Return TRUE if submitted ID matched one in the table
+            return $f;
+        };
+
+        // Delete requests if required
+        if (is_array($this->input->post('delete_request'))) {
+            if ($this->form_validation->run('delete_email_change_record') == TRUE) {
+                $id = array_keys($this->input->post('delete_request'));
+                $id = $id[0];
+
+                if ($check_is_users_request($id)) {
+                    $delete = $this->email_update_model->delete_request($this->current_user->user_id, $id);
+                    if ($delete) {
+                        $this->current_user->set_return_message('That email has been deleted', FALSE);
+                        redirect('accounts/email');
+                    } else {
+                        $data['returnMessage'] = 'Unable to delete this request, please try again later.';
+                    }
+                } else {
+                    $data['returnMessage'] = 'That record was not found';
+                }
+            }
+        }
+
+        // Allow user to submit new email addresses
+        if ($this->input->post('submit_new_email_address') == 'Submit') {
+            if ($this->form_validation->run('submit_new_email_address') == TRUE) {
+
+                $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
+                $check_password = $this->users_model->check_password($this->current_user->user_name, $this->general->password($this->input->post('password'), $user_info['salt']));
+                if (is_array($check_password) && $check_password['id'] == $user_info['id']) {
+                    $request = array('email_address' => $this->input->post('email_address'),
+                        'user_id' => $this->current_user->user_id,
+                        'time' => time(),
+                        'expire_time' => (time() + 86400),
+                        'activation_hash' => bin2hex(openssl_random_pseudo_bytes(16)),
+                        'activation_id' => bin2hex(openssl_random_pseudo_bytes(7)));
+
+                    if ($this->email_update_model->new_update_request($request) == TRUE) {
+
+                        $this->load->library('email');
+                        $service_name = preg_replace("/^[\w]{2,6}:\/\/([\w\d\.\-]+).*$/", "$1", $this->config->slash_item('base_url'));
+
+                        $this->email->from('do-not-reply@' . $service_name, $this->bw_config->site_title);
+                        $this->email->to($request['email_address']);
+                        $this->email->subject('Email Activation: ' . $service_name);
+                        $msg = "In order to confirm your new email address, please visit the following link:\n"
+                            . anchor('activate/change_email/' . $request['activation_id'] . '/' . $request['activation_hash'], 'Activate your account') . "\n\n" .
+                            "Alternatively, you can visit " . base_url('activate/change_email') .
+                            "and manually verify by entering your email address, and the verification token below:\n" .
+                            "Token: {$request['activation_hash']}\n\nIf you didn't make this request, feel free to ignore it - it will expire in 24 hours.";
+                        $this->email->message($msg);
+                        $this->email->send();
+
+                        $this->current_user->set_return_message("An email has been sent to the address you supplied. Please click the verification link within 24 hours.", FALSE);
+                        redirect('account');
+                    } else {
+                        $data['returnMessage'] = 'An error occured, please try again later.';
+                    }
+                    // Add email to pending new emails, await verification.
+
+                } else {
+                    $data['returnMessage'] = 'Your password was incorrect, please try again.';
+                }
+            }
+        }
+
+        // Feed into pending email updates
+        $data['page'] = 'accounts/submit_new_email';
+        $data['title'] = (($data['action_type'] == 'new') ? 'Set' : 'Update') . ' Email Address';
+        $this->_render($data['page'], $data);
+    }
+
+    /**
+     * Password
+     *
+     * Allow users to change their password on the website.
+     */
+    public function password()
+    {
         $this->load->model('users_model');
         $user_info = $this->users_model->get(array('id' => $this->current_user->user_id));
 
@@ -166,7 +283,7 @@ class Accounts extends MY_Controller
                     // Generate new hash + salt
                     $new_password = $this->general->new_password($this->input->post('new_password0'));
                     $update = $this->accounts_model->update_user_password($this->current_user->user_id, $new_password['hash'], $new_password['salt']);
-                    if($update == TRUE) {
+                    if ($update == TRUE) {
                         $this->current_user->set_return_message('Your password has been changed!', TRUE);
                         redirect('account');
                     } else {
@@ -179,6 +296,7 @@ class Accounts extends MY_Controller
         $data['title'] = 'Change Password';
         $this->_render('accounts/change_password', $data);
     }
+
     /**
      * Edit own account settings
      * URI: /account/edit
@@ -220,6 +338,9 @@ class Accounts extends MY_Controller
         $data['option_replace_pgp'] = (($this->bw_config->force_vendor_pgp == true && $this->current_user->user_role == 'Vendor')
             OR $this->current_user->user_role == 'Admin');
 
+        if($data['user']['email_address'] !== '')
+            $this->form_validation->set_rules('email_updates', 'email updates', 'required|check_bool_enabled');
+
         // Different form validation rules depending on if the user has a PGP key uploaded.
         $form_rules = (isset($data['user']['pgp']) == TRUE) ? 'account_edit' : 'account_edit_no_pgp';
 
@@ -231,6 +352,10 @@ class Accounts extends MY_Controller
             $changes['location'] = ($data['user']['location'] == $this->input->post('location')) ? NULL : $this->input->post('location');
             $changes['display_login_time'] = ($data['user']['display_login_time'] == $this->input->post('display_login_time')) ? NULL : $this->input->post('display_login_time');
             $changes['local_currency'] = ($data['user']['currency'] == $this->input->post('local_currency')) ? NULL : $this->input->post('local_currency');
+
+            if($data['user']['email_address'] !== '') {
+                $changes['email_updates'] = ($data['user']['email_updates'] == $this->input->post('email_updates')) ? NULL : $this->input->post('email_updates');
+            }
 
             // Only consider these if the user has a PGP key uploaded.
             if (isset($data['user']['pgp'])) {
@@ -428,7 +553,7 @@ class Accounts extends MY_Controller
                 $this->session->set_userdata('otp_secret', $data['secret']);
             }
 
-            $url = $this->totp->getOTPLink("{$this->current_user->user_name} @ Bitwasp", $data['secret']);
+            $url = $this->totp->getOTPLink("{$this->current_user->user_name} @ {$this->bw_config->site_title}", $data['secret']);
             $data['qr'] = $this->ciqrcode->generate_base64(array('data' => $url));
         }
 

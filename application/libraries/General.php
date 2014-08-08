@@ -31,32 +31,6 @@ class General
     }
 
     /**
-     * Random Data
-     *
-     * Generate pseudo-random data of a specified length
-     *
-     * @param        int
-     * @return        string
-     */
-    public function random_data($length)
-    {
-        return openssl_random_pseudo_bytes($length);
-    }
-
-    /**
-     * Generate Salt
-     *
-     * Generates a hash from random data.
-     *
-     * @return        string
-     */
-    public function generate_salt()
-    {
-        $rounds = '10';
-        return '$2a$' . $rounds . '$' . str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
-    }
-
-    /**
      * New Password
      *
      * Given $password, return the salt and hash.
@@ -70,6 +44,19 @@ class General
         $hash = crypt($password, $salt);
         return array('hash' => $hash,
             'salt' => $salt);
+    }
+
+    /**
+     * Generate Salt
+     *
+     * Generates a hash from random data.
+     *
+     * @return        string
+     */
+    public function generate_salt()
+    {
+        $rounds = '10';
+        return '$2a$' . $rounds . '$' . str_replace("+", "o", base64_encode(openssl_random_pseudo_bytes(22)));
     }
 
     /**
@@ -117,6 +104,19 @@ class General
     }
 
     /**
+     * Random Data
+     *
+     * Generate pseudo-random data of a specified length
+     *
+     * @param        int
+     * @return        string
+     */
+    public function random_data($length)
+    {
+        return openssl_random_pseudo_bytes($length);
+    }
+
+    /**
      * Role from ID
      *
      * Used to determine which role the ID relates to.
@@ -159,6 +159,9 @@ class General
         // Load the current time, and check the difference between the times in seconds.
         $currentTime = time();
         $difference = $currentTime - $timestamp;
+        if ($difference < 0)
+            return $this->format_future_time($timestamp);
+
         if ($difference < 60) { // within a minute.
             return 'less than a minute ago';
         } else if ($difference < 120) { // 60-120 seconds.
@@ -178,6 +181,36 @@ class General
         }
     }
 
+    /**
+     * Format Future Time
+     *
+     * This function accepts a $timestamp, and stat
+     * @param $timestamp
+     * @return string
+     */
+    public function format_future_time($timestamp)
+    {
+        $currentTime = time();
+        $difference = $timestamp - $currentTime;
+
+        if ($difference < 60) {
+            return 'in less than a minute';
+        } else if ($difference < 120) {
+            return 'in about a minute';
+        } else if ($difference < (60 * 60)) {
+            return 'in ' . round($difference / 60) . ' minutes';
+        } else if ($difference < (120 * 60)) {
+            return 'an hour from now';
+        } else if ($difference < (24 * 60 * 60)) {
+            return 'in ' . round($difference / 3600) . ' hours';
+        } else if ($difference < (48 * 60 * 60)) {
+            return 'in one day';
+        } else if ($difference < (7 * 24 * 60 * 60)) {
+            return round($difference / (24 * 60 * 60)) . ' days from now';
+        } else {
+            return 'on ' . date('j F Y', (int)$timestamp);
+        }
+    }
 }
 
 ;
