@@ -1,10 +1,10 @@
 
             <div class="col-md-9">
                 <h2>Email Activation</h2>
-                {assign var="defaultMessage" value="Enter your email and activation token to verify your account"}
+                {assign var="defaultMessage" value="Enter your email and activation token to update your email"}
                 {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
 
-                {form method="open" action="activate/email" attr=['class'=>'form-horizontal']}
+                {form method="open" action="activate/change_email" attr=['class'=>'form-horizontal']}
 
                     <fieldset>
                         <div class="form-group">

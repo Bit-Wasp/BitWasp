@@ -129,7 +129,7 @@ class Activate extends MY_Controller
         }
 
         // Load the form for user input
-        $data['page'] = 'activate/email_form';
+        $data['page'] = 'activate/change_email_form';
         $data['title'] = 'Verify Email';
         $this->_render($data['page'], $data);
     }
@@ -169,15 +169,15 @@ class Activate extends MY_Controller
                 $this->current_user->set_return_message(
                     (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified.')
                     , FALSE);
-                echo 'redirect to account';
-                //redirect('account');
+
+                redirect('account');
             } else {
                 // Inform user of outcome, redirect to login.
                 $this->current_user->set_return_message(
                     (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified, please log in below!')
                     , FALSE);
-                echo 'redirect to login';
-                //redirect('login');
+
+                redirect('login');
             }
         }
     }

@@ -243,8 +243,7 @@ class Accounts extends MY_Controller
                         $this->email->send();
 
                         $this->current_user->set_return_message("An email has been sent to the address you supplied. Please click the verification link within 24 hours.", FALSE);
-                        echo 'yay';
-                        //redirect('account');
+                        redirect('account');
                     } else {
                         $data['returnMessage'] = 'An error occured, please try again later.';
                     }
