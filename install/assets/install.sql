@@ -797,7 +797,7 @@ INSERT INTO `bw_page_authorization` (`auth_level`, `system`, `timeout`, `URI`) V
 ('login', '0', 0, ''),
 ('vendor', '1', 0, 'listings'),
 ('login', '1', 0, 'bitcoin'),
-('login', '1', 0, 'authorize')
+('login', '1', 0, 'authorize'),
 ('admin', '1', 0, 'admin'),
 ('login', '', 0, 'items'),
 ('buyer', '0', 0, 'purchase'),

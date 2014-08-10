@@ -1,14 +1,16 @@
             <div class="col-md-9">
-                <h2>{if isset($custom_title) == TRUE}{$custom_title|escape:'html':'UTF-8'}
-                {else}Items{/if}</h2>
+                <div class="row">
+                    <div class="col-md-12 btn-group">
+                        <div class='pull-right'>
+                            {$links}
+                        </div>
+                        <h2>{if isset($custom_title) == TRUE}{$custom_title|escape:'html':'UTF-8'}
+                            {else}Items{/if}</h2>
+                    </div>
+                </div>
 
                 {assign var="defaultMessage" value=""}
                 {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
-
-                <div class='row'>
-                    <!-- Pagination -->
-                    {$links}
-                </div>
 
                 {if is_array($items) AND count($items) > 0}
                     {$c = 0}
