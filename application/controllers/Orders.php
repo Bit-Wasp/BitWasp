@@ -406,13 +406,17 @@ class Orders extends MY_Controller
                     $this->current_user->set_return_message('This item is not available in your location. Message the vendor to discuss availability.', FALSE);
                     redirect('item/' . $item_info['hash']);
                 }
+                // Load current order with this vendor?
+                $order      = $this->order_model->load($item_info['vendor_hash'], '0');
+                // Load exchange rates for this item.
+                $code      = strtolower($this->bw_config->currencies[$item_info['currency']]['code']);
+                $fx         = $this->bw_config->exchange_rates[$code];
 
-                $order = $this->order_model->load($item_info['vendor_hash'], '0');
                 if ($order == FALSE) {
                     // New order; Need to create
                     $new_order = array('buyer_id' => $this->current_user->user_id,
                         'vendor_hash' => $item_info['vendor_hash'],
-                        'items' => $item_info['hash'] . "-1",
+                        'items' => $item_info['hash'] . "-1-".$fx."-".$item_info['price'],
                         'price' => $item_info['price_b'],
                         'currency' => '0');
 
@@ -424,7 +428,10 @@ class Orders extends MY_Controller
                     // Already have order, update it
                     if ($order['progress'] == '0') {
                         $update = array('item_hash' => $item_info['hash'],
-                            'quantity' => '1');
+                            'quantity' => '1',
+                            'fx' => $fx,
+                            'price' => $item_info['price']
+                        );
                         $res = $this->order_model->update_items($order['id'], $update);
                         $message = (($res == TRUE) ? 'Your order has been updated.' : 'Unable to update your order at this time.');
                         $this->current_user->set_return_message($message, $res);
@@ -461,10 +468,16 @@ class Orders extends MY_Controller
                 // Loop through items in order, and update each.
                 $list = $this->input->post('quantity');
                 foreach ($list as $hash => $quantity) {
-                    $item_info = $this->items_model->get($hash);
+                    $item_info  = $this->items_model->get($hash, TRUE);
+                    $code      = strtolower($this->bw_config->currencies[$item_info['currency']]['code']);
+                    $fx         = $this->bw_config->exchange_rates[$code];
+
                     if ($item_info !== FALSE) {
                         $update = array('item_hash' => $hash,
-                            'quantity' => $quantity);
+                            'quantity' => $quantity,
+                            'fx' => $fx,
+                            'price' => $item_info['price']
+                        );
                         $this->order_model->update_items($current_order['id'], $update, 'force');
                     }
                 }
