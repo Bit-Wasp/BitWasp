@@ -223,13 +223,22 @@ class Items_model extends CI_Model
     /**
      * Get
      *
-     * Get information about an item (by $hash).
+     * Get information about an item (by $hash). If $hidden is set to TRUE,
+     * hidden items are allowed in results (eg, if the user visits that items URL
+     * If set to false it will be disabled.
+     *
+     * $order_fx/$order_price is set when looking up items in an order which is confirmed
+     * by the buyer.
+     * In this case, $order_fx will be set to the exchange rate at the time of the order.
+     * In all other cases this should be set to FALSE to use the currency exchange rates.
      *
      * @param $hash
      * @param bool $hidden
+     * @param bool|float $order_fx
+     * @param bool|float $order_price
      * @return bool
      */
-    public function get($hash, $hidden = TRUE)
+    public function get($hash, $hidden = TRUE, $order_fx = FALSE, $order_price = FALSE)
     {
         if ($hidden == TRUE)
             $this->db->where('hidden', '0');
@@ -268,17 +277,24 @@ class Items_model extends CI_Model
             $row['description_s'] = substr(strip_tags($row['description']), 0, 70);
             if (strlen($row['description']) > 70) $row['description_s'] .= '...';
 
+            // Determine price of item: Current price if $order_fx is FALSE
+            // Otherwise work out price using $order_fx as the exchange rate
             $currency = $this->bw_config->currencies[$row['currency']];
-            $rate = $this->bw_config->exchange_rates[strtolower($currency['code'])];
+            if($order_fx == FALSE) {
+                $rate = $this->bw_config->exchange_rates[strtolower($currency['code'])];
+                $price = $row['price']/$rate;
+            } else {
+                // Use whatever parameters are passed.
+                $rate = $order_fx;
+                $price = $order_price/$rate;
+            }
 
-            $row['price_b'] = number_format(($row['price'] / $rate), 8);
+            $row['price_b'] = $price;
             $row['price_l'] = ($this->current_user->currency['id'] != '0')
                 ? number_format((float)($row['price_b'] * $this->current_user->currency['rate']), 2)
                 : number_format((float)($row['price_b'] * $this->current_user->currency['rate']), 8);
             $row['price_f'] = $this->current_user->currency['symbol'] . ' ' . htmlentities($row['price_l']);
-
             $row['images'] = $this->images_model->by_item($row['hash']);
-
             $row['add_time_f'] = $this->general->format_time($row['add_time']);
             $row['ship_from_f'] = $this->bw_config->locations[$row['ship_from']]['location'];
             $row['update_time_f'] = $this->general->format_time($row['update_time']);

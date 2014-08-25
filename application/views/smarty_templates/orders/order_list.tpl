@@ -66,6 +66,7 @@
                                                 {else}
                                                     {$item.quantity} x {if $item.hash == 'removed'}{$item.name|escape:"html":"UTF-8"}{else}{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=''}{/if}
                                                 {/if}
+                                                <br />
                                             {/foreach}
                                         </ul>
                                     </div>

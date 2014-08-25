@@ -89,8 +89,7 @@ class Order_model extends CI_Model
             // Loop through each order.
             foreach ($orders as $order) {
                 // Extract product hash/quantities.
-                $items = $order['items'];
-                $items = explode(":", $items);
+                $items = explode(":", $order['items']);
                 $j = 0;
 
                 $price_b = 0.00000000;
@@ -98,8 +97,13 @@ class Order_model extends CI_Model
                 foreach ($items as $item) {
                     // Load each item & quantity.
                     $array = explode("-", $item);
-                    $item_info = $this->items_model->get($array[0], FALSE);
                     $quantity = $array[1];
+
+                    if($order['progress'] == '0') {
+                        $item_info = $this->items_model->get($array[0], FALSE, FALSE);
+                    } else {
+                        $item_info = $this->items_model->get($array[0], FALSE, $array[2], $array[3]);
+                    }
 
                     // If the item no longer exists, display a message.
                     if ($item_info == FALSE) {
@@ -112,6 +116,7 @@ class Order_model extends CI_Model
                         unset($item_info['vendor']);
                         $item_array[$j] = $item_info;
                     }
+
                     $item_array[$j++]['quantity'] = $quantity;
                 }
 
@@ -156,6 +161,7 @@ class Order_model extends CI_Model
                         $buyer_progress_message = "Awaiting refund.";
                         $vendor_progress_message = "Awaiting refund.";
                 }
+
                 $currency = $this->bw_config->currencies[$order['currency']];
 
                 // Work out what price to display for the current user.
@@ -562,13 +568,13 @@ class Order_model extends CI_Model
             if ($quantity > 0) {
                 if ($place++ !== 0) $item_string .= ":";
 
-                $item_string .= $item['hash'] . "-" . $quantity;
+                $item_string .= $item['hash'] . "-" . $quantity . "-" . $update['fx']."-".$update['price'];
             }
         }
         // If we haven't encountered the item on the list, add it now.
         if ($found_item == FALSE) {
             if ($update['quantity'] > 0)
-                $item_string .= ":" . $update['item_hash'] . "-" . $update['quantity'];
+                $item_string .= ((strlen($item_string)>0)?':':'') . $update['item_hash'] . "-" . $update['quantity'] . "-". $update['fx']."-".$update['price'];
         }
 
         // Delete order if the item_string is empty.

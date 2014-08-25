@@ -35,7 +35,7 @@ vendor will notify you once the order has been dispatched. When received you can
                                             <tr>
                                                 <td>{$item.quantity|escape:"html":"UTF-8"} x</td>
                                                 <td>{url type="anchor" url=$smarty.capture.t_item_url text=$item.name|escape:"html":"UTF-8" attr=''}</td>
-                                                <td>{$coin.code} {$item.quantity*$item.price_b}</td>
+                                                <td>{$coin.code} {number_format($item.quantity*$item.price_b,8)}</td>
                                             </tr>
                                         {/foreach}
                                         <tr>
