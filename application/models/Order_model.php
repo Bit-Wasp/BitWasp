@@ -469,9 +469,8 @@ class Order_model extends CI_Model
             $new_tx = RawTransaction::decode($raw_transaction);
 
             foreach ($new_tx['vin'] as &$input_ref) {
-                $empty_input = '4c' . RawTransaction::_encode_vint(strlen($script) / 2) . $script;
                 //$empty_input = $script;
-                $input_ref['scriptSig']['hex'] = $empty_input;
+                $input_ref['scriptSig']['hex'] = $script;
             }
             $raw_transaction = RawTransaction::encode($new_tx);
             $decoded_transaction = RawTransaction::decode($raw_transaction);
