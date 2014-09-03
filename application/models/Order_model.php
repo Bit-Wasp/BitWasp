@@ -102,7 +102,10 @@ class Order_model extends CI_Model
                     if($order['progress'] == '0') {
                         $item_info = $this->items_model->get($array[0], FALSE, FALSE);
                     } else {
-                        $item_info = $this->items_model->get($array[0], FALSE, $array[2], $array[3]);
+                        if(isset($array[2]) AND isset($array[3]))
+                            $item_info = $this->items_model->get($array[0], FALSE, $array[2], $array[3]);
+                        else
+                            $item_info = $this->items_model->get($array[0], FALSE, FALSE);
                     }
 
                     // If the item no longer exists, display a message.

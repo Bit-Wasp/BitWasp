@@ -46,11 +46,10 @@
                     </div>
                 </form>
 
-                <ul id="image_listing" class="thumbnails">
                 {foreach from=$images item=image}
                     {capture name='t_main_image_url'}listings/main_image/{$image.hash}{/capture}
                     {capture name='t_delete_image_url'}listings/delete_image/{$image.hash}{/capture}
-                    <li class="col-md-4 image_box">
+                    <div class="col-md-4">
                         <div class="thumbnail">
                             <img class="productImg" src="data:image/jpeg;base64,{$image.encoded}" title="{$item.name|escape:"html":"UTF-8"}" width='150' />
                             <div class="caption">
@@ -59,7 +58,6 @@
                                 </center>
                             </div>
                         </div>
-                    </li>
+                    </div>
                 {/foreach}
-                </ul>
             </div>
