@@ -39,6 +39,8 @@ class Bip32_model extends CI_Model
 
     public function recurse_until_unique_bip32_key($bip32_key_row)
     {
+        $this->load->model('used_pubkeys_model');
+        
         // Loop until a unique key is found.
         $valid = FALSE;
         while ($valid == FALSE) {
