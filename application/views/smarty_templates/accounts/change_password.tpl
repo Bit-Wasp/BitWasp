@@ -12,7 +12,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-4" for="new_password0">New Password</label>
                             <div class="col-xs-7">
-                                <input type="text" class="form-control" name="new_password0" id="new_password0" value="" />
+                                <input type="password" class="form-control" name="new_password0" id="new_password0" value="" />
                             </div>
                         </div>
                         <div class="col-xs-9 col-xs-offset-3">{form method='form_error' field='new_password0'}</div>
@@ -22,7 +22,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-4" for="new_password1">New Password (again)</label>
                             <div class="col-xs-7">
-                                <input type="text" class="form-control" name="new_password1" id="new_password1" value="" />
+                                <input type="password" class="form-control" name="new_password1" id="new_password1" value="" />
                             </div>
                         </div>
                         <div class="col-xs-8 col-xs-offset-4">{form method='form_error' field='new_password1'}</div>
@@ -34,7 +34,7 @@
                         <div class="col-xs-12">
                             <label class="control-label col-xs-4" for="current_password">Current Password</label>
                             <div class="col-xs-7">
-                                <input type="text" class="form-control" name="current_password" id="current_password" value="" />
+                                <input type="password" class="form-control" name="current_password" id="current_password" value="" />
                             </div>
                         </div>
                         <div class="col-xs-9 col-xs-offset-4">{form method='form_error' field='current_password'}</div>

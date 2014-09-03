@@ -102,7 +102,10 @@ class Order_model extends CI_Model
                     if($order['progress'] == '0') {
                         $item_info = $this->items_model->get($array[0], FALSE, FALSE);
                     } else {
-                        $item_info = $this->items_model->get($array[0], FALSE, $array[2], $array[3]);
+                        if(isset($array[2]) AND isset($array[3]))
+                            $item_info = $this->items_model->get($array[0], FALSE, $array[2], $array[3]);
+                        else
+                            $item_info = $this->items_model->get($array[0], FALSE, FALSE);
                     }
 
                     // If the item no longer exists, display a message.
@@ -469,9 +472,8 @@ class Order_model extends CI_Model
             $new_tx = RawTransaction::decode($raw_transaction);
 
             foreach ($new_tx['vin'] as &$input_ref) {
-                $empty_input = '4c' . RawTransaction::_encode_vint(strlen($script) / 2) . $script;
                 //$empty_input = $script;
-                $input_ref['scriptSig']['hex'] = $empty_input;
+                $input_ref['scriptSig']['hex'] = $script;
             }
             $raw_transaction = RawTransaction::encode($new_tx);
             $decoded_transaction = RawTransaction::decode($raw_transaction);

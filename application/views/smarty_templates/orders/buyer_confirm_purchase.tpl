@@ -114,7 +114,7 @@ vendor will notify you once the order has been dispatched. When received you can
                             <div class="col-sm-5 col-lg-5 col-md-5">
                                 <p align="center">
                                     <input type="submit" class="btn btn-primary" value='Place Order' {if isset($order.vendor.pgp) == TRUE}onclick='messageEncrypt()'{/if} />
-                                    {url type="anchor" url='order/list' text="Cancel" attr='class="btn btn-default"'}
+                                    {url type="anchor" url='purchases' text="Cancel" attr='class="btn btn-default"'}
                                 </p>
                             </div>
                         </div>

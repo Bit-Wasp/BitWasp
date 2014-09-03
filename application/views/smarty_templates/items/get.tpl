@@ -73,6 +73,14 @@
                 {/if}
             </div>
 
+            {foreach from=$item.images item=image}
+                <div class="col-md-4">
+                    <div class="thumbnail">
+                        <img class="productImg" src="data:image/jpeg;base64,{$image.encoded}" title="{$item.name|escape:"html":"UTF-8"}" width='150' />
+                    </div>
+                </div>
+            {/foreach}
+
             {if $reviews == TRUE}
             <div class="well" style="background:white;">
                 <h4>Recent Reviews</h4>
