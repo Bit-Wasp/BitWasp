@@ -13,7 +13,7 @@
                     {/if} for {$name|escape:"html":"UTF-8"}</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <div class='row'>
                     <div class='col-md-12'>Average Rating: {$average}</div>

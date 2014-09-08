@@ -4,7 +4,7 @@
             <div class="col-md-9" id="manage_items">
                 <h2>Edit Item</h2>
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action=$smarty.capture.t_form_action attr=['class'=>'form-horizontal']}
                     <div class="form-group">

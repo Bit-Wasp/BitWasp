@@ -2,7 +2,7 @@
                 <h2>Disable Two Factor Authentication</h2>
 
                 {assign var="defaultMessage" value="Decrypt the following PGP message to remove two factor challenge on login:"}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action="account/disable_2fa" attr=['class'=>'form-horizontal']}
 

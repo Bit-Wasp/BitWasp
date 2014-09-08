@@ -3,7 +3,7 @@
                 <h2>{url type="anchor" url='admin/users' text='Back' attr='class="btn btn-default"'} User List</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <div class="row">
                     {$links}

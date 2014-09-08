@@ -4,7 +4,7 @@
 		            <h2>Inbox {if $count_unread_messages > 0}<small>{$count_unread_messages} new messages</small>{/if}</h2>
 
                     {assign var="defaultMessage" value=""}
-                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                     {if is_array($messages) == TRUE}
                     <table class="table">

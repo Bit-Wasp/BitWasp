@@ -3,7 +3,7 @@
                 {$nav}
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <div class="row">
                     <div class="col-xs-6"><strong>User Count</strong></div>

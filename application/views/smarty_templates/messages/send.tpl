@@ -3,7 +3,7 @@
                 <h2>Send Message</h2>
 
                 {assign var="defaultMessage" value="Enter your message below: "}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action=$action_uri attr=['class'=>'form-horizontal', 'name' => 'sendMessageForm']}
                     <div class="form-group">

@@ -6,7 +6,7 @@
                 <div class="row">
 
                     {assign var="defaultMessage" value=""}
-                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                     <div class="row">
                         <div class="col-md-9 btn-group">

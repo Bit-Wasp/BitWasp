@@ -2,7 +2,7 @@
                 {$nav}
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <div class="row">
                     <label class="control-label col-xs-6" for="status">Site Status</label>

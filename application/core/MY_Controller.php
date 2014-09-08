@@ -44,11 +44,11 @@ class MY_Controller extends CI_Controller
         $info = json_decode($this->session->flashdata('returnMessage'));
         if (!isset($this->_template_data_array['returnMessage']) && count($info) !== 0 && isset($info->message)) {
             $this->smarty->assign('returnMessage', $info->message);
-            $this->smarty->assign('success', ((isset($info->success) && $info->success == TRUE)
+            $this->smarty->assign('returnMessage_class', ((isset($info->success) && $info->success == TRUE)
                 ? TRUE : FALSE));
         } else {
             $this->smarty->assign('returnMessage', '');
-            $this->smarty->assign('success', '');
+            $this->smarty->assign('returnMessage_class', '');
         }
 
         $this->_prepare_template();

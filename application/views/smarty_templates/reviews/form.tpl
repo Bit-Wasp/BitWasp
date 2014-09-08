@@ -2,7 +2,7 @@
                 <h2>Review Order #{$review_state.order_id}</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if $review_state.review_type == 'buyer'}
                 {capture name="t_vendor_url"}user/{$review_info.vendor.user_hash}{/capture}

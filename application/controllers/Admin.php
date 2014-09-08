@@ -186,7 +186,7 @@ class Admin extends MY_Controller
                     $class = 'success';
                 } else {
                     $message = 'No changes were made.';
-                    $class = 'info';
+                    $class = 'warning';
                 }
                 $this->current_user->set_return_message($message, $class);
                 redirect('admin/edit');
@@ -372,7 +372,7 @@ class Admin extends MY_Controller
                     $class = 'success';
                 } else {
                     $message = 'No changes were made.';
-                    $class = 'info';
+                    $class = 'warning';
                 }
                 $this->current_user->set_return_message($message, $class);
 
@@ -479,7 +479,7 @@ class Admin extends MY_Controller
                 $this->current_user->set_return_message('Your changes have been saved', 'success');
 
             } else {
-                $this->current_user->set_return_message('No changes were made', 'info');
+                $this->current_user->set_return_message('No changes were made', 'warning');
             }
 
             redirect('admin/users');
@@ -608,7 +608,7 @@ class Admin extends MY_Controller
                 if ((count($changes) > 0 AND $this->config_model->update($changes) == TRUE)) {
                     $this->current_user->set_return_message('Your changes have been saved', 'success');
                 } else {
-                    $this->current_user->set_return_message('No changes were made to the settings.', 'info');
+                    $this->current_user->set_return_message('No changes were made to the settings.', 'warning');
                 }
 
                 redirect('admin/items');
@@ -1063,7 +1063,7 @@ class Admin extends MY_Controller
 
                     $this->current_user->set_return_message('Your changes have been saved.','success');
                 } else {
-                    $this->current_user->set_return_message('No changes have been made.','info');
+                    $this->current_user->set_return_message('No changes have been made.','warning');
                 }
 
                 redirect('admin/items/fees');

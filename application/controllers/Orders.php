@@ -404,7 +404,7 @@ class Orders extends MY_Controller
                 $shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $this->current_user->location['id']);
 
                 if ($shipping_costs == FALSE) {
-                    $this->current_user->set_return_message('This item is not available in your location. Message the vendor to discuss availability.', 'info');
+                    $this->current_user->set_return_message('This item is not available in your location. Message the vendor to discuss availability.', 'warning');
                     redirect('item/' . $item_info['hash']);
                 }
                 // Load current order with this vendor?
@@ -423,7 +423,7 @@ class Orders extends MY_Controller
 
                     $add = $this->order_model->add($new_order);
                     $message = (($add == TRUE) ? 'Your order has been created!' : 'Unable to add your order at this time, please try again later.');
-                    $class = ($add) ? 'success' : 'info';
+                    $class = ($add) ? 'success' : 'warning';
                     $this->current_user->set_return_message($message, $class);
 
                 } else {
@@ -435,11 +435,11 @@ class Orders extends MY_Controller
                             'price' => $item_info['price']
                         );
                         $res = $this->order_model->update_items($order['id'], $update);
-                        $symbol = $res ? 'success' : 'info';
+                        $symbol = $res ? 'success' : 'warning';
                         $message = (($res == TRUE) ? 'Your order has been updated.' : 'Unable to update your order at this time.');
                         $this->current_user->set_return_message($message, $symbol);
                     } else {
-                        $this->current_user->set_return_message('Your order has already been created, please contact your vendor to discuss any further changes','info');
+                        $this->current_user->set_return_message('Your order has already been created, please contact your vendor to discuss any further changes','warning');
                     }
                 }
                 redirect('purchases');
@@ -464,7 +464,7 @@ class Orders extends MY_Controller
                 // If the order cannot be loaded (progress == 0), redirect to Purchases page.
                 $current_order = $this->order_model->load_order($id, array('0'));
                 if ($current_order == FALSE) {
-                    $this->current_user->set_return_message('Unable to find this order.', 'info');
+                    $this->current_user->set_return_message('Unable to find this order.', 'warning');
                     redirect('purchases');
                 }
 
@@ -515,13 +515,13 @@ class Orders extends MY_Controller
             if ($this->form_validation->run('submit_buyer_received_upfront_order') == TRUE) {
                 $current_order = $this->order_model->load_order($this->input->post('received_upfront_order_id'), array('5'));
                 if ($current_order == FALSE) {
-                    $this->current_user->set_return_message('That order could not be found!', 'info');
+                    $this->current_user->set_return_message('That order could not be found!', 'warning');
                     redirect('purchases');
                 }
 
                 // Prevent escrow orders from being marked as 'received'.
                 if ($current_order['vendor_selected_upfront'] == '0') {
-                    $this->current_user->set_return_message('You must sign and broadcast the transaction to finalize the order', 'info');
+                    $this->current_user->set_return_message('You must sign and broadcast the transaction to finalize the order', 'warning');
                     redirect('purchases');
                 }
 

@@ -2,7 +2,7 @@
                 <h2>Public Key</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <p align="justify">You are currently using password based wallet in order to create your keys. This means the marketplace can create order addresses automatically, and all you need to do is enter a password to authorize payments.</p>
 

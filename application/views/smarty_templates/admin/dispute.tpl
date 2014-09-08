@@ -6,7 +6,7 @@
                 <h2>{url type="anchor" url="admin" text="Back" attr='class="btn btn-default"'} Disputed Order #{$dispute.order_id}</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <div class="well">
                     <div class="row">

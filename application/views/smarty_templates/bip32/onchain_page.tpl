@@ -1,6 +1,9 @@
             <div class="col-md-9">
                 <h2>Public Keys</h2>
 
+                {assign var="defaultMessage" value=""}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
+
                 <p align="justify">You are using Onchain to sign your multisignature transactions. Private keys are stored on your device, so you should make sure your seed is copied exactly as displayed on the app in case you lose your phone.</p>
 
                 <div class="panel panel-default" id="bip32panel">

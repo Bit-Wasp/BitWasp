@@ -48,7 +48,7 @@ class Listings extends MY_Controller
 
                 // Abort if the listing does not exist.
                 if ($item == FALSE) {
-                    $this->current_user->set_return_message('This listing does not exist!', 'info');
+                    $this->current_user->set_return_message('This listing does not exist!', 'warning');
                     redirect('listings');
                 }
 
@@ -63,7 +63,7 @@ class Listings extends MY_Controller
 
                     $this->current_user->set_return_message('Your listing has been removed', 'success');
                 } else {
-                    $this->current_user->set_return_message('Unable to remove your listing', 'info');
+                    $this->current_user->set_return_message('Unable to remove your listing', 'warning');
                 }
 
                 redirect('listings');
@@ -118,7 +118,7 @@ class Listings extends MY_Controller
             if(count($changes) > 0 && $this->listings_model->update($item_hash, $changes)){
                 $this->current_user->set_return_message('Your changes have been saved.','success');
             } else {
-                $this->current_user->set_return_message('No changes were made to that listing.','info');
+                $this->current_user->set_return_message('No changes were made to that listing.','warning');
             }
 
             redirect('listings/edit/' . $item_hash);

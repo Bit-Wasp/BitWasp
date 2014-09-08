@@ -233,7 +233,7 @@ class Reviews extends MY_Controller
 
                             if ($this->review_model->publish_reviews($all_reviews, 'vendor') == TRUE) {
                                 $this->review_auth_model->clear_user_auth($data['review_state']['order_id']);
-                                $this->current_user->set_return_message('Your feedback for this user has been saved!','info');
+                                $this->current_user->set_return_message('Your feedback for this user has been saved!','success');
                                 redirect($data['cancel_page']);
                             } else {
                                 $data['returnMessage'] = 'Error publishing review, please try again.';

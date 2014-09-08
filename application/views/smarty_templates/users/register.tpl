@@ -1,7 +1,7 @@
             <div class="col-md-9">
                 <h2>Register</h2>
                 {assign var="defaultMessage" value="Enter your details to register an account: "}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
                 {form method="open" action="register" attr=['class'=>'form-horizontal', 'name' => 'registerForm']}
 
                 <fieldset>

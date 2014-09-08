@@ -90,7 +90,7 @@ class Users extends MY_Controller
                         redirect('login');
                     } else if ($user_info['banned'] == '1') {
                         // User is banned. Disallow.
-                        $this->current_user->set_return_message("You have been banned from this site.",'info');
+                        $this->current_user->set_return_message("You have been banned from this site.",'warning');
                         redirect('login');
                     } else if ($user_info['user_role'] !== 'Admin' AND $this->bw_config->maintenance_mode == TRUE) {
                         // Maintainance mode active, but user isn't admin. Disallow.
@@ -125,7 +125,7 @@ class Users extends MY_Controller
             }
 
             $this->session->set_userdata('failed_login', ((int)$this->session->userdata('failed_login') + 1));
-            $this->current_user->set_return_message("Your details were incorrect, try again.", 'info');
+            $this->current_user->set_return_message("Your details were incorrect, try again.", 'warning');
             redirect('login');
         }
 
@@ -185,13 +185,13 @@ class Users extends MY_Controller
 
             // Display an error if the user has not agreed to the terms of service.
             if ($data['terms_of_service'] !== FALSE && $this->input->post('tos_agree') !== '1') {
-                $this->current_user->set_return_message('You must agree to the terms of service to register an account.','info');
+                $this->current_user->set_return_message('You must agree to the terms of service to register an account.','warning');
                 redirect('register');
             }
 
             // If there's no token, the admin cannot register.
             if ($token == NULL && !in_array($data['role'], array('Buyer', 'Vendor'))) {
-                $this->current_user->set_return_message('Please select a valid role.','info');
+                $this->current_user->set_return_message('Please select a valid role.','warning');
                 redirect('register');
             }
 

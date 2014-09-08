@@ -6,7 +6,7 @@
 			        <h2>Issue Refund: Order {$order.id}</h2>
 
                     {assign var="defaultMessage" value=""}
-                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                     {form method="open" action=$smarty.capture.t_refund_url attr='class="form-horizontal"'}
             			<div class='col-xs-9'>

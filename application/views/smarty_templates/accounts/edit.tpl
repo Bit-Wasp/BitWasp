@@ -2,7 +2,7 @@
                 <h2>Edit Account</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action="account/edit" attr=['class'=>'form-horizontal']}
                     <div class="form-group">

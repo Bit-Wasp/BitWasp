@@ -21,7 +21,7 @@
                 </div>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
                 <div class="col-xs-12">&nbsp;</div>
 
                 <div class="row">

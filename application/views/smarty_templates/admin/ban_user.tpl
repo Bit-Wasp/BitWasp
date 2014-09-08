@@ -5,7 +5,7 @@
                 <h2>Ban User</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action=$smarty.capture.t_ban_user_url attr='class="form-horizontal"'}
                     <p>Please confirm you wish to flag {$user.user_name|escape:"html":"UTF-8"} as {if $user.banned == '1'}un{/if}banned.</p>

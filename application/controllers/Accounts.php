@@ -201,7 +201,7 @@ class Accounts extends MY_Controller
                 if ($check_is_users_request($id)) {
                     $delete = $this->email_update_model->delete_request($this->current_user->user_id, $id);
                     if ($delete) {
-                        $this->current_user->set_return_message('That email has been deleted', 'info');
+                        $this->current_user->set_return_message('That email has been deleted', 'success');
                         redirect('accounts/email');
                     } else {
                         $data['returnMessage'] = 'Unable to delete this request, please try again later.';
@@ -242,7 +242,7 @@ class Accounts extends MY_Controller
                         $this->email->message($msg);
                         $this->email->send();
 
-                        $this->current_user->set_return_message("An email has been sent to the address you supplied. Please click the verification link within 24 hours.", 'info');
+                        $this->current_user->set_return_message("An email has been sent to the address you supplied. Please click the verification link within 24 hours.", 'warning');
                         redirect('account');
                     } else {
                         $data['returnMessage'] = 'An error occured, please try again later.';
@@ -597,7 +597,7 @@ class Accounts extends MY_Controller
             if($this->input->post('delete') == '1' && $this->accounts_model->delete_pgp_key($data['user']['id']) == TRUE){
                 $this->current_user->set_return_message('Your PGP key has been deleted.','success');
             } else {
-                $this->current_user->set_return_message('Your key was not deleted','info');
+                $this->current_user->set_return_message('Your key was not deleted','warning');
             }
 
             redirect('account');

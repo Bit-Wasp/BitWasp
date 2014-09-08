@@ -2,7 +2,7 @@
             <div class="col-md-9">
                 <h2>Login</h2>
                 {assign var="defaultMessage" value="Enter your details to continue: "}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
                 {form method="open" action="login" attr=['class'=>'form-horizontal', 'name' => 'loginForm']}
 
                     <fieldset>

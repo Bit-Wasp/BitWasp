@@ -3,7 +3,7 @@
             <h2>{$coin.name} Payout Address</h2>
 
             {assign var="defaultMessage" value=""}
-            {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+            {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
             <p>Your payout address is where funds should be sent when they are ready to be moved from the order address. Be sure to double check before you set this!</p>
 

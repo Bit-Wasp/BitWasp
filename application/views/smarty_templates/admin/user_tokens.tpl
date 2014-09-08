@@ -3,7 +3,7 @@
                 <h2>{url type="anchor" url='admin/users' text='Back' attr='class="btn btn-default"'} Registration Invites</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <legend>Create Registration Invites</legend>
                 {form method="open" action='admin/tokens' attr='class="form-horizontal"'}

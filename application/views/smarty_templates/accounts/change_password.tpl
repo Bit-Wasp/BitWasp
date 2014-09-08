@@ -2,7 +2,7 @@
 
                 <h2>Change Password</h2>
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <p align="justify">You should always set a strong, unique passphrase for each website. Passphrases should be memorable sentences that only you could know - make it funny, make it rhyme, but ultimately it should be extremely hard for anyone to guess.</p>
 
