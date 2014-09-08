@@ -183,10 +183,12 @@ class Admin extends MY_Controller
                     $log = $this->admin_model->format_config_changes($changes);
                     $this->logs_model->add('Admin: General Panel', 'General site configuration updated', 'The general configuration of the site has been updated:<br />' . $log, 'Info');
                     $message = 'Your changes have been saved.';
+                    $class = 'success';
                 } else {
                     $message = 'No changes were made.';
+                    $class = 'warning';
                 }
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+                $this->current_user->set_return_message($message, $class);
                 redirect('admin/edit');
             }
         }
@@ -367,11 +369,13 @@ class Admin extends MY_Controller
                     $log = $this->admin_model->format_config_changes($changes);
                     $this->logs_model->add("Admin: {$this->bw_config->currencies[0]['name']} Panel", $this->bw_config->currencies[0]['name'] . ' configuration updated', 'The ' . $this->bw_config->currencies[0]['name'] . ' configuration of the site has been updated:<br />' . $log, 'Info');
                     $message = 'Your changes were saved.';
+                    $class = 'success';
                 } else {
                     $message = 'No changes were made.';
+                    $class = 'warning';
                 }
+                $this->current_user->set_return_message($message, $class);
 
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
                 redirect('admin/bitcoin');
             }
         }
@@ -471,12 +475,13 @@ class Admin extends MY_Controller
                 $log = $this->admin_model->format_config_changes($changes);
                 $this->logs_model->add('Admin: Users Panel', 'Users configuration updated', 'The users configuration of the site has been updated:<br />' . $log, 'Info');
 
-                $message = 'Your changes have been saved.';
+
+                $this->current_user->set_return_message('Your changes have been saved', 'success');
+
             } else {
-                $message = 'No changes were made.';
+                $this->current_user->set_return_message('No changes were made', 'warning');
             }
 
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
             redirect('admin/users');
         }
 
@@ -539,7 +544,7 @@ class Admin extends MY_Controller
                     'hash' => $this->general->unique_hash('categories', 'hash'),
                     'parent_id' => $this->input->post('category_parent'));
                 if ($this->categories_model->add($category) == TRUE) {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your category has been saved.')));
+                    $this->current_user->set_return_message('Your category has been saved.', 'success');
                     redirect('admin/edit/items');
                 } else {
                     $data['returnMessage'] = 'Error saving category!';
@@ -552,7 +557,7 @@ class Admin extends MY_Controller
             if ($this->form_validation->run('admin_rename_category') == TRUE) {
                 // Rename the category.
                 if ($this->categories_model->rename($this->input->post('rename_id'), $this->input->post('category_name')) == TRUE) {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your category has been renamed.')));
+                    $this->current_user->set_return_message('Your category has been renamed.', 'success');
                     redirect('admin/edit/items');
                 }
             }
@@ -569,7 +574,7 @@ class Admin extends MY_Controller
                 } else {
                     // Otherwise it's empty and can be deleted.
                     if ($this->categories_model->delete($category['id']) == TRUE) {
-                        $this->current_user->set_return_message("The chosen category has been deleted.", TRUE);
+                        $this->current_user->set_return_message("The chosen category has been deleted.", 'success');
                         redirect('admin/edit/items');
                     }
                 }
@@ -600,11 +605,12 @@ class Admin extends MY_Controller
                 $changes['trusted_user_order_count'] = ($data['config']['trusted_user_order_count'] != $this->input->post('trusted_user_order_count')) ? $this->input->post('trusted_user_order_count') : NULL;
                 $changes = array_filter($changes, 'strlen');
 
-                // Making use of lazy evaluation here :)
-                $message = (count($changes) > 0 AND $this->config_model->update($changes) == TRUE)
-                    ? 'Your changes have been saved.'
-                    : 'No changes were made to the settings.';
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+                if ((count($changes) > 0 AND $this->config_model->update($changes) == TRUE)) {
+                    $this->current_user->set_return_message('Your changes have been saved', 'success');
+                } else {
+                    $this->current_user->set_return_message('No changes were made to the settings.', 'warning');
+                }
+
                 redirect('admin/items');
             }
         }
@@ -725,7 +731,7 @@ class Admin extends MY_Controller
 
             // Finally, delete the category and redirect.
             if ($this->categories_model->delete($data['category']['id']) == TRUE) {
-                $this->session->set_flashdata('Categories have been moved.');
+                $this->current_user->set_return_message('Categories have been moved.','success');
                 redirect('admin/edit/items');
             }
         }
@@ -762,7 +768,8 @@ class Admin extends MY_Controller
                 $data['returnMessage'] = 'Unable to delete the specified token, please try again.';
                 if ($this->users_model->delete_registration_token($token['id']) == TRUE) {
                     // Display a message if the token is successfully deleted.
-                    $this->current_user->set_return_message('The selected token has been deleted', FALSE);
+
+                    $this->current_user->set_return_message('The selected token has been deleted', 'success');
                     redirect('admin/user_tokens');
                 }
             }
@@ -786,8 +793,7 @@ class Admin extends MY_Controller
                         'comment' => $this->input->post('token_comment'),
                         'entry_payment' => $entry_payment)) == TRUE
                 ) {
-                    // If token is successfully added, display error message.
-                    $this->session->set_flashdata('returnMessage', json_encode(array('success' => TRUE, 'message' => 'Your token has been created.')));
+                    $this->current_user->set_return_message('Your token has been created.', 'success');
                     redirect('admin/user_tokens');
                 }
             }
@@ -830,7 +836,7 @@ class Admin extends MY_Controller
                 $message = $this->bw_messages->prepare_input($info, $details);
                 $this->messages_model->send($message);
 
-                $this->current_user->set_return_message('The selected item has been removed', TRUE);
+                $this->current_user->set_return_message('The selected item has been removed', 'success');
                 redirect('items');
             } else {
                 $data['returnMessage'] = 'Unable to delete that item at this time.';
@@ -865,7 +871,8 @@ class Admin extends MY_Controller
                 if ($this->input->post('ban_user') == '1') {
                     $new = (string)((int)$data['user']['banned'] + 1) % 2;
                     if ($this->accounts_model->toggle_ban($data['user']['id'], "$new")) {
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => "{$data['user']['user_name']} has now been " . (($new == 1) ? 'banned.' : 'unbanned.'))));
+                        $m = "{$data['user']['user_name']} has now been " . (($new == 1) ? 'banned.' : 'unbanned.');
+                        $this->current_user->set_return_message($m, 'success');
                         redirect('user/' . $data['user']['user_hash']);
                     } else {
                         $data['returnMessage'] = 'Unable to alter this user right now, please try again later.';
@@ -1054,11 +1061,11 @@ class Admin extends MY_Controller
                     $log = $this->admin_model->format_config_changes($changes);
                     $this->logs_model->add('Admin: Fees Panel', 'Fees configuration updated', 'The fees configuration of the site has been updated:<br />' . $log, 'Info');
 
-                    $message = 'Your changes have been saved.';
+                    $this->current_user->set_return_message('Your changes have been saved.','success');
                 } else {
-                    $message = 'No changes have been made.';
+                    $this->current_user->set_return_message('No changes have been made.','warning');
                 }
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+
                 redirect('admin/items/fees');
             }
         }
@@ -1068,7 +1075,7 @@ class Admin extends MY_Controller
                 $key = array_keys($this->input->post('delete_rate'));
                 $id = $key[0];
                 if ($this->fees_model->delete($id) == TRUE) {
-                    $this->current_user->set_return_message('The selected fee has been deleted.', FALSE);
+                    $this->current_user->set_return_message('The selected fee has been deleted.', 'success');
                     redirect('admin/items/fees');
                 }
             }
@@ -1081,7 +1088,7 @@ class Admin extends MY_Controller
                         'high' => $this->input->post('upper_limit'),
                         'rate' => $this->input->post('percentage_fee'));
                     if ($this->fees_model->add($rate) == TRUE) {
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Basic settings have been updated.')));
+                        $this->current_user->set_return_message('Basic settings have been updated.', 'success');
                         redirect('admin/items/fees');
                     }
                 } else {
@@ -1350,7 +1357,7 @@ class Admin extends MY_Controller
                 }
 
                 if (count($changes) > 0 && $this->config_model->update($changes) == TRUE) {
-                    $this->current_user->set_return_message('Changed location list.', TRUE);
+                    $this->current_user->set_return_message('Changed location list.', 'success');
                     redirect('admin/locations');
                 } else {
                     $data['returnMessage'] = 'No changes were made.';
@@ -1364,7 +1371,7 @@ class Admin extends MY_Controller
                     'hash' => $this->general->unique_hash('locations_custom_list', 'hash'),
                     'parent_id' => $this->input->post('location'));
                 if ($this->location_model->add_custom_location($location) == TRUE) {
-                    $this->current_user->set_return_message('Your new location has been saved', TRUE);
+                    $this->current_user->set_return_message('Your new location has been saved', 'success');
                     redirect('admin/locations');
                 }
             }
@@ -1373,7 +1380,7 @@ class Admin extends MY_Controller
         if ($this->input->post('delete_custom_location') == 'Submit') {
             if ($this->form_validation->run('admin_delete_custom_location') == TRUE) {
                 if ($this->location_model->delete_custom_location($this->input->post('location_delete')) == TRUE) {
-                    $this->current_user->set_return_message('Your location has been deleted', TRUE);
+                    $this->current_user->set_return_message('Your location has been deleted', 'success');
                     redirect('admin/locations');
                 }
             }

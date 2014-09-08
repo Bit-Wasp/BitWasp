@@ -90,11 +90,11 @@ class Users extends MY_Controller
                         redirect('login');
                     } else if ($user_info['banned'] == '1') {
                         // User is banned. Disallow.
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => "You have been banned from this site.")));
+                        $this->current_user->set_return_message("You have been banned from this site.",'warning');
                         redirect('login');
                     } else if ($user_info['user_role'] !== 'Admin' AND $this->bw_config->maintenance_mode == TRUE) {
                         // Maintainance mode active, but user isn't admin. Disallow.
-                        $this->session->set_flashdata('returnMessage', json_encode(array('message' => "The site is in maintenance mode, please try again later.")));
+                        $this->current_user->set_return_message("This site is down for maintenance, please check again later.");
                         redirect('login');
                     } else if ($user_info['entry_paid'] == '0') {
                         // Registration payment required. Direct to details.
@@ -125,7 +125,7 @@ class Users extends MY_Controller
             }
 
             $this->session->set_userdata('failed_login', ((int)$this->session->userdata('failed_login') + 1));
-            $this->current_user->set_return_message("Your details were incorrect, try again.", FALSE);
+            $this->current_user->set_return_message("Your details were incorrect, try again.", 'warning');
             redirect('login');
         }
 
@@ -185,13 +185,13 @@ class Users extends MY_Controller
 
             // Display an error if the user has not agreed to the terms of service.
             if ($data['terms_of_service'] !== FALSE && $this->input->post('tos_agree') !== '1') {
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You must agree to the terms of service to register an account.')));
+                $this->current_user->set_return_message('You must agree to the terms of service to register an account.','warning');
                 redirect('register');
             }
 
             // If there's no token, the admin cannot register.
             if ($token == NULL && !in_array($data['role'], array('Buyer', 'Vendor'))) {
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => "Please select a valid role.")));
+                $this->current_user->set_return_message('Please select a valid role.','warning');
                 redirect('register');
             }
 
@@ -279,7 +279,7 @@ In order to activate your account, please visit the following link:\n"
                         ? "Your account has been created! You'll need to verify your email address by clicking the link we just sent"
                         : "Your account has been created, please login below: ";
                 }
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+                $this->current_user->set_return_message($message,'success');
                 redirect('login');
             } else {
                 // Unsuccessful submission, show form again.

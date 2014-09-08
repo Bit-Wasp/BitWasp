@@ -2,7 +2,7 @@
                 <h2>Setup Keys</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <p align="justify">In order to create your order addresses, you need to set up an extended public key. This lets us set up unique and secure payment addresses for each order. You can choose a number of ways to create one of these keys.</p>
                 <ul>

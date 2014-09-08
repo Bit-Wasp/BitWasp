@@ -2,7 +2,7 @@
                 <h2>{if $current_user.user_role == 'Vendor'}My Orders{else}My Purchases{/if}</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if $orders == TRUE}
                     {foreach from=$orders item=order}

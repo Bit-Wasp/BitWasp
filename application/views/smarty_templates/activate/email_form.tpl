@@ -2,7 +2,7 @@
             <div class="col-md-9">
                 <h2>Email Activation</h2>
                 {assign var="defaultMessage" value="Enter your email and activation token to verify your account"}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action="activate/email" attr=['class'=>'form-horizontal']}
 

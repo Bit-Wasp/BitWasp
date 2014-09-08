@@ -2,7 +2,7 @@
 			<h2>Welcome {$user.user_name|escape:"html":"UTF-8"}!</h2>
 
             {assign var="defaultMessage" value=""}
-            {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+            {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
             Please pay an entry fee to {$entry_payment.bitcoin_address}.<br /><br />
 			

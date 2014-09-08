@@ -2,7 +2,7 @@
                 <h2>Replace PGP key</h2>
 
                 {assign var="defaultMessage" value="Enter your replacement PGP key below. "}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action="pgp/replace" attr=['class'=>'form-horizontal']}
                     <div class="form-group">

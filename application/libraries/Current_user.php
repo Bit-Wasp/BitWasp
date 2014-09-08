@@ -208,9 +208,9 @@ class Current_User
         $this->CI->session->set_userdata('message_password_granted', time());
     }
 
-    public function set_return_message($message, $success = FALSE)
+    public function set_return_message($message, $class = 'warning')
     {
-        $this->CI->session->set_flashdata('returnMessage', json_encode(array('message' => $message, 'success' => $success)));
+        $this->CI->session->set_flashdata('returnMessage', json_encode(array('message' => $message, 'class' => $class)));
     }
 
     public function setup_vendor_bitcoin()

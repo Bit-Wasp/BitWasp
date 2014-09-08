@@ -11,7 +11,7 @@
                 </p>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if count($pending_verification) > 0}
                 {form method="open" action="accounts/email" attr=""}

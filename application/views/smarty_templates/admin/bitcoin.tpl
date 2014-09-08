@@ -3,7 +3,7 @@
                 {$nav}
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if is_array($bitcoin_info) == TRUE}
                 <div class="row">

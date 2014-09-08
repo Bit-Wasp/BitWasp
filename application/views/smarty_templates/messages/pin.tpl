@@ -2,7 +2,7 @@
                 <h2>Message's PIN</h2>
 
                 {assign var="defaultMessage" value="You must enter your PIN to decrypt your messages"}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action="message/pin" attr=['class'=>'form-horizontal']}
                     <div class="form-group">

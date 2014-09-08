@@ -2,7 +2,7 @@
                 <h2>Two Factor Authentication</h2>
 
                 {assign var="defaultMessage" value="To disable two factor authentication, enter the token as displayed on your app:"}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action="account/disable_2fa" attr=['class'=>'form-horizontal']}
                     <div class="form-group">

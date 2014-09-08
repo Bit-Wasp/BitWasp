@@ -3,7 +3,7 @@
                 <h2>Fix Orphans</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <p>Deleting this category will orphan <?php echo $list; ?>, please select another category to contain them.</p>
 

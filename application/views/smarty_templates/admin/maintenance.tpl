@@ -3,7 +3,7 @@
                 <h2>Maintenance Settings</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <p>You can use this panel to put the website into maintenance mode. Guests will not be able to view the site, and non-administrative users will be logged out. Once re-enabled, your previous settings will be restored.</p>
 

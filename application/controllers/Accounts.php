@@ -103,7 +103,7 @@ class Accounts extends MY_Controller
                 if (is_array($check_login) == TRUE && $check_login['id'] == $this->current_user->user_id) {
 
                     if ($this->bitcoin_model->set_payout_address($this->current_user->user_id, $this->input->post('address'))) {
-                        $this->current_user->set_return_message('Payout address has been saved', TRUE);
+                        $this->current_user->set_return_message('Payout address has been saved', 'success');
                         redirect('account');
                     } else {
                         $data['returnMessage'] = 'Unable to update your address at this time.';
@@ -201,7 +201,7 @@ class Accounts extends MY_Controller
                 if ($check_is_users_request($id)) {
                     $delete = $this->email_update_model->delete_request($this->current_user->user_id, $id);
                     if ($delete) {
-                        $this->current_user->set_return_message('That email has been deleted', FALSE);
+                        $this->current_user->set_return_message('That email has been deleted', 'success');
                         redirect('accounts/email');
                     } else {
                         $data['returnMessage'] = 'Unable to delete this request, please try again later.';
@@ -242,13 +242,12 @@ class Accounts extends MY_Controller
                         $this->email->message($msg);
                         $this->email->send();
 
-                        $this->current_user->set_return_message("An email has been sent to the address you supplied. Please click the verification link within 24 hours.", FALSE);
+                        $this->current_user->set_return_message("An email has been sent to the address you supplied. Please click the verification link within 24 hours.", 'warning');
                         redirect('account');
                     } else {
                         $data['returnMessage'] = 'An error occured, please try again later.';
                     }
                     // Add email to pending new emails, await verification.
-
                 } else {
                     $data['returnMessage'] = 'Your password was incorrect, please try again.';
                 }
@@ -284,7 +283,7 @@ class Accounts extends MY_Controller
                     $new_password = $this->general->new_password($this->input->post('new_password0'));
                     $update = $this->accounts_model->update_user_password($this->current_user->user_id, $new_password['hash'], $new_password['salt']);
                     if ($update == TRUE) {
-                        $this->current_user->set_return_message('Your password has been changed!', TRUE);
+                        $this->current_user->set_return_message('Your password has been changed!', 'success');
                         redirect('account');
                     } else {
                         $data['returnMessage'] = 'Unable to update your password at this time.';
@@ -367,8 +366,10 @@ class Accounts extends MY_Controller
             if (count($changes) > 0) {
                 // If there are changes, set an error message for if the update fails (and user is not redirected).
                 $data['returnMessage'] = 'Unable to save your changes, please try again later.';
-                if ($this->accounts_model->update($changes) == TRUE)
+                if ($this->accounts_model->update($changes) == TRUE){
+                    $this->current_user->set_return_message('Your changes have been saved');
                     redirect('account');
+                }
             }
         }
 
@@ -593,10 +594,12 @@ class Accounts extends MY_Controller
             redirect('account');
 
         if ($this->form_validation->run('delete_pgp') === TRUE) {
-            $message = ($this->input->post('delete') == '1' && $this->accounts_model->delete_pgp_key($data['user']['id']) == TRUE)
-                ? 'Your PGP key has been deleted.'
-                : 'Your key was not deleted.';
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
+            if($this->input->post('delete') == '1' && $this->accounts_model->delete_pgp_key($data['user']['id']) == TRUE){
+                $this->current_user->set_return_message('Your PGP key has been deleted.','success');
+            } else {
+                $this->current_user->set_return_message('Your key was not deleted','warning');
+            }
+
             redirect('account');
         }
 
@@ -675,7 +678,7 @@ class Accounts extends MY_Controller
         // If they have a PGP key, redirect them.
         $pgp = $this->accounts_model->get_pgp_key($this->current_user->user_id);
         if ($pgp !== FALSE) {
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You already have a public key set up.')));
+            $this->current_user->set_return_message('You already have a PGP key set up.');
             redirect('account');
         }
 
@@ -691,7 +694,7 @@ class Accounts extends MY_Controller
                     'fingerprint' => $import['fingerprint'],
                     'public_key' => $import['clean_key']
                 ));
-                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'PGP public key has been saved.')));
+                $this->current_user->set_return_message('Your PGP key has been saved');
                 redirect('account');
             } else {
                 $data['returnMessage'] = 'Failed to import that public key.';
@@ -700,9 +703,7 @@ class Accounts extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-}
-
-;
+};
 
 /* End of file: Accounts.php */
 /* Location: ./application/controllers/Accounts.php */

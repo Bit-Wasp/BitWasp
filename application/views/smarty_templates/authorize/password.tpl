@@ -2,7 +2,7 @@
                 <h2>Authorize Request</h2>
 
                 {assign var="defaultMessage" value="As this page has heightened security, you must enter your login details to continue."}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open" action="authorize" attr=['class'=>'form-horizontal', 'name' => 'authorizeForm']}
 

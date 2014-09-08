@@ -3,7 +3,7 @@
                 <h2>{url type="anchor" url="admin/items" text="Back" attr='class="btn btn-default"'} Fees Configuration</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
                 <div class="col-xs-12">&nbsp;</div>
 
                 {form method="open" action="admin/items/fees" attr='class="form-horizontal"'}

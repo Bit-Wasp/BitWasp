@@ -103,13 +103,13 @@ class Orders extends MY_Controller
     public function vendor_accept($id)
     {
         if (!(is_numeric($id) && $id >= 0)) {
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Invalid order ID.')));
+            $this->current_user->set_return_message('Invalid order ID.');
             redirect('orders');
         }
 
         $data['order'] = $this->order_model->load_order($id, array('1'));
         if ($data['order'] == FALSE) {
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Invalid order ID.')));
+            $this->current_user->set_return_message('Invalid order ID.');
             redirect('orders');
         }
 
@@ -177,12 +177,12 @@ class Orders extends MY_Controller
     {
         $data['order'] = $this->order_model->load_order($order_id, array('3', '4'));
         if ($data['order'] == FALSE) {
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to refund this order.')));
+            $this->current_user->set_return_message('Unable to refund this order.');
             redirect('orders');
         }
 
         if (!in_array($data['order']['progress'], array('3', '4'))) {
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Unable to refund this order.')));
+            $this->current_user->set_return_message('Unable to refund this order.');
             redirect('orders');
         }
 
@@ -193,7 +193,7 @@ class Orders extends MY_Controller
         if ($this->input->post('issue_refund') == 'Issue Refund') {
             if ($this->form_validation->run() == TRUE) {
                 if ($this->input->post('refund') == '0') {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'You have chosen not to refund this order.')));
+                    $this->current_user->set_return_message('You have chosen not to refund this order.');
                     redirect('orders/details/' . $data['order']['id']);
                 } else {
                     // Construct new raw transaction!
@@ -207,7 +207,7 @@ class Orders extends MY_Controller
                         if ($this->order_model->update_order($data['order']['id'], array('progress' => '8',
                                 'refund_time' => time())) == TRUE
                         ) {
-                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'A refund has been issued for this order. Please sign to ensure the funds can be claimed ASAP.')));
+                            $this->current_user->set_return_message('A refund has been issued for this order. Please sign to ensure the funds can be claimed ASAP.','success');
                             redirect('orders/details/' . $data['order']['id']);
                         } else {
                             $data['returnMessage'] = 'An error occured processing the refund.';
@@ -338,7 +338,8 @@ class Orders extends MY_Controller
                             }
                             $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
                             $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
-                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been accepted, please see the order details page for the payment address.')));
+                            $this->current_user->set_return_message('Your order has been accepted, please see the order details page for the payment address.','success');
+
                             redirect('purchases');
                         } else if (is_string($vendor_accept) == TRUE) {
                             $data['returnMessage'] = $vendor_accept;
@@ -365,7 +366,7 @@ class Orders extends MY_Controller
                             $message .= "\nOrder Total: {$data['order']['currency']['symbol']}{$order_total}\nFees: {$data['order']['currency']['symbol']}{$fees_total}\nEarnings: {$data['order']['currency']['symbol']}{$vendor_total}\n\nBuyer Address: \n" . $this->input->post('buyer_address');
                             $this->order_model->send_order_message($data['order']['id'], $data['order']['vendor']['user_name'], $subject, $message);
 
-                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been placed. Once accepted you will be able to pay to the address.')));
+                            $this->current_user->set_return_message('Your order has been placed. Once accepted you will be able to pay to the address.','success');
                             redirect('purchases');
                         }
                     }
@@ -403,7 +404,7 @@ class Orders extends MY_Controller
                 $shipping_costs = $this->shipping_costs_model->find_location_cost($item_info['id'], $this->current_user->location['id']);
 
                 if ($shipping_costs == FALSE) {
-                    $this->current_user->set_return_message('This item is not available in your location. Message the vendor to discuss availability.', FALSE);
+                    $this->current_user->set_return_message('This item is not available in your location. Message the vendor to discuss availability.', 'warning');
                     redirect('item/' . $item_info['hash']);
                 }
                 // Load current order with this vendor?
@@ -422,7 +423,8 @@ class Orders extends MY_Controller
 
                     $add = $this->order_model->add($new_order);
                     $message = (($add == TRUE) ? 'Your order has been created!' : 'Unable to add your order at this time, please try again later.');
-                    $this->current_user->set_return_message($message, $add);
+                    $class = ($add) ? 'success' : 'warning';
+                    $this->current_user->set_return_message($message, $class);
 
                 } else {
                     // Already have order, update it
@@ -433,10 +435,11 @@ class Orders extends MY_Controller
                             'price' => $item_info['price']
                         );
                         $res = $this->order_model->update_items($order['id'], $update);
+                        $symbol = $res ? 'success' : 'warning';
                         $message = (($res == TRUE) ? 'Your order has been updated.' : 'Unable to update your order at this time.');
-                        $this->current_user->set_return_message($message, $res);
+                        $this->current_user->set_return_message($message, $symbol);
                     } else {
-                        $this->current_user->set_return_message('Your order has already been created, please contact your vendor to discuss any further changes');
+                        $this->current_user->set_return_message('Your order has already been created, please contact your vendor to discuss any further changes','warning');
                     }
                 }
                 redirect('purchases');
@@ -461,7 +464,7 @@ class Orders extends MY_Controller
                 // If the order cannot be loaded (progress == 0), redirect to Purchases page.
                 $current_order = $this->order_model->load_order($id, array('0'));
                 if ($current_order == FALSE) {
-                    $this->current_user->set_return_message('Unable to find this order.', FALSE);
+                    $this->current_user->set_return_message('Unable to find this order.', 'warning');
                     redirect('purchases');
                 }
 
@@ -496,12 +499,12 @@ class Orders extends MY_Controller
             if ($this->form_validation->run('submit_buyer_cancel_order') == TRUE) {
                 $current_order = $this->order_model->load_order($this->input->post('order_cancel_id'), array('1'));
                 if ($current_order == FALSE) {
-                    $this->current_user->set_return_message('Order could not be found.', FALSE);
+                    $this->current_user->set_return_message('Order could not be found.');
                     redirect('purchases');
                 }
 
                 if ($this->order_model->buyer_cancel($this->input->post('order_cancel_id')) == TRUE) {
-                    $this->current_user->set_return_message('This order has been cancelled.', FALSE);
+                    $this->current_user->set_return_message('This order has been cancelled.', 'success');
                     redirect('purchases');
                 }
             }
@@ -512,18 +515,18 @@ class Orders extends MY_Controller
             if ($this->form_validation->run('submit_buyer_received_upfront_order') == TRUE) {
                 $current_order = $this->order_model->load_order($this->input->post('received_upfront_order_id'), array('5'));
                 if ($current_order == FALSE) {
-                    $this->current_user->set_return_message('That order could not be found!', FALSE);
+                    $this->current_user->set_return_message('That order could not be found!', 'warning');
                     redirect('purchases');
                 }
 
                 // Prevent escrow orders from being marked as 'received'.
                 if ($current_order['vendor_selected_upfront'] == '0') {
-                    $this->current_user->set_return_message('You must sign and broadcast the transaction to finalize the order', FALSE);
+                    $this->current_user->set_return_message('You must sign and broadcast the transaction to finalize the order', 'warning');
                     redirect('purchases');
                 }
 
                 if ($this->order_model->progress_order($this->input->post('received_upfront_order_id'), '5', '7', array('received_time' => time(), 'time' => time())) == TRUE) {
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your order has been marked as received. Please leave feedback for this user!')));
+                    $this->current_user->set_return_message('Your order has been marked as received. Please leave feedback for this user!','success');
                     redirect('purchases');
                 }
             }
@@ -578,7 +581,6 @@ class Orders extends MY_Controller
         $data['dispute'] = $this->disputes_model->get_by_order_id($id);
         $data['disputing_user'] = ($data['dispute']['disputing_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
         $data['other_user'] = ($data['dispute']['other_user_id'] == $data['current_order']['buyer']['id']) ? $data['current_order']['buyer'] : $data['current_order']['vendor'];
-
         $data['form'] = TRUE; // Tell the view whether to display the create dispute form
         $data['post_update'] = TRUE; // Tell the view whether to display the post_update (depends on $record['final_response'])
 
@@ -609,7 +611,7 @@ class Orders extends MY_Controller
                     $message = $this->bw_messages->prepare_input($info, $details);
                     $message['order_id'] = $data['current_order']['id'];
                     $this->messages_model->send($message);
-
+                    $this->current_user->set_return_message('Your dispute has been raised, and will soon be reviewed.','success');
                     redirect($data['dispute_page']);
                 } else {
                     $data['returnMessage'] = 'There was an error';
@@ -624,7 +626,7 @@ class Orders extends MY_Controller
                     if ($this->form_validation->run('submit_dispute_refund_address') == TRUE) {
                         $update = $this->order_model->update_order($data['current_order']['id'], array('buyer_payout' => $this->input->post('refund_address')));
                         if ($update) {
-                            $this->current_user->set_return_message('Your refund address has been set.', TRUE);
+                            $this->current_user->set_return_message('Your refund address has been set.', 'success');
                             redirect($data['dispute_page']);
                         }
                     }
@@ -644,7 +646,6 @@ class Orders extends MY_Controller
                         redirect($data['dispute_page']);
                 }
             }
-
         }
 
         $data['page'] = 'orders/dispute';
@@ -728,7 +729,6 @@ class Orders extends MY_Controller
                 $this->load->library('onchainlib');
                 $tx_crc = substr(hash('sha256', (($data['order']['partially_signed_transaction'] == '') ? $data['order']['unsigned_transaction'] : $data['order']['partially_signed_transaction'])), 0, 8);
                 $data['onchain_sign'] = $this->onchainlib->sign_request($data['order']['id'], $tx_crc);
-
             }
         }
 
@@ -769,7 +769,7 @@ class Orders extends MY_Controller
                         $data['invalid_transaction_error'] = $check;
                     } else if ($check == TRUE) {
                         if (strlen($data['order']['partially_signed_transaction']) > 0) {
-                            $this->current_user->set_return_message('The transaction has been broadcast, and will be displayed here once confirmed!');
+                            $this->current_user->set_return_message('Transaction has been submitted, and will be processed shortly.','success');
                             redirect($data['action_page']);
                         } else {
 
@@ -798,7 +798,7 @@ class Orders extends MY_Controller
                                     'partially_signed_time' => time());
                                 $this->order_model->update_order($order_id, $update);
                             }
-                            $this->current_user->set_return_message('Your partially signed transaction has been saved!', TRUE);
+                            $this->current_user->set_return_message('Your partially signed transaction has been saved!', 'success');
                             redirect($data['action_page']);
                         }
                     }
@@ -814,7 +814,7 @@ class Orders extends MY_Controller
                         $data['invalid_transaction_error'] = $validate;
                     } else if ($validate == TRUE) {
                         if (strlen($data['order']['partially_signed_transaction']) > 0) {
-                            $this->current_user->set_return_message('The transaction has been broadcast, and will be displayed here once confirmed!');
+                            $this->current_user->set_return_message('Transaction has been submitted, and will be processed shortly.','success');
                             redirect($data['action_page']);
                         } else {
                             if ($data['order']['progress'] == '3') {
@@ -842,7 +842,7 @@ class Orders extends MY_Controller
                                     'partially_signed_time' => time());
                                 $this->order_model->update_order($order_id, $update);
                             }
-                            $this->current_user->set_return_message('Your partially signed transaction has been saved!', TRUE);
+                            $this->current_user->set_return_message('Your partially signed transaction has been saved!', 'success');
 
                             redirect($data['action_page']);
                         }

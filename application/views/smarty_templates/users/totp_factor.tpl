@@ -3,7 +3,7 @@
                     <h2>Two Factor Authentication</h2>
 
                     {assign var="defaultMessage" value="Enter the code displayed by your mobile device to continue:"}
-                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
                     {form method="open" action="login/totp_factor" attr=['class'=>'form-horizontal', 'name' => 'register_pgp']}
                         <fieldset>
                             <div class='row-fluid'>

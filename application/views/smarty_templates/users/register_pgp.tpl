@@ -2,7 +2,7 @@
                 <h2>Upload Public Key</h2>
 
                 {assign var="defaultMessage" value="For security reasons, you must upload your PGP public key to continue:"}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
                 {form method="open" action="register/pgp" attr=['class'=>'form-horizontal', 'name' => 'register_pgp']}
                     <fieldset>
 

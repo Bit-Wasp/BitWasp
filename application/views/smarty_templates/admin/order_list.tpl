@@ -3,7 +3,7 @@
                 <h2>{url type="anchor" url="admin" text="Back" attr='class="btn btn-default"'} Order List</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if is_array($orders) == TRUE }
                     <div class="col-md-10 col-md-offset-1 col-xs-12">

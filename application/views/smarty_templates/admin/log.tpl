@@ -1,6 +1,7 @@
             <div class="col-md-9" id="admin-dispute-form">
                 <h2>{url type="anchor" url="admin/logs" text="Back" attr='class="btn btn-default"'} Log Record: {$log.id}</h2>
-
+                {assign var="defaultMessage" value=""}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
                 <div class="col-xs-12">
                     <div class="row">
                         <div class="col-xs-2">Warning Level</div>

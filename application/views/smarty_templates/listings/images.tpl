@@ -5,7 +5,7 @@
                 <h2>Item Images</h2>
 
                 {assign var="defaultMessage" value="Select an image to upload for your item: "}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {form method="open-multipart" action=$smarty.capture.t_form_url attr=['class'=>'form-horizontal']}
                     <div class="form-group">

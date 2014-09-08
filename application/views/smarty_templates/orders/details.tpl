@@ -6,7 +6,7 @@
                 <h2>Order Details: #{$order.id}</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <div class="row">
                     <!-- Display Order Items, Shipping Info, Fees -->

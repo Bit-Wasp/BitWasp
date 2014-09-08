@@ -7,7 +7,7 @@
 			    <h2>Shipping Costs: {$item.name|escape:"html":"UTF-8"}</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if $shipping_costs == TRUE}
                 {form method="open" action=$smarty.capture.t_form_action attr=['class'=>'form-horizontal']}

@@ -4,7 +4,7 @@
 			        <h2>Review Order</h2>
 
                     {assign var="defaultMessage" value=""}
-                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                    {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if $order_type == "upfront"}
 <p align="justify">{$order.vendor.user_name|escape:"html":"UTF-8"} has requested this order is paid up-front. After

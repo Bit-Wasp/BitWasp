@@ -10,7 +10,7 @@
         <div class="col-md-9" id="item_detail">
 
             {assign var="defaultMessage" value=""}
-            {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+            {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
             {if $current_user.logged_in == TRUE AND $current_user.user_role == 'Buyer'}
             {form method="open" action="purchases" attr=''}

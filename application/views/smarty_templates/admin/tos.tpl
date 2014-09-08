@@ -3,7 +3,7 @@
                 <h2>{url type="anchor" url='admin' text='Back' attr='class="btn btn-default"'} Terms Of Service</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 <div class="col-xs-12">
                     <div class="col-xs-10">Here you can set whether a terms of service must be agreed to before
