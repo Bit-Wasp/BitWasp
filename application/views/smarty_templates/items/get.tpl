@@ -36,7 +36,7 @@
                             {/if}
                         {/if}
                     </p>
-                    <p>{$item.description_f|escape:"html":"UTF-8"}</p>
+                    <p>{nl2br($item.description|escape:"html":"UTF-8")}</p>
                     <p>By {url type="anchor" url=$smarty.capture.t_vendor_url text=$item.vendor.user_name|escape:"html":"UTF-8" attr=""} <span class="rating">({url type="anchor" url=$smarty.capture.t_vendor_reviews_url text=$vendor_rating attr=''})</p>
                     <p>Added: {$item.add_time_f}</p>
                     {if $item.update_time == TRUE}
