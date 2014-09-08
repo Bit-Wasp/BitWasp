@@ -412,8 +412,7 @@ class Order_model extends CI_Model
                     $msg = ($info['initiating_user'] == 'buyer')
                         ? 'This order has been automatically accepted, visit the orders page to see the payment address!'
                         : 'You have accepted this order! Visit the orders page to see the bitcoin address!';
-                    $this->session->set_flashdata('returnMessage', json_encode(array('message' => $msg)));
-
+                    $this->current_user->set_return_message($msg, 'success');
                     return TRUE;
                 } else {
                     return 'There was an error creating your order.';

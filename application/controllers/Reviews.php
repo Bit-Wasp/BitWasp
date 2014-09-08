@@ -203,7 +203,7 @@ class Reviews extends MY_Controller
                         if ($this->review_model->publish_reviews($all_reviews, 'buyer') == TRUE) {
                             // If published, clear authorization to review this order.
                             $this->review_auth_model->clear_user_auth($data['review_state']['order_id']);
-                            $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your feedback for this order has been saved!')));
+                            $this->current_user->set_return_message('Your feedback for this order has been saved!','success');
                             redirect($data['cancel_page']);
                         } else {
                             $data['returnMessage'] = 'Error publishing reviews, please try again.';
@@ -233,7 +233,7 @@ class Reviews extends MY_Controller
 
                             if ($this->review_model->publish_reviews($all_reviews, 'vendor') == TRUE) {
                                 $this->review_auth_model->clear_user_auth($data['review_state']['order_id']);
-                                $this->session->set_flashdata('returnMessage', json_encode(array('message' => 'Your feedback for this user has been saved!')));
+                                $this->current_user->set_return_message('Your feedback for this user has been saved!','info');
                                 redirect($data['cancel_page']);
                             } else {
                                 $data['returnMessage'] = 'Error publishing review, please try again.';
@@ -247,9 +247,7 @@ class Reviews extends MY_Controller
         $this->_render($data['page'], $data);
     }
 
-}
-
-;
+};
 
 
 /* End of File: Reviews.php */

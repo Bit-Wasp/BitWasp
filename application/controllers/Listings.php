@@ -48,7 +48,7 @@ class Listings extends MY_Controller
 
                 // Abort if the listing does not exist.
                 if ($item == FALSE) {
-                    $this->current_user->set_return_message('This listing does not exist!', FALSE);
+                    $this->current_user->set_return_message('This listing does not exist!', 'info');
                     redirect('listings');
                 }
 
@@ -60,13 +60,12 @@ class Listings extends MY_Controller
                             $this->images_model->delete_item_img($item['hash'], $image['hash']);
                         }
                     }
-                    $message = 'Your listing has been removed.';
-                    $success = TRUE;
+
+                    $this->current_user->set_return_message('Your listing has been removed', 'success');
                 } else {
-                    $message = 'Unable to remove your listing';
-                    $success = FALSE;
+                    $this->current_user->set_return_message('Unable to remove your listing', 'info');
                 }
-                $this->current_user->set_return_message($message, $success);
+
                 redirect('listings');
             }
         }
@@ -116,12 +115,13 @@ class Listings extends MY_Controller
             $changes['ship_from'] = ($data['item']['ship_from'] == $this->input->post('ship_from')) ? NULL : $this->input->post('ship_from');
             $changes = array_filter($changes, 'strlen');
 
-            $message = (count($changes) > 0 && $this->listings_model->update($item_hash, $changes))
-                ? 'Your changes have been saved.'
-                : 'No changes were made to that listing.';
-            $this->session->set_flashdata('returnMessage', json_encode(array('message' => $message)));
-            redirect('listings/edit/' . $item_hash);
+            if(count($changes) > 0 && $this->listings_model->update($item_hash, $changes)){
+                $this->current_user->set_return_message('Your changes have been saved.','success');
+            } else {
+                $this->current_user->set_return_message('No changes were made to that listing.','info');
+            }
 
+            redirect('listings/edit/' . $item_hash);
         }
 
         $this->load->model('categories_model');

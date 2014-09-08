@@ -296,10 +296,9 @@ class Items_model extends CI_Model
         }
 
         return FALSE;
+
     }
 
-}
-
-;
+};
 
 /* End of File: Items_Model.php */
