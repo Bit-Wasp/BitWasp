@@ -1,7 +1,8 @@
             <div class="col-md-9" id="homepage">
                 <h2>BitWasp</h2>
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
+
                 <div class='alert alert-danger'>So long as this message remains in the code, the project is NOT production ready, and should only be used with the Bitcoin Testnet. Let ye be warned.</div>
 
                 <p>Set up your own Bitcoin marketplace, independent of other payment processing services.</p>

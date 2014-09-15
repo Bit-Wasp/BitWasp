@@ -5,7 +5,7 @@
                 <h2>Dispute: Order #{$current_order.id}</h2>
 
                 {assign var="defaultMessage" value=""}
-                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" success="$success"}
+                {returnMessage defaultMessage="$defaultMessage" returnMessage="$returnMessage" class="$returnMessage_class"}
 
                 {if $form == TRUE}
                 {form method="open" action=$dispute_page attr=['class'=>"form-horizontal"]}
