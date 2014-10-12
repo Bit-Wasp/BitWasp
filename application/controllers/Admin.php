@@ -259,7 +259,7 @@ class Admin extends MY_Controller
 
             // If the update happened successfully, redirect!
             if ($update) {
-                $this->current_user->set_return_message('Your changes have been saved', TRUE);
+                $this->current_user->set_return_message('Your changes have been saved', 'success');
                 redirect('admin/autorun');
             }
         }
@@ -761,7 +761,7 @@ class Admin extends MY_Controller
                 // Abort if the token does not exist.
                 $token = $this->users_model->check_registration_token($this->input->post('delete_token_content'));
                 if ($token == FALSE) {
-                    $this->current_user->set_return_message('This token does not exist', FALSE);
+                    $this->current_user->set_return_message('This token does not exist', 'warning');
                     redirect('admin/user_tokens');
                 }
 

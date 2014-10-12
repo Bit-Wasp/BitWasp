@@ -95,7 +95,7 @@ class Activate extends MY_Controller
             // Otherwise, user is verified. Determine message
             $this->current_user->set_return_message(
                 (($attempt === 'activated') ? 'Your email has already been verified' : 'Your email has been verified, please log in below!')
-                , FALSE);
+                , (($attempt === 'activated') ? 'warning' : 'success'));
             redirect('login');
         }
     }

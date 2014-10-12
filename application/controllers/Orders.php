@@ -397,7 +397,7 @@ class Orders extends MY_Controller
                 // Process Form Submission
                 $item_info = $this->items_model->get($this->input->post('item_hash'), FALSE);
                 if ($item_info == FALSE) {
-                    $this->current_user->set_return_message('Unable to find this item', FALSE);
+                    $this->current_user->set_return_message('Unable to find this item', 'warning');
                     redirect('items');
                 }
 

@@ -56,7 +56,7 @@ class Bip32 extends MY_Controller
 
             if (isset($insert_bip32_array)) {
                 if ($this->bip32_model->add($insert_bip32_array) == TRUE) {
-                    $this->current_user->set_return_message('Your key has been set up!', TRUE);
+                    $this->current_user->set_return_message('Your key has been set up!', 'success');
                     redirect('bip32');
                 }
             }

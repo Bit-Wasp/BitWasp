@@ -80,7 +80,7 @@ class Messages extends MY_Controller
             if ($this->form_validation->run('submit_delete_all_messages') == TRUE) {
                 if ($this->input->post('delete_message') == 'all') {
                     if ($this->messages_model->delete_all() == TRUE) {
-                        $this->current_user->set_return_message('Inbox has been emptied.', TRUE);
+                        $this->current_user->set_return_message('Inbox has been emptied.', 'success');
                         redirect('inbox');
                     } else {
                         $data['returnMessage'] = 'Error deleting messages, please try again later.';
@@ -94,7 +94,7 @@ class Messages extends MY_Controller
                 $get = $this->messages_model->get($this->input->post('delete_message_hash'));
                 if ($get !== FALSE) {
                     if ($this->messages_model->delete($get['id']) == TRUE) {
-                        $this->current_user->set_return_message('Message has been deleted.', TRUE);
+                        $this->current_user->set_return_message('Message has been deleted.', 'success');
                         redirect('inbox');
                     } else {
                         $data['returnMessage'] = 'Error deleting message, please try again later.';
@@ -164,7 +164,7 @@ class Messages extends MY_Controller
             $data['from'] = $this->current_user->user_id;
             $message = $this->bw_messages->prepare_input($data);
             if ($this->messages_model->send($message)) {
-                $this->current_user->set_return_message('Your message has been sent!', TRUE);
+                $this->current_user->set_return_message('Your message has been sent!', 'success');
                 redirect('inbox');
             }
         }

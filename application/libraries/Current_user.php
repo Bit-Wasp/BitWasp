@@ -221,7 +221,7 @@ class Current_User
         if (!is_array($this->CI->bitcoin_model->get_payout_address($this->user_id))
             OR !is_array($this->CI->bip32_model->get($this->user_id))
         ) {
-            $this->set_return_message('You must configure a source of public keys, and a payout address, before you can add listings.', FALSE);
+            $this->set_return_message('You must configure a source of public keys, and a payout address, before you can add listings.', 'warning');
             redirect('account');
         }
     }
