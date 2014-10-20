@@ -113,7 +113,7 @@ class Admin extends MY_Controller
                 <li class="col-xs-3"><h4>' . $self['heading'] . '</h4></li>
                 <li class="col-xs-1">';
 
-        if ($panel_url !== '/logs') $nav .= " " . anchor('admin/edit' . $panel_url, 'Edit', '');
+        if ($panel_url !== '/logs') $nav .= " " . anchor('admin/edit' . $panel_url, '<span class="glyphicon glyphicon-wrench"></span>', 'class="btn btn-xs btn-primary"');
 
         $nav .= '
                 </li>
