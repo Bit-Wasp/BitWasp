@@ -6,8 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="description" content="{$header.site_description|escape:'html':'UTF-8'}" />
     <title>{$header.title|escape:'html':'UTF-8'} | {$header.site_title|escape:'html':'UTF-8'}</title>
-    <link rel="stylesheet" type="text/css" href="{url type="site" url="assets/css/bootstrap.css"}">
-    <link rel="stylesheet" type="text/css" href="{url type="site" url="assets/css/style.css"}">
+    <link rel="stylesheet" type="text/css" href="{url type="base_url" url=""}assets/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="{url type="base_url" url=""}assets/css/style.css">
     <!-- JavaScript -->
     <script src="{url type="site" url="assets/js/jquery-1.8.1.min.js"}"></script>
     <script src="{url type="site" url="assets/js/bootstrap.js"}"></script>
