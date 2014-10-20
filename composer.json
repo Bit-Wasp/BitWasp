@@ -5,6 +5,7 @@
 		"php": ">=5.2.4",
 	        "ext-gmp": "*",
 		"ext-mcrypt": "*",
-	        "bitwasp/bitcoin-lib": "@dev"
+		"mdanter/ecc" : "dev-master",
+	        "bitwasp/bitcoin-lib": "dev-master"
 	}
 }
