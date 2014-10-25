@@ -673,12 +673,11 @@ class Orders extends MY_Controller
         if ($data['order'] == FALSE)
             redirect('');
 
-        // Work out if the user is allowed to view this order.
-        if (!$this->current_user->user_role == 'Admin'
-            && !($this->current_user->user_id == $data['order']['buyer']['id'])
-            && !($this->current_user->user_id == $data['order']['vendor']['id'])
-        )
+        if(!($this->current_user->user_id == $data['order']['buyer']['id']
+            OR $this->current_user->user_id == $data['order']['vendor']['id']
+            OR $this->current_user->user_role == 'Admin'))
             redirect('');
+
         // Only allow access when the order is confirmed by the buyer.
         if ($data['order']['progress'] == '0')
             redirect('');
@@ -727,7 +726,8 @@ class Orders extends MY_Controller
 
             } elseif ($ident == 'onchain') {
                 $this->load->library('onchainlib');
-                $tx_crc = substr(hash('sha256', (($data['order']['partially_signed_transaction'] == '') ? $data['order']['unsigned_transaction'] : $data['order']['partially_signed_transaction'])), 0, 8);
+                $tx = $data['order']['unsigned_transaction'];
+                $tx_crc = substr(hash('sha256', $tx), 0, 8);
                 $data['onchain_sign'] = $this->onchainlib->sign_request($data['order']['id'], $tx_crc);
             }
         }
