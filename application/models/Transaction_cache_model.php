@@ -129,8 +129,11 @@ class Transaction_cache_model extends CI_Model
                     $payment['order_id'] = $order['id'];
 
                     // If it's not already finalized, and payment is sufficient, record a paid order.
-                    if ($order['finalized'] == '0' AND abs($order_total - $total_payment) <= 0.00000001)
+                    if ($order['finalized'] == '0' AND abs($order_total - $total_payment) <= 0.01)
+                    {
                         $this->record_paid_order($order['id']);
+                    }
+
                 }
 
                 if ($payment['purpose'] == 'fees') {
@@ -499,7 +502,6 @@ class Transaction_cache_model extends CI_Model
     public function check_if_expected_spend($output, $order_id)
     {
         $hash = hash('sha256', json_encode($this->outputs_to_log_array($output)));
-        echo $hash . "<br />";
         $search = $this->search_log_hashes($hash, $order_id);
         return ($search === FALSE) ? FALSE : $search['address'];
     }
