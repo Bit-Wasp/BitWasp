@@ -73,8 +73,11 @@ class Items extends MY_Controller
         $data['custom_title'] = 'Category: ' . $data['category']['name'];
         $data['page'] = 'items/index';
 
-        $data['links'] = $this->items_model->pagination_links(array('category' => $data['category']['id']), site_url("category/$hash"), $this->items_per_page, 3);
-        $data['items'] = $this->items_model->get_list_pages(array('category' => $data['category']['id']), $page, $this->items_per_page);
+        $item_search = array(
+            'cat_id_list' => $this->categories_model->node_categories($data['category']['id'])
+        );
+        $data['links'] = $this->items_model->pagination_links($item_search, site_url("category/$hash"), $this->items_per_page, 3);
+        $data['items'] = $this->items_model->get_list_pages($item_search, $page, $this->items_per_page);
 
         $this->_render($data['page'], $data);
     }

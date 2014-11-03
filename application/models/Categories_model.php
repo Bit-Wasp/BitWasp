@@ -88,29 +88,60 @@ class Categories_model extends CI_Model
      */
     public function get(array $cat)
     {
+        if(!isset($cat['hash']) AND !isset($cat['id']))
+            throw new Exception('Must specify a hash or ID');
 
-        if (isset($cat['hash'])) {
-            $query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id) AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
-                ->from('categories c1')
-                ->where('c1.hash', $cat['hash'])
-                ->get();
+        if (isset($cat['hash']))
+            $this->db->where('c1.hash', $cat['hash']);
+        else
+            $this->db->where('c1.id', $cat['id']);
 
-        } elseif (isset($cat['id'])) {
-            $query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id) AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
-                ->from('categories c1')
-                ->where('c1.hash', $cat['id'])
-                ->get();
-        } else {
-            return FALSE;
-        }
+        $query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id AND hidden = '0') AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
+            ->from('categories c1')
+            ->get();
 
         if ($query->num_rows() > 0) {
-            $row = $query->row_array();
-            $row['count_items'] = $this->get_item_count($row['id']);
-            return $row;
+            return $query->row_array();
         } else {
             return FALSE;
         }
+    }
+
+    /**
+     * Return the array of categories under this parent id
+     * @param $category_id
+     * @return array
+     */
+    public function node_categories($category_id)
+    {
+        $start   = array($category_id);
+        $results = array($category_id);
+
+        $done = false;
+        while (count($start) > 0)
+        {
+            $v    = end($start);
+            $lpos = count($start)-1;
+            unset($start[$lpos]);
+
+            $anything = false;
+            foreach ($this->bw_config->categories as $cat)
+            {
+                if ($cat['parent_id'] == $v){
+                    $results[] = $cat['id'];
+
+                    if(!in_array($cat['id'], $start)){
+                        $start[] = $cat['id'];
+                        $anything = true;
+                    }
+
+                }
+            }
+            if(!$anything )
+                break;
+        }
+
+        return $results;
     }
 
     /**
@@ -138,7 +169,7 @@ class Categories_model extends CI_Model
     public function list_all()
     {
 
-        $query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id) AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
+        $query = $this->db->select("c1.*, (SELECT COUNT(*) FROM bw_items WHERE category = c1.id AND hidden = '0') AS count_child_items, (SELECT COUNT(*) FROM bw_categories WHERE parent_id = c1.id) AS count_child_cats")
             ->from('categories c1')
             ->get();
 
@@ -214,11 +245,11 @@ class Categories_model extends CI_Model
      * recurse into the multidimensional array to show child/parent
      * categories.
      *
-     * @param    string $param_name
-     * @param    string $class
-     * @param    FALSE /int    $selected
-     * @param    array $extras
-     * @return    string
+     * @param $param_name
+     * @param $class
+     * @param mixed $selected
+     * @param array $extras
+     * @return string
      */
     public function generate_select_list($param_name, $class, $selected = FALSE, $extras = array())
     {
@@ -250,14 +281,11 @@ class Categories_model extends CI_Model
 
         $this->load->model('items_model');
 
+
+
         // Add all categories to $menu[] array.
         foreach ($categories as $result) {
-            // Only need the count for this.
-            $joins = array(
-                array('table' => 'users',
-                    'on' => "users.user_hash = items.vendor_hash AND users.banned='0'")
-            );
-            $count_item_children = $this->items_model->get_count(array('category' => $result['id']), $joins);
+
             $count_menu_children = count($this->get_children($result['id']));
 
             $menu[$result['id']] = array(
@@ -265,7 +293,7 @@ class Categories_model extends CI_Model
                 'name' => $result['name'],
                 'description' => $result['description'],
                 'hash' => $result['hash'],
-                'count' => $count_item_children,
+                'count_child_items' => $result['count_child_items'],
                 'count_children' => $count_menu_children,
                 'parent_id' => $result['parent_id']
             );

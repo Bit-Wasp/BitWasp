@@ -160,18 +160,14 @@ class MY_Controller extends CI_Controller
             if ($category['id'] == $this->category)
                 $extra['selected'] = true;
 
-
-         //   if ($category['count_child_items'] > 0){
-
-                $content[$category['id']] = (object)array(
-                    'id' => $category['id'],
-                    'text' => $category['name'],
-                    'hash' => $category['hash'],
-                    'href' => base_url('category/'.$category['hash']),
-                    'tags' => "".$category['count_child_items']."",
-                    'parent_id' => $category['parent_id']
-                );
-           // }
+            $content[$category['id']] = (object)array(
+                'id' => $category['id'],
+                'text' => $category['name'],
+                'hash' => $category['hash'],
+                'href' => base_url('category/'.$category['hash']),
+                'tags' => "".$category['count_child_items']."",
+                'parent_id' => $category['parent_id']
+            );
 
 
         }
@@ -190,30 +186,6 @@ class MY_Controller extends CI_Controller
         //$content = $this->_prepare_menu2($content, 0, array());
         return json_encode(json_decode(json_encode(array_values($content))));
 
-    }
-
-    public function _prepare_menu2($categories, $level, $parent)
-    {
-        $content = array();
-        $level++;
-
-        // Pregenerate the URL. Checks for trailing slashes, fixes up
-        // issues when mod_rewrite is disabled.
-        // Loop through each parent category
-        foreach ($categories as $category) {
-            if(isset($category['nodes']))
-                $nodes = $this->_prepare_menu2($category['nodes'], $level, $params);
-
-            //Check if were are currently viewing this category, if so, set it as active
-            $build = new StdClass;
-            $build->text = $category['text'];
-            $build->href = base_url('category/'.$category['hash']);
-            $build->tags = $category['tags'];
-
-
-        }
-
-        return $content;
     }
 
     /**
@@ -248,7 +220,8 @@ class MY_Controller extends CI_Controller
             $content .= "'>";
 
             // Display link if category contains items.
-            $content .= ($category['count'] == 0) ? "<a href='#'>{$category['name']}   </a>" : anchor('category/' . $category['hash'], $category['name'] . ' (' . $category['count'] . ")");
+            $name_str = $category['name'] . (($category['count_child_items'] > 0) ? " (" . $category['count_child_items'] . ")" : '');
+            $content .= anchor('category/' . $category['hash'], $name_str);
 
             // Check if we need to recurse into children.
             if (isset($category['children']))

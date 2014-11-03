@@ -89,12 +89,14 @@ class Items_model extends CI_Model
         // Add on extra options.
         if (count($opt) > 0) {
             // If there is a list of item ID's to load..
-            if (isset($opt['item_id_list'])) {
-                if (is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
-                    $this->db->where_in('id', $opt['item_id_list']);
-                }
-                // Remove this option to avoid issues with the next step.
+            if (isset($opt['item_id_list']) && is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
+                $this->db->where_in('id', $opt['item_id_list']);
                 unset($opt['item_id_list']);
+            }
+
+            if (isset($opt['cat_id_list']) && is_array($opt['cat_id_list']) && count($opt['cat_id_list']) > 0) {
+                $this->db->where_in('category', $opt['cat_id_list']);
+                unset($opt['cat_id_list']);
             }
 
             foreach ($opt as $key => $val) {
@@ -126,6 +128,40 @@ class Items_model extends CI_Model
         return $this->get_list_pages($opt, 0, 10000);
     }
 
+    public function get_category($parent_cat)
+    {
+        $cat_list = $this->categories_model->node_categories($parent_cat);
+
+        $query = $this->db
+            ->select('items.*')
+            ->from('items')
+            ->where('items.hidden','0')
+            ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
+            ->where_in('category', $cat_list )
+            ->get();
+
+
+        return $query->result();
+
+     /*   $this->db->select('items.id, items.hash, price')
+            ->order_by('add_time DESC')
+            ->from('items')
+            ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
+            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\' AND bw_reviews.timestamp < \'' . time() . '\'', 'left')
+            ->join('currencies', 'currencies.id = items.currency')
+            ->group_by('items.id');*/
+
+ /*
+        $this->db->select('items.id, items.hash, price, vendor_hash, currency, description, hidden, category, items.name, add_time, update_time, description, main_image, users.user_hash, users.user_name, users.banned, images.hash as image_hash, images.encoded as image_encoded, images.height as image_height, images.width as image_width, currencies.code as currency_code, (SELECT count(bw_reviews.id)) as review_count')
+            ->order_by('add_time DESC')
+            ->select_avg('reviews.average_rating')
+            ->from('items')
+            ->join('users', 'users.user_hash = items.vendor_hash AND bw_users.banned = \'0\'')
+            ->join('reviews', 'reviews.subject_hash = items.hash AND bw_reviews.review_type = \'item\' AND bw_reviews.timestamp < \'' . time() . '\'', 'left')
+            ->group_by('items.id')
+            ->join('images', 'images.hash = items.main_image', 'left')
+            ->join('currencies', 'currencies.id = items.currency');*/
+    }
     /**
      * Get list of items. (need to build in pagination).
      *
@@ -159,16 +195,15 @@ class Items_model extends CI_Model
         // Add on extra options.
         if (count($opt) > 0) {
             // If there is a list of item ID's to load..
-            if (isset($opt['item_id_list'])) {
-                if (is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
-                    $this->db->where_in('items.id', $opt['item_id_list']);
-                } else {
-                    $this->db->reset_query();
-                    return FALSE;
-                }
-
-                // Remove this option to avoid issues with the next step.
+            // If there is a list of item ID's to load..
+            if (isset($opt['item_id_list']) && is_array($opt['item_id_list']) && count($opt['item_id_list']) > 0) {
+                $this->db->where_in('id', $opt['item_id_list']);
                 unset($opt['item_id_list']);
+            }
+
+            if (isset($opt['cat_id_list']) && is_array($opt['cat_id_list']) && count($opt['cat_id_list']) > 0) {
+                $this->db->where_in('category', $opt['cat_id_list']);
+                unset($opt['cat_id_list']);
             }
 
             foreach ($opt as $key => $val) {
@@ -177,6 +212,7 @@ class Items_model extends CI_Model
         }
 
         // Get the list of items.
+        $this->db->group_by('items.id');
         $query = $this->db->get();
 
         $results = array();
@@ -213,7 +249,6 @@ class Items_model extends CI_Model
                 $results[] = $row;
             }
         }
-
         return $results;
 
     }
