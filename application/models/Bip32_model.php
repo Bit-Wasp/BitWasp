@@ -23,12 +23,28 @@ class Bip32_model extends CI_Model
         parent::__construct();
     }
 
+    /**
+     * Add a parent BIP32 key for a user.
+     * array(
+     *   'key' => 'xpub..',
+     *   'user_id' => ..,
+     *   'provider' => Manual / Onchain / JS,
+     *   'key_index' => ..
+     * );
+     * @param $data
+     * @return bool
+     */
     public function add($data)
     {
         $data['time'] = time();
         return $this->db->insert('bip32_keys', $data) == TRUE;
     }
 
+    /**
+     * Load a users BIP32 parent key, or return false.
+     * @param $user_id
+     * @return bool
+     */
     public function get($user_id)
     {
         $query = $this->db->get_where('bip32_keys', array('user_id' => $user_id));
@@ -37,11 +53,16 @@ class Bip32_model extends CI_Model
             : FALSE;
     }
 
+    /**
+     * Given a parent key row, find a BIP32 public key which was never used before.
+     * @param $bip32_key_row
+     * @return array
+     */
     public function recurse_until_unique_bip32_key($bip32_key_row)
     {
         $this->load->model('used_pubkeys_model');
         
-        // Loop until a unique key is found.
+        // Loop until a unique key is found. Key index is generally set
         $valid = FALSE;
         while ($valid == FALSE) {
             $new_key = \BitWasp\BitcoinLib\BIP32::build_key($bip32_key_row['key'], $bip32_key_row['key_index']);
@@ -64,6 +85,12 @@ class Bip32_model extends CI_Model
         );
     }
 
+    /**
+     * Get next bip32 child key when given a user id.
+     *
+     * @param $user_id
+     * @return array|bool
+     */
     public function get_next_bip32_child($user_id)
     {
         $this->load->model('used_pubkeys_model');
@@ -73,6 +100,10 @@ class Bip32_model extends CI_Model
             : FALSE;
     }
 
+    /**
+     * Load the next child public key for the admin user.
+     * @return array|bool
+     */
     public function get_next_admin_child()
     {
         $admin_key = array(
@@ -88,12 +119,31 @@ class Bip32_model extends CI_Model
         return $child;
     }
 
+    /**
+     * Set the next public sequence number to be used.
+     * @param $info
+     */
     public function update_next_index($info)
     {
         if ($info['user_role'] !== 'Admin')
             $this->db->where('user_id', $info['user_id'])->update('bip32_keys', array('key_index' => ($info['key_index'] + 1)));
     }
 
+    /**
+     * Add a child bip32 key
+     * array(
+     *   'user_id' => x,
+     *   'order_id' => x,
+     *   'order_hash' => x,
+     *   'user_role' => x,
+     *   'parent_extended_public_key' =>
+     *   'provider' =>
+     *   'extended_public_key'
+     *   'public_key'
+     *   'key_index'
+     * @param $info
+     * @return bool
+     */
     public function add_child_key($info)
     {
         $info['time'] = time();
@@ -108,6 +158,11 @@ class Bip32_model extends CI_Model
         }
     }
 
+    /**
+     * Get a child key by its ID
+     * @param $id
+     * @return bool
+     */
     public function get_child_key($id)
     {
         $query = $this->db->get_where('bip32_user_keys', array('id' => $id));
@@ -116,6 +171,11 @@ class Bip32_model extends CI_Model
             : FALSE;
     }
 
+    /**
+     * Load all CHILD public keys and addresses that a user has created.
+     * @param $user_id
+     * @return mixed
+     */
     public function get_user_key_usage($user_id)
     {
         $query = $this->db->get_where('bip32_user_keys', array('user_id' => $user_id))->result_array();
