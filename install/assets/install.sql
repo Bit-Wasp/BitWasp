@@ -1014,7 +1014,7 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 INSERT INTO `bw_users` (`banned`, `block_non_pgp`, `entry_paid`, `force_pgp_messages`, `location`, `login_time`, `display_login_time`, `password`, `public_key`, `private_key`, `private_key_salt`, `register_time`, `salt`, `pgp_two_factor`, `user_hash`, `user_name`, `user_role`, `local_currency`, `completed_order_count`, `totp_two_factor`, `totp_secret`) VALUES
-('0', '0', '1', '0', 1, 0, '0', '%PASSWORD%', '%PUBLIC_KEY%', '%PRIVATE_KEY%', '%PRIVATE_KEY_SALT%', %REGISTER_TIME%, '%SALT%', '0', '%USER_HASH%', 'admin', 'Admin', 0, 0, '0', '');
+('0', '0', '1', '0', 1, 0, '0', '%PASSWORD%', '%PUBLIC_KEY%', '%PRIVATE_KEY%', '%PRIVATE_KEY_SALT%', '%REGISTER_TIME%', '%SALT%', '0', '%USER_HASH%', 'admin', 'Admin', 0, 0, '0', '');
 
 --
 -- Table structure for table `bw_watched_addresses`
