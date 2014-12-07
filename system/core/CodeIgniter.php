@@ -222,8 +222,12 @@ if ( ! is_php('5.4'))
 	// iconv's predefined constants is "strongly discouraged".
 	if (extension_loaded('iconv'))
 	{
-		define('ICONV_ENABLED', TRUE);
-		iconv_set_encoding('internal_encoding', $charset);
+        define('ICONV_ENABLED', TRUE);
+        if (PHP_VERSION_ID < 50600) {
+            iconv_set_encoding('internal_encoding', $charset);
+        } else {
+            ini_set('default_charset', $charset);
+        }
 	}
 	else
 	{
