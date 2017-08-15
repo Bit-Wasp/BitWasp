@@ -8,6 +8,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `bw_alerts`
 --
 
+DROP TABLE IF EXISTS `bw_alerts`;
 CREATE TABLE IF NOT EXISTS `bw_alerts` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `source` varchar(30) NOT NULL,
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `bw_alerts` (
 -- Table structure for table `bw_autorun`
 --
 
+DROP TABLE IF EXISTS `bw_autorun`;
 CREATE TABLE IF NOT EXISTS `bw_autorun` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `name` varchar(40) NOT NULL,
@@ -38,6 +40,7 @@ CREATE TABLE IF NOT EXISTS `bw_autorun` (
 -- Table structure for table `bw_bitcoin_public_keys`
 --
 
+DROP TABLE IF EXISTS `bw_bitcoin_public_keys`;
 CREATE TABLE IF NOT EXISTS `bw_bitcoin_public_keys` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `user_id` int(9) NOT NULL,
@@ -50,7 +53,7 @@ CREATE TABLE IF NOT EXISTS `bw_bitcoin_public_keys` (
 -- Table structure for table `bw_bip32_keys`
 --
 
-
+DROP TABLE IF EXISTS `bw_bip32_keys`;
 CREATE TABLE IF NOT EXISTS `bw_bip32_keys` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `key` varchar(600) NOT NULL,
@@ -67,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `bw_bip32_keys` (
 -- Table structure for table `bw_bip32_user_keys`
 --
 
+DROP TABLE IF EXISTS `bw_bip32_user_keys`;
 CREATE TABLE IF NOT EXISTS `bw_bip32_user_keys` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `user_id` int(9) NOT NULL,
@@ -85,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `bw_bip32_user_keys` (
 --
 -- Table structure for table `bw_blocks`
 --
-
+DROP TABLE IF EXISTS `bw_blocks`;
 CREATE TABLE IF NOT EXISTS `bw_blocks` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `hash` varchar(64) NOT NULL,
@@ -101,7 +105,7 @@ CREATE TABLE IF NOT EXISTS `bw_blocks` (
 --
 -- Table structure for table `bw_categories`
 --
-
+DROP TABLE IF EXISTS `bw_categories`;
 CREATE TABLE IF NOT EXISTS `bw_categories` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `description` varchar(100) NOT NULL,
@@ -119,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `bw_categories` (
 --
 -- Table structure for table `bw_config`
 --
-
+DROP TABLE IF EXISTS `bw_config`;
 CREATE TABLE IF NOT EXISTS `bw_config` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `parameter` varchar(30) NOT NULL,
@@ -174,7 +178,7 @@ INSERT INTO `bw_config` (`parameter`, `value`) VALUES
 --
 -- Table structure for table `bw_currencies`
 --
-
+DROP TABLE IF EXISTS `bw_currencies`;
 CREATE TABLE IF NOT EXISTS `bw_currencies` (
   `id` int(9) NOT NULL,
   `name` varchar(40) NOT NULL,
@@ -198,7 +202,7 @@ INSERT INTO `bw_currencies` (`id`, `name`, `symbol`, `code`, `crypto_magic_byte`
 --
 -- Table structure for table `bw_disputes`
 --
-
+DROP TABLE IF EXISTS `bw_disputes`;
 CREATE TABLE IF NOT EXISTS `bw_disputes` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `dispute_message` text NOT NULL,
@@ -219,6 +223,7 @@ CREATE TABLE IF NOT EXISTS `bw_disputes` (
 -- Table structure for table `bw_disputes_updates`
 --
 
+DROP TABLE IF EXISTS `bw_disputes_updates`;
 CREATE TABLE IF NOT EXISTS `bw_disputes_updates` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `order_id` int(9) NOT NULL,
@@ -235,7 +240,7 @@ CREATE TABLE IF NOT EXISTS `bw_disputes_updates` (
 --
 -- Table structure for table `bw_entry_payment`
 --
-
+DROP TABLE IF EXISTS `bw_entry_payment`;
 CREATE TABLE IF NOT EXISTS `bw_entry_payment` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `user_hash` varchar(25) NOT NULL,
@@ -252,7 +257,7 @@ CREATE TABLE IF NOT EXISTS `bw_entry_payment` (
 --
 -- Table structure for table `bw_exchange_rates`
 --
-
+DROP TABLE IF EXISTS `bw_exchange_rates`;
 CREATE TABLE IF NOT EXISTS `bw_exchange_rates` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `time` varchar(20) NOT NULL,
@@ -278,7 +283,7 @@ INSERT INTO `bw_exchange_rates` (`id`, `time`, `usd`, `eur`, `gbp`, `btc`, `pric
 --
 -- Table structure for table `bw_fees`
 --
-
+DROP TABLE IF EXISTS `bw_fees`;
 CREATE TABLE IF NOT EXISTS `bw_fees` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `low` decimal(20,8) NOT NULL COMMENT 'Orders exceeding this value apply to this range',
@@ -301,7 +306,7 @@ INSERT INTO `bw_fees` (`id`, `low`, `high`, `rate`) VALUES
 --
 -- Table structure for table `bw_images`
 --
-
+DROP TABLE IF EXISTS `bw_images`;
 CREATE TABLE IF NOT EXISTS `bw_images` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `hash` varchar(25) NOT NULL,
@@ -325,7 +330,7 @@ INSERT INTO `bw_images` (`id`, `hash`, `encoded`, `height`, `width`) VALUES
 --
 -- Table structure for table `bw_items`
 --
-
+DROP TABLE IF EXISTS `bw_items`;
 CREATE TABLE IF NOT EXISTS `bw_items` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `hash` varchar(25) NOT NULL,
@@ -351,7 +356,7 @@ CREATE TABLE IF NOT EXISTS `bw_items` (
 --
 -- Table structure for table `bw_item_images`
 --
-
+DROP TABLE IF EXISTS `bw_item_images`;
 CREATE TABLE IF NOT EXISTS `bw_item_images` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `image_hash` varchar(25) NOT NULL,
@@ -365,7 +370,7 @@ CREATE TABLE IF NOT EXISTS `bw_item_images` (
 --
 -- Table structure for table `bw_key_usage`
 --
-
+DROP TABLE IF EXISTS `bw_key_usage`;
 CREATE TABLE IF NOT EXISTS `bw_key_usage` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `usage` varchar(25) NOT NULL,
@@ -383,7 +388,7 @@ CREATE TABLE IF NOT EXISTS `bw_key_usage` (
 --
 -- Table structure for table `bw_locations_custom_list`
 --
-
+DROP TABLE IF EXISTS `bw_locations_custom_list`;
 CREATE TABLE IF NOT EXISTS `bw_locations_custom_list` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `location` varchar(60) NOT NULL,
@@ -398,7 +403,7 @@ CREATE TABLE IF NOT EXISTS `bw_locations_custom_list` (
 --
 -- Table structure for table `bw_locations_default_list`
 --
-
+DROP TABLE IF EXISTS `bw_locations_default_list`;
 CREATE TABLE IF NOT EXISTS `bw_locations_default_list` (
   `id` int(4) NOT NULL AUTO_INCREMENT,
   `location` varchar(60) NOT NULL,
@@ -658,7 +663,7 @@ INSERT INTO `bw_locations_default_list` (`id`, `location`, `parent_id`, `hash`) 
 --
 -- Table structure for table `bw_logs`
 --
-
+DROP TABLE IF EXISTS `bw_logs`;
 CREATE TABLE IF NOT EXISTS `bw_logs` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `caller` varchar(35) NOT NULL COMMENT 'Name of the script which left the log',
@@ -678,7 +683,7 @@ CREATE TABLE IF NOT EXISTS `bw_logs` (
 --
 -- Table structure for table `bw_messages`
 --
-
+DROP TABLE IF EXISTS `bw_messages`;
 CREATE TABLE IF NOT EXISTS `bw_messages` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `content` blob NOT NULL,
@@ -701,7 +706,7 @@ CREATE TABLE IF NOT EXISTS `bw_messages` (
 --
 -- Table structure for table `bw_onchain_requests`
 --
-
+DROP TABLE IF EXISTS `bw_onchain_requests`;
 CREATE TABLE IF NOT EXISTS `bw_onchain_requests` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `user_token` varchar(64) NOT NULL,
@@ -717,7 +722,7 @@ CREATE TABLE IF NOT EXISTS `bw_onchain_requests` (
 --
 -- Table structure for table `bw_orders`
 --
-
+DROP TABLE IF EXISTS `bw_orders`;
 CREATE TABLE IF NOT EXISTS `bw_orders` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `created_time` varchar(20) NOT NULL,
@@ -768,7 +773,7 @@ CREATE TABLE IF NOT EXISTS `bw_orders` (
 --
 -- Table structure for table `bw_page_authorization`
 --
-
+DROP TABLE IF EXISTS `bw_page_authorization`;
 CREATE TABLE IF NOT EXISTS `bw_page_authorization` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `auth_level` varchar(15) NOT NULL,
@@ -809,7 +814,7 @@ INSERT INTO `bw_page_authorization` (`auth_level`, `system`, `timeout`, `URI`) V
 --
 -- Table structure for table `bw_paid_orders_cache`
 --
-
+DROP TABLE IF EXISTS `bw_paid_orders_cache`;
 CREATE TABLE IF NOT EXISTS `bw_paid_orders_cache` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `order_id` int(9) NOT NULL,
@@ -822,7 +827,7 @@ CREATE TABLE IF NOT EXISTS `bw_paid_orders_cache` (
 --
 -- Table structure for table `bw_pgp_keys`
 --
-
+DROP TABLE IF EXISTS `bw_pgp_keys`;
 CREATE TABLE IF NOT EXISTS `bw_pgp_keys` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `fingerprint` varchar(128) NOT NULL,
@@ -838,7 +843,7 @@ CREATE TABLE IF NOT EXISTS `bw_pgp_keys` (
 --
 -- Table structure for table `bw_registration_tokens`
 --
-
+DROP TABLE IF EXISTS `bw_registration_tokens`;
 CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `comment` varchar(100) NOT NULL,
@@ -855,7 +860,7 @@ CREATE TABLE IF NOT EXISTS `bw_registration_tokens` (
 --
 -- Table structure for table `bw_reviews`
 --
-
+DROP TABLE IF EXISTS `bw_reviews`;
 CREATE TABLE IF NOT EXISTS `bw_reviews` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `review_type` varchar(10) NOT NULL,
@@ -873,7 +878,7 @@ CREATE TABLE IF NOT EXISTS `bw_reviews` (
 --
 -- Table structure for table `bw_review_auth_tokens`
 --
-
+DROP TABLE IF EXISTS `bw_review_auth_tokens`;
 CREATE TABLE IF NOT EXISTS `bw_review_auth_tokens` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `auth_token` varchar(64) NOT NULL,
@@ -889,7 +894,7 @@ CREATE TABLE IF NOT EXISTS `bw_review_auth_tokens` (
 --
 -- Table structure for table `bw_shipping_costs`
 --
-
+DROP TABLE IF EXISTS `bw_shipping_costs`;
 CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `item_id` int(9) NOT NULL,
@@ -905,7 +910,7 @@ CREATE TABLE IF NOT EXISTS `bw_shipping_costs` (
 --
 -- Table structure for table `bw_transactions_block_cache`
 --
-
+DROP TABLE IF EXISTS `bw_transactions_block_cache`;
 CREATE TABLE IF NOT EXISTS `bw_transactions_block_cache` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `tx_id` varchar(64) NOT NULL,
@@ -917,7 +922,7 @@ CREATE TABLE IF NOT EXISTS `bw_transactions_block_cache` (
 --
 -- Table structure for table `bw_transactions_broadcast_cache`
 --
-
+DROP TABLE IF EXISTS `bw_transactions_broadcast_cache`;
 CREATE TABLE IF NOT EXISTS `bw_transactions_broadcast_cache` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `transaction` varchar(1024) NOT NULL,
@@ -928,7 +933,7 @@ CREATE TABLE IF NOT EXISTS `bw_transactions_broadcast_cache` (
 --
 -- Table structure for table `bw_transactions_expected_cache`
 --
-
+DROP TABLE IF EXISTS `bw_transactions_expected_cache`;
 CREATE TABLE IF NOT EXISTS `bw_transactions_expected_cache` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `outputs_hash` varchar(64) NOT NULL,
@@ -942,7 +947,7 @@ CREATE TABLE IF NOT EXISTS `bw_transactions_expected_cache` (
 --
 -- Table structure for table `bw_transactions_payments_cache`
 --
-
+DROP TABLE IF EXISTS `bw_transactions_payments_cache`;
 CREATE TABLE IF NOT EXISTS `bw_transactions_payments_cache` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `block_height` int(9) DEFAULT NULL,
@@ -960,7 +965,7 @@ CREATE TABLE IF NOT EXISTS `bw_transactions_payments_cache` (
 --
 -- Table structure for table `bw_two_factor_tokens`
 --
-
+DROP TABLE IF EXISTS `bw_two_factor_tokens`;
 CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `user_id` int(9) NOT NULL,
@@ -973,6 +978,7 @@ CREATE TABLE IF NOT EXISTS `bw_two_factor_tokens` (
 --
 --  Table structure for table `bw_used_public_keys`
 --
+DROP TABLE IF EXISTS `bw_used_public_keys`;
 CREATE TABLE IF NOT EXISTS `bw_used_public_keys` (
   `id` int(9) NOT NULL,
   `public_key_sha256` varchar(64) NOT NULL
@@ -983,7 +989,7 @@ CREATE TABLE IF NOT EXISTS `bw_used_public_keys` (
 --
 -- Table structure for table `bw_users`
 --
-
+DROP TABLE IF EXISTS `bw_users`;
 CREATE TABLE IF NOT EXISTS `bw_users` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `banned` enum('0','1') DEFAULT '0',
@@ -1014,12 +1020,12 @@ CREATE TABLE IF NOT EXISTS `bw_users` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 INSERT INTO `bw_users` (`banned`, `block_non_pgp`, `entry_paid`, `force_pgp_messages`, `location`, `login_time`, `display_login_time`, `password`, `public_key`, `private_key`, `private_key_salt`, `register_time`, `salt`, `pgp_two_factor`, `user_hash`, `user_name`, `user_role`, `local_currency`, `completed_order_count`, `totp_two_factor`, `totp_secret`) VALUES
-('0', '0', '1', '0', 1, 0, '0', '%PASSWORD%', '%PUBLIC_KEY%', '%PRIVATE_KEY%', '%PRIVATE_KEY_SALT%', %REGISTER_TIME%, '%SALT%', '0', '%USER_HASH%', 'admin', 'Admin', 0, 0, '0', '');
+('0', '0', '1', '0', 1, 0, '0', '%PASSWORD%', '%PUBLIC_KEY%', '%PRIVATE_KEY%', '%PRIVATE_KEY_SALT%', '%REGISTER_TIME%', '%SALT%', '0', '%USER_HASH%', 'admin', 'Admin', 0, 0, '0', '');
 
 --
 -- Table structure for table `bw_watched_addresses`
 --
-
+DROP TABLE IF EXISTS `bw_watched_addresses`;
 CREATE TABLE IF NOT EXISTS `bw_watched_addresses` (
   `id` int(9) NOT NULL AUTO_INCREMENT,
   `purpose` varchar(20) NOT NULL,
